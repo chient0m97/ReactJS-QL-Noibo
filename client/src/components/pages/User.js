@@ -13,10 +13,140 @@ const { Column } = Table;
 const {Option} = Select
 const { Search } = Input;
 
+let id = 0;
+
+class DynamicFieldSet extends React.Component {
+  remove = k => {
+    const { form } = this.props;
+    // can use data-binding to get
+    const keys = form.getFieldValue('keys');             
+    // We need at least one passenger
+    if (keys.length === 0) {
+      return;
+    }
+
+    // can use data-binding to set
+    form.setFieldsValue({
+      keys: keys.filter(key => key !== k),
+    });
+    this.props.remove();
+    this.props.callback('');
+  };
+
+  add = () => {
+    const { form } = this.props;
+    // can use data-binding to get
+    const keys = form.getFieldValue('keys');
+    const nextKeys = keys.concat(id++);
+    // can use data-binding to set
+    // important! notify form to detect changes
+    form.setFieldsValue({
+      keys: nextKeys,
+    });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const { keys, names } = values;
+        console.log('Received values of form: ', values);
+        console.log('Merged values:', keys.map(key => names[key]));
+      }
+    });
+  };
+  render() {
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 4 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 20 },
+      },
+    };
+    const formItemLayoutWithOutLabel = {
+      wrapperCol: {
+        xs: { span: 24, offset: 0 },
+        sm: { span: 20, offset: 4 },
+      },
+    };
+    getFieldDecorator('keys', { initialValue: [] });
+    const keys = getFieldValue('keys');
+    const formItems = keys.map((k, index) => (
+      <Form.Item
+        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+        label={index === 0 ? '' : ''}
+        required={false}
+        key={k}
+      >
+        {getFieldDecorator(`names[${k}]`, {
+          validateTrigger: ['onChange', 'onBlur'],         
+
+        })(<div>
+          <Select
+            defaultValue={['name']}
+            showSearch
+            style={{ width: 200 }}
+            placeholder="Select a person"
+            optionFilterProp="children"
+            onChange={this.props.onchangeSearch}
+            // onFocus={this.onFocus}
+            // onBlur={this.onBlur}
+            onSearch={this.onSearch}
+            filterOption={(input, option) =>
+              option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            <Option value="name">User Name</Option>
+            <Option value="code">Code</Option>
+            <Option value="email">Email</Option>
+            <Option value="password">Password</Option>
+            <Option value="phone">Phone Number</Option>
+            <Option value="fullname">Full name</Option>
+
+
+          </Select>,
+        <Search style={{ width: 300 }} placeholder="input search text" onChange={this.props.changesearch.bind(this)} onSearch={(value) => { this.props.callback(value) }} enterButton />
+        
+        </div>)}
+        {keys.length > 0 ? (
+          <Icon
+            className="dynamic-delete-button"
+            type="minus-circle-o"
+            onClick={() => this.remove(k)}
+          />
+        ) : null}
+      </Form.Item>
+    ));
+    return (
+      <Form onSubmit={this.handleSubmit}>
+        {formItems}
+        <Form.Item {...formItemLayoutWithOutLabel}>
+          <Button type="dashed" onClick={this.add} style={{color:'red'}} >
+             Click vào đây để Search Bờ rô
+          </Button>
+        </Form.Item>
+        
+      </Form>
+    );
+  }
+}
+
+const WrappedDynamicFieldSet = Form.create({ name: 'dynamic_form_item' })(DynamicFieldSet);
 
 
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
+    constructor(props){
+      super(props);
+    this.state = {
+      messageRequired:'Trường này không được bỏ trống!'
+     
+
+    }}
     render() {
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
       console.log(id_visible)
@@ -47,15 +177,16 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Mã:">
                   {getFieldDecorator('code', {
-                    rules: [ { required: true, message: 'Trường này không được bỏ trống!', } ],
-                  })(<Input type="text" />)}
+                    rules: [ { required: true, message: this.state.messageRequired, } ],
+                  })(<Input type="text" />)
+                  }
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Tên đầy đủ:">
-                  {getFieldDecorator('fullname', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" />)}
+                  {getFieldDecorator('fullname', {     
+                    rules: [ { required: true, message:this.state.messageRequired, } ],
+                  })(<Input type="text" />)}       
                 </Form.Item>
               </Col>
             </Row>
@@ -63,14 +194,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Tên đăng nhập">
                   {getFieldDecorator('name', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [ { required: true, message: this.state.messageRequired, } ],
                   })(<Input type="text" placeholder="user name" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Mật khẩu:">
                   {getFieldDecorator('password', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [ { required: true, message: this.state.messageRequired, } ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -79,14 +210,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Email:">
                   {getFieldDecorator('email', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!' }, { email: true, message: 'Trường này phải là email!' } ],
+                    rules: [ { required: true, message: this.state.messageRequired }, { email: true, message: 'Trường này phải là email!' } ],
                   })(<Input type="email" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Số điện thoại:">
                   {getFieldDecorator('phone', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [ { required: true, message: this.state.messageRequired, } ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -116,11 +247,18 @@ class User extends React.Component {
       action: 'insert',
       isSearch: 0,
       searchText: '',
-      columnSearch: '',
+      columnSearch: 'name',
       isSort: true,
       sortBy: '',
       index: 'id',
       orderby: 'arrow-up',
+      nameSearch:'',
+      emailSearch:'',
+      phoneSearch:'',
+      passwordSearch:'',
+      fullnameSearch:'',
+      codeSearch:''
+
     }
   }
   //--------------DELETE-----------------------
@@ -136,6 +274,8 @@ class User extends React.Component {
   }
 
   getUsers = (pageNumber) => {
+    console.log('index',this.state.index)
+    console.log('sortby',this.state.sortBy)
     if (pageNumber <= 0)
       return;
     this.props.fetchLoading({
@@ -173,7 +313,7 @@ class User extends React.Component {
           if (response.status === 200 & response.data.success === true) {
             form.resetFields();
             this.setState({
-              visible: false,
+              visible: false, 
               message: response.data.message
             })
           }
@@ -204,12 +344,12 @@ class User extends React.Component {
   componentDidMount() {
     this.getUsers(this.state.pageNumber, this.state.index, this.state.sortBy);
   }
-  onchangpage = (page) => {
-    this.setState({
+  onchangpage = async (page) => {
+    await this.setState({
       page: page
     })
 
-    this.getUsers(page); if (this.state.isSearch === 1) {
+   if (this.state.isSearch === 1) {
       this.search(this.state.searchText)
     }
     else {
@@ -271,32 +411,32 @@ class User extends React.Component {
   onShowSizeChange = async (current, size) => {
     console.log('size', size);
     console.log('curent', current);
+    console.log('txt', this.state.isSearch);
+    console.log(this.state.isSearch)
     await this.setState({
       pageSize: size
     });
-    if (this.state.isSearch === 1) {
-      console.log('xxxx')
-      this.handleSearch(this.state.page, this.state.searchText, this.confirm, this.state.nameSearch, this.state.codeSearch);
-      console.log(this.state.page)
-    }
-    else {
-      this.getUsers(this.state.page, this.state.index, this.state.sortBy)
-    }
+    
+    this.search(this.state.searchText);
+    
   }
 
   search = async (xxxx) => {
-
-    Request('user/Search', 'POST', {
+    console.log('xxxxxxxxxxxx',this.state.pageSize)
+    console.log('search text',xxxx)
+    Request('user/search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
-      textSearch: xxxx,
+      searchText: xxxx,
       columnSearch: this.state.columnSearch,
       p1: this.state.index,
-      p2: this.state.sortBy
+      p2: this.state.sortBy,
+      
     })
       .then((response) => {
         let data = response.data;
-        console.log(data)
+        
+        console.log('aaaaaaaaaaaaa',data)
         if (data.data)
           this.setState({
             users: data.data.users,
@@ -361,8 +501,16 @@ class User extends React.Component {
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
-
-
+  removeSearch =()=>{
+    this.setState({
+      searchText:''
+    })
+  }
+  onchangeSearch = (event) =>{
+    let value = event.target.value
+    this.search(value)
+    
+  }
   render() {
     if (token)
       return (
@@ -381,33 +529,7 @@ class User extends React.Component {
             </Col>
 
           </Row>
-          <div>
-            <Select
-              defaultValue={[ 'name' ]}
-              showSearch
-              style={{ width: 200 }}
-              placeholder="Select a person"
-              optionFilterProp="children"
-              onChange={this.onChange}
-              // onFocus={this.onFocus}
-              // onBlur={this.onBlur}
-              onSearch={this.onSearch}
-              filterOption={(input, option) =>
-                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              <Option value="name">User Name</Option>
-              <Option value="code">Code</Option>
-              <Option value="email">Email</Option>
-              <Option value="password">Password</Option>
-              <Option value="phone">Phone Number</Option>
-              <Option value="fullname">Full name</Option>
-
-
-            </Select>,
-          <Search style={{ width: 300 }} placeholder="input search text" onSearch={(value) => { this.search(value) }} enterButton />
-
-          </div>
+          <WrappedDynamicFieldSet changesearch={this.onchangeSearch}  remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
           <Row className="table-margin-bt">
             <FormModal
               wrappedComponentRef={this.saveFormRef}
