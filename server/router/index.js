@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router()
 // middleware that is specific to this router
 var userController = require('../controller/userController');
-
+var hopdongController = require('../controller/hopdongController');
 
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now())
@@ -89,4 +89,50 @@ router.get('/about', function (req, res) {
     res.send('About User')
 })
 
+router.post('/hopdong/get', function (req, res) {
+  let body = req.body;
+  let pageNumber = body.pageNumber;
+  let pageSize = body.pageSize;
+  hopdongController.getHopdong(pageNumber, pageSize, function (data) {
+      res.send(data);
+  })
+})
+router.get('/hopdong/get/:hd_id', function (req, res) {
+  hopdongController.GetById(req.params.hd_id, function (data) {
+        res.send(data);
+    })
+})
+
+
+router.delete('/hopdong/delete', function (req, res) {
+  hopdongController.DeleteHopdongbyId(req.body.hd_id, function (data) {
+        res.send(data);
+    })
+})
+
+router.post('/hopdong/insert',function (req, res) {
+  hopdongController.insertHopdong(req.body, function (data) {
+        res.send(data);
+    })
+
+})
+
+router.post('/hopdong/update',function (req, res) {
+  console.log('data res',req)
+  hopdongController.updateHopdong(req.body, function (data) {
+      res.send(data);
+  })
+})
+router.post('/hopdong/search',function(req,res){
+  let pageSize=req.body.pageSize;
+  let pageNumber=req.body.pageNumber;
+  let textSearch = req.body.textSearch;
+  let columnSearch = req.body.columnSearch;
+  let index = req.body.p1;
+  let sortBy = req.body.p2
+  hopdongController.search(pageSize,pageNumber,textSearch, columnSearch,index,sortBy ,function(data){
+      res.send(data);
+  })
+
+})
 module.exports = router

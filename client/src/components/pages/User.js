@@ -18,7 +18,7 @@ const { Search } = Input;
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     render() {
-      const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
+      const { visible, onCancel, onSave, form, title, confirmLoading, formtype, id_visible } = this.props;
       console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
@@ -348,7 +348,7 @@ class User extends React.Component {
           index: column.dataIndex
         })
         console.log('xx', this.state.isSort)
-        if (this.state.isSearch == 1) {
+        if (this.state.isSearch === 1) {
           this.search(this.state.searchText)
         }
         else {
@@ -402,9 +402,7 @@ class User extends React.Component {
               <Option value="password">Password</Option>
               <Option value="phone">Phone Number</Option>
               <Option value="fullname">Full name</Option>
-
-
-            </Select>,
+            </Select>&nbsp;
           <Search style={{ width: 300 }} placeholder="input search text" onSearch={(value) => { this.search(value) }} enterButton />
 
           </div>

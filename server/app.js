@@ -6,9 +6,10 @@ config = require('./configurations/config');
 app = express();
 const port = 5000;
 var routers = require('./router/index');
-
+//var hopdongrouters = require('./router/hopdong');
 //var group_userRouter = require('./router/group_userRoute');
-var userController = require('./controller/userController');
+//var userController = require('./controller/userController');
+//var hopdongController = require('./controller/hopdongController');
 var authorize = require('./middleware/authorize')
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
@@ -39,6 +40,8 @@ app.use(cors());
 
 
 app.use('/', authorize, routers);
+
+//app.use('/', authorize, hopdongrouters );
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
