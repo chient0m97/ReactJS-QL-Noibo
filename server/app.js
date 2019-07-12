@@ -4,11 +4,12 @@ const cors = require("cors");
 jwt = require('jsonwebtoken');
 config = require('./configurations/config');
 app = express();
+const login = require('./router/login')
 const port = 5000;
-var routers = require('./router/index');
+var userRouter = require('./router/index');
 
 //var group_userRouter = require('./router/group_userRoute');
-var userController = require('./controller/userController');
+var userController = require('./controller/phanquyen/userController');
 var authorize = require('./middleware/authorize')
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
@@ -37,8 +38,10 @@ var corsOptions = {
 }
 app.use(cors());
 
+app.use('/Login',login);
 
-app.use('/', authorize, routers);
+
+app.use('/', authorize, userRouter);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
