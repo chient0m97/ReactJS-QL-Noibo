@@ -9,12 +9,15 @@ constructor = (value, errMessage) => {
         return false;
     }
     if (typeof errMessage === undefined | errMessage === null | errMessage.length === 0) {
-
+        
     }
     else {
         defaultMessage = errMessage
     }
+    
     if ((typeof value) + '' === 'string' & value.length > 0) {
+        console.log('igui',value)
+
         return true
     }
 
@@ -77,13 +80,36 @@ var Validator = {
         }
         return false
     },
+    isInt: (value, errMessage) => {
+        if (constructor(value, errMessage)) {
+            if(regExpConfig.isInt.test(value)) 
+            return true
+        }
+        else {
+            Validator.error.push(defaultMessage)
+            return false
+        }
+
+    },
+    Name: (value, errMessage) => {
+        if (constructor(value, errMessage)) {
+            if(regExpConfig.Name.test(value)) 
+            return true
+        }
+        else {
+            Validator.error.push(defaultMessage)
+            return false
+        }
+
+    },
     // validate database 
     db: {
         unique: async (table, column, value, errMessage) => {
             defaultMessageUnique = errMessage
             var is_valid = await knex(table).where(column, value)
                 .then((res) =>  {
-                    if (res.length > 0) { 
+                    if (res.length > 0) {
+                        Validator.error.push(defaultMessageUnique)
                         return false
                     } else {
                         return true

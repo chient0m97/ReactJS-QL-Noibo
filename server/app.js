@@ -6,6 +6,7 @@ config = require('./configurations/config');
 app = express();
 const port = 5000;
 var routers = require('./router/index');
+var router = require('./router/unitRoute');
 
 //var group_userRouter = require('./router/group_userRoute');
 var userController = require('./controller/userController');
@@ -39,6 +40,8 @@ app.use(cors());
 
 
 app.use('/', authorize, routers);
+
+app.use('/', router);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
