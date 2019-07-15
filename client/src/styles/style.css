@@ -118,3 +118,11 @@
     transform: rotate(405deg);
   }
 }
+  
+.ant-row.ant-form-item{
+  margin-bottom:0px
+}
+
+
+
+

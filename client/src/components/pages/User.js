@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
-// import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
@@ -12,8 +11,6 @@ const token = cookie.load('token');
 const { Column } = Table;
 const {Option} = Select
 const { Search } = Input;
-
-
 
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
@@ -36,16 +33,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={24}>
                 <div style={{ display: id_visible === true ? 'block' : 'none' }}>
                   <Form.Item label="Id:" >
-                    {getFieldDecorator('id', {
-                      rules: [ {} ],
-                    })(<Input type="number" disabled />)}
+                    {getFieldDecorator('id')(<Input type="number" disabled />)}
                   </Form.Item>
                 </div>
               </Col>
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label="Mã:">
+                <Form.Item label="Code:">
                   {getFieldDecorator('code', {
                     rules: [ { required: true, message: 'Trường này không được bỏ trống!', } ],
                   })(<Input type="text" />)}
@@ -201,9 +196,11 @@ class User extends React.Component {
   refresh = (pageNumber) => {
     this.getUsers(this.state.pageNumber)
   }
+
   componentDidMount() {
     this.getUsers(this.state.pageNumber, this.state.index, this.state.sortBy);
   }
+
   onchangpage = (page) => {
     this.setState({
       page: page
@@ -364,7 +361,7 @@ class User extends React.Component {
 
 
   render() {
-    if (token)
+     if (token)
       return (
         <div>
           <Row className="table-margin-bt">

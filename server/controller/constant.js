@@ -1,5 +1,5 @@
 module.exports = constant ={
-    successInseart : 'Thêm mới thành công',
+    successInsert : 'Thêm mới thành công',
     successDelete : 'Xóa thành công',
     successUpdate:  'Sửa thành công',
     errorInsert : 'Thêm mới không thành công!',
