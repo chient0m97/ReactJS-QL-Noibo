@@ -16,7 +16,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     render() {
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
-      console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
         <Modal
@@ -42,7 +41,8 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Code:">
                   {getFieldDecorator('code', {
-                    rules: [ { required: true, message: 'Trường này không được bỏ trống!', } ],
+                    rules: [ { required: true, message: 'Trường này không được bỏ trống!',  validateStatus: 'error'},
+                     ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -158,7 +158,12 @@ class User extends React.Component {
 
   InsertOrUpdateUser = () => {
     const { form } = this.formRef.props;
-    form.validateFields((err, values) => {
+form.setFields({
+      name: {
+        value:'sdsdsds',
+        errors: [new Error('forbid ha')],
+      },
+    });    form.validateFields((err, values) => {
       if (err) {
         return
       }
