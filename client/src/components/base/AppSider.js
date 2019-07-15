@@ -12,7 +12,8 @@ class AppSider extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapsed: props.collapsed
+            collapsed: props.collapsed,
+            menu: []
         }
 
         this.setCollapsed(props.collapsed)
@@ -22,6 +23,10 @@ class AppSider extends Component {
         this.setState({
             collapsed : value 
         })
+    }
+
+    componentDidMount(){
+        
     }
 
     render() {
