@@ -8,6 +8,7 @@ import Request from '@apis/Request'
 //import { fetchHopdong } from '@actions/hopdong.action';
 import { fetchLoading } from '@actions/common.action';
 
+const dateFormat = 'YYYY-MM-DD';
 const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select
@@ -26,7 +27,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
         <Modal
           visible={visible}
           title={title}
-          okText="Save"
+          okText="Lưu"
           onCancel={onCancel}
           onOk={onSave}
           confirmLoading={confirmLoading}
@@ -35,21 +36,37 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
           <Form layout={formtype}>
             <Row gutter={24}>
               <Col span={8}>
-                <div style={{ display: id_visible === true }}>
-                  <Form.Item label="Id hợp đồng:" >
+                
+                  <Form.Item label="Id hợp đồng tôi là tôi:" >
                     {getFieldDecorator('hd_id', {
-                      rules: [ {} ],
-                    })(<Input type="number" disabled placeholder="Id tự tăng"/>)}
-                  </Form.Item>
-                </div>
-              </Col>
-            
-        
-              <Col span={8}>
-                 <Form.Item label="Id dự án:" >
-                    {getFieldDecorator('dm_duan_id', {
                       rules: [ {required: true, message: 'Trường này không được bỏ trống!', } ],
                     })(<Input type="number" />)}
+                  </Form.Item>
+               
+              </Col>
+            
+              <Col span={4}>
+                <Form.Item label="Id dự án:">
+                  {getFieldDecorator('dm_duan_id', {
+                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                  })(<Input type="number" disabled/>)}
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                 <Form.Item label="Tên dự án:" >
+                    {
+                      getFieldDecorator('dm_duan_id', {
+                      rules: [ {required: true, message: 'Trường này không được bỏ trống!', } ],
+                    })(
+                    <Select onChange={this.props.onChangeId}>
+                      <Option value="1">DA01 - QLTV</Option>
+                      <Option value="2">DA02 - QLBH</Option>
+                      {/* <Option value="10">DA03 - QLTV</Option>
+                      <Option value="11">DA04 - QLMT</Option>
+                      <Option value="12">DA05 - QLND</Option> */}
+                    </Select>
+                    
+                    )}
                   </Form.Item>
               </Col>
         
@@ -58,7 +75,12 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Loại hợp đồng:">
                   {getFieldDecorator('hd_loai', {
                     rules: [ { required: true, message: 'Trường này không được bỏ trống!', } ],
-                  })(<Input type="text" placeholder="CN/DV"/>)}
+                  })(
+                    <Select >
+                      <Option value="CN">CN</Option>
+                      <Option value="DV">DV</Option>
+                    </Select>
+                  )}
                 </Form.Item>
               </Col>
               </Row>
@@ -66,24 +88,39 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Số hợp đồng:">
                   {getFieldDecorator('hd_so', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                   // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
             
             
-              <Col span={8}>
+              <Col span={4}>
                 <Form.Item label="Thời gian thực hiện:">
                   {getFieldDecorator('hd_thoigianthuchien', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" placeholder="1T/3T/6T/1N"/>)}
+                  })(<Input type="number" />)}
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item label="Loại thời gian:">
+                {
+                  getFieldDecorator('hd_thoigianthuchien', {
+                     initialValue : '90'
+                  })(<Select  onChange={this.props.onchangeOptionThoiGianHD}>
+                  <Option value="30">1 Tháng</Option>
+                  <Option value="90">3 Tháng</Option>
+                  <Option value="180">6 Tháng</Option>
+                  <Option value="365">1 Năm</Option>
+                </Select>)}
+                
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày kết thúc:">
                   {getFieldDecorator('hd_ngayketthuc', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" placeholder="yyyy-mm-dd"/>)}
+                   // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                  })(
+                    <Input type="date" format={dateFormat} />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -91,15 +128,15 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Địa chỉ:">
                   {getFieldDecorator('hd_diachi', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!' } ],
+                   // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày ký:">
                   {getFieldDecorator('hd_ngayky', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" placeholder="yyyy-mm-dd"/>)}
+                  })(<Input type="date" format={dateFormat} />
+                   )}
                 </Form.Item>
               </Col>
             
@@ -107,8 +144,9 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Ngày thanh lý:">
                   {getFieldDecorator('hd_ngaythanhly', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="text" placeholder="yyyy-mm-dd"/>)}
+                   // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
+                  })(<Input type="date" format={dateFormat} />
+                   )}
                 </Form.Item>
               </Col>
               </Row>
@@ -116,23 +154,32 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Ngày xuất hóa đơn:">
                   {getFieldDecorator('hd_ngayxuathoadon', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" placeholder="yyyy-mm-dd"/>)}
+                   // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                  })(<Input type="date" format={dateFormat}/>
+                   )}
                 </Form.Item>
               </Col>
             
               <Col span={8}>
                 <Form.Item label="Ngày thanh toán:">
                   {getFieldDecorator('hd_ngaythanhtoan', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="text" placeholder="yyyy-mm-dd"/>)}
+                   // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
+                  })(<Input type="date" format={dateFormat} />
+                   
+                    )}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Trạng thái:">
                   {getFieldDecorator('hd_trangthai', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" placeholder="DTH/TL/XHD/DTT/DONG"/>)}
+                   // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                  })(<Select >
+                    <Option value="DTH">Đang thực hiện</Option>
+                    <Option value="TL">Thanh lý</Option>
+                    <Option value="XHD">Xuất hóa đơn</Option>
+                    <Option value="DTT">Đã thanh toán</Option>
+                    <Option value="DONG">Đóng</Option>
+                  </Select>)}
                 </Form.Item>
               </Col>
             </Row>
@@ -140,14 +187,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Files:">
                   {getFieldDecorator('hd_files', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!' } ],
+                    //rules: [ { required: true, message: 'Trường này không được để trống!' } ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Ghi chú:">
                   {getFieldDecorator('hd_ghichu', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    //rules: [ { required: true, message: 'Trường này không được để trống!', } ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -169,12 +216,12 @@ class Hopdong extends React.Component {
       pageSize: 10,
       showPopup: false,
       count: 1,
-      show: true,
-      visible: true,
+      show: false,
+      visible: false,
       formtype: 'horizontal',
-      title: 'Nhập thông tin',
-      id_visible: true,
-      action: 'insert',
+      title: 'Nhập thông tin cho hợp đồng',
+      //id_visible: false,
+      //action: 'insert',
       isSearch: 0,
       searchText: '',
       columnSearch: '',
@@ -230,6 +277,7 @@ InsertOrUpdateHopdong = () => {
         if (err) {
             return
         }
+        console.log(values, "day la value");
         var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
         Request(url, 'POST', values)
         .then((response) => {
@@ -271,6 +319,7 @@ onchangpage = (page) => {
     this.setState({
         page: page
     })
+    
 
     this.getHopdongs(page); if(this.state.isSearch === 1){
         this.search(this.state.searchText) 
@@ -279,11 +328,25 @@ onchangpage = (page) => {
         this.getHopdongs(page)
     }
 }
-
+onchangeoption = (value) =>  {
+  const {form} = this.formRef.props
+  console.log(value, 'gia tri cua f')
+  form.setFieldsValue({
+    hd_thoigianthuchien: value
+  })
+}
+onchangeid = (value) =>  {
+  const {form} = this.formRef.props
+  console.log(value, 'gia tri cua id')
+  form.setFieldsValue({
+    dm_duan_id: value
+  })
+}
 showModal = (hopdong) => {
     const {form} = this.formRef.props
     this.setState({
-        visible: true
+        visible: true,
+        action: 'insert'
     });
     form.resetFields();
     if (hopdong.hd_id !== undefined) {
@@ -483,10 +546,12 @@ saveFormRef = formRef => {
               title={this.state.title}
               formtype={this.state.formtype}
               id_visible={this.state.id_visible}
+              onchangeOptionThoiGianHD = {this.onchangeoption}
+              onChangeId = {this.onchangeid}
             />
 
-
-            <Table pagination={false} dataSource={this.state.hopdongs} rowKey="hd_id" >
+              
+            <Table pagination={false} dataSource={this.state.hopdongs} rowKey="hd_id"  >
               <Column
                 title={<span>id hợp đồng<Icon type={this.state.orderby} /></span>}
                 dataIndex="hd_id"
@@ -513,8 +578,10 @@ saveFormRef = formRef => {
                 render={(text, record) => (
 
                   <span>
+                    
                     <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.hd_id, text)}>
                       <Icon type="edit" />
+                      
                     </Button>
                     <Popconfirm
                       title="Bạn chắc chắn muốn xóa?"
@@ -531,6 +598,7 @@ saveFormRef = formRef => {
               />
 
             </Table>
+            
           </Row>
           <Row>
             <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />

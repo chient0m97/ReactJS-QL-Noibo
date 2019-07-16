@@ -68,7 +68,7 @@ router.post('hopdong/insert',function (req, res) {
 })
 
 router.post('hopdong/update',function (req, res) {
-  console.log('data res',req)
+  //console.log('data res',req)
   hopdongController.updateHopdong(req.body, function (data) {
       res.send(data);
   })

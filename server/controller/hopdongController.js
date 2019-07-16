@@ -3,6 +3,7 @@
 var Validator = require('../validate/common')
 const hopdongData = require('../data/hopdong.data')
 const constant = require('./constant')
+const uuidv4 = require('uuid/v4');
 var HopdongController = {
     /**
      * Get user paging.
@@ -35,8 +36,8 @@ var HopdongController = {
         });
     },
 
-    DeleteHopdongbyId: async function DeleteHopdongbyId(Id, callback) {
-        hopdongData.DeleteHopdongbyId(Id, (data) => {
+    DeleteHopdongbyId: async function deleteHopdongbyId(Id, callback) {
+        hopdongData.deleteHopdongbyId(Id, (data) => {
 
             if (data.success === true) {
                 callback({
@@ -49,24 +50,34 @@ var HopdongController = {
     },
 
     insertHopdong: async function insertHopdong(hopdong, callback) {
-
-        if (Validator.isDate(hopdong.hd_ngayketthuc, 'Ngày kết thúc không đúng định dạng')
-            & Validator.isDate(hopdong.hd_ngayky, 'Ngày ký không đúng định dạng')
-            & Validator.isDate(hopdong.hd_ngaythanhly, 'Ngày thanh lý không đúng định dạng')
-            & Validator.isDate(hopdong.hd_ngayxuathoadon, 'Ngày xuất hóa đơn không đúng định dạng')
-            & Validator.isDate(hopdong.hd_ngaythanhtoan, 'Ngày thanh toán không đúng định dạng')
-            & Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
-            & Validator.isNum(hopdong.dm_duan_id, 'Dự án id không đúng định dạng')
-            & Validator.isAlpha(hopdong.hd_loai, 'Loại hợp đồng không đúng định dạng')
-            & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')
+            
+        // if (Validator.isDate(hopdong.hd_ngayketthuc, 'Ngày kết thúc không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngayky, 'Ngày ký không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngaythanhly, 'Ngày thanh lý không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngayxuathoadon, 'Ngày xuất hóa đơn không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngaythanhtoan, 'Ngày thanh toán không đúng định dạng')
+        //     & 
+            if(1
+            //Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
+            //& Validator.isNum(hopdong.dm_duan_id, 'Dự án id không đúng định dạng')
+            //& 
+            // Validator.isAlpha(hopdong.hd_loai, 'Loại hợp đồng không đúng định dạng')
+            // & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')
             
         ) {
 
-            if (await Validator.db.unique('hopdongs', 'hd_so', hopdong.hd_so, 'Số hợp đồng đã tồn tại !')) 
-            
+            if (1
+                //await Validator.db.unique('hopdongs', 'hd_so', hopdong.hd_so, 'Số hợp đồng đã tồn tại !'
+                ) 
             {
                 console.log('ddax validate')
-                    hopdongData.insertHopdong(hopdong, (response) => {
+                
+                let firtInsert;
+                firtInsert = hopdong;
+                firtInsert.hd_so = 'Toi la chien: ' + firtInsert.hd_so;
+                firtInsert.hd_id = uuidv4();
+
+                    hopdongData.insertHopdong(firtInsert, (response) => {
                     var message = constant.successInsert;
                     var status = 200;
                     if (!response.success) {
@@ -95,26 +106,22 @@ var HopdongController = {
             }, 400);
         }
     },
-    updateHopdong: function updateHopdong(hopdong, callback) {
-    //     if (Validator.isDate(hopdong.hd_ngayketthuc, 'Ngày kết thúc không đúng định dạng')
-    //     & Validator.isDate(hopdong.hd_ngayky, 'Ngày ký không đúng định dạng')
-    //     & Validator.isDate(hopdong.hd_ngaythanhly, 'Ngày thanh lý không đúng định dạng')
-    //     & Validator.isDate(hopdong.hd_ngayxuathoadon, 'Ngày xuất hóa đơn không đúng định dạng')
-    //     & Validator.isDate(hopdong.hd_ngaythanhtoan, 'Ngày thanh toán không đúng định dạng')
-    //     & Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
+    updateHopdong: async function updateHopdong(hopdong, callback) {
+    //     if (
+    //     Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
     //     & Validator.isNum(hopdong.dm_duan_id, 'Dự án id không đúng định dạng')
     //     & Validator.isAlpha(hopdong.hd_loai, 'Loại hợp đồng không đúng định dạng')
     //     & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')  
-    // ) {
-    //         if (1) {
+    //  ) {
+    //          if (1) {
                 hopdongData.updateHopdong(hopdong, (res) => {
                     callback({
                         success: res.success,
                         message: res.success === true ? constant.successUpdate : constant.errorUpdate
                     })
                 })
-           // }
-       // }
+         //  }
+        //}
     }
     ,
 //     Login: function getUserLogin(userName, callback) {

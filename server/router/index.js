@@ -97,8 +97,8 @@ router.post('/hopdong/get', function (req, res) {
       res.send(data);
   })
 })
-router.get('/hopdong/get/:hd_id', function (req, res) {
-  hopdongController.GetById(req.params.hd_id, function (data) {
+router.get('/hopdong/get/:Id', function (req, res) {
+  hopdongController.GetById(req.params.Id, function (data) {
         res.send(data);
     })
 })
@@ -111,18 +111,22 @@ router.delete('/hopdong/delete', function (req, res) {
 })
 
 router.post('/hopdong/insert',function (req, res) {
-  hopdongController.insertHopdong(req.body, function (data) {
+  console.log(req.body, "Da req")
+    hopdongController.insertHopdong(req.body, function (data) {
+    
         res.send(data);
     })
 
 })
 
 router.post('/hopdong/update',function (req, res) {
-  console.log('data res',req)
+  //console.log('data res',req)
+  //console.log("/hopdong/update")
   hopdongController.updateHopdong(req.body, function (data) {
       res.send(data);
   })
 })
+
 router.post('/hopdong/search',function(req,res){
   let pageSize=req.body.pageSize;
   let pageNumber=req.body.pageNumber;
