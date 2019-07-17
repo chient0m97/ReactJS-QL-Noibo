@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination,Checkbox, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Checkbox, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -7,14 +7,19 @@ import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
-import '../../index.css'
+import '../../index.css';
+import jwt from 'jsonwebtoken';
+import { check } from 'express-validator';
+import Permission from '../Authen/Permission'
 const token = cookie.load('token');
+
+
 const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
 
 let id = 0;
-
+console.log('token', token)
 class DynamicFieldSet extends React.Component {
   remove = k => {
     const { form } = this.props;
@@ -163,12 +168,12 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
           width={1000}
         >
           <Form layout={formtype}>
-            <Row gutter={24}>
+            <Row gutter={24} >
               <Col span={24}>
-                <div style={{ display: id_visible === true ? 'block' : 'none' }}>
+                <div style={{ display: 'none' }}>
                   <Form.Item label="Id:" >
                     {getFieldDecorator('id', {
-                      rules: [{}],
+
                     })(<Input type="number" disabled />)}
                   </Form.Item>
                 </div>
@@ -219,7 +224,18 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Số điện thoại:">
                   {getFieldDecorator('phone', {
                     rules: [{ required: true, message: this.state.messageRequired, }],
-                  })(<Input type="text" />)}
+                  })(<Input type="phone" />
+                    // <Select>
+                    //   {this.props.datacha.map((item, i) => {
+                    //     return(
+                    //     <Option value={item.ns_id}>{item.ns_id}</Option>
+
+                    //     )
+                    //   })}
+
+
+                    // </Select>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -233,6 +249,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
 class User extends React.Component {
   constructor(props) {
     super(props);
+    //this.child = React.createRef();
     this.state = {
       pageNumber: 1,
       current: 1,
@@ -250,8 +267,8 @@ class User extends React.Component {
       searchText: '',
       columnSearch: 'name',
       isSort: true,
-      sortBy: '',
-      index: 'id',
+      sortBy: 'ASC',
+      index: 'name',
       orderby: 'arrow-up',
       nameSearch: '',
       emailSearch: '',
@@ -260,13 +277,14 @@ class User extends React.Component {
       fullnameSearch: '',
       codeSearch: '',
       roleVisible: 'none',
-      modalRoleVisible:false,
-      actionColumn:'action-hide'
-
+      modalRoleVisible: false,
+      actionColumn: 'action-hide',
+      datacha: []
     }
   }
   //--------------DELETE-----------------------
   deleteUser = (id) => {
+    console.log('delte id: ', id)
     Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
@@ -278,13 +296,12 @@ class User extends React.Component {
   }
 
   getUsers = (pageNumber) => {
+
     console.log('index', this.state.index)
     console.log('sortby', this.state.sortBy)
     if (pageNumber <= 0)
       return;
-    this.props.fetchLoading({
-      loading: true
-    })
+
     Request('user/get', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
@@ -293,6 +310,7 @@ class User extends React.Component {
     })
       .then((response) => {
         let data = response.data;
+        console.log('data', data.data.users)
         if (data.data)
           this.setState({
             users: data.data.users,
@@ -302,15 +320,25 @@ class User extends React.Component {
           loading: false
         })
       })
+    //   jwt.decode(token)
+    // jwt.verify(token, "heymynameismohamedaymen", (err, decoded) => {
+    //   if (decoded.role == 'admin') {
+    //     this.setState({
+    //       roleVisible: ''
+    //     })
+    //   }
+    // })
   }
   // insert---------------------------------
 
   InsertOrUpdateUser = () => {
     const { form } = this.formRef.props;
+
     form.validateFields((err, values) => {
       if (err) {
         return
       }
+      console.log('urllllllllllllllllllll', this.state.action)
       var url = this.state.action === 'insert' ? 'user/insert' : 'user/update'
       Request(url, 'POST', values)
         .then((response) => {
@@ -349,6 +377,7 @@ class User extends React.Component {
     this.getUsers(this.state.pageNumber, this.state.index, this.state.sortBy);
   }
   onchangpage = async (page) => {
+    console.log('page', page)
     await this.setState({
       page: page
     })
@@ -358,10 +387,22 @@ class User extends React.Component {
     }
     else {
       this.getUsers(page)
+      console.log(this.getUsers(page))
     }
   }
 
   showModal = (user) => {
+    Request('user/getcha', 'POST', null).then((res) => {
+      let data = res.data;
+      console.log('--', data)
+      this.setState({
+        datacha: data
+      })
+    })
+    console.log('data', this.state.datacha)
+
+
+
     const { form } = this.formRef.props
     this.setState({
       visible: true
@@ -420,9 +461,13 @@ class User extends React.Component {
     await this.setState({
       pageSize: size
     });
+    if (this.state.searchText) {
+      this.search(this.state.searchText);
 
-    this.search(this.state.searchText);
-
+    }
+    else {
+      this.getUsers(this.state.page)
+    }
   }
 
   search = async (xxxx) => {
@@ -518,9 +563,9 @@ class User extends React.Component {
   ChangeCheckbox = () => {
     console.log('dcm')
   }
-  showmodalRole=()=>{
+  showmodalRole = () => {
     this.setState({
-      modalRoleVisible:true
+      modalRoleVisible: true
     })
   }
   okRole = e => {
@@ -536,129 +581,166 @@ class User extends React.Component {
       modalRoleVisible: false,
     });
   };
+  changeRows = (selectedRowKeys, selectedRows) => {
+    console.log('checked')
+  }
+
+  handleClickRow(rowIndex) {
+    let users = this.state.users;
+    users[rowIndex].Selected = true;
+    this.setState({
+      users : users
+    })
+  }
   render() {
+    let token = cookie.load('token');
+    if (!token || !jwt.decode(token)) {
+      return (
+        <Login />
+      )
+    }
+    let payload = jwt.decode(token);
+    let claims = payload.claims;
+    console.log(claims);
+    let canRead = claims.indexOf(Permission.User.Read) >= 0;
+    let canEdit = claims.indexOf(Permission.User.Edit) >= 0;
+    let canDelete = claims.indexOf(Permission.User.DELETE) >= 0;
+    // if(!canRead)
+    // {
+    //   return (
+    //     <AccessDenied />
+    //   )
+    // }
     const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
+      hideDefaultSelections: true,
+      onChange: async (selectedRowKeys, selectedRows) => {
+
+        console.log('id check', selectedRowKeys[0])
         if (selectedRows[0]) {
-          this.setState({
-            roleVisible: ''
+          console.log('kkkkkkk')
+          await this.setState({
+            selectedId: selectedRowKeys[0],
+            user: selectedRows[0],
+
           })
         }
-        else {
-          this.setState({
-            roleVisible: 'none'
-          })
-        }
-        console.log('select', selectedRowKeys)
-        console.log('select rows')
-        console.log('aaaaaaa', this.state.roleVisible)
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
+
       getCheckboxProps: record => ({
 
         disabled: Column.title === 'Id', // Column configuration not to be checked
         name: record.name,
       }),
+
     };
-    if (token)
-      return (
-        <div>
-          <Modal
-            title="Phân quyền "
-            visible={this.state.modalRoleVisible}
-            onOk={this.okRole}
-            onCancel={this.cancelRole}
-          >
-           <Checkbox>Quản lý người dùng</Checkbox>
-          </Modal>
-          <Row className="table-margin-bt">
-            <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
-                <Icon type="plus" />
-              </Button>
-            </Col>
-
-            <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
-                <Icon type="reload" />
-              </Button>
-            </Col>
-
-          </Row>
-          <WrappedDynamicFieldSet changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
-
-          <div style={{ display: this.state.roleVisible }}>
-            <Button onClick={this.showmodalRole}>
-              <Icon type="user" />
-
+    return (
+      <div>
+        <Modal
+          title="Phân quyền "
+          visible={this.state.modalRoleVisible}
+          onOk={this.okRole}
+          onCancel={this.cancelRole}
+        >
+          <Checkbox>Quản lý người dùng</Checkbox>
+        </Modal>
+        {/* <Row className="table-margin-bt">
+          <Col span={1}>
+            <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
+              <Icon type="reload" />
             </Button>
-            Phân Quyền
-          </div>
-          <Row className="table-margin-bt">
-            <FormModal
-              wrappedComponentRef={this.saveFormRef}
-              visible={this.state.visible}
-              onCancel={this.handleCancel}
-              onSave={this.InsertOrUpdateUser}
-              title={this.state.title}
-              formtype={this.state.formtype}
-              id_visible={this.state.id_visible}
-            />
+          </Col>
+
+        </Row> */}
+        <WrappedDynamicFieldSet changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
 
 
-            <Table pagination={false} rowSelection={rowSelection} dataSource={this.state.users} rowKey="id" >
+        <div>
+          {
+            canEdit ?
+              <div>
+                <Button style={{ margin: '20px' }} onClick={this.showmodalRole}>
+                  <Icon type="user" />
+                </Button> Phân Quyền
+          <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
+                  <Icon type="plus" />
+                </Button> Thêm
+          <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
+                  <Icon type="edit" />
+                </Button> Sửa
+            </div>
+              : null
+          }
+          {
+            canDelete ?
+              <Popconfirm
+                title="Bạn chắc chắn muốn xóa?"
+                onConfirm={this.deleteUser.bind(this, this.state.selectedId)}
+                onCancel={this.cancel}
+                okText="Yes"
+                cancelText="No">
+                <Button type="danger" style={{ margin: '20px' }} >
+                  <Icon type="delete" />
+                </Button> Xóa
+          </Popconfirm>
+              :
+              null
+          }
 
-
-              <Column className="action-hide"
-                title={<span>Id <Icon type={this.state.orderby} /></span>}
-                dataIndex="id"
-                key="id"
-                onHeaderCell={this.onHeaderCell}
-
-              />
-              <Column  title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
-              />
-              <Column title="Code" dataIndex="code" key="code" onHeaderCell={this.onHeaderCell} />
-              <Column className="action-hide" title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
-              <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
-              <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
-              <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
-              <Column  className={this.state.actionColumn}
-                visible={false}
-                title="Action"
-                key="action"
-                render={(text, record) => (
-
-                  <span>
-                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.id, text)}>
-                      <Icon type="edit" />
-                    </Button>
-                    <Popconfirm
-                      title="Bạn chắc chắn muốn xóa?"
-                      onConfirm={this.deleteUser.bind(this, record.id)}
-                      onCancel={this.cancel}
-                      okText="Yes"
-                      cancelText="No">
-                      <Button type="danger"  >
-                        <Icon type="delete" />
-                      </Button>
-                    </Popconfirm>
-                  </span>
-                )}
-              />
-
-            </Table>
-          </Row>
-          <Row>
-            <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
-          </Row>
         </div>
+        <Row className="table-margin-bt">
+          <FormModal
+            datacha={this.state.datacha}
+            wrappedComponentRef={this.saveFormRef}
+            visible={this.state.visible}
+            onCancel={this.handleCancel}
+            onSave={this.InsertOrUpdateUser}
+            title={this.state.title}
+            formtype={this.state.formtype}
+            id_visible={this.state.id_visible}
+          />
 
-      );
-    else
-      return (
-        <Login action={this.state.actionColumn}/>
-      )
+
+          <Table
+
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => {
+                  this.handleClickRow.bind(this, rowIndex)
+                  console.log('aaaaaaaaaaaaaaaaaa', event)
+                  console.log('reacassadasdad', record)
+
+                  console.log('reacassadasdad', rowIndex)
+
+                }, // click row
+              };
+            }}
+            expandRowByClick="true" onChange={this.changeRows}
+            pagination={false}
+            rowSelection={rowSelection}
+            dataSource={this.state.users} rowKey="id" >
+            <Column className="action-hide"
+              title={<span>Id <Icon type={this.state.orderby} /></span>}
+              dataIndex="id"
+              key="id"
+              onHeaderCell={this.onHeaderCell}
+            />
+            <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
+            />
+            <Column title="Code" dataIndex="code" key="code" onHeaderCell={this.onHeaderCell} />
+            <Column className="action-hide" title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
+            <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
+            <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
+            <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
+
+
+          </Table>
+        </Row>
+        <Row>
+          <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+        </Row>
+      </div>
+
+    )
   }
 }
 const mapStateToProps = state => ({

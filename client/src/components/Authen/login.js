@@ -32,6 +32,7 @@ class NormalLoginForm extends Component {
                             console.log('ssssssssssaaaaaaaaaaaaaaaassssssssssss',data.action)
                             this.props.action=data.action;
                             cookie.save('token', data.token, { path: '/' })
+                            cookie.save('role',data.role,{})
                             window.location.reload()
                         }
                         else {
@@ -44,6 +45,9 @@ class NormalLoginForm extends Component {
                     })
             }
         });
+    }
+    getState = ()=>{
+        console.log('heeeeeeeeeeeeeeeeee')
     }
     handleChangeInput = (e) => {
         var user = this.props.form.getFieldsValue([ 'username', 'password' ]);
