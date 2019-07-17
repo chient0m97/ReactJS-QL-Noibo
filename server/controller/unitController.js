@@ -1,6 +1,7 @@
-var Validator =  require('../validate/common')
-var unitData = require('../data/unit.data')
-var constant = require('./constant')
+var Validator = require('../validate/common')
+const unitData = require('../data/unit.data')
+const constant = require('./constant')
+const uuidv1 = require('uuid/v1');
 var UnitController = {
     /**
      * Get user paging.
@@ -11,22 +12,49 @@ var UnitController = {
     /**
      * @para
      */
-    getUnit: function getUnit(pageNumber, pageSize,index, sortBy, callback){
+    getUnit: function getUnit(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        unitData.getUnit(limit, offset,index, sortBy, (data) => {
+        var res_unit = []
+        unitData.getUnit(limit, offset, index, sortBy, async (data) => {
+            await data.data.units.map((value, index) => {
+
+                switch (value.dm_dv_trangthai) {
+                    case 'HD':
+                        value.dm_dv_trangthai_txt = 'Hoạt Động'
+                        break;
+                    case 'DHD':
+                        value.dm_dv_trangthai_txt = 'Dừng Hoạt Động'
+                        break;
+                    case 'GT':
+                        value.dm_dv_trangthai_txt = 'Giải Thể'
+                        break;
+
+                }
+
+                res_unit.push(value)
+            })
+            console.log(res_unit, 'data')
+            data.data.units = res_unit
             callback(data);
         });
     },
-     /**
-     * Get user by Id.
-     * @param {Number} Id The identify of user
-     */
+    /**
+    * Get user by Id.
+    * @param {Number} Id The identify of user
+    */
+
+    // getcha: function getcha(callback) {
+    //     unitData.getcha((data)=>{
+    //         callback(data)
+    //     })
+    // },
+
 
     GetById: function GetById(Id, callback) {
         unitData.GetById(Id, (data) => {
             console.log('DATA', data)
-            if (data == undefined){
+            if (data == undefined) {
                 callback({});
             }
             callback(data);
@@ -35,7 +63,7 @@ var UnitController = {
 
     DeleteUnitbyId: async function deleteUnitbyId(Id, callback) {
         unitData.deleteUnitbyId(Id, (data) => {
-            if(data.success === true) {
+            if (data.success === true) {
                 callback({
                     success: data.success,
                     message: data.success === true ? constant.successDelete : constant.errorMessage
@@ -46,15 +74,17 @@ var UnitController = {
     },
 
     insertUnit: async function insertUnit(unit, callback) {
-        if( 
-        Validator.isInt(unit.dm_db_id_tinh, 'ID Tỉnh không đúng định dạng')
-        & Validator.isInt(unit.dm_db_id_huyen, 'ID Huyện không đúng định dạng')
-        & Validator.isInt(unit.dm_db_id_xa, 'ID Xã không đúng định dạng')
-        ){
-            if (await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
-            & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
-            & await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!')
-            ){
+        unit.dm_dv_id = uuidv1();
+        if (
+            Validator.isInt(unit.dm_db_id_tinh, 'ID Tỉnh không đúng định dạng')
+            & Validator.isInt(unit.dm_db_id_huyen, 'ID Huyện không đúng định dạng')
+            & Validator.isInt(unit.dm_db_id_xa, 'ID Xã không đúng định dạng')
+        ) {
+            if (
+                await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
+                & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
+                & await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!')
+            ) {
                 console.log('ddax validate')
                 unitData.insertUnit(unit, (response) => {
                     var message = constant.successInseart;
@@ -71,43 +101,31 @@ var UnitController = {
                 })
             }
             else {
-                var eror =  Validator.getError()
+                var eror = Validator.getError()
                 console.log('looix tra ve', eror)
                 callback({
                     message: eror,
                     success: false
                 }, 400);
             }
-         }
+        }
     },
     updateUnit: function updateUnit(unit, callback) {
-        // if(
-        // Validator.isInt(unit.dm_db_id_tinh, 'ID Tỉnh không đúng định dạng')
-        // & Validator.isInt(unit.dm_db_id_huyen, 'ID Huyện không đúng định dạng')
-        // & Validator.isInt(unit.dm_db_id_xa, 'ID Xã không đúng định dạng')
-        // & Validator.isInt(unit.kh_id_nguoidaidien, 'ID Người đại diện không đúng định dạng')
-        // ){
-            // if (await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
-            // & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
-            // & await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!')
-            // ){
-                unitData.updateUnit(unit, (res) => {
-                    callback({
-                        success: res.success,
-                        message: res.success === true ? constant.successUpdate : callback.errorUpdate
-                    })
-                })
-            // }
-        // }
+        unitData.updateUnit(unit, (res) => {
+            callback({
+                success: res.success,
+                message: res.success === true ? constant.successUpdate : callback.errorUpdate
+            })
+        })
     },
-    search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
+    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        unitData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
-        console.log(limit)
-        console.log(offset)
-            
-            console.log('aaaaaaaaa',data)
+        unitData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
+            console.log(limit)
+            console.log(offset)
+
+            console.log('aaaaaaaaa', data)
             callback(data);
         })
     },

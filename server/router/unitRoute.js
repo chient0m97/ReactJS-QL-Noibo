@@ -18,6 +18,11 @@ router.post('/unit/get', function (req, res) {
     })
 })
 
+// router.post('/unit/getCha', function (req, res) {
+//     unitController.(function(data){})
+//     res.send(data);
+// })
+
 router.get('/unit/get/:Id', function (req, res) {
     unitController.GetById(req.params.Id, function (data) {
         res.send(data);

@@ -24,7 +24,7 @@
   /*Makes the word loading have a transparent background*/ 
   background: transparent;
   /*Creates a square*/
-  border: 3px solid #3c3c3c;
+  border: 3px dotted #3c3c3c;
   /*turns the square to a circle*/
   border-radius: 50%;
   /* Aligns the word Loading to the right so it is in the center of the circle*/
@@ -117,4 +117,7 @@
   {
     transform: rotate(405deg);
   }
+}
+.hide{
+  display: none;
 }

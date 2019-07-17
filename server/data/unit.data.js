@@ -35,7 +35,6 @@ module.exports = {
         }).catch(err => {
             console.log(err)
             callback({ success: false })
-            message.success(data.message + 'id là' + dm_dv_id)
         })
     },
 
@@ -49,14 +48,23 @@ module.exports = {
     //     })
     // },
 
-    insertUnit: function (unit, callback){
-        knex.from('donvis').insert(unit).then(res => {
+    insertUnit: function (unit, callback,qb){
+       if( knex.from('donvis').insert(unit).then(res => {
             console.log('inserted');
             callback({ success: true });
         }).catch(err => {
             console.log(err)
             callback({ success: false })
-        })
+        })){
+            return true;
+        }
+        else{
+            knex.withRecursive('donvis',(qb) => {
+                qb.select('*').from('dm_dv_id').where('dm_dv_id_cha', 1).union((qb) => {
+                    qb.select('*').from('dm_dv_id').join('donvis','dm_dv_id_cha')
+                })
+            }).select('*').from('donvis')
+        }
     },
     updateUnit: function (unit, callback) {
         knex.from('donvis').where('dm_dv_id', unit.dm_dv_id)
@@ -70,10 +78,17 @@ module.exports = {
     selectUnit: function (unit, callback) {
         knex.from('donvis').select('*').where('dm_dv_id', unit.dm_dv_id).then(res => {
             callback(res[0]);
+
         }).catch(err => {
-            console.log(err)
-            callback({ success: false })
+            console.log('uiwhihw', err)
+            callback({ success: false})
         })
+        // knex.from('donvis').select('*').where('dm_dv_id', unit.dm_dv_id).then(res => {
+        //     callback(res[0]);
+        // }).catch(err => {
+        //     console.log(err)
+        //     callback({ success: false })
+        // })
     },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
         console.log('cai dkm')
@@ -81,7 +96,7 @@ module.exports = {
         knex('donvis').where(columnSearch,'like','%'+textSearch+'%').orderBy(index,sortBy).limit(limit).offset(offset)
         .then(res=> {
             var units = res
-            console.log(units)
+            console.log('unit',units)
             knex('donvis').where(columnSearch,'like','%'+textSearch+'%').count()
             .then(resCount=>{
                 var count = resCount[0].count
@@ -104,4 +119,9 @@ module.exports = {
             console.log('lỗi  kết nối', err)
         })
     },
+    // getcha:function(callback){
+    //     knex('donvis').select('dm_dv_id_cha').then(res=>{
+    //         callback(res);
+    //     })
+    // }
 };
