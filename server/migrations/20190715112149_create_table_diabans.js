@@ -1,7 +1,7 @@
 
 exports.up = function(knex) {
     return knex.schema
-    .createTable('syss', function (table) {
+    .createTable('diabans', function (table) {
         table.string('id', 36).unique().primary();
         table.string('pagetitle', 255);
         table.string('footerpage', 255);
@@ -11,5 +11,5 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-  return knex.schema.dropTableIfExists('syss')
+  
 };

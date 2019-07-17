@@ -1,7 +1,7 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('hopdongs', function(table){
-      table.increments('hd_id').primary();
+      table.string('hd_id').unique().primary();
       table.integer('dm_duan_id').notNullable();
       table.string('hd_loai', 10).notNullable();
       table.string('hd_so', 100);

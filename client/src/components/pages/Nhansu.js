@@ -6,15 +6,19 @@ import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import { DatePicker } from 'antd';
 import { Height } from 'devextreme-react/range-selector';
+import GroupFilter from '@components/common/GroupFilter'
 //import { Tooltip } from 'devextreme-react/bar-gauge';
 import '@styles/style.css'
 const { Column } = Table;
 const { Option, OptGroup } = Select
 const { Search } = Input;
 
-let id = 0;
+
+const columnFilter = [{column: 'ns_ho', name: 'Họ', type: 'text'},{column: 'ns_tenlot', name: 'Tên lót', type: 'date'}]
+
 
 class DynamicFieldSet extends React.Component {
+    
     remove = k => {
         const op = ['ns_ten', 'ns_gioitinh', 'ns_email', 'ns_sodienthoai', 'ns_bangcap', 'ns_trangthai'];
         //selected.push(<Option value={''})
@@ -434,6 +438,9 @@ class Nhansu extends React.Component {
             sortBy: '',
             index: 'ns_id',
             orderby: 'arrow-up',
+            filter: {
+                visible: false
+            }
         }
     }
 
@@ -680,8 +687,14 @@ class Nhansu extends React.Component {
 
 
     render() {
+        
         return (
             <div>
+                <GroupFilter
+                    columnFilter = {columnFilter}
+                >
+                   
+                </GroupFilter>
                 <Row className="table-margin-bt">
                     <Col span={1}>
                         <Tooltip title="Thêm Nhân Sự">
