@@ -1,7 +1,12 @@
 var Validator = require('../validate/common')
 const nhansuData = require('../data/nhansu_data')
 const constant = require('./constant')
+const uuidv1 = require('uuid/v1');
+
 var nhansuController = {
+
+    
+
     getNhansu: function getNhansu(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
@@ -11,8 +16,14 @@ var nhansuController = {
     },
 
     insertNhansu: async function insertNhansu(nhansu, callback) {
+        console.log('Controller : ', uuidv1())
+        nhansu.ns_id=uuidv1();
+        nhansu.ns_sodienthoai+="0";
+        //nhansu.data.ns_id=uuidv1;g
+        console.log('console :', nhansu)
         if (Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng')
         ) {
+
             if (await Validator.db.unique('nhansu','ns_dinhdanhcanhan',nhansu.ns_dinhdanhcanhan, 'Định danh cá nhân đã tồn tại !')
                 & await Validator.db.unique('nhansu', 'ns_sodienthoai', nhansu.ns_sodienthoai, 'Số điện thoại đã tồn tại !')
                 & await Validator.db.unique('nhansu', 'ns_email', nhansu.ns_email, 'Email đã tồn tại !')) {
