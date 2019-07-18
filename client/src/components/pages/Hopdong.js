@@ -1,11 +1,13 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, Divider, notification, Alert, Select } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 //import { fetchHopdong } from '@actions/hopdong.action';
+//import { Cascader } from 'antd';
+//mport { Menu, Dropdown } from 'antd';
 import { fetchLoading } from '@actions/common.action';
 
 const dateFormat = 'YYYY-MM-DD';
@@ -18,13 +20,47 @@ const { Search } = Input;
 
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        labelCombobox: 'Chọn khách hàng là đơn vị:'
+      }
+     
+    }
+    onChangeClick_loaihopdong = (e) => {
+      var label = e ==='DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
+      
+      this.setState({
+        labelCombobox: label
+      })
+
+    
+    }
+
     render() {
-      const { visible, onCancel, onSave, form, title, confirmLoading, formtype, id_visible } = this.props;
+      const { visible, onCancel, onSave, form, title, confirmLoading, formtype, id_visible,comboBoxDuanSource, comboBoxDatasource, comboBoxDatasource1 } = this.props;
+      var combobox =[]
+      var combobox1 =[]
+      var combobox2 =[]
+      console.log(comboBoxDatasource, 'data don vi ')
+        // eslint-disable-next-line array-callback-return
+        comboBoxDatasource.map((value) => {
+        combobox.push(<Option value={value.id}>{value.ten}</Option>)
+        })
+        // eslint-disable-next-line array-callback-return
+        comboBoxDatasource1.map((value) => {
+          combobox2.push(<Option value={value.id}>{value.ten}</Option>)
+          })
+        // eslint-disable-next-line array-callback-return
+        comboBoxDuanSource.map((value) => {
+          combobox1.push(<Option value={value.dm_duan_id}>{value.dm_duan_ten}</Option>)
+        })
       console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
-        
+
         <Modal
+        
           visible={visible}
           title={title}
           okText="Lưu"
@@ -33,34 +69,43 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
           confirmLoading={confirmLoading}
           width={1000}
         >
-          <Form layout={formtype}>
+          <Form layout={formtype} >
             <Row gutter={24}>
-              <Col span={8}>
+              <Col span={0} className="an">
                 
-                  <Form.Item label="Id hợp đồng tôi là tôi:" >
+                  <Form.Item label="Id hợp đồng:" >
                     {getFieldDecorator('hd_id', {
-                      rules: [ {required: true, message: 'Trường này không được bỏ trống!', } ],
-                    })(<Input type="number" />)}
+                      //rules: [ {required: true, message: 'Trường này không được bỏ trống!', } ],
+                    })(<Input type="number" size="small" />)}
                   </Form.Item>
                
               </Col>
             
-              <Col span={4}>
-                <Form.Item label="Id dự án:">
+              <Col span={0}>
+                <Form.Item label="Id dự án:" className="an"> 
                   {getFieldDecorator('dm_duan_id', {
                     rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="number" disabled/>)}
+                  })(<Input type="number" size="small" disabled/>)}
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col span={8}>
                  <Form.Item label="Tên dự án:" >
                     {
                       getFieldDecorator('dm_duan_id', {
-                      rules: [ {required: true, message: 'Trường này không được bỏ trống!', } ],
+                        
+                        rules: [ {required: true, message: 'Trường này không được bỏ trống!', } ],
                     })(
-                    <Select onChange={this.props.onChangeId}>
-                      <Option value="1">DA01 - QLTV</Option>
-                      <Option value="2">DA02 - QLBH</Option>
+                    <Select size="small" onChange={this.props.onChangeId} dropdownRender={menu => (
+                      <div>
+                        {menu}
+                        <Divider style={{ margin: '4px 0' }} />
+                        <div style={{ padding: '8px', cursor: 'pointer' }}>
+                          <Icon type="plus" />Thêm
+                        </div>
+                      </div>
+                    )}>
+                      
+                      {combobox1}
                       {/* <Option value="10">DA03 - QLTV</Option>
                       <Option value="11">DA04 - QLMT</Option>
                       <Option value="12">DA05 - QLND</Option> */}
@@ -69,27 +114,73 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     )}
                   </Form.Item>
               </Col>
-        
             
-              <Col span={8}>
+              <Col span={4}>
                 <Form.Item label="Loại hợp đồng:">
                   {getFieldDecorator('hd_loai', {
+                    initialValue: 'DV',
                     rules: [ { required: true, message: 'Trường này không được bỏ trống!', } ],
                   })(
-                    <Select >
-                      <Option value="CN">CN</Option>
-                      <Option value="DV">DV</Option>
+                    <Select size="small" onSelect={this.onChangeClick_loaihopdong}>
+                      
+                      <Option value="DV">Đơn Vị</Option>
+                      <Option value="CN">Cá Nhân</Option>
+                      
                     </Select>
                   )}
                 </Form.Item>
               </Col>
+           
+              
+              
+                <Col span={12}>
+                  <Form.Item label={this.state.labelCombobox} >
+                  {getFieldDecorator('hd_doituong', {})(
+                    <Select size="small" dropdownRender={menu => (
+                    <div>
+                      {menu}
+                      <Divider style={{ margin: '4px 0' }} />
+                      <div style={{ padding: '8px', cursor: 'pointer' }}>
+                        <Icon type="plus" />Thêm
+                      </div>
+                    </div>
+                  )}>                   
+                      {Form.Item.labelCombobox === 'Chọn khách hàng là đơn vị:' ? combobox : combobox2} 
+                    </Select>
+                  )}
+                    </Form.Item>
+                </Col>
+                </Row>
+                <Row gutter={24}>
+                <Col span={8}>
+                    <Select size="small" className="an" dropdownRender={menu => (
+                    <div>
+                      {menu}
+                      <Divider style={{ margin: '4px 0' }} />
+                      <div style={{ padding: '8px', cursor: 'pointer' }}>
+                        <Icon type="plus" /> Thêm Cá Nhân
+                      </div>
+                    </div>
+                  )}>
+                      <Option value="VTS">Vũ Thiên Sơn</Option>
+                      <Option value="HDT">Hoàng Đức Trí</Option>
+                      <Option value="TVT">Tạ Văn Toàn</Option>
+                    </Select>
+
+                </Col>
+              <Col span={8}>
+               
+              </Col>
               </Row>
+              
+
+              
               <Row gutter={24}>
               <Col span={8}>
                 <Form.Item label="Số hợp đồng:">
                   {getFieldDecorator('hd_so', {
                    // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" />)}
+                  })(<Input type="text" size="small"/>)}
                 </Form.Item>
               </Col>
             
@@ -97,7 +188,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={4}>
                 <Form.Item label="Thời gian thực hiện:">
                   {getFieldDecorator('hd_thoigianthuchien', {
-                  })(<Input type="number" />)}
+                  })(<Input type="number" size="small"/>)}
                 </Form.Item>
               </Col>
               <Col span={4}>
@@ -105,7 +196,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 {
                   getFieldDecorator('hd_thoigianthuchien', {
                      initialValue : '90'
-                  })(<Select  onChange={this.props.onchangeOptionThoiGianHD}>
+                  })(<Select size="small" onChange={this.props.onchangeOptionThoiGianHD}>
                   <Option value="30">1 Tháng</Option>
                   <Option value="90">3 Tháng</Option>
                   <Option value="180">6 Tháng</Option>
@@ -119,7 +210,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   {getFieldDecorator('hd_ngayketthuc', {
                    // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
                   })(
-                    <Input type="date" format={dateFormat} />
+                    <Input type="date" size="small" format={dateFormat} />
                   )}
                 </Form.Item>
               </Col>
@@ -129,13 +220,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Địa chỉ:">
                   {getFieldDecorator('hd_diachi', {
                    // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="text" />)}
+                  })(<Input type="text" size="small"/>)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày ký:">
                   {getFieldDecorator('hd_ngayky', {
-                  })(<Input type="date" format={dateFormat} />
+                  })(<Input type="date" size="small" format={dateFormat} />
                    )}
                 </Form.Item>
               </Col>
@@ -145,7 +236,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày thanh lý:">
                   {getFieldDecorator('hd_ngaythanhly', {
                    // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="date" format={dateFormat} />
+                  })(<Input type="date" size="small" format={dateFormat} />
                    )}
                 </Form.Item>
               </Col>
@@ -155,7 +246,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày xuất hóa đơn:">
                   {getFieldDecorator('hd_ngayxuathoadon', {
                    // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="date" format={dateFormat}/>
+                  })(<Input type="date" size="small" format={dateFormat}/>
                    )}
                 </Form.Item>
               </Col>
@@ -164,7 +255,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày thanh toán:">
                   {getFieldDecorator('hd_ngaythanhtoan', {
                    // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="date" format={dateFormat} />
+                  })(<Input type="date" size="small" format={dateFormat} />
                    
                     )}
                 </Form.Item>
@@ -172,8 +263,9 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Trạng thái:">
                   {getFieldDecorator('hd_trangthai', {
+                    initialValue: 'DTH',
                    // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Select >
+                  })(<Select size="small">
                     <Option value="DTH">Đang thực hiện</Option>
                     <Option value="TL">Thanh lý</Option>
                     <Option value="XHD">Xuất hóa đơn</Option>
@@ -188,14 +280,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Files:">
                   {getFieldDecorator('hd_files', {
                     //rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="text" />)}
+                  })(<Input type="txt" size="small"/>)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Ghi chú:">
                   {getFieldDecorator('hd_ghichu', {
                     //rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" />)}
+                  })(<Input type="text" size="small"/>)}
                 </Form.Item>
               </Col>
             </Row>
@@ -229,6 +321,9 @@ class Hopdong extends React.Component {
       sortBy: '',
       index: 'id',
       orderby: 'arrow-up',
+      comboBoxDatasource: [],
+      comboBoxDuanSource: [],
+      comboBoxDatasource1: [],
     }
   }
   //--------------DELETE-----------------------
@@ -340,9 +435,28 @@ onchangeid = (value) =>  {
   console.log(value, 'gia tri cua id')
   form.setFieldsValue({
     dm_duan_id: value
+  
   })
 }
 showModal = (hopdong) => {
+  Request('hopdong/getcha','POST',null).then(res=>{
+    this.setState({
+      comboBoxDatasource: res.data
+    })
+    
+  })
+  Request('hopdong/getduan','POST',null).then(res=>{
+    this.setState({
+      comboBoxDuanSource: res.data
+    })
+    
+  })
+  Request('hopdong/getcha1','POST',null).then(res=>{
+    this.setState({
+      comboBoxDatasource1: res.data
+    })
+    
+  })
     const {form} = this.formRef.props
     this.setState({
         visible: true,
@@ -537,8 +651,9 @@ saveFormRef = formRef => {
           <Search style={{ width: 300 }} placeholder="input search text" onSearch={(value) => { this.search(value) }} enterButton />
 
           </div>
-          <Row className="table-margin-bt">
+          <Row className="table-margin-bt" >
             <FormModal
+            
               wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
               onCancel={this.handleCancel}
@@ -548,10 +663,14 @@ saveFormRef = formRef => {
               id_visible={this.state.id_visible}
               onchangeOptionThoiGianHD = {this.onchangeoption}
               onChangeId = {this.onchangeid}
+              comboBoxDatasource = {this.state.comboBoxDatasource}
+              comboBoxDuanSource = {this.state.comboBoxDuanSource}
+              comboBoxDatasource1 = {this.state.comboBoxDatasource1}
+              //onhiddenbutton =  {this.onhiddenbutton}
             />
 
               
-            <Table pagination={false} dataSource={this.state.hopdongs} rowKey="hd_id"  >
+            <Table pagination={false} dataSource={this.state.hopdongs} rowKey="hd_id" scroll={{x: 1000}} >
               <Column
                 title={<span>id hợp đồng<Icon type={this.state.orderby} /></span>}
                 dataIndex="hd_id"
@@ -573,7 +692,7 @@ saveFormRef = formRef => {
               <Column title="ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" onHeaderCell={this.onHeaderCell} />
               <Column
                 visible={false}
-                title="Action"
+                title="hành động"
                 key="action"
                 render={(text, record) => (
 

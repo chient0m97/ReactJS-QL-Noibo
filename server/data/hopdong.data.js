@@ -1,5 +1,6 @@
 var knex = require('./common/DB')
 
+
 module.exports = {
     getHopdong: (limit, offset, callback) => {
         knex.select('*').from('hopdongs').limit(limit).offset(offset)
@@ -69,6 +70,35 @@ module.exports = {
     //         console.log(err, 'lỗi kết nối')
     //     })
     // },
+    getcha: function(callback){
+        //let strSqlKH = "select kh_id as id, kh_ten || '(' || kh_email || ')' ten from khachhangs";
+        let strSqlDV = "select dm_dv_id as id, dm_dv_ten ten from donvis";
+        knex.raw(  strSqlDV  ).then(res=>{ //('donvis').select('dm_dv_id','dm_dv_ten').then(res=>{
+            callback(res.rows);
+            console.log(res)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    },
+    getcha1: function(callback){
+        let strSqlKH = "select kh_id as id, kh_ten || '(' || kh_email || ')' ten from khachhangs";
+        //let strSqlDV = "select dm_dv_id as id, dm_dv_ten ten from donvis";
+        knex.raw(  strSqlKH  ).then(res=>{ //('donvis').select('dm_dv_id','dm_dv_ten').then(res=>{
+            callback(res.rows);
+            console.log(res)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    },
+    getduan: function(callback){
+        let strSqlDA = "select dm_duan_id, dm_duan_ten from duans";
+        knex.raw(  strSqlDA  ).then(res=>{ //('donvis').select('dm_dv_id','dm_dv_ten').then(res=>{
+            callback(res.rows);
+            console.log(res)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
         knex('hopdongs').where(columnSearch,'like', textSearch).orderBy(index,sortBy).limit(limit).offset(offset)
         .then(res=> {

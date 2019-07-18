@@ -137,6 +137,21 @@ router.post('/hopdong/search',function(req,res){
   hopdongController.search(pageSize,pageNumber,textSearch, columnSearch,index,sortBy ,function(data){
       res.send(data);
   })
+})
 
+router.post('/hopdong/getcha', function(req, res){
+  hopdongController.getcha(function(data){
+    res.send(data);
+  })
+})
+router.post('/hopdong/getcha1', function(req, res){
+  hopdongController.getcha1(function(data){
+    res.send(data);
+  })
+})
+router.post('/hopdong/getduan', function(req, res){
+  hopdongController.getduan(function(data){
+    res.send(data);
+  })
 })
 module.exports = router

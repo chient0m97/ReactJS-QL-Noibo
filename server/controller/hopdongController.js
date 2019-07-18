@@ -130,6 +130,21 @@ var HopdongController = {
 //             callback(data);
 //         })
 //     },
+getcha: function getcha(callback){
+    hopdongData.getcha((data)=>{
+        callback(data)
+    })
+},
+getcha1: function getcha1(callback){
+    hopdongData.getcha1((data)=>{
+        callback(data)
+    })
+},
+getduan: function getduan(callback){
+    hopdongData.getduan((data)=>{
+        callback(data)
+    })
+},
     search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
