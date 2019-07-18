@@ -1,5 +1,6 @@
 var knex = require('./common/DB')
 let pool = require('./connect')
+const uuidv1 = require('uuid/v1');
 module.exports = {
     getUser: (limit, offset,index, sortBy, callback) => {
         knex.from('users').select('*').orderBy(index, sortBy).limit(limit).offset(offset)
@@ -37,7 +38,9 @@ module.exports = {
         })
     },
     insertUser: function (user, callback) {
-        knex.from('users').insert(user).then(res => {
+        let abc = user;
+        abc.id=uuidv1();
+        knex.from('users').insert(abc).then(res => {
             console.log('inserted');
             callback({ success: true});
         }).catch(err => {
@@ -46,6 +49,7 @@ module.exports = {
         })
     },
     updateUser: function (user, callback) {
+        console.log('upadteeeeeeeeeeeeee')
         knex.from('users').where('id', user.id)
         .update(user).then(res=>{
             callback({ success: true })
@@ -63,7 +67,8 @@ module.exports = {
         })
     },
     getUserLogin: function (username, callback) {
-        knex.from('users').select('password').where('name','=',username).then(res=>{
+        knex.from('users').select('password','code').where('name','=',username).then(res=>{
+            console.log('password code',res)
             callback(res[0]);
         }).catch(err=>{
             console.log(err, 'lỗi kết nối')
@@ -94,4 +99,9 @@ module.exports = {
             console.log('lỗi  kết nối', err)
         })
     },
+    ss:function(callback){
+        knex('nhansu').select('ns_id').then(res=>{
+            callback(res);
+        })
+    }
 };

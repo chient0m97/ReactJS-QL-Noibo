@@ -1,6 +1,6 @@
 import About from '@pages/About';
 import HomePage from '@pages/HomePage';
-import User from '@pages/User'
+import User from '@pages/User';
 
 
 
@@ -20,7 +20,6 @@ const routers = [
         component: User,
         name: 'user'
     },
-
 ]
 
 export default routers

@@ -161,7 +161,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
         <Modal
           visible={visible}
           title={title}
-          okText="Save"
+          okText="Lưu"
           onCancel={onCancel}
           onOk={onSave}
           confirmLoading={confirmLoading}
@@ -354,7 +354,7 @@ class User extends React.Component {
           var message = 'Thành công'
 
           if (!!!response.data.success) {
-            message = 'Có lỗi xảy ra!'
+            message = 'Lỗi Cmnr'
             notifi_type = 'error'
             description = response.data.message.map((value, index) => {
               return <Alert type='error' message={value}></Alert>
@@ -392,14 +392,14 @@ class User extends React.Component {
   }
 
   showModal = (user) => {
-    Request('user/getcha', 'POST', null).then((res) => {
-      let data = res.data;
-      console.log('--', data)
-      this.setState({
-        datacha: data
-      })
-    })
-    console.log('data', this.state.datacha)
+    // Request('user/getcha', 'POST', null).then((res) => {
+    //   let data = res.data;
+    //   console.log('--', data)
+    //   this.setState({
+    //     datacha: data
+    //   })
+    // })
+    // console.log('data', this.state.datacha)
 
 
 
@@ -409,6 +409,7 @@ class User extends React.Component {
     });
     form.resetFields();
     if (user.id !== undefined) {
+      console.log('day la update')
       this.setState({
         id_visible: true,
         action: 'update'
@@ -589,7 +590,7 @@ class User extends React.Component {
     let users = this.state.users;
     users[rowIndex].Selected = true;
     this.setState({
-      users : users
+      users: users
     })
   }
   render() {
@@ -661,10 +662,10 @@ class User extends React.Component {
                 <Button style={{ margin: '20px' }} onClick={this.showmodalRole}>
                   <Icon type="user" />
                 </Button> Phân Quyền
-          <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
+                <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
                   <Icon type="plus" />
                 </Button> Thêm
-          <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
+                <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
                   <Icon type="edit" />
                 </Button> Sửa
             </div>

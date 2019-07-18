@@ -15,6 +15,7 @@ router.post('/user/get', function (req, res) {
     let index = body.index;
     let sortBy = body.sortBy
     userController.getUser(pageNumber, pageSize,index,sortBy, function (data) {
+      
         res.send(data);
     })
 })
@@ -33,14 +34,22 @@ router.delete('/user/delete', function (req, res) {
 })
 
 router.post('/user/insert',function (req, res) {
+    console.log('data insert',req.body)
     userController.insertUser(req.body, function (data) {
         res.send(data);
+        console.log('result',data)
+
     })
 
 })
-
+router.post('/user/getcha',(req,res)=>{
+  userController.ss(function(data){
+    res.send(data)
+    console.log('data',data)
+  })
+})
 router.post('/user/update',function (req, res) {
-  console.log('data res',req)
+  console.log('data res',req.body)
   userController.updateUser(req.body, function (data) {
       res.send(data);
   })
@@ -61,5 +70,6 @@ router.post('/user/search',function(req,res){
 router.get('/about', function (req, res) {
     res.send('About User')
 })
+
 
 module.exports = router

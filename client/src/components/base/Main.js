@@ -18,9 +18,9 @@ import Loading from '@components/base/Loading'
 // router 
 import routers from '@configs/router.config'
 import { connect } from 'react-redux'
-import { Value } from 'devextreme-react/range-selector';
+//import { Value } from 'devextreme-react/range-selector';
 import { fetchLoading } from '@actions/common.action';
-import App from '@src/App';
+//import App from '@src/App';
 
 moment.locale('fr');
 

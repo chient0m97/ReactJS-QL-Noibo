@@ -17,7 +17,9 @@ router.post('/', (req, res) => {
                 //if eveything is okey let's create our token 
                 const payload = {
                     check: true,
-                    userName: req.body.username
+                    userName: req.body.username,
+                    role: data.code,
+                    claims: data.claims
                 };
                 var token = jwt.sign(payload, app.get('Secret'), {
                     expiresIn: "24h" // expires in 24 hours
@@ -26,15 +28,13 @@ router.post('/', (req, res) => {
                 if (req.body.username === 'admin') {
                     console.log('cai dcm')
                     res.json({
-                        action: 'none',
                         success: true,
                         message: 'authentication done ',
                         token: token
                     });
                 }
-                else{
+                else {
                     res.json({
-                        action: '',
                         success: true,
                         message: 'authentication done ',
                         token: token

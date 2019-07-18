@@ -4,7 +4,7 @@ import logger from "redux-logger";
 import rootReducer from '@reducers/rootReducer';
 
 import {loadState, saveState} from '@redux/localStorage'
-import { save } from 'react-cookies';
+//import { save } from 'react-cookies';
 const innitialState  = loadState();
 const middlewares = [thunk];
 // if (__DEV__) react native check dev

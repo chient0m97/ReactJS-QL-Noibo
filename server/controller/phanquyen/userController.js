@@ -14,10 +14,10 @@ var UserController = {
      * @para
      */
 
-    getUser: function getUser(pageNumber, pageSize,index,sortBy, callback) {
+    getUser: function getUser(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        userData.getUser(limit, offset,index,sortBy,  (data) => {
+        userData.getUser(limit, offset, index, sortBy, (data) => {
             callback(data);
         }
         );
@@ -74,8 +74,11 @@ var UserController = {
                     }, status);
                 })
             } else {
+                let error = Validator.getError()
+                console.log('list error',error)
                 callback({
-                    message: Validator.getError(),
+                    message: error,
+                    
                     success: false
                 }, 400);
             }
@@ -88,33 +91,72 @@ var UserController = {
         }
     },
     updateUser: function updateUser(user, callback) {
+        console.log('controller')
         if (Validator.isMail(user.email, 'Email không đúng định dạng')
             & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
             & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
         ) {
-           
-                userData.updateUser(user, (res) => {
-                    callback({
-                        success: res.success,
-                        message: res.success === true ? constant.successUpdate : constant.errorUpdate
-                    })
+            console.log('go to db')
+            userData.updateUser(user, (res) => {
+                callback({
+                    success: res.success,
+                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
                 })
-            
+            })
+
         }
-    }
-    ,
+    },
     Login: function getUserLogin(userName, callback) {
         userData.getUserLogin(userName, (data) => {
-
-            callback(data);
+            console.log('data', data)
+            this.getClaimsByUser(userName, (cls) => {
+                data.claims = cls;
+                callback(data);
+            })
         })
     },
-    search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
+    getClaimsByUser: (userName, callback) => {
+        let data = [
+            "USER.READ",
+            "USER.EDIT",
+            "USER.DELETE"
+        ]
+        if (userName == 'admin') {
+            callback(data)
+        } else {
+            data = [
+                "USER.READ"
+            ];
+            callback(data);
+        }
+    },
+
+    getClaimsByGroupUser: (groupUserName, callback) => {
+        let data = [
+            "USER.READ",
+            "USER.EDIT",
+            "USER.DELETE"
+        ]
+        if (groupUserName == 'dev') {
+            callback(data)
+        } else {
+            data = [
+                "USER.READ"
+            ];
+            callback(data);
+        }
+    },
+    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         console.log('dm')
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        userData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
-            console.log('aaaaaaaaa',data)
+        userData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
+            console.log('aaaaaaaaa', data)
+            callback(data);
+        })
+    },
+    ss: function ss(callback) {
+        userData.ss((data) => {
             callback(data);
         })
     },
