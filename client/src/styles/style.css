@@ -121,3 +121,39 @@
 .hide{
   display: none;
 }
+.ant-modal-header {
+  padding: 16px 24px;
+  color:brown;
+  background:cornflowerblue;
+  border-bottom: 1px solid #181407;
+  border-radius: 4px 4px 0 0;
+}
+.ant-modal-content {
+  position: relative;
+  background-color:#BDBDBD;
+  background-clip: padding-box;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+}
+.ant-row {
+  position: relative;
+  height: auto;
+  margin-right: 0;
+  margin-left: 0;
+  zoom: 1;
+  color:blue;
+  display: block;
+  box-sizing: border-box;
+}
+.ant-table {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  background-color:aliceblue;
+  font-variant: tabular-nums;
+  line-height: 1.5;
+  list-style: none;
+  font-feature-settings: 'tnum';
+}
+

@@ -29,11 +29,17 @@ var UnitController = {
                     case 'GT':
                         value.dm_dv_trangthai_txt = 'Giải Thể'
                         break;
-
                 }
-
+            
                 res_unit.push(value)
             })
+
+            // await data.data.units.map((value, index)=>{
+            //     switch (value.dm_dv_trangthai_txt) {
+            //         case 1:
+            //             value.dm_dv_id_cha_txt = units.dm_dv_id > units.dm_dv_ten
+            //             break;
+            // })
             console.log(res_unit, 'data')
             data.data.units = res_unit
             callback(data);
@@ -111,12 +117,19 @@ var UnitController = {
         }
     },
     updateUnit: function updateUnit(unit, callback) {
+        // if(await Validator.db.unique('donvis', 'dm_dv_id_cha', unit.dm_dv_id_cha, 'Error!!')){
+        //     callback({success: false, message: res.success == false})
+        // }else{
+        if(unit.dm_dv_id == unit.dm_dv_ten){
+            unitData.getUnit(this, null);
+        }else{
         unitData.updateUnit(unit, (res) => {
             callback({
                 success: res.success,
                 message: res.success === true ? constant.successUpdate : callback.errorUpdate
             })
         })
+    }
     },
     search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;

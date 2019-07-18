@@ -26,11 +26,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange } = this.props;
             console.log(dm_dv_id_visible)
             const { getFieldDecorator } = form;
+            var datacha = this.props.datacha
+
             return (
                 <div>
                     <Modal
                         visible={visible}
-                        title="Nhập thông tin đơn vị:"
+                        title="NHẬP THÔNG TIN ĐƠN VỊ:"
                         okText="Save"
                         onCancel={onCancel}
                         onOk={onSave}
@@ -132,7 +134,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                                             // rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!',}],
                                         })(
                                             <Select>
-                                                {this.props.datacha.map((item, i) => {
+                                                {datacha.map((item, i) => {
                                                     return (
                                                         <Option value={item.dm_dv_id}>{item.dm_dv_ten}</Option>
                                                     )
@@ -200,6 +202,7 @@ class Unit extends React.Component {
 
 
     getUnits = (pageNumber) => {
+        console.log('asasd')
         if (pageNumber <= 0)
             return;
         this.props.fetchLoading({
@@ -260,6 +263,9 @@ class Unit extends React.Component {
                         message: message,
                         description: description
                     })
+                    // if(dm_dv_id_cha.setValue(unit.dm_dv_id == unit.dm_dv_ten)){
+                    //     return null;
+                    // }
                     this.getUnits(this.state.page)
                 })
         });
@@ -293,14 +299,29 @@ class Unit extends React.Component {
         this.setState({
             visible: true
         });
-
         form.resetFields();
         form.setFieldsValue({ dm_dv_trangthai: 'HD' })
+        this.setState({
+            dataSource_Select_Parent: this.state.units
+        })
         if (unit.dm_dv_id !== undefined) {
             this.setState({
                 dm_dv_id_visible: true,
                 action: 'update'
             })
+            var dataSourceCha = []
+
+            this.state.units.map((value, index) => {
+                if (value.dm_dv_id !== unit.dm_dv_id) {
+                    dataSourceCha.push(value)
+                }
+            })
+
+            this.setState({
+                dataSource_Select_Parent: dataSourceCha
+            })
+
+
             // unit.dm_dv_id = Number(unit.dm_dv_id)
             form.setFieldsValue(unit);
         }
@@ -476,7 +497,7 @@ class Unit extends React.Component {
                             </Button> Thêm
                         </Col>
                         <span>
-                        <Col span={2}>
+                            <Col span={2}>
                                 <Button shape='circle' type="primary" size="large" onClick={this.showModal.bind(this, this.state.unit)}>
                                     <Icon type="edit" /></Button> Sửa
                         </Col>
@@ -524,7 +545,7 @@ class Unit extends React.Component {
                     <br />
                     <Row className="table-margin-bt">
                         <FormModal
-                            datacha={this.state.units}
+                            datacha={this.state.dataSource_Select_Parent}
                             wrappedComponentRef={this.saveFormRef}
                             visible={this.state.visible}
                             onCancel={this.handleCancel}
@@ -535,7 +556,8 @@ class Unit extends React.Component {
                             handleChange={this.handleChange}
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.units} bordered='1' rowKey="dm_dv_id">
-                            <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" onHeaderCell={this.onHeaderCell}/>
+                            <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
                             <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} />
                             <Column title="Địa chỉ đơn vị" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã số thuế đơn vị" dataIndex="dm_dv_masothue" key="dm_dv_masothue" onHeaderCell={this.onHeaderCell} />
