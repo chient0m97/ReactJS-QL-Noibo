@@ -146,3 +146,19 @@
   padding-top: 0px;
   padding-bottom: 0px;
 }
+/* .ant-form-item{
+  padding-top: 5px;
+}*/
+.ant-row::after{
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+} 
+.ant-form-item-control{
+  padding-bottom: 0px;
+}
+.ant-col.ant-col-8{
+  padding-bottom: 0px;  
+}
+.ant-row.ant-form-item::after{
+  padding-bottom: 0px;
+}

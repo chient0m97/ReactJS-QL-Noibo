@@ -95,7 +95,8 @@ router.post('/hopdong/get', function (req, res) {
   let pageSize = body.pageSize;
   hopdongController.getHopdong(pageNumber, pageSize, function (data) {
       res.send(data);
-  })
+      console.log(data,'data tra ve')
+  }) 
 })
 router.get('/hopdong/get/:Id', function (req, res) {
   hopdongController.GetById(req.params.Id, function (data) {
@@ -138,14 +139,20 @@ router.post('/hopdong/search',function(req,res){
       res.send(data);
   })
 })
-
-router.post('/hopdong/getcha', function(req, res){
+//don vi
+router.post('/hopdong/getcha', function(req, res){ 
   hopdongController.getcha(function(data){
     res.send(data);
   })
 })
-router.post('/hopdong/getcha1', function(req, res){
-  hopdongController.getcha1(function(data){
+router.post('/hopdong/getdonvi', function(req, res){ 
+  hopdongController.getdonvi(function(data){
+    res.send(data);
+  })
+})
+//khach hang
+router.post('/hopdong/getkhachhang', function(req, res){
+  hopdongController.getkhachhang(function(data){
     res.send(data);
   })
 })

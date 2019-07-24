@@ -74,7 +74,7 @@ var HopdongController = {
                 
                 let firtInsert;
                 firtInsert = hopdong;
-                firtInsert.hd_so = 'Toi la chien: ' + firtInsert.hd_so;
+                //firtInsert.hd_so = 'Toi la chien: ' + firtInsert.hd_so;
                 firtInsert.hd_id = uuidv4();
 
                     hopdongData.insertHopdong(firtInsert, (response) => {
@@ -135,8 +135,13 @@ getcha: function getcha(callback){
         callback(data)
     })
 },
-getcha1: function getcha1(callback){
-    hopdongData.getcha1((data)=>{
+getdonvi: function getdonvi(callback){
+    hopdongData.getdonvi((data)=>{
+        callback(data)
+    })
+},
+getkhachhang: function getkhachhang(callback){
+    hopdongData.getkhachhang((data)=>{
         callback(data)
     })
 },
