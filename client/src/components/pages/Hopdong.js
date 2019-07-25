@@ -190,11 +190,11 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
               <Col span={5}>
                 <Form.Item label="Chọn nhanh:">
-                {getFieldDecorator('hd_chonnhanhthoigianthuchien', {
+                {getFieldDecorator('hd_thoigianthuchien', {
                   initialValue: '90'
                   })(
                   
-                <Select defaultValue="90" size="small" onChange={this.props.onchangeOptionThoiGianHD}>
+                <Select  size="small" onChange={this.props.onchangeOptionThoiGianHD}>
                       <Option value="30">1 Tháng</Option>
                       <Option value="90">3 Tháng</Option>
                       <Option value="180">6 Tháng</Option>
@@ -395,7 +395,7 @@ class Hopdong extends React.Component {
           if (!!!response.data.success) {
             message = 'Có lỗi xảy ra!'
             notifi_type = 'error'
-            description = response.data.message.map((values, index) => {
+            description = response.data.message.map((values) => {
               return <Alert type='error' message={values}></Alert>
             })
           }
