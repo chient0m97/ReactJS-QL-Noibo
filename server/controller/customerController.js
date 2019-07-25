@@ -15,27 +15,37 @@ var CustomerController = {
     getCustomer: function getCustomer(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        // var res_customer = []
+        var res_customer = []
         customerData.getCustomer(limit, offset, index, sortBy, async (data) => {
-            // await data.data.customers.map((value, index) => {
+            await data.data.customers.map((value, index) => {
 
-            //     switch (value.dm_dv_trangthai) {
-            //         case 'HD':
-            //             value.dm_dv_trangthai_txt = 'Hoạt Động'
-            //             break;
-            //         case 'DHD':
-            //             value.dm_dv_trangthai_txt = 'Dừng Hoạt Động'
-            //             break;
-            //         case 'GT':
-            //             value.dm_dv_trangthai_txt = 'Giải Thể'
-            //             break;
+                switch (value.kh_lienlac) {
+                    case 'HD':
+                        value.kh_lienlac_txt = 'Đại diện'
+                        break;
+                    case 'DHD':
+                        value.kh_lienlac_txt = 'Đầu mối liên lạc'
+                        break;
+                    case 'GT':
+                        value.kh_lienlac_txt = 'Thường xuyên lien lạc'
+                        break;
+                }
+                // switch (value.kh_gioitinh) {
+                //     case 'Nam':
+                //         value.kh_gioitinh = 'Nam'
+                //         break;
+                //     case 'Nữ':
+                //         value.kh_gioitinh = 'Nữ'
+                //         break;
+                //     case 'Khác':
+                //         value.kh_gioitinh = 'Khác'
+                //         break;
+                // }
 
-            //     }
-
-            //     res_unit.push(value)
-            // })
-            // console.log(res_customer, 'data')
-            // data.data.customer = res_unit
+                res_customer.push(value)
+            })
+            console.log(res_customer, 'data')
+            data.data.customers = res_customer
             callback(data);
         });
     },
@@ -80,9 +90,10 @@ var CustomerController = {
             & Validator.isInt(customer.dm_db_id_huyen, 'ID Huyện không đúng định dạng !!')
             & Validator.isInt(customer.dm_db_id_xa, 'ID Xã không đúng định dạng !!')
             & Validator.isInt(customer.kh_sodienthoai, 'Số điện thoại không đúng định dạng !!')
-            & Validator.Name(customer.kh_ho, 'Họ không đúng định dạng !!')
-            & Validator.Name(customer.kh_tenlot, 'Tên lót không đúng định dạng !!')
-            & Validator.Name(customer.kh_ten, 'Tên không đúng định dạng !!')
+            // & Validator.Name(customer.kh_ho, 'Họ không đúng định dạng !!')
+            // & Validator.Name(customer.kh_tenlot, 'Tên lót không đúng định dạng !!')
+            // & Validator.Name(customer.kh_ten, 'Tên không đúng định dạng !!')
+            // & Validator.isMail(customer.kh_email, 'Email không đúng định dạng !!')
         ) {
             if (
                 await Validator.db.unique('khachhangs', 'kh_email', customer.kh_email, 'Email khách hàng này đã tồn tại !!')

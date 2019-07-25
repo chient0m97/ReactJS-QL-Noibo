@@ -56,6 +56,28 @@ var UnitController = {
     //     })
     // },
 
+    getTinh: function getTinh(callback){
+        unitData.getTinh((data)=>{
+            console.log('data',data)
+            callback(data)
+        })
+    },
+
+    getHuyen: function getHuyeb(body,callback){
+        unitData.getHuyen(body.id_db_tinh ,(data)=>{
+            console.log('data',data)
+            callback(data)
+        })
+    },
+
+    getXa: function getXa(callback){
+        unitData.getXa((data)=>{
+            console.log('data',data)
+            callback(data)
+        })
+    },
+
+
 
     GetById: function GetById(Id, callback) {
         unitData.GetById(Id, (data) => {

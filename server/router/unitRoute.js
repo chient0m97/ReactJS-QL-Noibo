@@ -23,6 +23,27 @@ router.post('/unit/get', function (req, res) {
 //     res.send(data);
 // })
 
+router.post('/unit/gettinh', function (req, res) {
+    console.log('reqesy tinh', req.data)
+    unitController.getTinh(function(data){
+        res.send(data);
+    })
+})
+
+router.post('/unit/gethuyen', function (req, res) {
+    console.log('req huuyen', req.body)
+    unitController.getHuyen(req.body, function(data){
+        res.send(data);
+    })
+})
+
+router.post('/unit/getxa', function (req, res) {
+    console.log('o qfnuq phoiqg')
+    unitController.getXa(function(data){
+        res.send(data);
+    })
+})
+
 router.get('/unit/get/:Id', function (req, res) {
     unitController.GetById(req.params.Id, function (data) {
         res.send(data);

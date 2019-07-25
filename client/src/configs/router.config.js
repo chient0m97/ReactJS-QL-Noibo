@@ -2,6 +2,7 @@ import About from '@pages/About';
 import HomePage from '@pages/HomePage';
 import User from '@pages/User'
 import Unit from '@pages/Unit'
+import Customer from '@pages/Customer'
 
 
 
@@ -25,7 +26,12 @@ const routers = [
        path: '/unit',
        component: Unit,
        name: 'unit' 
-    }
+    },
+    {
+        path: '/customer',
+        component: Customer,
+        name: 'customer' 
+    },
 ]
 
 export default routers

@@ -45,6 +45,7 @@ class AppSider extends Component {
                         <Menu.Item key="5"><NavLink to="/user" className="">User</NavLink ></Menu.Item>
                         <Menu.Item key="4"><NavLink to="/about" className="">About</NavLink ></Menu.Item>
                         <Menu.Item key="10"><NavLink to="/unit" className="">Unit</NavLink></Menu.Item>
+                        <Menu.Item key="11"><NavLink to="/customer" className="">Customer</NavLink></Menu.Item>
                     </SubMenu>
                     <SubMenu
                         key="sub2"

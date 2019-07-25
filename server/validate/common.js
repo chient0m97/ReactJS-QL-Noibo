@@ -16,8 +16,7 @@ constructor = (value, errMessage) => {
     }
     
     if ((typeof value) + '' === 'string' & value.length > 0) {
-        console.log('igui',value)
-
+        console.log('art cool');
         return true
     }
 

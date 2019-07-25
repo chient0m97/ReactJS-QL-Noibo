@@ -7,6 +7,7 @@ import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 // import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
+import { async } from 'q';
 
 // import { async } from 'q';
 const token = cookie.load('token');
@@ -20,10 +21,11 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
         render() {
             const { Option } = Select;
             const combobox = [];
+
             combobox.push(<Option key={'HD'}>Hoạt động</Option>);
             combobox.push(<Option key={'DHD'}>Dừng hoạt động</Option>);
             combobox.push(<Option key={'GT'}>Giải thể</Option>);
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange } = this.props;
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen } = this.props;
             console.log(dm_dv_id_visible)
             const { getFieldDecorator } = form;
             var datacha = this.props.datacha
@@ -70,24 +72,51 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                             </Row>
                             <Row gutter={24}>
                                 <Col span={8}>
-                                    <Form.Item label='Mã Địa Bàn Tỉnh'>
+                                    <Form.Item label='Địa Bàn Tỉnh'>
                                         {getFieldDecorator('dm_db_id_tinh', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
+                                        })(<Select onSelect={onSelectDiaBanTinh}>
+                                            {
+                                                select_diabantinh.map((value, index) => {
+                                                    return (
+                                                        <Option value={value.dm_db_id}>{value.dm_db_ten}</Option>
+                                                    )
+                                                })
+
+                                            }
+                                        </Select>)}
                                     </Form.Item>
                                 </Col>
                                 <Col span={8}>
                                     <Form.Item label='Mã Địa Bàn Huyện'>
                                         {getFieldDecorator('dm_db_id_huyen', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
+                                        })(<Select onSelect={onSelectDiaBanHuyen}>
+                                            {
+                                                select_diabanhuyen.map((value, index) => {
+                                                    return (
+                                                        <Option value={value.dm_db_id}>{value.dm_db_ten}</Option>
+                                                    )
+                                                })
+
+                                            }
+                                        </Select>)}
                                     </Form.Item>
                                 </Col>
                                 <Col span={8}>
                                     <Form.Item label='Mã Địa Bàn Xã'>
                                         {getFieldDecorator('dm_db_id_xa', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
+                                        })(<Select>
+                                            {
+                                                select_diabanxa.map((value, index) => {
+                                                    return (
+                                                        <Option value={value.dm_db_id}>{value.dm_db_ten}</Option>
+                                                    )
+                                                })
+
+                                            }
+                                        </Select>)}
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -125,7 +154,9 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                                     <Form.Item label='Mã Người Đại Diện'>
                                         {getFieldDecorator('kh_id_nguoidaidien', {
                                             // rules: [ {required: true,}],
-                                        })(<Input type="text" />)}
+                                        })(<Select>
+
+                                        </Select>)}
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -181,7 +212,10 @@ class Unit extends React.Component {
             orderby: 'arrow-up',
             corlor: '#d9d9d9',
             dataSource_Select_Parent: [],
-            units: []
+            units: [],
+            select_diabantinh: [],
+            select_diabanhuyen: [],
+            select_diabanxa: []
         }
     }
     //---Delete---
@@ -199,7 +233,7 @@ class Unit extends React.Component {
             })
     }
 
-
+    //xxxx
 
     getUnits = (pageNumber) => {
         console.log('asasd')
@@ -227,7 +261,17 @@ class Unit extends React.Component {
 
                 })
             })
+
     }
+
+    // getLocation = () => {
+    //     Request('unit/getlocation', 'POST', {
+
+    //     }).then((response) =>{
+    //         let data = response.data;
+    //         console.log('data', data)
+    //     })
+    // }
 
     //---Insert---
     InsertOrUpdateUnit = () => {
@@ -294,13 +338,27 @@ class Unit extends React.Component {
         this.getUnits(this.state.dataSource_Select_Parent);
     }
 
-    showModal = (unit) => {
+    showModal = async (unit) => {
         const { form } = this.formRef.props
         this.setState({
             visible: true
         });
         form.resetFields();
         form.setFieldsValue({ dm_dv_trangthai: 'HD' })
+
+        await this.set_select_diabantinh();
+        await form.setFieldsValue({ dm_db_id_tinh: 1 })
+
+        await this.set_select_diabanhuyen(1);
+        await form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
+
+        await this.set_select_diabanxa({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id });
+        await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
+
+        // await form.setFieldsValue({dm_db_id_huyen : this.state.select_diabanhuyen[0].dm_db_id})
+        // await this.set_select_diabanxa({dm_db_id_huyen : this.state.select_diabanhuyen[0].dm_db_id});
+        // await form.setFieldsValue({dm_db_id_xa : this.state.select_diabanxa[0].dm_db_id})
+
         this.setState({
             dataSource_Select_Parent: this.state.units
         })
@@ -310,6 +368,7 @@ class Unit extends React.Component {
                 action: 'update'
             })
             var dataSourceCha = []
+
 
             this.state.units.map((value, index) => {
                 if (value.dm_dv_id !== unit.dm_dv_id) {
@@ -357,7 +416,7 @@ class Unit extends React.Component {
         })
     }
 
-    confirm = (e) => {
+    confirm = (e) => { //xác nhận
         console.log(e);
         message.success('Bấm yes để xác nhận');
     }
@@ -366,7 +425,7 @@ class Unit extends React.Component {
         console.log(e);
     }
 
-    showTotal = (total) => {
+    showTotal = (total) => { //hiển thị tổng số
         return `Total ${total} items `;
     }
 
@@ -468,6 +527,64 @@ class Unit extends React.Component {
         })
     }
 
+    set_select_diabantinh = async () => {
+        await Request('unit/gettinh', 'POST', {
+        }).then(async (res) => {
+            console.log(res.data, 'data tinh')
+            await this.setState({
+                select_diabantinh: res.data
+            })
+        })
+    }
+
+    set_select_diabanhuyen = async (id_db_tinh) => {
+        console.log('select diab an tinh', id_db_tinh)
+        await Request('unit/gethuyen', 'POST', {
+            id_db_tinh: id_db_tinh
+        }).then(async (res) => {
+            console.log(res.data, 'data res huyen')
+            await this.setState({
+                select_diabanhuyen: res.data
+            })
+        })
+    }
+
+    set_select_diabanxa = async (id_db_huyen) => {
+        await Request('unit/getxa', 'POST', {
+            id_db_huyen: this.state.id_db_huyen
+        }).then((res) => {
+            this.setState({
+                select_diabanxa: res.data
+            })
+        })
+    }
+
+    onSelectDiaBanTinh = async (value) => {
+        const { form } = this.formRef.props
+        await this.set_select_diabanhuyen(value);
+        if (this.state.select_diabanhuyen.length === 0) {
+            await form.setFieldsValue({ dm_db_id_huyen: '' })
+        }
+        else {
+            await form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
+        }
+    }
+
+    onSelectDiaBanHuyen = async (value) => {
+        const { form } = this.formRef.props
+        await this.set_select_diabanhuyen(value);
+        await this.set_select_diabanxa(value);
+        if (this.state.select_diabanhuyen.length === 0 && this.state.select_diabanxa.length === 0) {
+            console.log('dcm')
+            await form.setFieldsValue({ dm_db_id_huyen: '' })
+            await form.setFieldsValue({ dm_db_id_xa: '' })
+        }
+        else {
+            await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
+        }
+    }
+
+
     render() {
         const rowSelection = {
             onChange: async (selectedRowKeys, selectedRows) => {
@@ -554,15 +671,27 @@ class Unit extends React.Component {
                             formtype={this.state.formtype}
                             dm_dv_id_visible={this.state.dm_dv_id_visible}
                             handleChange={this.handleChange}
+                            select_diabantinh={this.state.select_diabantinh}
+                            select_diabanhuyen={this.state.select_diabanhuyen}
+                            select_diabanxa={this.state.select_diabanxa}
+                            onSelectDiaBanTinh={this.onSelectDiaBanTinh}
+                            onSelectDiaBanHuyen={this.onSelectDiaBanHuyen}
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.units} bordered='1' rowKey="dm_dv_id">
                             <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hide" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
                             <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} />
                             <Column title="Địa chỉ đơn vị" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã số thuế đơn vị" dataIndex="dm_dv_masothue" key="dm_dv_masothue" onHeaderCell={this.onHeaderCell} />
                             <Column title="Số điện thoại đơn vị" dataIndex="dm_dv_sodienthoai" key="dm_dv_sodienthoai" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Mã người đại diện" dataIndex="kh_id_nguoidaidien" key="kh_id_nguoidaidien" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã người đại diện" dataIndex="kh_id_nguoidaidien" key="kh_id_nguoidaidien" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Tên người đại diện" dataIndex="tennguoidaidien" key="tennguoidaidien" onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái đơn vị" dataIndex="dm_dv_trangthai" key="dm_dv_trangthai" className="hide" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái đơn vị" dataIndex="dm_dv_trangthai_txt" key="dm_dv_trangthai_txt" onHeaderCell={this.onHeaderCell} />
                             <Column />

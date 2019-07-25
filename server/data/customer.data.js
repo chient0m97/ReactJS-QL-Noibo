@@ -39,18 +39,35 @@ module.exports = {
     },
 
     insertCustomer: function (customer, callback){
-        knex.from('khachhangs').insert(customer).then(res => {
-            console.log('inserted');
-            callback({ success: true });
-        }).catch(err => {
-            console.log(err)
-            callback({ success: false })
-        })
-            return true;
-        },
+    //     console.log('thêm mới',customer)
+    //     knex.from('khachhangs').insert(customer).then(res => {
+    //         console.log('inserted');
+    //         callback({ success: true });
+    //     }).catch(err => {
+    //         console.log(err)
+    //         callback({ success: false })
+    //     })
+    // },
+    if (knex.from('khachhangs').insert(customer).then(res => {
+        console.log('inserted');
+        callback({ success: true });
+    }).catch(err => {
+        console.log(err)
+        callback({ success: false })
+    })) {
+        return true;
+    }
+    else {
+        knex.withRecursive('donvis', (qb) => {
+            qb.select('*').from('khachhangs').where('kh_id', 1).union((qb) => {
+                qb.select('*').from('khachhangs').join('donvis', 'dm_dv_id', 'kh_id')
+            })
+        }).select('*').from('donvis')
+    }
+    },
 
     updateCustomer: function (customer, callback) {
-        knex.from('khachhangs').where('kh_id', unit.kh_id)
+        knex.from('khachhangs').where('kh_id', customer.kh_id)
         .update(customer).then(res => {
             callback({ success: true })
         }).catch(err => {
