@@ -10,7 +10,7 @@ import Request from '@apis/Request'
 //mport { Menu, Dropdown } from 'antd';
 import { fetchLoading } from '@actions/common.action';
 
-const dateFormat = 'YYYY-MM-DD';
+const dateformat = 'YYYY-MM-DD HH:mm:ss';
 const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select
@@ -44,7 +44,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       var combobox = []
       var combobox1 = []
       var comboboxLoaiHopDong = []
-
+      
       // eslint-disable-next-line array-callback-return
       comboBoxDatasource.map((value) => {
         combobox.push(<Option value={value.id}>{value.ten}</Option>)
@@ -110,11 +110,9 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                         </div>
                         </div>
                       )}>
-
+                      
                         {combobox1}
-                        {/* <Option value="10">DA03 - QLTV</Option>
-                      <Option value="11">DA04 - QLMT</Option>
-                      <Option value="12">DA05 - QLND</Option> */}
+                 
                       </Select>
 
                     )}
@@ -186,29 +184,32 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={5}>
                 <Form.Item label="Thời gian thực hiện(ngày):">
                   {getFieldDecorator('hd_thoigianthuchien', {
+                    initialValue: '90'
                   })(<Input type="number" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={5}>
                 <Form.Item label="Chọn nhanh:">
-                  {
-                    getFieldDecorator('hd_thoigianthuchien', {
-                      initialValue: '90'
-                    })(<Select size="small" onChange={this.props.onchangeOptionThoiGianHD}>
+                {getFieldDecorator('hd_chonnhanhthoigianthuchien', {
+                  initialValue: '90'
+                  })(
+                  
+                <Select defaultValue="90" size="small" onChange={this.props.onchangeOptionThoiGianHD}>
                       <Option value="30">1 Tháng</Option>
                       <Option value="90">3 Tháng</Option>
                       <Option value="180">6 Tháng</Option>
                       <Option value="365">1 Năm</Option>
-                    </Select>)}
+                    </Select>
+                  )}
 
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="Ngày kết thúc:">
+                <Form.Item  label="Ngày kết thúc:">
                   {getFieldDecorator('hd_ngayketthuc', {
                     // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
                   })(
-                    <Input type="date" size="small" format={dateFormat} />
+                    <Input type="date" size="small" format={dateformat} />
                   )}
                 </Form.Item>
               </Col>
@@ -224,7 +225,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Ngày ký:">
                   {getFieldDecorator('hd_ngayky', {
-                  })(<Input type="date" size="small" format={dateFormat} />
+                  })(<Input type="date" size="small" format={dateformat} />
                   )}
                 </Form.Item>
               </Col>
@@ -234,7 +235,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày thanh lý:">
                   {getFieldDecorator('hd_ngaythanhly', {
                     // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="date" size="small" format={dateFormat} />
+                  })(<Input type="date" size="small" format={dateformat} />
                   )}
                 </Form.Item>
               </Col>
@@ -244,7 +245,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày xuất hóa đơn:">
                   {getFieldDecorator('hd_ngayxuathoadon', {
                     // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="date" size="small" format={dateFormat} />
+                  })(<Input type="date" size="small" format={dateformat} />
                   )}
                 </Form.Item>
               </Col>
@@ -253,7 +254,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày thanh toán:">
                   {getFieldDecorator('hd_ngaythanhtoan', {
                     // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="date" size="small" format={dateFormat} />
+                  })(<Input type="date" size="small" format={dateformat} />
 
                   )}
                 </Form.Item>
@@ -454,6 +455,7 @@ class Hopdong extends React.Component {
     })
   }
   showModal = (hopdong) => {
+    var formatdate=require('dateformat')
     Request('hopdong/getdonvi', 'POST', null).then(res => {
       this.setState({
         propDatasourceSelectLoaiHopDong: {
@@ -463,6 +465,7 @@ class Hopdong extends React.Component {
         }
       })
       const { form } = this.formRef.props
+
       form.setFieldsValue({
         hd_doituong: res.data[0].id
 
@@ -491,6 +494,12 @@ class Hopdong extends React.Component {
         id_visible: true,
         action: 'update'
       })
+      hopdong.hd_ngayky=formatdate(hopdong.hd_ngayky, 'yyyy-mm-dd')
+      hopdong.hd_ngaythanhly=formatdate(hopdong.hd_ngaythanhly, 'yyyy-mm-dd')
+      hopdong.hd_ngaythanhtoan=formatdate(hopdong.hd_ngaythanhtoan, 'yyyy-mm-dd')
+      hopdong.hd_ngayxuathoadon=formatdate(hopdong.hd_ngayxuathoadon, 'yyyy-mm-dd')
+      hopdong.hd_ngayketthuc=formatdate(hopdong.hd_ngayketthuc, 'yyyy-mm-dd')
+      
       form.setFieldsValue(hopdong);
     }
   };
@@ -652,6 +661,7 @@ class Hopdong extends React.Component {
   }
 
   render() {
+    var dateFormat = require('dateformat');
     if (token)
       return (
         <div>
@@ -703,7 +713,7 @@ class Hopdong extends React.Component {
           </div>
           <Row className="table-margin-bt" >
             <FormModal
-
+              
               wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
               onCancel={this.handleCancel}
@@ -734,13 +744,13 @@ class Hopdong extends React.Component {
               <Column title="Loại hợp đồng" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
               <Column title="Tên đối tượng" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
               <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} />
-              <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" onHeaderCell={this.onHeaderCell} />
+              <Column title="Thời gian thực hiện(ngày)" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
               <Column title="Địa chỉ" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               {/* <Column title="tên trạng thái" dataIndex="hd_tentrangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} /> */}
               <Column title="Files" dataIndex="hd_files" key="hd_files" onHeaderCell={this.onHeaderCell} />

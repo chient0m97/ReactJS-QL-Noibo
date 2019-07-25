@@ -36,12 +36,14 @@ module.exports = {
             case (hd.hd_loai) \
                 when 'DV' then 'Đơn Vị'\
                 when 'CN' then 'Cá Nhân'\
-                else 'Không xác định' end hd_loai,\
+                else 'Đơn Vị' \
+            end hd_loai,\
             hd.hd_doituong,\
             case (hd.hd_loai)\
                 when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
                 when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
-                else 'Không xác định' end hd_doituong,\
+                else 'Đơn Vị' \
+            end hd_doituong,\
             hd.dm_duan_id,\
             da.dm_duan_ten,\
             hd.hd_so,\
@@ -59,13 +61,13 @@ module.exports = {
                  when 'XHD' then 'Xuất hóa đơn'\
                  when 'DTT' then 'Đã thanh toán'\
                  when 'DONG' then 'Đóng'\
-                 else 'Không xác định'\
-             end hd_trangthai,\
+                 else 'Đang thực hiện'\
+            end hd_trangthai,\
             hd.hd_files,\
             hd.hd_ghichu\
-        from hopdongs hd,\
-          duans da \
-          where hd.dm_duan_id = da.dm_duan_id"
+            from hopdongs hd,\
+            duans da \
+            where hd.dm_duan_id = da.dm_duan_id"
                 return client.query(sql_SelectHopDongs)
                     .then(res => {
                         var hopdongs = res
