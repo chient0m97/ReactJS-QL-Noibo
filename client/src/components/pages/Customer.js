@@ -56,7 +56,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                                     <div style={{ display: kh_id_visible === true ? 'block' : 'none' }}>
                                         <Form.Item label="Mã khách hàng:">
                                             {getFieldDecorator('kh_id', {
-                                                rules: [{},]
+                                                rules: [{}]
                                             })(<Input type="text" disabaled />)}
                                         </Form.Item>
                                     </div>

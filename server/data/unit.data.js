@@ -137,7 +137,7 @@ module.exports = {
                 callback(res);
             })
     },
-    getHuyen: function (id_db_tinh,callback) {
+    getHuyen: function (id_db_tinh, callback) {
         console.log('day la id tinh', id_db_tinh)
         knex.raw('select dm_db_id , dm_db_ten from diabans where dm_db_id_cha = ' + id_db_tinh)
             .then((res) => {
@@ -145,11 +145,28 @@ module.exports = {
                 callback(res.rows);
             })
     },
-    getXa: function (callback) {
-        knex.from('diabans').select('*').where('dm_db_cap', 3)
+    getXa: function (data, callback) {
+        console.log('dcm id  huyen', data)
+        knex.raw('select dm_db_id, dm_db_ten from diabans where dm_db_id_cha = ' + data.dm_db_id_huyen)
+        // console.log('dcm xa',data)
             .then((res) => {
-                console.log('data', res)
-                callback(res);
+                console.log('data xa', res.rows)
+                callback(res.rows);
             })
+    },
+
+    getKhachhang : function (callback) {
+        knex.from('khachhangs').select('*')
+        .then((res) => {
+            callback(res);
+        })
     }
+    // getXa : function (id_db_huyen, callback) {
+    //     console.log('đây là id huyện',id_db_huyen)
+    //     knex.raw('select dm_db_id, dm_db_ten from diabans where dm_db_id_cha =' + id_db_huyen)
+    //     .then((res) => {
+    //         console.log('data row', res.rows)
+    //         callback(res.rows);
+    //     })
+    // }
 };

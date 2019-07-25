@@ -38,8 +38,14 @@ router.post('/unit/gethuyen', function (req, res) {
 })
 
 router.post('/unit/getxa', function (req, res) {
-    console.log('o qfnuq phoiqg')
-    unitController.getXa(function(data){
+    console.log('req xa',req.body)
+    unitController.getXa(req.body, function(data){
+        res.send(data);
+    })
+})
+
+router.post('/unit/getkhachhang', function (req, res) {
+    unitController.getKhachhang(function(data){
         res.send(data);
     })
 })

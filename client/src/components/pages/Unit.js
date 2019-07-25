@@ -25,8 +25,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             combobox.push(<Option key={'HD'}>Hoạt động</Option>);
             combobox.push(<Option key={'DHD'}>Dừng hoạt động</Option>);
             combobox.push(<Option key={'GT'}>Giải thể</Option>);
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen } = this.props;
-            console.log(dm_dv_id_visible)
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh } = this.props;
             const { getFieldDecorator } = form;
             var datacha = this.props.datacha
 
@@ -107,7 +106,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                                     <Form.Item label='Mã Địa Bàn Xã'>
                                         {getFieldDecorator('dm_db_id_xa', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select>
+                                        })(<Select onSelect={onSelectDiaBanXa}>
                                             {
                                                 select_diabanxa.map((value, index) => {
                                                     return (
@@ -154,8 +153,12 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                                     <Form.Item label='Mã Người Đại Diện'>
                                         {getFieldDecorator('kh_id_nguoidaidien', {
                                             // rules: [ {required: true,}],
-                                        })(<Select>
-
+                                        })(<Select>{
+                                            select_tenkh.map((value, index) => {
+                                                    return (
+                                                        <Option value={value.kh_id}>{value.kh_ten}</Option>
+                                                    )
+                                                })}
                                         </Select>)}
                                     </Form.Item>
                                 </Col>
@@ -215,7 +218,8 @@ class Unit extends React.Component {
             units: [],
             select_diabantinh: [],
             select_diabanhuyen: [],
-            select_diabanxa: []
+            select_diabanxa: [],
+            select_tenkh:[]
         }
     }
     //---Delete---
@@ -283,7 +287,7 @@ class Unit extends React.Component {
             var url = this.state.action === 'insert' ? 'unit/insert' : 'unit/update'
             Request(url, 'POST', values)
                 .then((response) => {
-
+console.log("hien thi ",url)
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -355,9 +359,6 @@ class Unit extends React.Component {
         await this.set_select_diabanxa({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id });
         await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
 
-        // await form.setFieldsValue({dm_db_id_huyen : this.state.select_diabanhuyen[0].dm_db_id})
-        // await this.set_select_diabanxa({dm_db_id_huyen : this.state.select_diabanhuyen[0].dm_db_id});
-        // await form.setFieldsValue({dm_db_id_xa : this.state.select_diabanxa[0].dm_db_id})
 
         this.setState({
             dataSource_Select_Parent: this.state.units
@@ -368,7 +369,6 @@ class Unit extends React.Component {
                 action: 'update'
             })
             var dataSourceCha = []
-
 
             this.state.units.map((value, index) => {
                 if (value.dm_dv_id !== unit.dm_dv_id) {
@@ -527,6 +527,15 @@ class Unit extends React.Component {
         })
     }
 
+    set_select_tenkh = async () => {
+        await Request('unit/getkhachhang', 'POST', {
+        }).then(async (res) => {
+            await this.setState({
+                select_tenkh : res.data
+            })
+        })
+    }
+
     set_select_diabantinh = async () => {
         await Request('unit/gettinh', 'POST', {
         }).then(async (res) => {
@@ -551,7 +560,7 @@ class Unit extends React.Component {
 
     set_select_diabanxa = async (id_db_huyen) => {
         await Request('unit/getxa', 'POST', {
-            id_db_huyen: this.state.id_db_huyen
+            id_db_huyen: id_db_huyen
         }).then((res) => {
             this.setState({
                 select_diabanxa: res.data
@@ -560,29 +569,64 @@ class Unit extends React.Component {
     }
 
     onSelectDiaBanTinh = async (value) => {
+        console.log('dia ban tinh')
         const { form } = this.formRef.props
         await this.set_select_diabanhuyen(value);
+
         if (this.state.select_diabanhuyen.length === 0) {
             await form.setFieldsValue({ dm_db_id_huyen: '' })
+            await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
+            await form.setFieldsValue({ dm_db_id_xa: '' })
         }
         else {
             await form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
+            await this.set_select_diabanxa({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id });
+            if (this.state.select_diabanxa.length !== 0) {
+                await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
+            }
+            else {
+                await form.setFieldsValue({ dm_db_id_xa: ' ' })
+            }
         }
+
+
     }
 
     onSelectDiaBanHuyen = async (value) => {
         const { form } = this.formRef.props
-        await this.set_select_diabanhuyen(value);
-        await this.set_select_diabanxa(value);
-        if (this.state.select_diabanhuyen.length === 0 && this.state.select_diabanxa.length === 0) {
+        // await this.set_select_diabanhuyen(value);
+        // await form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
+        console.log('value diaban huye', value)
+        await this.set_select_diabanxa({ dm_db_id_huyen: value });
+        if (this.state.select_diabanhuyen.length === 0) {
             console.log('dcm')
-            await form.setFieldsValue({ dm_db_id_huyen: '' })
+            // await form.setFieldsValue({ dm_db_id_huyen: '' })
             await form.setFieldsValue({ dm_db_id_xa: '' })
         }
         else {
-            await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
+            if (this.state.select_diabanxa.length === 0) {
+                await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
+                await form.setFieldsValue({ dm_db_id_xa: '' })
+            }
+            else{
+                 await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
+            }
+           
         }
+
+        
+
     }
+
+    // onSelectDiaBanXa = async (value) => {
+    //     const { form } = this.formRef.props
+    //     if (this.state.select_diabanxa.length !== 0) {
+    //         await form.setFieldsValue(value)
+    //     }else{
+    //         await form.setFieldsValue({ dm_db_id_xa: '' })
+    //     }
+    // }
+    
 
 
     render() {
@@ -674,8 +718,10 @@ class Unit extends React.Component {
                             select_diabantinh={this.state.select_diabantinh}
                             select_diabanhuyen={this.state.select_diabanhuyen}
                             select_diabanxa={this.state.select_diabanxa}
+                            select_tenkh={this.state.select_tenkh}
                             onSelectDiaBanTinh={this.onSelectDiaBanTinh}
                             onSelectDiaBanHuyen={this.onSelectDiaBanHuyen}
+                            onSelectDiaBanXa={this.onSelectDiaBanXa}
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.units} bordered='1' rowKey="dm_dv_id">
                             <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hide" disabled onHeaderCell={this.onHeaderCell} />

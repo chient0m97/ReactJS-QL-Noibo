@@ -65,19 +65,23 @@ var UnitController = {
 
     getHuyen: function getHuyeb(body,callback){
         unitData.getHuyen(body.id_db_tinh ,(data)=>{
-            console.log('data',data)
+            console.log('data huyennnn',data)
             callback(data)
         })
     },
 
-    getXa: function getXa(callback){
-        unitData.getXa((data)=>{
-            console.log('data',data)
+    getXa: function getXa(data,callback){
+        unitData.getXa(data.id_db_huyen,(data)=>{
+            console.log('data xaaaaa',data)
             callback(data)
         })
     },
 
-
+    getKhachhang: function getKhachhang(callback){
+        unitData.getKhachhang((data) =>{
+            callback(data)
+        })
+    },
 
     GetById: function GetById(Id, callback) {
         unitData.GetById(Id, (data) => {
