@@ -1,13 +1,15 @@
-
- 
+var UserController = require('../controller/phanquyen/userController')
+var constant = require('./constant')
 var authorize = (req, res, next) => {
     // check header for the token
-    
-      // decode token
-    if(JSON.stringify(req.url).trim().toLocaleLowerCase().includes('login') === true){
+    console.log('consta', constant)
+
+    console.log('request tu client', req.originalUrl)
+    // decode token
+    if (JSON.stringify(req.url).trim().toLocaleLowerCase().includes('login') === true) {
         next();
     }
-    else{
+    else {
         var token = req.headers['access-token'];
         console.log('authorize token', token)
         if (token) {
@@ -17,40 +19,28 @@ var authorize = (req, res, next) => {
                     return res.json({ message: 'invalid token' });
                 } else {
                     // if everything is good, save to request for use in other routes
-                    if (decoded.userName) {
-                        UserController.getClaims(decoded.userName, (claims) => {
-                            let isValid = false;
-                            if (claims && claims.length > 0) {
-                                let resource = req.originalUrl
-                                console.log('url: ', resource)
-                                for (let i = 0; i < claims.length; i++) {
-                                    const element = claims[i].split('.')[0];
-                                    if (resource.toUpperCase().indexOf(element) >= 0) {
-                                        isValid = true;
+                    UserController.getClaimsByUser(decoded.userName, (claims) => {
+                        console.log('claims authorizeeeeeeeeeeeeeeeeeeeee', claims)
+                        for (i = 0; i < constant.length; i++) {
+                            if (constant[i].url == req.originalUrl) {
+                                let clm = constant[i].claim
+                                for (j = 0; j < claims.length; j++) {
+                                    if (claims[j] == clm) {
                                         next();
-                                        break; 
+                                        break;
+
                                     }
                                 }
                             }
-                            if (!isValid) {
-                                res.send({
-                                    message: 'Chưa được phân quyền.'
-                                });
-                            }
-                        })
-                        next();
-                    } else {
-                     
-                            res.send({
-                                message: 'may deo co quyen vao day'
-                            });
-                    }
+                        }
+
+                    })
                 }
             })
-    } else {
+        } else {
             // if there is no token  
             res.send({
-                message: 'No token provided.' 
+                message: 'No token provided.'
             });
         }
     }

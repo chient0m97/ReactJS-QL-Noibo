@@ -29,8 +29,7 @@ class NormalLoginForm extends Component {
                         if (response.data.success === true) {
                             let data = response.data;
                             console.log('ssssssssssssssssssssss',data.token)
-                            console.log('ssssssssssaaaaaaaaaaaaaaaassssssssssss',data.action)
-                            this.props.action=data.action;
+                            console.log('ssssssssssaaaaaaaaaaaaaaaassssssssssss',data.message)
                             cookie.save('token', data.token, { path: '/' })
                             cookie.save('role',data.role,{})
                             window.location.reload()

@@ -3,51 +3,39 @@ const app = express();
 var router = express.Router();
 var userController = require('../controller/phanquyen/userController')
 config = require('../configurations/config');
+const bcrypt = require('bcryptjs');
 app.set('Secret', config.secret);
 
 router.post('/', (req, res) => {
-    userController.Login(req.body.username, function (data) {
+    userController.Login(req.body.username, async function (data) {
+        console.log(req.body.username)
         console.log(req.body.password);
-        console.log('data-----------------', data.password);
-        if (data) {
-
-            if (req.body.password == data.password) {
-                console.log('log thanh cong')
-
-                //if eveything is okey let's create our token 
+        console.log('data bay oi', data.password)
+        bcrypt.compare(req.body.password, data.password, function (err, match) {
+            console.log('matching ',match)
+            if (match) {
+                console.log('mk dung roi nhoc')
                 const payload = {
                     check: true,
                     userName: req.body.username,
-                    role: data.code,
                     claims: data.claims
                 };
                 var token = jwt.sign(payload, app.get('Secret'), {
                     expiresIn: "24h" // expires in 24 hours
                 });
-                console.log(token)
-                if (req.body.username === 'admin') {
-                    console.log('cai dcm')
-                    res.json({
-                        success: true,
-                        message: 'authentication done ',
-                        token: token
-                    });
-                }
-                else {
-                    res.json({
-                        success: true,
-                        message: 'authentication done ',
-                        token: token
-                    });
-                }
+                res.json({
+                    success: true,
+                    message: 'authentication done ',
+                    token: token
+                });
 
 
             } else {
-                res.json({ message: "please check your password !" })
+                res.json({ message: "sai mật khẩu rồi nhóc" })
+
             }
-        } else {
-            res.json({ message: "user not found !" })
-        }
+        });
+
     })
 
 

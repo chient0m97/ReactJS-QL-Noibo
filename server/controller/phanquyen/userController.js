@@ -1,9 +1,11 @@
-
-
 var Validator = require('../../validate/common')
 const userData = require('../../data/userData')
 const constant = require('../constant')
+const bcrypt = require('bcryptjs');
+
+
 var UserController = {
+
     /**
      * Get user paging.
      * @param {Number} pageNumber Page number
@@ -38,57 +40,38 @@ var UserController = {
 
     DeleteUserbyId: async function deleteUserbyId(Id, callback) {
         userData.deleteUserbyId(Id, (data) => {
-
+            console.log('erioertioertioerhiotero', data.success)
             if (data.success === true) {
                 callback({
                     success: data.success,
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callback(data, 400);
+            else {
+                callback(data, 400);
+
+            }
         })
     },
 
-    insertUser: async function insertUser(user, callback) {
-
-        if (Validator.isMail(user.email, 'Email không đúng định dạng')
-            & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
-            & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
-        ) {
-
-            if (await Validator.db.unique('users', 'name', user.name, 'Tên đăng nhập đã tồn tại !')
-                & await Validator.db.unique('users', 'email', user.email, 'Email đã tồn tại !')
-                & await Validator.db.unique('users', 'phone', user.phone, 'Số điện thoại đã tồn tại !')
-                & await Validator.db.unique('users', 'code', user.code, 'Mã đã tồn tại !')) {
-                userData.insertUser(user, (response) => {
-                    var message = constant.successInsert;
-                    var status = 200;
-                    if (!response.success) {
-                        Validator.error.push(constant.errorSys)
-                        message = Validator.getError()
-                        status = 400
-                    }
-                    callback({
-                        message: message,
-                        success: response.success
-                    }, status);
-                })
-            } else {
-                let error = Validator.getError()
-                console.log('list error',error)
+    insertUser: function insertUser(user, callback) {
+        console.log('hash password', user.password)
+        bcrypt.hash(user.password, 10, function (err, hash) {
+            user.password = hash;
+            userData.insertUser(user, (response) => {
+                var message = constant.successInsert;
+                var status = 200;
+                if (!response.success) {
+                    Validator.error.push(constant.errorSys)
+                    message = Validator.getError()
+                    status = 400
+                }
                 callback({
-                    message: error,
-                    
-                    success: false
-                }, 400);
-            }
-
-        } else {
-            callback({
-                message: Validator.getError(),
-                success: false
-            }, 400);
-        }
+                    message: message,
+                    success: response.success
+                }, status);
+            })
+        });
     },
     updateUser: function updateUser(user, callback) {
         console.log('controller')
@@ -97,38 +80,54 @@ var UserController = {
             & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
         ) {
             console.log('go to db')
-            userData.updateUser(user, (res) => {
-                callback({
-                    success: res.success,
-                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
+            bcrypt.hash(user.password, 10, function (err, hash) {
+                user.password = hash;
+                userData.updateUser(user, (res) => {
+                    callback({
+                        success: res.success,
+                        message: res.success === true ? constant.successUpdate : constant.errorUpdate
+                    })
                 })
-            })
+            });
+
 
         }
     },
     Login: function getUserLogin(userName, callback) {
         userData.getUserLogin(userName, (data) => {
-            console.log('data', data)
-            this.getClaimsByUser(userName, (cls) => {
-                data.claims = cls;
-                callback(data);
-            })
+            if (data) {
+                this.getClaimsByUser(userName, (cls) => {
+                    data.claims = cls;
+                    console.log('claim', cls)
+                    callback(data);
+                })
+            }
+            else {
+                callback(data)
+
+            }
+
         })
+
     },
     getClaimsByUser: (userName, callback) => {
-        let data = [
-            "USER.READ",
-            "USER.EDIT",
-            "USER.DELETE"
-        ]
-        if (userName == 'admin') {
-            callback(data)
-        } else {
-            data = [
-                "USER.READ"
-            ];
-            callback(data);
-        }
+        userData.getClaims(userName, (data) => {
+            console.log('tra ve data', data)
+            console.log('qweqweqweqweqeqwe', data.length)
+            if (data.length > 0) {
+                var data = data.map(function (value) {
+                    return value.role + '.' + value.action
+
+                });
+                callback(data)
+            }
+            else {
+                console.log('readdddd')
+                let data = ['USER.READ']
+                callback(data)
+            }
+        })
+
     },
 
     getClaimsByGroupUser: (groupUserName, callback) => {

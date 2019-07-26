@@ -11,6 +11,7 @@ import '../../index.css';
 import jwt from 'jsonwebtoken';
 import { check } from 'express-validator';
 import Permission from '../Authen/Permission'
+import Demo from '../common/Tree'
 const token = cookie.load('token');
 
 
@@ -208,7 +209,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Mật khẩu:">
                   {getFieldDecorator('password', {
                     rules: [{ required: true, message: this.state.messageRequired, }],
-                  })(<Input type="text" />)}
+                  })(<Input type="password" />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -601,11 +602,14 @@ class User extends React.Component {
       )
     }
     let payload = jwt.decode(token);
+    console.log('data tra ve bay oi', payload)
     let claims = payload.claims;
     console.log(claims);
+    let canPermiss = claims.indexOf(Permission.User.Permiss) >= 0;
     let canRead = claims.indexOf(Permission.User.Read) >= 0;
-    let canEdit = claims.indexOf(Permission.User.Edit) >= 0;
+    let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.DELETE) >= 0;
+    let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
     // if(!canRead)
     // {
     //   return (
@@ -642,7 +646,7 @@ class User extends React.Component {
           onOk={this.okRole}
           onCancel={this.cancelRole}
         >
-          <Checkbox>Quản lý người dùng</Checkbox>
+         <Demo/>
         </Modal>
         {/* <Row className="table-margin-bt">
           <Col span={1}>
@@ -655,20 +659,28 @@ class User extends React.Component {
         <WrappedDynamicFieldSet changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
 
 
-        <div>
+        <div style={{display:'flex'}}>
           {
-            canEdit ?
+            canUpdate ?
               <div>
+
                 <Button style={{ margin: '20px' }} onClick={this.showmodalRole}>
                   <Icon type="user" />
                 </Button> Phân Quyền
-                <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
-                  <Icon type="plus" />
-                </Button> Thêm
                 <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
                   <Icon type="edit" />
                 </Button> Sửa
             </div>
+              : null
+          }
+          
+          {
+            canCreate ?
+              <div>
+                <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
+                  <Icon type="plus" />
+                </Button> Thêm
+                </div>
               : null
           }
           {
@@ -739,7 +751,7 @@ class User extends React.Component {
         <Row>
           <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
         </Row>
-      </div>
+      </div >
 
     )
   }

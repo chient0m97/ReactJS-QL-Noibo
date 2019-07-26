@@ -4,6 +4,7 @@ var router = express.Router()
 var userController = require('../controller/phanquyen/userController');
 
 
+
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now())
     next()
@@ -20,21 +21,17 @@ router.post('/user/get', function (req, res) {
     })
 })
 
-router.get('/user/get/:Id', function (req, res) {
-    userController.GetById(req.params.Id, function (data) {
-        res.send(data);
-    })
-})
 
 
 router.delete('/user/delete', function (req, res) {
+    console.log('id delete la',req.body.id)
     userController.DeleteUserbyId(req.body.id, function (data) {
         res.send(data);
     })
 })
 
 router.post('/user/insert',function (req, res) {
-    console.log('data insert',req.body)
+    console.log('router',req.body)
     userController.insertUser(req.body, function (data) {
         res.send(data);
         console.log('result',data)
@@ -42,12 +39,7 @@ router.post('/user/insert',function (req, res) {
     })
 
 })
-router.post('/user/getcha',(req,res)=>{
-  userController.ss(function(data){
-    res.send(data)
-    console.log('data',data)
-  })
-})
+
 router.post('/user/update',function (req, res) {
   console.log('data res',req.body)
   userController.updateUser(req.body, function (data) {

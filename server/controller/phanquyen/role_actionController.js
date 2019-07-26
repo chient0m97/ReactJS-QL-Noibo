@@ -22,10 +22,13 @@ var UserController = {
         }
         );
     },
+
     /**
      * Get user by Id.
      * @param {Number} Id The identify of user
      */
+
+     
     GetById: function GetById(Id, callback) {
         userData.GetById(Id, (data) => {
             console.log('DATA', data)
