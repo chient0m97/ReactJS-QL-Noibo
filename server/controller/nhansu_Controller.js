@@ -5,8 +5,6 @@ const uuidv1 = require('uuid/v1');
 
 var nhansuController = {
 
-    
-
     getNhansu: function getNhansu(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
@@ -21,7 +19,7 @@ var nhansuController = {
         nhansu.ns_sodienthoai+="0";
         //nhansu.data.ns_id=uuidv1;g
         console.log('console :', nhansu)
-        if (Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng')
+        if ( nhansu.ns_email===undefined|| Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng')
         ) {
 
             if (await Validator.db.unique('nhansu','ns_dinhdanhcanhan',nhansu.ns_dinhdanhcanhan, 'Định danh cá nhân đã tồn tại !')
@@ -55,6 +53,8 @@ var nhansuController = {
     },
 
     updateNhansu: function updateNhansu(nhansu, callback){
+        console.log(nhansu, 'day la nhan su')
+        
         if (Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng'))
         {
             if (1){
