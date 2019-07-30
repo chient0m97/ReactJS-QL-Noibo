@@ -761,7 +761,6 @@ class Hotro extends React.Component {
                                 </Button>
                             </Tooltip>
                         </Col>
-
                         <Col span={1}>
                             <Tooltip title="Tải Lại">
                                 <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
@@ -792,7 +791,8 @@ class Hotro extends React.Component {
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }}>
                             <Column title="Dự án" dataIndex="dm_duan_ten" width={100} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="kh_hovaten" width={150} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Khách hàng" dataIndex="ns_hovaten" width={150} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Người được giao" dataIndex="kh_hovaten" width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
                                 render={text => {
                                     if (text === 'tiepnhan') { return 'Tiếp nhận' }
@@ -835,7 +835,7 @@ class Hotro extends React.Component {
                                 visible={false}
                                 title="Hành động"
                                 key="action"
-                                align="center"
+                                align="center"     
                                 render={(text, record) => (
                                     <span>
                                         <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.ns_id, text)}>
