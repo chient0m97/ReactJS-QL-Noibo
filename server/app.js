@@ -6,9 +6,8 @@ config = require('./configurations/config');
 app = express();
 const port = 5000;
 var routers = require('./router/index');
-
-//var group_userRouter = require('./router/group_userRoute');
-var userController = require('./controller/userController');
+var nhansuRoute = require('./router/nhansuRoute');
+var hotroRoute = require('./router/hotroRoute');
 var authorize = require('./middleware/authorize')
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
@@ -37,6 +36,9 @@ var corsOptions = {
 }
 app.use(cors());
 
+app.use('/nhansu', nhansuRoute);
+
+app.use('/hotro',hotroRoute)
 
 app.use('/', authorize, routers);
 

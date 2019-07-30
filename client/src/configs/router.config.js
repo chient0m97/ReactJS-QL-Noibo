@@ -1,7 +1,8 @@
 import About from '@pages/About';
 import HomePage from '@pages/HomePage';
 import User from '@pages/User'
-
+import NhanSu from '@pages/Nhansu'
+import HoTro from '@pages/Hotro'
 
 
 const routers = [
@@ -19,6 +20,16 @@ const routers = [
         path: '/user',
         component: User,
         name: 'user'
+    },
+    {
+        path: '/nhansu',
+        component: NhanSu,
+        name: 'nhansu'
+    },
+    {
+        path: '/hotro',
+        component: HoTro,
+        name: 'hotro'
     },
 
 ]

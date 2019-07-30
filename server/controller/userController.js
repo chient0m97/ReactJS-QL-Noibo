@@ -1,7 +1,7 @@
 
 
 var Validator = require('../validate/common')
-const userData = require('../data/user.data')
+const userData = require('../data/user_data')
 const constant = require('./constant')
 var UserController = {
     /**
@@ -72,7 +72,7 @@ var UserController = {
                         message: message,
                         success: response.success
                     }, status);
-                })
+                });
             } else {
                 callback({
                     message: Validator.getError(),
