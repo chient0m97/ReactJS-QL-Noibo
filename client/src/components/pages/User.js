@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
-// import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
@@ -10,16 +9,13 @@ import { fetchLoading } from '@actions/common.action';
 
 const token = cookie.load('token');
 const { Column } = Table;
-const {Option} = Select
+const { Option } = Select
 const { Search } = Input;
-
-
 
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     render() {
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
-      console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
         <Modal
@@ -36,25 +32,24 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={24}>
                 <div style={{ display: id_visible === true ? 'block' : 'none' }}>
                   <Form.Item label="Id:" >
-                    {getFieldDecorator('id', {
-                      rules: [ {} ],
-                    })(<Input type="number" disabled />)}
+                    {getFieldDecorator('id')(<Input type="number" disabled />)}
                   </Form.Item>
                 </div>
               </Col>
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label="Mã:">
+                <Form.Item label="Code:">
                   {getFieldDecorator('code', {
-                    rules: [ { required: true, message: 'Trường này không được bỏ trống!', } ],
+                    rules: [{ required: true, message: 'Trường này không được bỏ trống!', validateStatus: 'error' },
+                    ],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Tên đầy đủ:">
                   {getFieldDecorator('fullname', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -63,14 +58,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Tên đăng nhập">
                   {getFieldDecorator('name', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Input type="text" placeholder="user name" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Mật khẩu:">
                   {getFieldDecorator('password', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -79,14 +74,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Email:">
                   {getFieldDecorator('email', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!' }, { email: true, message: 'Trường này phải là email!' } ],
+                    rules: [{ required: true, message: 'Trường này không được để trống!' }, { email: true, message: 'Trường này phải là email!' }],
                   })(<Input type="email" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Số điện thoại:">
                   {getFieldDecorator('phone', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -127,7 +122,7 @@ class User extends React.Component {
   deleteUser = (id) => {
     Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
-        notification[ res.data.success === true ? 'success' : 'error' ]({
+        notification[res.data.success === true ? 'success' : 'error']({
           message: 'Thông báo',
           description: res.data.message
         });
@@ -163,6 +158,12 @@ class User extends React.Component {
 
   InsertOrUpdateUser = () => {
     const { form } = this.formRef.props;
+    form.setFields({
+      name: {
+        value: 'sdsdsds',
+        errors: [new Error('forbid ha')],
+      },
+    });
     form.validateFields((err, values) => {
       if (err) {
         return
@@ -189,7 +190,7 @@ class User extends React.Component {
             })
           }
           //thông báo lỗi vòa thành công
-          notification[ notifi_type ]({
+          notification[notifi_type]({
             message: message,
             description: description
           });
@@ -201,9 +202,11 @@ class User extends React.Component {
   refresh = (pageNumber) => {
     this.getUsers(this.state.pageNumber)
   }
+
   componentDidMount() {
     this.getUsers(this.state.pageNumber, this.state.index, this.state.sortBy);
   }
+
   onchangpage = (page) => {
     this.setState({
       page: page
@@ -228,7 +231,9 @@ class User extends React.Component {
         id_visible: true,
         action: 'update'
       })
+      user.name="ATrung"
       form.setFieldsValue(user);
+      console.log("last ", user)
     }
   };
 
@@ -247,7 +252,7 @@ class User extends React.Component {
 
   handleChangeInput = (e) => {
     let state = this.state;
-    state[ e.target.name ] = e.target.value;
+    state[e.target.name] = e.target.value;
     this.setState(state);
   }
   handleCount = () => {
@@ -383,7 +388,7 @@ class User extends React.Component {
           </Row>
           <div>
             <Select
-              defaultValue={[ 'name' ]}
+              defaultValue={['name']}
               showSearch
               style={{ width: 200 }}
               placeholder="Select a person"
@@ -430,7 +435,7 @@ class User extends React.Component {
               />
               <Column title="User Name" dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
               />
-              <Column title="Code" dataIndex="code" key="code"  onHeaderCell={this.onHeaderCell}/>
+              <Column title="Code" dataIndex="code" key="code" onHeaderCell={this.onHeaderCell} />
               <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
               <Column title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
               <Column title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />

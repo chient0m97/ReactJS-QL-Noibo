@@ -2,6 +2,8 @@ var express = require('express')
 var router = express.Router()
 // middleware that is specific to this router
 var userController = require('../controller/userController');
+app = express();
+
 
 
 router.use(function timeLog(req, res, next) {
@@ -15,7 +17,7 @@ router.post('/login', (req, res, next) => {
         if (req.body.password === data.password) {
           delete data.password
           //if eveything is okey let's create our token 
-          const payload = {
+          const payload = { 
             check: true,
             userName: req.body.username
           };
@@ -38,6 +40,8 @@ router.post('/login', (req, res, next) => {
     })
   });
 
+
+
 router.post('/user/get', function (req, res) {
     let body = req.body;
     let pageNumber = body.pageNumber;
@@ -45,6 +49,7 @@ router.post('/user/get', function (req, res) {
     userController.getUser(pageNumber, pageSize, function (data) {
         res.send(data);
     })
+    console.log('get data')
 })
 
 router.get('/user/get/:Id', function (req, res) {
@@ -88,5 +93,6 @@ router.post('/user/search',function(req,res){
 router.get('/about', function (req, res) {
     res.send('About User')
 })
+
 
 module.exports = router
