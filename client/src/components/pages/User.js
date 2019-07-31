@@ -11,7 +11,8 @@ import '../../index.css';
 import jwt from 'jsonwebtoken';
 import { check } from 'express-validator';
 import Permission from '../Authen/Permission'
-import Demo from '../common/Tree'
+import TreeRole from '../common/Tree'
+import { async } from 'q';
 const token = cookie.load('token');
 
 
@@ -20,7 +21,6 @@ const { Option } = Select
 const { Search } = Input;
 
 let id = 0;
-console.log('token', token)
 class DynamicFieldSet extends React.Component {
   remove = k => {
     const { form } = this.props;
@@ -107,7 +107,6 @@ class DynamicFieldSet extends React.Component {
             }
           >
             <Option value="name">User Name</Option>
-            <Option value="code">Code</Option>
             <Option value="email">Email</Option>
             <Option value="password">Password</Option>
             <Option value="phone">Phone Number</Option>
@@ -181,14 +180,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
             </Row>
             <Row gutter={24}>
-              <Col span={12}>
-                <Form.Item label="Mã:">
-                  {getFieldDecorator('code', {
-                    rules: [{ required: true, message: this.state.messageRequired, }],
-                  })(<Input type="text" />)
-                  }
-                </Form.Item>
-              </Col>
+
               <Col span={12}>
                 <Form.Item label="Tên đầy đủ:">
                   {getFieldDecorator('fullname', {
@@ -310,16 +302,20 @@ class User extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        let data = response.data;
-        console.log('data', data.data.users)
-        if (data.data)
-          this.setState({
-            users: data.data.users,
-            count: Number(data.data.count)//eps kieeru veef
+        console.log('res', response)
+        if (response) {
+          let data = response.data;
+          console.log('data', data.data.users)
+          if (data.data)
+            this.setState({
+              users: data.data.users,
+              count: Number(data.data.count)//eps kieeru veef
+            })
+          this.props.fetchLoading({
+            loading: false
           })
-        this.props.fetchLoading({
-          loading: false
-        })
+        }
+
       })
     //   jwt.decode(token)
     // jwt.verify(token, "heymynameismohamedaymen", (err, decoded) => {
@@ -565,20 +561,36 @@ class User extends React.Component {
   ChangeCheckbox = () => {
     console.log('dcm')
   }
-  showmodalRole = () => {
-    this.setState({
-      modalRoleVisible: true
-    })
+  showmodalRole = async (name) => {
+    console.log('show nodadadasaasdasd')
+    console.log('user name', name)
+
+
+    if (name) {
+      this.setState({
+        modalRoleVisible: true,
+
+      })
+    }
+    else {
+      message.info('chọn user đã nhóc');
+    }
+
   }
-  okRole = e => {
-    console.log(e);
-    this.setState({
+  okRole = async e => {
+    let user = this.state.selectedId
+    let a = this.child.state.checkedKeys
+    Request('setpermission', 'POST', { a, user }).then(res => {
+
+    })
+    console.log('data con ', a)
+    await this.setState({
       modalRoleVisible: false,
     });
   };
 
   cancelRole = e => {
-    console.log(e);
+    console.log('cancel')
     this.setState({
       modalRoleVisible: false,
     });
@@ -602,13 +614,13 @@ class User extends React.Component {
       )
     }
     let payload = jwt.decode(token);
-    console.log('data tra ve bay oi', payload)
     let claims = payload.claims;
-    console.log(claims);
-    let canPermiss = claims.indexOf(Permission.User.Permiss) >= 0;
+    console.log('quyen ',claims)
+    let canPermiss = claims.indexOf(Permission.Role.Permiss) >= 0;
+    console.log('permis',canPermiss)
     let canRead = claims.indexOf(Permission.User.Read) >= 0;
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
-    let canDelete = claims.indexOf(Permission.User.DELETE) >= 0;
+    let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
     let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
     // if(!canRead)
     // {
@@ -617,18 +629,33 @@ class User extends React.Component {
     //   )
     // }
     const rowSelection = {
+      type: 'radio',
       hideDefaultSelections: true,
       onChange: async (selectedRowKeys, selectedRows) => {
+        console.log(selectedRowKeys[0])
+        let sl = selectedRowKeys[0]
+        Request('checkrole', 'POST', { sl }).then((res) => {
+          console.log('data server trả về', res)
+          let data = res.data;
+          let a = data.map(function (value) {
+            return a = { role: value.split('.')[0], acton: value.split('.')[1] }
+          })
+          console.log('spitttttttttttttttttttttttttttttttttttttt', a)
+          this.setState({
+            dataTree: data,
+          })
+          console.log('ROLEeeee', this.state.dataTree)
 
-        console.log('id check', selectedRowKeys[0])
+        })
+        console.log('selected rowkeys', selectedRowKeys)
         if (selectedRows[0]) {
           console.log('kkkkkkk')
           await this.setState({
             selectedId: selectedRowKeys[0],
             user: selectedRows[0],
-
           })
         }
+
       },
 
       getCheckboxProps: record => ({
@@ -646,7 +673,7 @@ class User extends React.Component {
           onOk={this.okRole}
           onCancel={this.cancelRole}
         >
-         <Demo/>
+          <TreeRole ref={instance => this.child = instance} dataTree={this.state.dataTree} />
         </Modal>
         {/* <Row className="table-margin-bt">
           <Col span={1}>
@@ -659,21 +686,26 @@ class User extends React.Component {
         <WrappedDynamicFieldSet changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
 
 
-        <div style={{display:'flex'}}>
+        <div style={{ display: 'flex' }}>
+          {
+            canPermiss ?
+              <div>
+                <Button style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
+                  <Icon type="user" />
+                </Button> Phân Quyền
+            </div>
+              : null
+          }
           {
             canUpdate ?
               <div>
-
-                <Button style={{ margin: '20px' }} onClick={this.showmodalRole}>
-                  <Icon type="user" />
-                </Button> Phân Quyền
                 <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
                   <Icon type="edit" />
                 </Button> Sửa
             </div>
               : null
           }
-          
+
           {
             canCreate ?
               <div>
@@ -720,7 +752,7 @@ class User extends React.Component {
                 onClick: event => {
                   this.handleClickRow.bind(this, rowIndex)
                   console.log('aaaaaaaaaaaaaaaaaa', event)
-                  console.log('reacassadasdad', record)
+                  console.log('reacassadasdad', record.name)
 
                   console.log('reacassadasdad', rowIndex)
 
@@ -730,7 +762,7 @@ class User extends React.Component {
             expandRowByClick="true" onChange={this.changeRows}
             pagination={false}
             rowSelection={rowSelection}
-            dataSource={this.state.users} rowKey="id" >
+            dataSource={this.state.users} rowKey="name" >
             <Column className="action-hide"
               title={<span>Id <Icon type={this.state.orderby} /></span>}
               dataIndex="id"
@@ -739,7 +771,6 @@ class User extends React.Component {
             />
             <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
             />
-            <Column title="Code" dataIndex="code" key="code" onHeaderCell={this.onHeaderCell} />
             <Column className="action-hide" title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
             <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
             <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />

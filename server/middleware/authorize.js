@@ -23,9 +23,11 @@ var authorize = (req, res, next) => {
                         console.log('claims authorizeeeeeeeeeeeeeeeeeeeee', claims)
                         for (i = 0; i < constant.length; i++) {
                             if (constant[i].url == req.originalUrl) {
+                                console.log('url matching')
                                 let clm = constant[i].claim
                                 for (j = 0; j < claims.length; j++) {
                                     if (claims[j] == clm) {
+                                        console.log('nexttttttttttttttttttttttttttt')
                                         next();
                                         break;
 

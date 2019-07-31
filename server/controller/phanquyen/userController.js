@@ -2,7 +2,7 @@ var Validator = require('../../validate/common')
 const userData = require('../../data/userData')
 const constant = require('../constant')
 const bcrypt = require('bcryptjs');
-
+const pool = require('../../data/connect')
 
 var UserController = {
 
@@ -95,10 +95,13 @@ var UserController = {
     },
     Login: function getUserLogin(userName, callback) {
         userData.getUserLogin(userName, (data) => {
+            console.log('data', data)
             if (data) {
+                console.log('vao get claim')
                 this.getClaimsByUser(userName, (cls) => {
                     data.claims = cls;
                     console.log('claim', cls)
+                    console.log('dataaaaaaaaaaaaaaa', data)
                     callback(data);
                 })
             }
@@ -113,12 +116,13 @@ var UserController = {
     getClaimsByUser: (userName, callback) => {
         userData.getClaims(userName, (data) => {
             console.log('tra ve data', data)
-            console.log('qweqweqweqweqeqwe', data.length)
-            if (data.length > 0) {
-                var data = data.map(function (value) {
+            console.log('qweqweqweqweqeqwe', data.data.length)
+            if (data.data.length > 0) {
+                var data = data.data.map(function (value) {
                     return value.role + '.' + value.action
 
                 });
+                console.log('data', data)
                 callback(data)
             }
             else {
@@ -154,12 +158,17 @@ var UserController = {
             callback(data);
         })
     },
-    ss: function ss(callback) {
-        userData.ss((data) => {
-            callback(data);
-        })
-    },
 
+    setPermission: function (permiss, callback) {
+        userData.updateRole(permiss, (data) => {
+           console.log(data)
+        })
+        console.log('perrrrrrrrrrrrrrrrrrrrrrrrr', permiss)
+        //    let per =  permiss.map(function (value) {
+        //         return value = { role: value.split('.')[0], action: value.split('.')[1] }
+        //     })
+        //     callback(per)
+    },
     validateCreate: (req, res, next) => {
         next()
     },

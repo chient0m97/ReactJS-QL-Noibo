@@ -5,8 +5,11 @@ jwt = require('jsonwebtoken');
 config = require('./configurations/config');
 app = express();
 const login = require('./router/login')
+const checked = require('./router/checkrole')
+const setpermiss = require('./router/setpermission')
 const port = 5000;
 var userRouter = require('./router/index');
+
 
 //var group_userRouter = require('./router/group_userRoute');
 var userController = require('./controller/phanquyen/userController');
@@ -40,6 +43,9 @@ app.use(cors());
 
 app.use('/Login',login);
 
+app.use('/checkrole',checked)
+
+app.use('/setpermission',setpermiss)
 
 app.use('/', authorize, userRouter);
 
