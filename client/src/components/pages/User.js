@@ -389,17 +389,6 @@ class User extends React.Component {
   }
 
   showModal = (user) => {
-    // Request('user/getcha', 'POST', null).then((res) => {
-    //   let data = res.data;
-    //   console.log('--', data)
-    //   this.setState({
-    //     datacha: data
-    //   })
-    // })
-    // console.log('data', this.state.datacha)
-
-
-
     const { form } = this.formRef.props
     this.setState({
       visible: true
@@ -471,6 +460,7 @@ class User extends React.Component {
   search = async (xxxx) => {
     console.log('xxxxxxxxxxxx', this.state.pageSize)
     console.log('search text', xxxx)
+    console.log('column search',this.state.columnSearch)
     Request('user/search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
@@ -622,12 +612,7 @@ class User extends React.Component {
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
     let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-    // if(!canRead)
-    // {
-    //   return (
-    //     <AccessDenied />
-    //   )
-    // }
+   
     const rowSelection = {
       type: 'radio',
       hideDefaultSelections: true,

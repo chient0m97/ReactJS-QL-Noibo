@@ -1,0 +1,32 @@
+module.exports = 
+[
+    {
+        url:'/user/get',
+        claim:'USER.READ'
+    },
+    {
+        url:'/user/search',
+        claim:'USER.READ'
+    },
+    {
+        url:'/user/insert',
+        claim:'USER.INSERT'
+    },
+    {
+        url:'/user/update',
+        claim:'USER.UPDATE'
+    },
+    {
+        url:'/user/delete',
+        claim:'USER.DELETE'
+    },
+    {
+        url:'/user/checkrole',
+        claim:'ADMIN.INSERT'
+    },
+    {
+        url:'/setpermission',
+        claim:'ROLE.PERMISISON'
+    }
+   
+]
