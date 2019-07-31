@@ -36,14 +36,16 @@ module.exports = {
             case (hd.hd_loai) \
                 when 'DV' then 'Đơn Vị'\
                 when 'CN' then 'Cá Nhân'\
-                else 'Đơn Vị' \
-            end hd_loai,\
+                 \
+            end ten_hd_loai,\
+            hd.hd_loai,\
             hd.hd_doituong,\
             case (hd.hd_loai)\
                 when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
                 when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
-                else 'Đơn Vị' \
-            end hd_doituong,\
+                 \
+            end ten_hd_doituong,\
+            hd.hd_doituong,\
             hd.dm_duan_id,\
             da.dm_duan_ten,\
             hd.hd_so,\
@@ -61,8 +63,9 @@ module.exports = {
                  when 'XHD' then 'Xuất hóa đơn'\
                  when 'DTT' then 'Đã thanh toán'\
                  when 'DONG' then 'Đóng'\
-                 else 'Đang thực hiện'\
-            end hd_trangthai,\
+                 \
+            end ten_hd_trangthai,\
+            hd.hd_trangthai,\
             hd.hd_files,\
             hd.hd_ghichu\
             from hopdongs hd,\
@@ -117,15 +120,24 @@ module.exports = {
         })
     },
     updateHopdong: function (hopdong, callback) {
+        console.log('hopdongData')
         knex.from('hopdongs').where('hd_id', hopdong.hd_id)
             .update(hopdong).then(res => {
+                console.log('hopdongData')
                 callback({ success: true })
             }).catch(err => {
                 console.log(err)
                 callback({ success: false })
             })
     },
-
+    selectHopdong: function (hopdong, callback) {
+        knex.from('hopdongs').select('*').where('hd_id', hopdong.hd_id).then(res=>{
+            callback(res[0]);
+        }).catch(err=>{
+            console.log(err)
+            callback({ success: false })
+        })
+    },
     getcha: function (callback) {
         //let strSqlKH = "select kh_id as id, kh_ten || '(' || kh_email || ')' ten from khachhangs";
         let strSqlDV = "select dm_dv_id as id, dm_dv_ten ten from donvis";
@@ -163,6 +175,15 @@ module.exports = {
             console.log(res)
         }).catch((err) => {
             console.log(err)
+        })
+    },
+    getinsertduan: function (duan, callback){
+        knex.from('duans').insert(duan).then(res => {
+            console.log('inserted');
+            callback({ success: true});
+        }).catch(err => {
+            console.log(err)
+            callback({ success: false })
         })
     },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {

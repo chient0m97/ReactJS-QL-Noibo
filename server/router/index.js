@@ -122,8 +122,8 @@ router.post('/hopdong/insert',function (req, res) {
 
 router.post('/hopdong/update',function (req, res) {
   //console.log('data res',req)
-  //console.log("/hopdong/update")
-  hopdongController.updateHopdong(req.body, function (data) {
+  console.log("/hopdong/update")
+  hopdongController.UpdateHopdong(req.body, function (data) {
       res.send(data);
   })
 })
@@ -161,4 +161,22 @@ router.post('/hopdong/getduan', function(req, res){
     res.send(data);
   })
 })
+router.post('/hopdong/insertduan', function(req, res){
+  hopdongController.getinsertduan(function(data){
+    res.send(data);
+  })
+})
+router.post('/hopdong/upload',function(req, res) {
+     
+  upload(req, res, function (err) {
+         if (err instanceof multer.MulterError) {
+             return res.status(500).json(err)
+         } else if (err) {
+             return res.status(500).json(err)
+         }
+    return res.status(200).send(req.file)
+
+  })
+
+});
 module.exports = router

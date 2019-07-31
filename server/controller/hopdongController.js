@@ -106,24 +106,25 @@ var HopdongController = {
             }, 400);
         }
     },
-    updateHopdong: async function updateHopdong(hopdong, callback) {
+    UpdateHopdong: async function updateHopdong(hopdong, callback) {
     //     if (
     //     Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
     //     & Validator.isNum(hopdong.dm_duan_id, 'Dự án id không đúng định dạng')
     //     & Validator.isAlpha(hopdong.hd_loai, 'Loại hợp đồng không đúng định dạng')
     //     & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')  
     //  ) {
-    //          if (1) {
+             if (1) {
+                 console.log('hopdongController')
                 hopdongData.updateHopdong(hopdong, (res) => {
+                    console.log('hopdongController')
                     callback({
                         success: res.success,
                         message: res.success === true ? constant.successUpdate : constant.errorUpdate
                     })
                 })
-         //  }
+           }
         //}
-    }
-    ,
+    },
 //     Login: function getUserLogin(userName, callback) {
 //         hopdongData.getUserLogin(userName, (data) => {
 
@@ -147,6 +148,11 @@ getkhachhang: function getkhachhang(callback){
 },
 getduan: function getduan(callback){
     hopdongData.getduan((data)=>{
+        callback(data)
+    })
+},
+getinsertduan: function getinsertduan(callback){
+    hopdongData.getinsertduan((data)=>{
         callback(data)
     })
 },

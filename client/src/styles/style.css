@@ -139,7 +139,7 @@
 /* .ant-btn-primary{
   background-color: coral;
 } */
-.ant-form-item-required{
+/* .ant-form-item-required{
   margin-top: 0px;
 }
 .ant-modal-body{
@@ -149,7 +149,7 @@
 /* .ant-form-item{
   padding-top: 5px;
 }*/
-.ant-row::after{
+/*.ant-row::after{
   padding-bottom: 0px;
   margin-bottom: 0px;
 } 
@@ -161,4 +161,46 @@
 }
 .ant-row.ant-form-item::after{
   padding-bottom: 0px;
+} */
+.ant-modal-header {
+  padding: 16px 24px;
+  border-radius: 4px 4px 0 0;
 }
+.ant-modal-content {
+  position: relative;
+  background-clip: padding-box;
+  border: 0;
+  border-radius: 4px;
+  pointer-events: auto;
+}
+.ant-row {
+  position: relative;
+  height: auto;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  zoom: 1;
+  display: block;
+  box-sizing: border-box;
+}
+.ant-table {
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5;
+  list-style: none;
+  font-feature-settings: 'tnum';
+}
+/* .ant-modal-body{
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.ant-upload{
+  margin-bottom: 0px;
+}
+.ant-upload-drag{
+  margin-bottom: 0px;
+}
+.ant-form-item-control{
+  margin-bottom: 0px;
+} */
