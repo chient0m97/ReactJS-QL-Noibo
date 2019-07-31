@@ -336,7 +336,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="TG dự kiến hoàn thành">
                                     {getFieldDecorator('ht_thoigian_dukien_hoanthanh', {
                                         rules: [{}],
-                                    })(<Input type="date" size={"small"} disabled={this.props.trangthai} />)}
+                                    })(<Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -383,7 +383,7 @@ const rowSelection = {
 }
 
 var formatDateModal = require('dateformat');
-
+var array_ht_trangthai = []
 class Hotro extends React.Component {
     constructor(props) {
         super(props);
@@ -414,7 +414,8 @@ class Hotro extends React.Component {
             orderby: 'arrow-up',
             date: null,
             trangthaiinput: false,
-            trangthaibutton: false
+            trangthaibutton: false,
+            colorcolumn: 'yellow'
         }
     }
 
@@ -455,7 +456,6 @@ class Hotro extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                console.log("hien thi res gethotro ", res)
                 this.setState({
                     hotro: res.data.data.hotros,
                     count: res.data.data.count
@@ -466,13 +466,16 @@ class Hotro extends React.Component {
                 var array_duan = []
                 res.data.data.hotros.map((data, index) => {
                     array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
+                    array_ht_trangthai.push(data.ht_trangthai)
                 })
                 this.setState({
                     id_duanfilltable: array_duan
                 })
-            })
 
+            })
     }
+
+
 
     insertOrUpdate = async () => {
         const { form } = await this.formRef.props;
@@ -483,6 +486,8 @@ class Hotro extends React.Component {
             }
             var url = this.state.action === 'insert' ? 'hotro/insert' : 'hotro/update'
             console.log('url is: ', url)
+            if (values.ht_thoigian_dukien_hoanthanh === "")
+                values.ht_thoigian_dukien_hoanthanh = null
             Request(url, 'POST', values)
                 .then((response) => {
                     console.log("hien thi gia tri values ", values)
@@ -748,7 +753,30 @@ class Hotro extends React.Component {
             })
     }
 
+    convertDateToInt = (date) => {
+        return formatDateModal(date, 'yyyymmdd')
+    }
+
+    checkDate = (check, text, j) => {
+        j = j - 1
+        if (array_ht_trangthai[(this.state.page-1)*10+ j] === "daxong") {
+            return <a style={{ color: 'brown' }}>{text}</a>
+        }
+        if (check === 1)
+            return <a style={{ color: 'red' }}>{text}</a>
+        return <span>{text}</span>
+    }
+
+
+    checkDateConvert = (x) => {
+        var y = 0
+        y = ((format(x, "mm") - format(new Date(), "mm")) * 30) + (format(x, "dd") - format(new Date(), "dd"))
+        return y
+    }
+
     render() {
+        var i = 0
+        var j = 0
         var formatDate = require('dateformat')
         return (
             <div>
@@ -789,53 +817,98 @@ class Hotro extends React.Component {
                             trangthaibutton={this.state.trangthaibutton}
                             changeButton={this.changeButton}
                         />
-                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }}>
-                            <Column title="Dự án" dataIndex="dm_duan_ten" width={100} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="ns_hovaten" width={150} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Người được giao" dataIndex="kh_hovaten" width={150} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
+                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }} >
+                            <Column dataIndex="ht_thoigian_dukien_hoanthanh"
+                                render={
+                                    text => {
+                                        j++
+                                        console.log("Hien thi j ", (this.state.page-1)*10+ j-1, " va page ",this.state.page)
+                                        if (array_ht_trangthai[ (this.state.page-1)*10+ j-1] === "daxong") {
+                                            return <Badge color={"brown"} />
+                                        }
+                                        if (this.checkDateConvert(text) <= 1) {
+                                            i = 1
+                                            return <Badge color={"red"} />
+                                        }
+                                        else {
+                                            i = 0
+                                            return <Badge color={"green"} />
+                                        }
+
+                                    }}
+                            />
+                            <Column title="Dự án" dataIndex="dm_duan_ten" width={100}
                                 render={text => {
-                                    if (text === 'tiepnhan') { return 'Tiếp nhận' }
-                                    else if (text === 'dangxuly') { return 'Đang xử lý' }
-                                    else if (text === 'dangxem') { return 'Đang xem' }
-                                    else return 'Đã xong'
+                                    return this.checkDate(i, text, j)
                                 }}
+                                onHeaderCell={this.onHeaderCell} />
+                            <Column title="Khách hàng" dataIndex="ns_hovaten"
+                                render={text => {
+                                    return this.checkDate(i, text,j)
+                                }}
+                                width={150} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Người được giao" dataIndex="kh_hovaten"
+                                render={text => {
+                                    return this.checkDate(i, text,j)
+                                }}
+                                width={150} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
+                                render={
+                                    text => {
+                                        if (text === 'tiepnhan') { return this.checkDate(i, "Tiếp nhận",j) }
+                                        if (text === 'dangxuly') { return this.checkDate(i, "Đang xử lý",j) }
+                                        if (text === 'dangxem') { return this.checkDate(i, "Đang xem",j) }
+                                        return this.checkDate(i, "Đã xong",j)
+                                    }
+                                }
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Phân loại" dataIndex="ht_phanloai" width={100}
                                 render={text => {
-                                    if (text === 'bug') { return 'Lỗi' }
-                                    else if (text === 'new') { return 'Việc mới' }
-                                    else return 'Việc tương lai'
+                                    if (text === 'bug') { return this.checkDate(i, "Lỗi",j) }
+                                    if (text === 'new') { return this.checkDate(i, "Việc mới",j) }
+                                    return this.checkDate(i, this.checkDate(i, "Việc tương lai",j))
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Ưu tiên" dataIndex="ht_uutien"
                                 render={text => {
-                                    if (text === 'GAP') { return 'Gấp' }
-                                    else if (text === 'CAO') { return 'Cao' }
-                                    else if (text === 'TB') { return 'Trung bình' }
-                                    else return 'Thấp'
+                                    if (text === 'GAP') { return this.checkDate(i, "Gấp",j) }
+                                    if (text === 'CAO') { return this.checkDate(i, "Cao",j) }
+                                    if (text === 'TB') { return this.checkDate(i, "Trung bình",j) }
+                                    return this.checkDate(i, "Thấp",j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" render={text => formatDate(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh"
+                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan"
+                                render={text => {
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"),j)
+                                }}
+                                 onHeaderCell={this.onHeaderCell} />
+                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
                                 render={text => {
                                     if (text === null) { return '' }
-                                    else return formatDate(text, "dd/mm/yyyy")
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"),j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh"
                                 render={text => {
                                     if (text === null) { return '' }
-                                    else return formatDate(text, "dd/mm/yyyy")
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"),j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Ghi chú" dataIndex="ht_ghichu" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau"
+                                render={text => {
+                                    return this.checkDate(i, text,j)
+                                }}
+                                onHeaderCell={this.onHeaderCell} />
+                            <Column title="Ghi chú" dataIndex="ht_ghichu"
+                                render={text => {
+                                    return this.checkDate(i, text,j)
+                                }}
+                                onHeaderCell={this.onHeaderCell} />
                             <Column
                                 visible={false}
                                 title="Hành động"
                                 key="action"
-                                align="center"     
+                                align="center"
                                 render={(text, record) => (
                                     <span>
                                         <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.ns_id, text)}>
