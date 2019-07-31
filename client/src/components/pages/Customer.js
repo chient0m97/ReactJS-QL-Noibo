@@ -7,6 +7,7 @@ import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 // import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
+import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 // import { type } from 'os';
 // import { unwatchFile } from 'fs';
 
@@ -16,189 +17,6 @@ const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
 var formDateModal = require('dateformat');
-
-const FormModal = Form.create({ name: 'form_in_modal' })(
-    class extends React.Component {
-
-        render() {
-            const { Option } = Select;
-            const combobox = [];
-            const comboboxx = [];
-
-            combobox.push(<Option key={'DD'}>Đại diện</Option>);
-            combobox.push(<Option key={'DM'}>Đầu mối liên lạc</Option>);
-            combobox.push(<Option key={'TXLL'}>Thường xuyên liên lạc</Option>);
-
-            comboboxx.push(<Option key={'Nam'}>Nam</Option>);
-            comboboxx.push(<Option key={'Nữ'}>Nữ</Option>);
-            comboboxx.push(<Option key={'Khác'}>Khác</Option>);
-
-            const dateFormat = "YYYY-MM-DD";
-
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, kh_id_visible, handleChange } = this.props;
-            console.log(kh_id_visible)
-            const { getFieldDecorator } = form;
-            // var datacha = this.props.datacha
-            return (
-                <div>
-                    <Modal
-                        visible={visible}
-                        title="NHẬP THÔNG TIN KHÁCH HÀNG:"
-                        okText="Save"
-                        onCancel={onCancel}
-                        onOk={onSave}
-                        confirmLoading={confirmLoading}
-                        width={1000}
-                    >
-                        <Form layout={formtype}>
-                            <Row>
-                                <Col span={24}>
-                                    <div style={{ display: kh_id_visible === true ? 'block' : 'none' }}>
-                                        <Form.Item label="Mã khách hàng:">
-                                            {getFieldDecorator('kh_id', {
-                                                rules: [{}]
-                                            })(<Input type="text" disabaled />)}
-                                        </Form.Item>
-                                    </div>
-                                </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={8}>
-                                    <Form.Item label='Họ:'>
-                                        {getFieldDecorator('kh_ho', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Tên lót:'>
-                                        {getFieldDecorator('kh_tenlot', {
-                                            rules: [{}],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Tên:'>
-                                        {getFieldDecorator('kh_ten', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={5}>
-                                    <Form.Item label='Ngày sinh:'>
-                                        {getFieldDecorator('kh_ngaysinh', {
-                                            // rules: [{}],
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(
-                                        <Input type="date" size="small" format={dateFormat} />
-                                        )}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={5}>
-                                    <Form.Item label='Giới tính:'>
-                                        {getFieldDecorator('kh_gioitinh', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select
-                                            style={{ width: '100%' }}
-                                            placeholder='Please select'
-                                            onChange={handleChange}
-                                        >
-                                            {comboboxx}
-                                        </Select>)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={5}>
-                                    <Form.Item label='Định danh cá nhân:'>
-                                        {getFieldDecorator('kh_dinhdanhcanhan', {
-                                            rules: [{}],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={5}>
-                                    <Form.Item label='Email:'>
-                                        {getFieldDecorator('kh_email', {
-                                            rules: [{}],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={4}>
-                                    <Form.Item label='Số điện thoại:'>
-                                        {getFieldDecorator('kh_sodienthoai', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={8}>
-                                    <Form.Item label='Mã tỉnh:'>
-                                        {getFieldDecorator('dm_db_id_tinh', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Mã huyện:'>
-                                        {getFieldDecorator('dm_db_id_huyen', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Mã xã:'>
-                                        {getFieldDecorator('dm_db_id_xa', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col span={24}>
-                                    <Form.Item label='Địa chỉ:'>
-                                        {getFieldDecorator('kh_diachi', {
-                                            rules: [{}],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={8}>
-                                    <Form.Item label='Mã đơn vị:'>
-                                        {getFieldDecorator('dm_dv_id', {
-                                            rules: [{}],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Vị trí công tác:'>
-                                        {getFieldDecorator('kh_vitricongtac', {
-                                            rules: [{}],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Liên lạc:'>
-                                        {getFieldDecorator('kh_lienlac', {
-                                            rules: [{}],
-                                        })(<Select
-                                            style={{ width: '100%' }}
-                                            placeholder='Please select'
-                                            onChange={handleChange}
-                                        >
-                                            {combobox}
-                                        </Select>)}
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                        </Form>
-                    </Modal>
-                </div>
-            )
-        }
-    }
-)
 
 class Customer extends React.Component {
     constructor(props) {
@@ -221,11 +39,15 @@ class Customer extends React.Component {
             columnSearch: '',
             isSort: true,
             sortBy: 'ASC',
-            index: 'kh_ten',
+            index: 'tendonvi',
             orderby: 'arrow-up',
             corlor: '#d9d9d9',
             dataSource_Select_Parent: [],
-            customers: []
+            customers: [],
+            select_tinh: [],
+            select_huyen: [],
+            select_xa: [],
+            select_tendv: []
         }
     }
 
@@ -239,6 +61,19 @@ class Customer extends React.Component {
                 this.getCustomers(this.state.page)
             })
     }
+
+    // getDonvis = () => {
+    //     console.log('get dv')
+    //     Request('customer/getdonvi', 'POST', {
+    //     }).then((response) => {
+    //         let data = response.data;
+    //         console.log('data dv', data)
+    //         if (data.data)
+    //             this.setState({
+    //                 customers: data.data.customers,
+    //             })
+    //     })
+    // }
 
     getCustomers = (pageNumber) => {
         console.log('getdata')
@@ -254,14 +89,16 @@ class Customer extends React.Component {
             sortBy: this.state.sortBy,
             customers: this.state.customers
         })
-            .then((response) => {
+            .then(async (response) => {
                 let data = response.data;
                 console.log(data, 'data trả về')
                 if (data.data)
-                    this.setState({
+    
+                    await this.setState({
                         customers: data.data.customers,
                         count: Number(data.data.count)
                     })
+                    console.log('ccccccccc', this.state.customers)
                 var i = 0;
                 for (i = 0; i < this.state.count; i++) {
                     this.state.customers[i].kh_hovaten = this.state.customers[i].kh_ho + " " + this.state.customers[i].kh_tenlot + " " + this.state.customers[i].kh_ten
@@ -337,7 +174,7 @@ class Customer extends React.Component {
     }
 
     //Modal
-    showModal = (customer) => {
+    showModal = async (customer) => {
         const { form } = this.formRef.props
         this.setState({
             visible: true
@@ -345,30 +182,171 @@ class Customer extends React.Component {
         form.resetFields();
         form.setFieldsValue({ kh_lienlac: 'DD' })
         form.setFieldsValue({ kh_gioitinh: 'Nam' })
-        // this.setState({
-        //     dataSource_Select_Parent: this.state.customers
-        // })
+       
+        this.setState({
+            dataSource_Select_Parent: this.state.customers
+        })
+        
         if (customer.kh_id !== undefined) {
-            this.setState({
+            await this.setState({
                 kh_id_visible: true,
                 action: 'update'
             })
-            // var dataSourceCha = []
 
-            // this.state.customers.map((value, index) => {
-            //     if (value.kh_id !== customer.kh_id) {
-            //         dataSourceCha.push(value)
-            //     }
-            // })
+            var dataSourceCha = []
 
-            // this.setState({
-            //     dataSource_Select_Parent: dataSourceCha
-            // })
+            this.state.units.map((value, index) => {
+                if (value.dm_dv_id !== unit.dm_dv_id) {
+                    dataSourceCha.push(value)
+                }
+            })
+            this.setState({
+                dataSource_Select_Parent: dataSourceCha
+            })
+            this.set_select_tendv();
+            form.setFieldsValue({dm_dv_id: 0})
 
+            this.set_select_tinh();
+            if (this.state.select_tinh.length === 0) {
+                form.setFieldsValue({ dm_db_id_tinh: '' })
+            }
+            this.set_select_huyen(customer.dm_db_id_tinh);
+            if (this.state.select_huyen.length === 0) {
+                form.setFieldsValue({ dm_db_id_huyen: '' })
+            }
+            this.set_select_xa(customer.dm_db_id_huyen);
+            if (this.state.select_xa.length === 0) {
+                form.setFieldsValue({ dm_db_id_xa: '' })
+            }
+            
             form.setFieldsValue(customer);
-            customers.kh_ngaysinh=formDateModal(customers.kh_ngaysinh, 'dd/mm/yyyy')
         }
+
+        if (this.state.action !== 'update') {
+            console.log('ddaay laf insert')
+            await this.set_select_tendv();
+            await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
+            await this.set_select_tinh();
+            if (this.state.select_tinh.length > 0) {
+                await form.setFieldsValue({ dm_db_id_tinh: 1 })
+                await this.set_select_huyen(1);
+            } else {
+                await form.setFieldsValue({ dm_db_id_tinh: '' })
+            }
+            if (this.state.select_huyen.length > 0) {
+                await form.setFieldsValue({ dm_db_id_huyen: this.state.select_huyen[0].dm_db_id })
+                await this.set_select_xa(this.state.select_huyen[0].dm_db_id);
+            } else {
+                await form.setFieldsValue({ dm_db_id_huyen: '' })
+            }
+            if (this.state.select_xa.length === 0) {
+                await form.setFieldsValue({ dm_db_id_xa: '' })
+            }
+            else {
+                await form.setFieldsValue({ dm_db_id_xa: this.state.select_xa[0].dm_db_id })
+            }
+            console.log('chuản bị koad donvi')
+           
+            // form.setFieldsValue({ kh_id: 'Bỏ chọn'})
+        }
+
+        // await this.set_select_tendv();
+
+        customer.kh_ngaysinh = formDateModal(customer.kh_ngaysinh, 'dd/mm/yyyy')
     };
+
+    set_select_tendv = async () => {
+        await Request('customer/getdonvi', 'POST', {
+        }).then(async (res) => {
+            console.log('data donvi',res.data)
+            await this.setState({
+                select_tendv: res.data
+            })
+        })
+    }
+
+
+    set_select_tinh = async () => {
+        await Request('customer/gettinh', 'POST', {
+        }).then(async (res) => {
+            console.log(res.data, 'data tinh')
+            await this.setState({
+                select_tinh: res.data
+            })
+        })
+    }
+
+    set_select_huyen = async (id_db_tinh) => {
+        console.log('select diab an tinh', id_db_tinh)
+        await Request('customer/gethuyen', 'POST', {
+            id_db_tinh: id_db_tinh
+        }).then(async (res) => {
+            console.log(res.data, 'data res huyen')
+            await this.setState({
+                select_huyen: res.data
+            })
+        })
+    }
+
+    set_select_xa = async (id_db_huyen) => {
+        await Request('customer/getxa', 'POST', {
+            id_db_huyen: id_db_huyen
+        }).then(async (res) => {
+            await this.setState({
+                select_xa: res.data
+            })
+        })
+    }
+
+    onSelectDv = async (value) => {
+        // if (value === 'add_donvi') {
+        //     console.log('dcm vao roif')
+        //     return this.setState({
+        //         visible_kh: true
+        //     })
+        // }
+        const { form } = this.formRef.props
+        await this.set_select_tendv(value);
+        if (this.state.select_tendv.length === 0) {
+            await form.setFieldsValue({ dm_dv_id: '' })
+        } 
+        console.log('===========================selected====================', value)
+    }
+
+    onSelectTinh = async (value) => {
+        console.log('dia ban tinh')
+        const { form } = this.formRef.props
+        await this.set_select_huyen(value);
+        if (this.state.select_huyen.length === 0) {
+            await form.setFieldsValue({ dm_db_id_huyen: '' })
+            await this.set_select_xa(-1);
+            // await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
+            await form.setFieldsValue({ dm_db_id_xa: '' })
+        }
+        else {
+            await form.setFieldsValue({ dm_db_id_huyen: this.state.select_huyen[0].dm_db_id })
+            await this.set_select_xa(this.state.select_huyen[0].dm_db_id);
+            if (this.state.select_xa.length === 0) {
+                await form.setFieldsValue({ dm_db_id_xa: ' ' })
+            }
+            else {
+                await form.setFieldsValue({ dm_db_id_xa: this.state.select_xa[0].dm_db_id })
+            }
+        }
+
+
+    }
+
+    onSelectHuyen = async (value) => {
+        const { form } = this.formRef.props
+        await this.set_select_xa(value);
+        if (this.state.select_xa.length === 0) {
+            await form.setFieldsValue({ dm_db_id_xa: '' })
+        }
+        else {
+            await form.setFieldsValue({ dm_db_id_xa: this.state.select_xa[0].dm_db_id });
+        }
+    }
 
     handleCancel = e => {
         this.setState({
@@ -502,6 +480,7 @@ class Customer extends React.Component {
     }
 
     render() {
+
         const rowSelection = {
             onChange: async (selectedRowKeys, selectedRows) => {
 
@@ -559,12 +538,10 @@ class Customer extends React.Component {
                             onChange={this.onChangeSearchType}
                             onSearch={this.onSearch}
                             filterOption={(input, option) =>
-                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
                             <Option value="kh_id">Mã khách</Option>
-                            <Option value="kh_ho">Họ</Option>
-                            <Option value="kh_tenlot">Tên lót</Option>
-                            <Option value="kh_ten" >Tên khách</Option>
+                            <Option value="kh_hovaten">Tên khách hàng</Option>
                             <Option value="kh_ngaysinh" >Ngày sinh</Option>
                             <Option value="kh_gioitinh" >Giới tính</Option>
                             <Option value="kh_dinhanhcanhan">Định danh cá nhân</Option>
@@ -583,7 +560,7 @@ class Customer extends React.Component {
                     </div>
                     <br />
                     <Row className='table-margin-bt'>
-                        <FormModal
+                        <CreateModalCustomer
                             wrappedComponentRef={this.saveFormRef}
                             visible={this.state.visible}
                             onCancel={this.handleCancel}
@@ -592,8 +569,16 @@ class Customer extends React.Component {
                             formtype={this.state.formtype}
                             dateFormat={this.state.formatDate}
                             kh_id_visible={this.state.kh_id_visible}
+                            select_tinh={this.state.select_tinh}
+                            select_huyen={this.state.select_huyen}
+                            select_xa={this.state.select_xa}
+                            select_tendv={this.state.select_tendv}
+                            onSelectTinh={this.onSelectTinh}
+                            onSelectHuyen={this.onSelectHuyen}
+                            onSelectXa={this.onSelectXa}
+                            onSelectDv={this.onSelectDv}
                         />
-                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.customers} bordered='1' rowKey="kh_id">
+                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
                             <Column title="Họ" dataIndex="kh_ho" key="kh_ho" className='hide' disabaled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tên lót" dataIndex="kh_tenlot" key="kh_tenlot" className='hide' disabaled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tên" dataIndex="kh_ten" key="kh_ten" className='hide' disabaled onHeaderCell={this.onHeaderCell} />
@@ -603,6 +588,12 @@ class Customer extends React.Component {
                             <Column title="Đinh danh cá nhân" dataIndex="kh_dinhdanhcanhan" key="kh_dinhdanhcanhan" onHeaderCell={this.onHeaderCell} />
                             <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" onHeaderCell={this.onHeaderCell} />
                             <Column title="Email" dataIndex="kh_email" key="kh_email" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" onHeaderCell={this.onHeaderCell} />
                             <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hide' disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" onHeaderCell={this.onHeaderCell} />

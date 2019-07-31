@@ -24,7 +24,7 @@
   /*Makes the word loading have a transparent background*/ 
   background: transparent;
   /*Creates a square*/
-  border: 3px dotted #3c3c3c;
+  border: 3px solid #3c3c3c;
   /*turns the square to a circle*/
   border-radius: 50%;
   /* Aligns the word Loading to the right so it is in the center of the circle*/
@@ -118,42 +118,62 @@
     transform: rotate(405deg);
   }
 }
+  
+.ant-row.ant-form-item{
+  margin-bottom:8px
+}
+
 .hide{
   display: none;
 }
+
+.ant-form-item-control {
+  position: relative;
+  line-height: 20px;
+  zoom: 1;
+}
+.ant-form-item-label {
+  display: inline-block;
+  overflow: hidden;
+  line-height: 30px;
+  white-space: nowrap;
+  text-align: right;
+  vertical-align: middle;
+}
 .ant-modal-header {
   padding: 16px 24px;
-  color:brown;
-  background:cornflowerblue;
-  border-bottom: 1px solid #181407;
+  color: rgba(0, 0, 0, 0.65);
+  background:#1890ff;;
+  border-bottom: 1px solid #e8e8e8;
   border-radius: 4px 4px 0 0;
 }
-.ant-modal-content {
-  position: relative;
-  background-color:#BDBDBD;
-  background-clip: padding-box;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  pointer-events: auto;
+.ant-input-sm {
+
+  height: 24px;
+  padding: 5px 30px;
+  line-height: 12px;
+  text-align: center;
+
 }
-.ant-row {
-  position: relative;
-  height: auto;
-  margin-right: 0;
-  margin-left: 0;
-  zoom: 1;
-  color:blue;
-  display: block;
-  box-sizing: border-box;
+.ant-modal-title {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 22px;
+  word-wrap: break-word;
 }
-.ant-table {
-  color: rgba(0, 0, 0, 0.65);
-  font-size: 14px;
-  background-color:aliceblue;
-  font-variant: tabular-nums;
-  line-height: 1.5;
-  list-style: none;
-  font-feature-settings: 'tnum';
+.ant-form label {
+  font-size: 15px;
+}
+.ant-modal-close-x {
+  font-size: 20px;
 }
 
+.toan {
+  padding: 0px;
+
+margin-top: 0px;
+
+margin-bottom: 0px;
+}

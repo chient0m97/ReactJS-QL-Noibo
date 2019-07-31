@@ -68,10 +68,27 @@ router.post('/unit/insert', function (req, res) {
     })
 })
 
-router.post('/unit/update', function (req, res) {
-    console.log('data res', req.body)
-    unitController.updateUnit(req.body, function (data) {
+router.post('/unit/insertkh', function (req, res) {
+    console.log('đây là insert khách hàng')
+    unitController.insertKhachhang(req.body, function (data) {
+        console.log('insert data',data)
         res.send(data);
+    })
+})
+
+router.post('/unit/update', function (req, res) {
+    console.log('data res', req) 
+    unitController.updateUnit(req.body,function (data) {
+        console.log('----------------------------------------------------',data)
+        // if(data.success){
+        //     res.send(data);
+        // }
+        // else{
+        //     data.message='sai mnr'
+        //     res.send(data)
+        // }
+        res.send(data);
+        
     })
 })
 

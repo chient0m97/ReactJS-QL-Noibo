@@ -29,8 +29,44 @@ router.get('/customer/get/:Id', function (req, res) {
     })
 })
 
+router.post('/customer/getdonvi', function(req, res){
+    console.log('cdm dv')
+    customerController.getDonvi( function(data) {
+        res.send(data);
+    })
+})
+
+router.post('/customer/gettinh', function (req, res) {
+    console.log('reqesy tinh', req.data)
+    customerController.getTinh(function(data){
+        res.send(data);
+    })
+})
+
+router.post('/customer/gethuyen', function (req, res) {
+    console.log('req huuyen', req.body)
+    customerController.getHuyen(req.body, function(data){
+        res.send(data);
+    })
+})
+
+router.post('/customer/getxa', function (req, res) {
+    console.log('req xa',req.body)
+    customerController.getXa(req.body, function(data){
+        res.send(data);
+    })
+})
+
 router.delete('/customer/delete', function (req, res) {
     customerController.DeleteCustomerbyId(req.body.kh_id, function (data) {
+        res.send(data);
+    })
+})
+
+router.post('/unit/insertdv', function (req, res) {
+    console.log('đây là insert đơn vị')
+    unitController.insertDonvi(req.body, function (data) {
+        console.log('insert data',data)
         res.send(data);
     })
 })

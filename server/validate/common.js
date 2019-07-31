@@ -21,7 +21,7 @@ constructor = (value, errMessage) => {
     }
 
     return false
-}
+}       
 
 asyncQuery = async (table, column, value) => {
     await knex(table).where(column, value)

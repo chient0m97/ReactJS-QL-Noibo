@@ -17,8 +17,9 @@ var CustomerController = {
         let offset = pageSize * (pageNumber - 1);
         var res_customer = []
         customerData.getCustomer(limit, offset, index, sortBy, async (data) => {
+            console.log('dataaaa',data)
             await data.data.customers.map((value, index) => {
-
+              
                 switch (value.kh_lienlac) {
                     case 'HD':
                         value.kh_lienlac_txt = 'Đại diện'
@@ -40,7 +41,7 @@ var CustomerController = {
                 //     case 'Khác':
                 //         value.kh_gioitinh = 'Khác'
                 //         break;
-                // }
+                // }    
 
                 res_customer.push(value)
             })
@@ -71,6 +72,34 @@ var CustomerController = {
         })
     },
 
+    getTinh: function getTinh(callback){
+        customerData.getTinh((data)=>{
+            console.log('data',data)
+            callback(data)
+        })
+    },
+
+    getHuyen: function getHuyeb(body,callback){
+        customerData.getHuyen(body.id_db_tinh ,(data)=>{
+            console.log('data huyennnn',data)
+            callback(data)
+        })
+    },
+
+    getXa: function getXa(data,callback){
+        customerData.getXa(data.id_db_huyen,(data)=>{
+            console.log('data xaaaaa',data)
+            callback(data)
+        })
+    },
+
+    getDonvi: function getDonvi(callback){
+        customerData.getDonvi((data) =>{
+            console.log('day la donvi')
+            callback(data)
+        })
+    },
+
     DeleteCustomerbyId: async function deleteCustomerbyId(Id, callback) {
         customerData.deleteCustomerbyId(Id, (data) => {
             if (data.success === true) {
@@ -80,6 +109,22 @@ var CustomerController = {
                 })
             }
             callback(data, 400);
+        })
+    },
+
+    insertDonvi: function insertDonvi(donvi, callback) {
+        customerData.insertDonvi(donvi, (response) => {
+            console.log("hien thi controller ",response)
+            var message = constant.successInseart;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError()
+            }
+            callback({
+                message: message,
+                success: response.success
+            },status);
         })
     },
 
@@ -124,6 +169,23 @@ var CustomerController = {
             }
         }
     },
+
+    insertDonvi: function insertDonvi(donvi, callback) {
+        customerData.insertDonvi(donvi, (response) => {
+            console.log("hien thi controller ",response)
+            var message = constant.successInseart;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError()
+            }
+            callback({
+                message: message,
+                success: response.success
+            },status);
+        })
+    },
+
     updateCustomer: function updateCustomer(customer, callback) {
         customerData.updateCustomer(customer, (res) => {
             callback({

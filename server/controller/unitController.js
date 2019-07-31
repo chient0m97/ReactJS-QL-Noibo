@@ -17,6 +17,7 @@ var UnitController = {
         let offset = pageSize * (pageNumber - 1);
         var res_unit = []
         unitData.getUnit(limit, offset, index, sortBy, async (data) => {
+            console.log('cttyuv',data)
             await data.data.units.map((value, index) => {
 
                 switch (value.dm_dv_trangthai) {
@@ -105,13 +106,25 @@ var UnitController = {
         })
     },
 
+    insertKhachhang: function insertKhachhang(khachhang, callback) {
+        unitData.insertKhachhang(khachhang, (response) => {
+            console.log("hien thi controller ",response)
+            var message = constant.successInseart;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError()
+            }
+            callback({
+                message: message,
+                success: response.success
+            },status);
+        })
+    },
+
     insertUnit: async function insertUnit(unit, callback) {
-        unit.dm_dv_id = uuidv1();
-        if (
-            Validator.isInt(unit.dm_db_id_tinh, 'ID Tỉnh không đúng định dạng')
-            & Validator.isInt(unit.dm_db_id_huyen, 'ID Huyện không đúng định dạng')
-            & Validator.isInt(unit.dm_db_id_xa, 'ID Xã không đúng định dạng')
-        ) {
+        console.log('inserted controller', unit);
+        unit.dm_dv_id = uuidv1();      
             if (
                 await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
                 & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
@@ -124,7 +137,9 @@ var UnitController = {
                     if (!response.success) {
                         Validator.error.push(constant.errorSys)
                         message = Validator.getError()
-                        status = 400
+                        // status = 400
+                        // console.log('message',message)
+
                     }
                     callback({
                         message: message,
@@ -140,22 +155,23 @@ var UnitController = {
                     success: false
                 }, 400);
             }
-        }
     },
-    updateUnit: function updateUnit(unit, callback) {
+    updateUnit: function updateUnit(unit, callback) { 
         // if(await Validator.db.unique('donvis', 'dm_dv_id_cha', unit.dm_dv_id_cha, 'Error!!')){
         //     callback({success: false, message: res.success == false})
         // }else{
-        if(unit.dm_dv_id == unit.dm_dv_ten){
-            unitData.getUnit(this, null);
-        }else{
+        // if(unit.dm_dv_id == unit.dm_dv_ten){
+        //     unitData.getUnit(this, null);
+        // }else{
         unitData.updateUnit(unit, (res) => {
+            console.log('dcm ')
             callback({
                 success: res.success,
                 message: res.success === true ? constant.successUpdate : callback.errorUpdate
             })
         })
-    }
+    // }
+// }
     },
     search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;
