@@ -5,7 +5,6 @@ module.exports = {
         knex.raw("select  hotro.* , dm_da.dm_duan_ten, khh.kh_hovaten, nhs.ns_hovaten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh.kh_ho || ' ' ||  kh.kh_tenlot  || ' ' || kh.kh_ten as kh_hovaten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select ns.ns_ho || ' ' ||  ns.ns_tenlot  || ' ' || ns.ns_ten as ns_hovaten, ns.ns_id ns_id from nhansu ns) as nhs on nhs.ns_id = hotro.ns_id_nguoitao order by " + index + ' ' + sortBy + ' offset ' + offset + ' limit ' + limit)
             // knex.select('*').from('hotros').orderBy(index, sortBy).limit(limit).offset(offset)    
             .then((res) => {
-                console.log("hien thi gethotro ", res)
                 knex('hotros').count()
                     .then((resCount) => {
                         console.log("hien thi count ", resCount[0].count)
@@ -90,7 +89,7 @@ module.exports = {
     },
 
     deleteHotro: function (ht_id, callback) {
-        knex.from('hotros').where('ht_id', ht_id).del().then(res => {
+        knex.from('hotros').whereIn('ht_id', ht_id).del().then(res => {
             callback({
                 success: true
             })

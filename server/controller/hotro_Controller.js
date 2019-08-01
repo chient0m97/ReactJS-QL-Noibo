@@ -43,14 +43,13 @@ var hotroController = {
     },
 
     deleteHotroById: async function deleteHotroById(ht_id, callback) {
-        hotroData.deleteHotroById(ns_id, data => {
+        hotroData.deleteHotro(ht_id, data => {
             if (data.success === true) {
                 callback({
                     success: data.success,
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callbackI(data, 400);
         })
     },
 

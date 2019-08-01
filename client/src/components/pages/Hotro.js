@@ -11,132 +11,9 @@ const { Column } = Table;
 const { Option } = Select
 const { Search, TextArea } = Input;
 
-class DynamicFieldSet extends React.Component {
-    remove = k => {
-        const { form } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        // We need at least one passenger
-        if (keys.length === 1) {
-            return;
-        }
-
-        // can use data-binding to set
-        form.setFieldsValue({
-            keys: keys.filter(key => key !== k),
-        });
-    };
-
-    add = () => {
-        const { form } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(id++);
-        // can use data-binding to set
-        // important! notify form to detect changes
-        form.setFieldsValue({
-            keys: nextKeys,
-        });
-    };
-
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                const { keys, names } = values;
-                console.log('Received values of form: ', values);
-                console.log('Merged values:', keys.map(key => names[key]));
-            }
-        });
-    };
-    render() {
-        const { getFieldDecorator, getFieldValue } = this.props.form;
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 4 },
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 20 },
-            },
-        };
-        const formItemLayoutWithOutLabel = {
-            wrapperCol: {
-                xs: { span: 24, offset: 0 },
-                sm: { span: 20, offset: 4 },
-            },
-        };
-        getFieldDecorator('keys', { initialValue: [] });
-        const keys = getFieldValue('keys');
-        const formItems = keys.map((k, index) => (
-            <Form.Item
-                {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                label={index === 0 ? 'Passengers' : ''}
-                required={false}
-                key={k}
-            >
-                {getFieldDecorator(`names[${k}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [
-                        {
-                            required: true,
-                            whitespace: true,
-                            message: "Please input passenger's name or delete this field.",
-                        },
-                    ],
-                })(<div>
-                    <Select
-                        defaultValue={['ns_ten']}
-                        showSearch
-                        style={{ width: 200 }}
-                        placeholder="Select a person"
-                        optionFilterProp="children"
-                        onChange={this.props.onCh}
-                        onSearch={this.props.ons}
-                        filterOption={(input, option) =>
-                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                    >
-                        <Option value="ns_ten">Tên</Option>
-                        <Option value="ns_gioitinh">Giới Tính</Option>
-                        <Option value="ns_email">Email</Option>
-                        <Option value="ns_sodienthoai">Số Điện Thoại</Option>
-                        <Option value="ns_bangcap">Bằng Cấp</Option>
-                        <Option value="ns_trangthai">Trạng Thái</Option>
-                    </Select>,
-                    <Search style={{ width: 300 }} placeholder="input search text" onSearch={(value) => { this.props.tk(value) }} enterButton />
-                </div>)}
-                {keys.length > 1 ? (
-                    <Icon
-                        className="dynamic-delete-button"
-                        type="minus-circle-o"
-                        onClick={() => this.remove(k)}
-                    />
-                ) : null}
-            </Form.Item>
-        ));
-        return (
-            // <WrappedDynamicFieldSet2 >
-            <Form onSubmit={this.handleSubmit}>
-                {formItems}
-                <Form.Item {...formItemLayoutWithOutLabel}>
-                    <Tooltip title="Chọn Tìm Kiếm">
-                        <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
-                            <Icon type="search" /> Thêm Tìm Kiếm
-                    </Button>
-                    </Tooltip>
-                </Form.Item>
-                <Form.Item {...formItemLayoutWithOutLabel}>
-                </Form.Item>
-            </Form>
-        );
-    }
-}
 var format = require('dateformat')
 
 var g = "9298eb00-a6d9-11e9-bd04-0986e022adbf"
-const WrappedDynamicFieldSet = Form.create({ name: 'dynamic_form_item' })(DynamicFieldSet);
 const FormModal = Form.create({ name: 'from_in_modal' })(
     class extends React.Component {
         clear = e => {
@@ -172,10 +49,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var khachhang = this.props.setKhachHang;
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton } = this.props;
             const { getFieldDecorator } = form;
-            // form.getFieldDecorator('dm_duan_id', { initialValue: '5' })
-            // form.getFieldDecorator('dm_duan_ten', { initialValue: '5' })
-            // form.getFieldDecorator('kh_id', { initialValue: '5' })
-            // form.getFieldDecorator('kh_hovaten', { initialValue: '5' })
             return (
                 <Modal
                     visible={visible}
@@ -282,7 +155,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={8}>
                                 <Form.Item label="Trạng thái">
                                     {getFieldDecorator('ht_trangthai', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "Đang xử lý"
+                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "dangxuly"
                                     })(<Select
                                         onChange={onTodoChange}
                                         size={"small"}
@@ -372,16 +245,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
     }
 )
 
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: record => ({
-        disabled: record.name === 'Disabled User',
-        name: record.name,
-    }),
-}
-
 var formatDateModal = require('dateformat');
 var array_ht_trangthai = []
 class Hotro extends React.Component {
@@ -415,7 +278,11 @@ class Hotro extends React.Component {
             date: null,
             trangthaiinput: false,
             trangthaibutton: false,
-            colorcolumn: 'yellow'
+            colorcolumn: 'yellow',
+            selectedId: [],
+            statebuttonedit: true,
+            statebuttondelete: true,
+            rowthotroselected: {}
         }
     }
 
@@ -471,11 +338,8 @@ class Hotro extends React.Component {
                 this.setState({
                     id_duanfilltable: array_duan
                 })
-
             })
     }
-
-
 
     insertOrUpdate = async () => {
         const { form } = await this.formRef.props;
@@ -515,6 +379,7 @@ class Hotro extends React.Component {
                         description: description
                     });
                     this.getHotro(this.state.page)
+                    window.location.reload()
                 })
         })
     }
@@ -522,6 +387,7 @@ class Hotro extends React.Component {
     deleteHotro = (ht_id) => {
         Request(`hotro/delete`, 'DELETE', { ht_id: ht_id })
             .then((res) => {
+                console.log("log res ", res)
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
                     description: res.data.message
@@ -553,29 +419,6 @@ class Hotro extends React.Component {
         }
     }
 
-    search = async (xxxx) => {
-        console.log('First Search');
-        Request('hotro/search', 'POST', {
-            pageSize: this.state.pageSize,
-            pageNumber: this.state.pageNumber,
-            textSearch: xxxx,
-            columnSearch: this.state.columnSearch,
-            p1: this.state.index,
-            p2: this.state.sortBy
-        })
-            .then((response) => {
-                console.log('text search is: ', response.data)
-                let data = response.data;
-                if (data.data)
-                    this.setState({
-                        hotro: data.data.hotros,
-                        count: Number(data.data.count),
-                        searchText: xxxx,
-                        isSearch: 1
-                    })
-            })
-    }
-
     onHeaderCell = (column) => {
         return {
             onClick: async () => {
@@ -595,12 +438,8 @@ class Hotro extends React.Component {
                     isSort: !this.state.isSort,
                     index: column.dataIndex
                 })
-                if (this.state.isSearch == 1) {
-                    this.search(this.state.searchText)
-                }
-                else {
-                    this.getHotro(this.state.page)
-                }
+                array_ht_trangthai = []
+                this.getHotro(this.state.page)
             },
         };
     }
@@ -619,8 +458,8 @@ class Hotro extends React.Component {
         else
             this.setState({
                 trangthai: false,
-                date: null
-                // date: <a>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</a>
+                // date: null
+                date: <a>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</a>
             })
         const { form } = this.formRef.props
         this.setState({
@@ -634,7 +473,8 @@ class Hotro extends React.Component {
                 id_visible: true,
                 action: 'update'
             })
-            hotro.ht_thoigiantiepnhan = formatDateModal(new Date(), "yyyy-mm-dd")
+            // hotro.ht_thoigiantiepnhan = formatDateModal(new Date(), "yyyy-mm-dd")
+            // hotro.ht_thoigiantiepnhan = formatDateModal(hotro.ht_thoigiantiepnhan, "yyyy-mm-dd")
             form.setFieldsValue(hotro);
             if (hotro.ht_thoigian_dukien_hoanthanh !== null) {
                 form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: formatDateModal(hotro.ht_thoigian_dukien_hoanthanh, "yyyy-mm-dd") })
@@ -683,19 +523,6 @@ class Hotro extends React.Component {
     showTotal = (total) => {
         return `Total ${total} items`;
     }
-    onShowSizeChange = async (current, size) => {
-        await this.setState({
-            pageSize: size
-        });
-        if (this.state.isSearch === 1) {
-            console.log('xxxx')
-            this.handleSearch(this.state.page, this.state.searchText, this.confirm, this.state.nameSearch, this.state.codeSearch);
-            console.log(this.state.page)
-        }
-        else {
-            this.getHotro(this.state.page, this.state.index, this.state.sortBy)
-        }
-    }
 
     onSearch = (val) => {
         console.log('search:', val);
@@ -727,9 +554,10 @@ class Hotro extends React.Component {
         }
         else {
             await this.setState({
-                date: null,
+                date: <a>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</a>,
                 trangthai: false
             })
+            form.setFieldsValue({ ht_thoigian_hoanthanh: null })
         }
         await console.log('Hien thi thoi gian hoan thanh ', this.state.date)
     }
@@ -759,14 +587,13 @@ class Hotro extends React.Component {
 
     checkDate = (check, text, j) => {
         j = j - 1
-        if (array_ht_trangthai[(this.state.page-1)*10+ j] === "daxong") {
+        if (array_ht_trangthai[(this.state.page - 1) * 10 + j] === "daxong") {
             return <a style={{ color: 'brown' }}>{text}</a>
         }
         if (check === 1)
             return <a style={{ color: 'red' }}>{text}</a>
         return <span>{text}</span>
     }
-
 
     checkDateConvert = (x) => {
         var y = 0
@@ -778,27 +605,85 @@ class Hotro extends React.Component {
         var i = 0
         var j = 0
         var formatDate = require('dateformat')
+
+        const rowSelection = {
+            hideDefaultSelections: true,
+            onChange: async (selectedRowKeys, selectedRows) => {
+                var arrayselected = []
+                arrayselected.push(selectedRowKeys)
+                if (selectedRowKeys.length > 0) {
+                    await this.setState({
+                        statebuttondelete: false
+                    })
+                }
+                else
+                    await this.setState({
+                        statebuttondelete: tr
+                    })
+                if (selectedRowKeys.length === 1) {
+                    await this.setState({
+                        statebuttonedit: false,
+                        rowthotroselected: selectedRows[0]
+                    })
+                    await console.log("hien thi object selectrow ", selectedRows[0])
+                    await console.log("hien thi object rowselect ", this.state.rowthotroselected)
+                }
+                else
+                    this.setState({
+                        statebuttonedit: true
+                    })
+                await this.setState({
+                    selectedId: arrayselected[0]
+                })
+            },
+
+            getCheckboxProps: record => ({
+                disabled: Column.title === 'Id', // Column configuration not to be checked
+                name: record.name,
+            }),
+        };
+
         return (
             <div>
                 <Form>
                     <Row className="table-margin-bt">
-                        <Col span={1}>
+                        <Col span={2}>
                             <Tooltip title="Thêm Hỗ Trợ">
                                 <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
                                     <Icon type="user-add" />
                                 </Button>
                             </Tooltip>
                         </Col>
-                        <Col span={1}>
+                        <Col span={2}>
+                            <Tooltip title="Sửa Hỗ Trợ">
+                                <Button type="primary" size="large" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                    <Icon type="edit" />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+                        <Col span={2}>
+                            <Tooltip title="Xóa">
+                                <Popconfirm
+                                    title="Bạn chắc chắn muốn xóa?"
+                                    onConfirm={this.deleteHotro.bind(this, this.state.selectedId)}
+                                    onCancel={this.cancel}
+                                    okText="Yes"
+                                    cancelText="No">
+                                    <Button type="primary" style={{ marginLeft: '10px' }} size="large" disabled={this.state.statebuttondelete} >
+                                        <Icon type="delete" />
+                                    </Button>
+                                </Popconfirm>
+                            </Tooltip>
+                        </Col>
+                        <Col span={2}>
                             <Tooltip title="Tải Lại">
-                                <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
+                                <Button shape="circle" type="primary" size="large" style={{ marginLeft: '18px' }} onClick={this.refresh.bind(null)}>
                                     <Icon type="reload" />
                                 </Button>
                             </Tooltip>
                         </Col>
                     </Row>
-                    <WrappedDynamicFieldSet tk={this.search} onCh={this.onChange} ons={this.onSearch} columnSearch={this.state.columnSearch} />
-                    <Row className="table-margin-bt">
+                    <Row className="table-margin-bt" style={{ marginTop: 20 }}>
                         <FormModal
                             wrappedComponentRef={this.saveFormRef}
                             visible={this.state.visible}
@@ -822,8 +707,8 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
-                                        console.log("Hien thi j ", (this.state.page-1)*10+ j-1, " va page ",this.state.page)
-                                        if (array_ht_trangthai[ (this.state.page-1)*10+ j-1] === "daxong") {
+                                        console.log("Hien thi array ",array_ht_trangthai[(this.state.page - 1) * 10 + j - 1])
+                                        if (array_ht_trangthai[(this.state.page - 1) * 10 + j - 1] === "daxong") {
                                             return <Badge color={"brown"} />
                                         }
                                         if (this.checkDateConvert(text) <= 1) {
@@ -834,7 +719,7 @@ class Hotro extends React.Component {
                                             i = 0
                                             return <Badge color={"green"} />
                                         }
-
+                                        
                                     }}
                             />
                             <Column title="Dự án" dataIndex="dm_duan_ten" width={100}
@@ -844,89 +729,80 @@ class Hotro extends React.Component {
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Khách hàng" dataIndex="ns_hovaten"
                                 render={text => {
-                                    return this.checkDate(i, text,j)
+                                    return this.checkDate(i, text, j)
                                 }}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Người được giao" dataIndex="kh_hovaten"
                                 render={text => {
-                                    return this.checkDate(i, text,j)
+                                    return this.checkDate(i, text, j)
                                 }}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
                                 render={
                                     text => {
-                                        if (text === 'tiepnhan') { return this.checkDate(i, "Tiếp nhận",j) }
-                                        if (text === 'dangxuly') { return this.checkDate(i, "Đang xử lý",j) }
-                                        if (text === 'dangxem') { return this.checkDate(i, "Đang xem",j) }
-                                        return this.checkDate(i, "Đã xong",j)
+                                        if (text === 'tiepnhan') { return this.checkDate(i, "Tiếp nhận", j) }
+                                        if (text === 'dangxuly') { return this.checkDate(i, "Đang xử lý", j) }
+                                        if (text === 'dangxem') { return this.checkDate(i, "Đang xem", j) }
+                                        return this.checkDate(i, "Đã xong", j)
                                     }
                                 }
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Phân loại" dataIndex="ht_phanloai" width={100}
                                 render={text => {
-                                    if (text === 'bug') { return this.checkDate(i, "Lỗi",j) }
-                                    if (text === 'new') { return this.checkDate(i, "Việc mới",j) }
-                                    return this.checkDate(i, this.checkDate(i, "Việc tương lai",j))
+                                    if (text === 'bug') { return this.checkDate(i, "Lỗi", j) }
+                                    if (text === 'new') { return this.checkDate(i, "Việc mới", j) }
+                                    return this.checkDate(i, this.checkDate(i, "Việc tương lai", j))
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Ưu tiên" dataIndex="ht_uutien"
+                                width={100}
                                 render={text => {
-                                    if (text === 'GAP') { return this.checkDate(i, "Gấp",j) }
-                                    if (text === 'CAO') { return this.checkDate(i, "Cao",j) }
-                                    if (text === 'TB') { return this.checkDate(i, "Trung bình",j) }
-                                    return this.checkDate(i, "Thấp",j)
+                                    if (text === 'GAP') { return this.checkDate(i, "Gấp", j) }
+                                    if (text === 'CAO') { return this.checkDate(i, "Cao", j) }
+                                    if (text === 'TB') { return this.checkDate(i, "Trung bình", j) }
+                                    return this.checkDate(i, "Thấp", j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan"
                                 render={text => {
-                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"),j)
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
-                                 onHeaderCell={this.onHeaderCell} />
+                                onHeaderCell={this.onHeaderCell} />
                             <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
                                 render={text => {
                                     if (text === null) { return '' }
-                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"),j)
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh"
                                 render={text => {
                                     if (text === null) { return '' }
-                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"),j)
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau"
                                 render={text => {
-                                    return this.checkDate(i, text,j)
+                                    return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Ghi chú" dataIndex="ht_ghichu"
                                 render={text => {
-                                    return this.checkDate(i, text,j)
+                                    return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column
+                            {/* <Column
                                 visible={false}
                                 title="Hành động"
                                 key="action"
                                 align="center"
                                 render={(text, record) => (
                                     <span>
-                                        <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.ns_id, text)}>
+                                        <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.ht_id, text)}>
                                             <Icon type="edit" />
                                         </Button>
-                                        <Popconfirm
-                                            title="Bạn chắc chắn muốn xóa?"
-                                            onConfirm={this.deleteHotro.bind(this, record.ns_id)}
-                                            onCancel={this.cancel}
-                                            okText="Yes"
-                                            cancelText="No">
-                                            <Button type="danger"  >
-                                                <Icon type="delete" />
-                                            </Button>
-                                        </Popconfirm>
                                     </span>
                                 )}
-                            />
+                            /> */}
                         </Table>
                     </Row>
                     <Row>
