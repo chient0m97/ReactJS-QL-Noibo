@@ -81,8 +81,8 @@ class Main extends React.Component {
               {/* header */}
               <Content
                 style={{
-                  margin: '24px 16px',
-                  padding: 24,
+                  margin: '8px',
+                  padding: 8,
                   background: '#fff',
                   minHeight: 580,
                 }}
