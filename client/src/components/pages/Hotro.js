@@ -616,7 +616,6 @@ class Hotro extends React.Component {
 
         const rowSelection = {
             hideDefaultSelections: true,
-            fixed: 'left',
             onChange: async (selectedRowKeys, selectedRows) => {
                 var arrayselected = []
                 arrayselected.push(selectedRowKeys)
@@ -655,7 +654,7 @@ class Hotro extends React.Component {
         return (
             <div>
                 <Form>
-                    <Card>
+                    <Card > 
                     <Row >
                         <Col span={2}>
                             <Tooltip title="Thêm Hỗ Trợ">
