@@ -1,5 +1,5 @@
 
-
+var multer = require('multer')
 var Validator = require('../validate/common')
 const hopdongData = require('../data/hopdong.data')
 const constant = require('./constant')
@@ -28,7 +28,7 @@ var HopdongController = {
      */
     GetById: function GetById(Id, callback) {
         hopdongData.GetById(Id, (data) => {
-            console.log('DATA', data)
+            //console.log('DATA', data)
             if (data == undefined) {
                 callback({});
             }
@@ -50,7 +50,21 @@ var HopdongController = {
     },
 
     insertHopdong: async function insertHopdong(hopdong, callback) {
-            
+        // var listfile = hopdong.hd_files.fileList
+        // console.log(listfile, 'file list')
+        // listfile.map((value, index)=> {
+        //    var z = window.atob(value)
+        //    console.log(z, 'abcd')
+        // })
+        // var storage = multer.diskStorage({
+        //     destination: function(req, file, cb){
+        //       cb(null, './upload')
+        //     },
+        //     filename: function(req, file, cb){
+        //       cb(null, file.originalname)
+        //     }
+        //   })
+        //   var upload = multer({storage:storage})
         // if (Validator.isDate(hopdong.hd_ngayketthuc, 'Ngày kết thúc không đúng định dạng')
         //     & Validator.isDate(hopdong.hd_ngayky, 'Ngày ký không đúng định dạng')
         //     & Validator.isDate(hopdong.hd_ngaythanhly, 'Ngày thanh lý không đúng định dạng')
@@ -70,7 +84,7 @@ var HopdongController = {
                 //await Validator.db.unique('hopdongs', 'hd_so', hopdong.hd_so, 'Số hợp đồng đã tồn tại !'
                 ) 
             {
-                console.log('ddax validate')
+                //console.log('ddax validate')
                 
                 let firtInsert;
                 firtInsert = hopdong;
@@ -99,7 +113,7 @@ var HopdongController = {
 
         } else {
             var eror =  Validator.getError()
-                console.log('looix tra ve', eror)
+                //console.log('looix tra ve', eror)
             callback({
                 message: eror,
                 success: false
@@ -114,9 +128,9 @@ var HopdongController = {
     //     & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')  
     //  ) {
              if (1) {
-                 console.log('hopdongController')
+                 //console.log('hopdongController')
                 hopdongData.updateHopdong(hopdong, (res) => {
-                    console.log('hopdongController')
+                    //console.log('hopdongController')
                     callback({
                         success: res.success,
                         message: res.success === true ? constant.successUpdate : constant.errorUpdate
@@ -151,16 +165,23 @@ getduan: function getduan(callback){
         callback(data)
     })
 },
+
 getinsertduan: function getinsertduan(callback){
     hopdongData.getinsertduan((data)=>{
         callback(data)
     })
 },
+getupload: function getupload(callback){
+    // hopdongData.getupload((data)=>{
+    //     callback(data)
+    // })
+        
+},
     search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         hopdongData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
-            console.log('aaaaaaaaa',data)
+            //console.log('aaaaaaaaa',data)
             callback(data);
         })
     },

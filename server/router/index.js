@@ -5,7 +5,7 @@ var userController = require('../controller/userController');
 var hopdongController = require('../controller/hopdongController');
 
 router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now())
+    //console.log('Time: ', Date.now())
     next()
 })
 
@@ -22,7 +22,7 @@ router.post('/login', (req, res, next) => {
           var token = jwt.sign(payload, app.get('Secret'), {
             expiresIn: '24h' // expires in 24 hours
           });
-          console.log('data login res', data)
+          //console.log('data login res', data)
           res.json({
             message: 'Đăng nhập thành công ',
             token: token,
@@ -68,7 +68,7 @@ router.post('/user/insert',function (req, res) {
 })
 
 router.post('/user/update',function (req, res) {
-  console.log('data res',req)
+  //console.log('data res',req)
   userController.updateUser(req.body, function (data) {
       res.send(data);
   })
@@ -95,7 +95,7 @@ router.post('/hopdong/get', function (req, res) {
   let pageSize = body.pageSize;
   hopdongController.getHopdong(pageNumber, pageSize, function (data) {
       res.send(data);
-      console.log(data,'data tra ve')
+     // console.log(data,'data tra ve')
   }) 
 })
 router.get('/hopdong/get/:Id', function (req, res) {
@@ -112,7 +112,7 @@ router.delete('/hopdong/delete', function (req, res) {
 })
 
 router.post('/hopdong/insert',function (req, res) {
-  console.log(req.body, "Da req")
+  //console.log(req.body, "Da req")
     hopdongController.insertHopdong(req.body, function (data) {
     
         res.send(data);
@@ -122,7 +122,7 @@ router.post('/hopdong/insert',function (req, res) {
 
 router.post('/hopdong/update',function (req, res) {
   //console.log('data res',req)
-  console.log("/hopdong/update")
+  //console.log("/hopdong/update")
   hopdongController.UpdateHopdong(req.body, function (data) {
       res.send(data);
   })
@@ -167,16 +167,21 @@ router.post('/hopdong/insertduan', function(req, res){
   })
 })
 router.post('/hopdong/upload',function(req, res) {
-     
-  upload(req, res, function (err) {
-         if (err instanceof multer.MulterError) {
-             return res.status(500).json(err)
-         } else if (err) {
-             return res.status(500).json(err)
-         }
-    return res.status(200).send(req.file)
-
+  hopdongController.getupload(function(data){
+    res.send(data);
   })
-
+  // upload(req, res, function (err) {
+  //        if (err instanceof multer.MulterError) {
+  //            return res.status(500).json(err)
+  //        } else if (err) {
+  //            return res.status(500).json(err)
+  //        }
+  //   return res.status(200).send(req.file)
+  // })
 });
+// router.post('/hopdong/upload',function(req, res){
+//   hopdongController.getupload(function(data){
+//     res.send(data);
+//   })
+// })
 module.exports = router

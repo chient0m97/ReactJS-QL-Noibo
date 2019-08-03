@@ -127,59 +127,24 @@
 #components-dropdown-demo-dropdown-button .ant-dropdown-button {
   margin: 0 8 8 0;
 }
-/* .ant-modal-header{
-  background-color: darkcyan;
-}
-.ant-modal-body{
-  background-color: #:;
-}
-.ant-modal-footer{
-  background-color: darkcyan;
-} */
-/* .ant-btn-primary{
-  background-color: coral;
-} */
-/* .ant-form-item-required{
-  margin-top: 0px;
-}
-.ant-modal-body{
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
-/* .ant-form-item{
-  padding-top: 5px;
-}*/
-/*.ant-row::after{
-  padding-bottom: 0px;
-  margin-bottom: 0px;
-} 
-.ant-form-item-control{
-  padding-bottom: 0px;
-}
-.ant-col.ant-col-8{
-  padding-bottom: 0px;  
-}
-.ant-row.ant-form-item::after{
-  padding-bottom: 0px;
-} */
 .ant-modal-header {
   padding: 16px 24px;
-  border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0px 0px;
 }
 .ant-modal-content {
   position: relative;
   background-clip: padding-box;
-  border: 0;
+  border: 0px;
   border-radius: 4px;
   pointer-events: auto;
 }
 .ant-row {
   position: relative;
   height: auto;
-  margin-right: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-left: 0;
+  margin-right: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
   zoom: 1;
   display: block;
   box-sizing: border-box;
@@ -191,16 +156,7 @@
   list-style: none;
   font-feature-settings: 'tnum';
 }
-/* .ant-modal-body{
-  padding-top: 0px;
+.ant-modal-body{
   padding-bottom: 0px;
+  padding-top: 0px;
 }
-.ant-upload{
-  margin-bottom: 0px;
-}
-.ant-upload-drag{
-  margin-bottom: 0px;
-}
-.ant-form-item-control{
-  margin-bottom: 0px;
-} */

@@ -74,7 +74,7 @@ module.exports = {
                 return client.query(sql_SelectHopDongs)
                     .then(res => {
                         var hopdongs = res
-                        console.log(res, 'res')
+                        //console.log(res, 'res')
                         knex('hopdongs').count()
                             .then((resCount) => {
                                 callback({
@@ -86,14 +86,14 @@ module.exports = {
                                     }
                                 })
                             }).catch((err) => {
-                                console.log(err),
+                                //console.log(err),
                                     callback({
                                         success: false
                                     })
                             })
                     })
                     .catch((err) => {
-                        console.log(err),
+                        //console.log(err),
                             callback({
                                 success: false
                             })
@@ -105,28 +105,28 @@ module.exports = {
         knex.from('hopdongs').where('hd_id', Id).del().then(res => {
             callback({ success: true });
         }).catch(err => {
-            console.log(err)
+            //console.log(err)
             callback({ success: false })
         })
     },
     insertHopdong: function (hopdong, callback) {
-        console.log(hopdong, 'data insert')
+        //console.log(hopdong, 'data insert')
         knex.from('hopdongs').insert(hopdong).then(res => {
-            console.log('inserted');
+            //console.log('inserted');
             callback({ success: true });
         }).catch(err => {
-            console.log(err)
+            //console.log(err)
             callback({ success: false })
         })
     },
     updateHopdong: function (hopdong, callback) {
-        console.log('hopdongData')
+        //console.log('hopdongData')
         knex.from('hopdongs').where('hd_id', hopdong.hd_id)
             .update(hopdong).then(res => {
-                console.log('hopdongData')
+                //console.log('hopdongData')
                 callback({ success: true })
             }).catch(err => {
-                console.log(err)
+                //console.log(err)
                 callback({ success: false })
             })
     },
@@ -134,7 +134,7 @@ module.exports = {
         knex.from('hopdongs').select('*').where('hd_id', hopdong.hd_id).then(res=>{
             callback(res[0]);
         }).catch(err=>{
-            console.log(err)
+            //console.log(err)
             callback({ success: false })
         })
     },
@@ -143,9 +143,9 @@ module.exports = {
         let strSqlDV = "select dm_dv_id as id, dm_dv_ten ten from donvis";
         knex.raw(strSqlDV).then(res => { //('donvis').select('dm_dv_id','dm_dv_ten').then(res=>{
             callback(res.rows);
-            console.log(res)
+            //console.log(res)
         }).catch((err) => {
-            console.log(err)
+            //console.log(err)
         })
     },
     getdonvi: function (callback) {
@@ -153,9 +153,9 @@ module.exports = {
         let strSqlDV = "select dm_dv_id as id, dm_dv_ten ten from donvis";
         knex.raw(strSqlDV).then(res => { //('donvis').select('dm_dv_id','dm_dv_ten').then(res=>{
             callback(res.rows);
-            console.log(res)
+           // console.log(res)
         }).catch((err) => {
-            console.log(err)
+           // console.log(err)
         })
     },
     getkhachhang: function (callback) {
@@ -163,28 +163,44 @@ module.exports = {
         //let strSqlDV = "select dm_dv_id as id, dm_dv_ten ten from donvis";
         knex.raw(strSqlKH).then(res => { //('donvis').select('dm_dv_id','dm_dv_ten').then(res=>{
             callback(res.rows);
-            console.log(res)
+            //console.log(res)
         }).catch((err) => {
-            console.log(err)
+           // console.log(err)
         })
     },
     getduan: function (callback) {
         let strSqlDA = "select dm_duan_id, dm_duan_ten from duans";
         knex.raw(strSqlDA).then(res => { //('donvis').select('dm_dv_id','dm_dv_ten').then(res=>{
             callback(res.rows);
-            console.log(res)
+            //console.log(res)
         }).catch((err) => {
-            console.log(err)
+           // console.log(err)
         })
     },
     getinsertduan: function (duan, callback){
         knex.from('duans').insert(duan).then(res => {
-            console.log('inserted');
+           // console.log('inserted');
             callback({ success: true});
         }).catch(err => {
-            console.log(err)
+           // console.log(err)
             callback({ success: false })
         })
+    },
+    getupload: function(hopdong, callback){
+        var multer = require('multer')
+        var storage = multer.diskStorage({
+        destination: function(req, file, cb){
+          cb(null, 'hopdong/upload')
+        },
+        filename: function(req, file, cb){
+          cb(null, file.originalname)
+        }
+      })
+      var upload = multer({storage:storage})
+      axios.post('hopdong/upload', upload.single("file"),function(req, res){
+        //console.log(req.file)
+        res.send("UPLOAD THANH CONG")
+      })
     },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
         knex('hopdongs').where(columnSearch, 'like', textSearch).orderBy(index, sortBy).limit(limit).offset(offset)
@@ -204,11 +220,11 @@ module.exports = {
                         callback(dataCallback)
                     })
                     .catch((err) => {
-                        console.log('lỗi  kết nối', err)
+                       // console.log('lỗi  kết nối', err)
                     })
             })
             .catch((err) => {
-                console.log('lỗi  kết nối', err)
+                //console.log('lỗi  kết nối', err)
             })
     },
 };

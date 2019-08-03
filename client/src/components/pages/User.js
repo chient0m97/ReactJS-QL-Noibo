@@ -418,7 +418,7 @@ class User extends React.Component {
             />
 
 
-            <Table pagination={false} dataSource={this.state.users} rowKey="id" >
+            <Table pagination={false} scroll={{x: 1000}} dataSource={this.state.users} rowKey="id" >
               <Column
                 title={<span>Id <Icon type={this.state.orderby} /></span>}
                 dataIndex="id"

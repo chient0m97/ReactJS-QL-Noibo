@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button,Upload, Form, Row, Col, Divider, notification, Alert, Select } from 'antd';
+//import Moment from 'react-moment';
+//import axios from 'axios';
+import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button,Upload, Form, Row, Col, notification, Alert, Select } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -10,7 +12,9 @@ import Request from '@apis/Request'
 //mport { Menu, Dropdown } from 'antd';
 import { fetchLoading } from '@actions/common.action';
 
-const dateformat = 'YYYY-MM-DD HH:mm:ss';
+
+
+//const dateformat = 'YYYY-MM-DD HH:mm:ss';
 const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select;
@@ -18,6 +22,7 @@ const { Option } = Select;
 //const { Search } = Input;
 const { Dragger } = Upload;
 const { TextArea } = Input;
+const formatdate = require('dateformat')
 
 const props = {
   name: 'file',
@@ -31,13 +36,33 @@ const props = {
     if (status === 'done') {
       message.success(`${info.file.name} file uploaded successfully.`);
       var data = new FormData()
+      // var multer = require('multer')
+      // var storage = multer.diskStorage({
+      //   destination: function(req, file, cb){
+      //     cb(null, 'hopdong/upload')
+      //   },
+      //   filename: function(req, file, cb){
+      //     cb(null, file.originalname)
+      //   }
+      // })
+      // var upload = multer({storage:storage})
+      // axios.post('hopdong/upload', upload.single("file"),function(req, res){
+      //   console.log(req.file)
+      //   res.send("UPLOAD THANH CONG")
+      // })
       data.append('file',info.file)
-      console.log(data, 'filr day nhe')
+      console.log(data, 'file day nhe')
+      console.log(info.file, 'info file')
     } else if (status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
     }
   },
 };
+// axios.post("/hopdong/upload", FormData, { // receive two parameter endpoint url ,form data 
+// })
+// .then(res => { // then print response status
+//   console.log(res.statusText)
+// })
 const FormModalDuan = Form.create({ name: 'form_create_duan' })(
   class extends React.Component {
     render() {
@@ -79,13 +104,13 @@ const FormModalDuan = Form.create({ name: 'form_create_duan' })(
                 </Form.Item>
               </Col>
               </Row>
-              <Row gutter={24}>
+              {/* <Row gutter={24}>
               <Col>
                 <Form.Item>
                   <Button type='primary' htmlType='submit'>Lưu</Button>
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
           </Form>
         </Modal>
       )
@@ -114,8 +139,9 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
     //   })
     // }
     render() {
-      const { visible, onCancel, onSave, form, title, confirmLoading, formtype, comboBoxDuanSource, comboBoxDatasource, onChangeClick_loaihopdong, propDatasourceSelectLoaiHopDong, onSelectDuan } = this.props;
-      const dateFormat = "YYYY-MM-DD"
+      const { visible, onCancel, onSave, form, title, confirmLoading, formtype, comboBoxDuanSource, comboBoxDatasource, onChangeClick_loaihopdong, propDatasourceSelectLoaiHopDong } = this.props;
+      //const dateFormat = "YYYY-MM-DD"
+      //var dateFormat = require('dateformat')
       var combobox = []
       var combobox1 = []
       var comboboxLoaiHopDong = []
@@ -140,7 +166,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       )
 
       // eslint-disable-next-line array-callback-return
-      console.log(propDatasourceSelectLoaiHopDong, 'datasource loaihopdong')
+      //console.log(propDatasourceSelectLoaiHopDong, 'datasource loaihopdong')
       // eslint-disable-next-line array-callback-return
       propDatasourceSelectLoaiHopDong.dataSource.map((value) => {
         comboboxLoaiHopDong.push(<Option value={value.id}>{value.ten}</Option>)
@@ -238,15 +264,17 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     <Select
                     showSearch
                     optionFilterProp="children"
-                    size="small" onChange={this.props.onChangeSelect} dropdownRender={menu => (
-                      <div>
-                        {menu}
-                        <Divider style={{ margin: '4px 0' }} value="add_duan" onSelect={onSelectDuan} />
-                        <div style={{ padding: '8px', cursor: 'pointer' }}>
-                          <Icon type="plus" />Thêm
-                      </div>
-                      </div>
-                    )}>
+                    size="small" onChange={this.props.onChangeSelect} 
+                    // dropdownRender={menu => (
+                    //   <div>
+                    //     {menu}
+                    //     <Divider style={{ margin: '4px 0' }} value="add_duan" onSelect={onSelectDuan} />
+                    //     <div style={{ padding: '8px', cursor: 'pointer' }}>
+                    //       <Icon type="plus" />Thêm
+                    //   </div>
+                    //   </div>
+                    // )}
+                    >
                       {comboboxLoaiHopDong}
 
                     </Select>
@@ -306,7 +334,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
                   })(
 
-                    <Input size={"small"} type="Date" format={dateformat} onChange={this.clear} />
+                    <Input size={"small"} type="date"  />
 
                   )}
                 </Form.Item>
@@ -324,7 +352,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày ký:">
                   {getFieldDecorator('hd_ngayky', {
                   })(
-                    <Input type="date" size="small" format={dateFormat} onChange={this.clear} />
+                    <Input type="date" size="small"  />
                     //   <DatePicker size="small" format={dateformat}></DatePicker>
                   )}
                 </Form.Item>
@@ -335,7 +363,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày thanh lý:">
                   {getFieldDecorator('hd_ngaythanhly', {
                     // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="date" size="small" format={dateformat} onChange={this.clear} />
+                  })(<Input type="date" size="small"  />
                   )}
                 </Form.Item>
               </Col>
@@ -347,7 +375,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     // rules: [ { required: true, message: 'Trường này không được để trống!', } ],
                   })(
 
-                    <Input type="date" size="small" format={dateformat} onChange={this.clear} />
+                    <Input type="date" size="small"  />
 
                   )}
                 </Form.Item>
@@ -357,7 +385,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Ngày thanh toán:">
                   {getFieldDecorator('hd_ngaythanhtoan', {
                     // rules: [ { required: true, message: 'Trường này không được để trống!' } ],
-                  })(<Input type="date" size="small" format={dateFormat} onChange={this.clear} />
+                  })(<Input type="date" size="small"  />
 
                   )}
                 </Form.Item>
@@ -479,13 +507,13 @@ class Hopdong extends React.Component {
     })
       .then((response) => {
         let data = response.data;
-        console.log('data trả về:', data)
+        //console.log('data trả về:', data)
         if (data.data)
           this.setState({
             hopdongs: data.data.hopdongs.rows,
             count: Number(data.data.count) // ép kiểu về    
           })
-        console.log('------------------------', this.state.hopdongs)
+        //console.log('------------------------', this.state.hopdongs)
         this.props.fetchLoading({
           loading: false
 
@@ -496,15 +524,21 @@ class Hopdong extends React.Component {
   //---Insert---
   InsertOrUpdateHopdong = () => {
     const { form } = this.formRef.props;
+    var file = form.getFieldsValue().hd_files.file
+    var formdata = new FormData()
+    formdata.append('files',file)
+    
     form.validateFields((err, values) => {
       if (err) {
         return
       }
-      console.log(values, "day la values");
+      //console.log(values, "day la values");
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
+      values.formdata = formdata
       Request(url, 'POST', values)
         .then((response) => {
           if (response.status === 200 & response.data.success === true) {
+            
             form.resetFields();
             this.setState({
               visible: false,
@@ -557,21 +591,21 @@ class Hopdong extends React.Component {
   }
   onchangeoption = (value) => {
     const { form } = this.formRef.props
-    console.log(value, 'gia tri cua f')
+    //console.log(value, 'gia tri cua thoi gian thuc hien')
     form.setFieldsValue({
       hd_thoigianthuchien: value
     })
   }
   onchangeid = (value) => {
     const { form } = this.formRef.props
-    console.log(value, 'gia tri cua id')
+    //console.log(value, 'gia tri cua id du an')
     form.setFieldsValue({
       dm_duan_id: value
 
     })
 
     if (value === 'add_duan') {
-      console.log('dcm vao roif')
+      //console.log('dcm vao roif')
       this.setState({
         visible_duan: true
       })
@@ -584,8 +618,8 @@ class Hopdong extends React.Component {
 
     })
   }
-  showModal = (hopdong) => {
-    var formatdate = require('dateformat')
+  showModal = async(hopdong) => {
+    
     Request('hopdong/getdonvi', 'POST', null).then(res => {
       this.setState({
         propDatasourceSelectLoaiHopDong: {
@@ -664,7 +698,7 @@ class Hopdong extends React.Component {
       const { form } = this.formRef.props
 
       Request(api, 'post', null).then((res) => {
-        console.log(res, 'ressssss')
+        //console.log(res, 'ressssss')
         this.setState({
           propDatasourceSelectLoaiHopDong: {
             label: label,
@@ -685,13 +719,15 @@ class Hopdong extends React.Component {
       })
 
       // }
+      await console.log(hopdong, 'hopdong truoc format')
+      hopdong.hd_ngayky = hopdong.hd_ngayky === null ? null :formatdate(hopdong.hd_ngayky, 'yyyy-mm-dd')
+      hopdong.hd_ngaythanhly = hopdong.hd_ngaythanhly === null ? null :formatdate(hopdong.hd_ngaythanhly, 'yyyy-mm-dd')
+      hopdong.hd_ngaythanhtoan = hopdong.hd_ngaythanhtoan === null ? null :formatdate(hopdong.hd_ngaythanhtoan, 'yyyy-mm-dd')
+      hopdong.hd_ngayxuathoadon = hopdong.hd_ngayxuathoadon === null ? null :formatdate(hopdong.hd_ngayxuathoadon, 'yyyy-mm-dd')
+      hopdong.hd_ngayketthuc = hopdong.hd_ngayketthuc === null ? null :formatdate(hopdong.hd_ngayketthuc, 'yyyy-mm-dd')
+      
 
-      hopdong.hd_ngayky = formatdate(hopdong.hd_ngayky, 'yyyy-mm-dd')
-      hopdong.hd_ngaythanhly = formatdate(hopdong.hd_ngaythanhly, 'yyyy-mm-dd')
-      hopdong.hd_ngaythanhtoan = formatdate(hopdong.hd_ngaythanhtoan, 'yyyy-mm-dd')
-      hopdong.hd_ngayxuathoadon = formatdate(hopdong.hd_ngayxuathoadon, 'yyyy-mm-dd')
-      hopdong.hd_ngayketthuc = formatdate(hopdong.hd_ngayketthuc, 'yyyy-mm-dd')
-      console.log(hopdong, 'hopdong update')
+      //console.log(hopdong, 'hopdong update')
       form.setFieldsValue(hopdong);
     }
   };
@@ -827,7 +863,7 @@ class Hopdong extends React.Component {
     const { form } = this.formRef.props
 
     Request(api, 'post', null).then((res) => {
-      console.log(res, 'ressssss')
+      //console.log(res, 'ressssss')
       this.setState({
         propDatasourceSelectLoaiHopDong: {
           label: label,
@@ -854,7 +890,7 @@ class Hopdong extends React.Component {
 
   onSelectDuan = async (value) => {
     if (value === 'add_duan') {
-      console.log('dcm vao roif')
+      //console.log('dcm vao roif')
       return this.setState({
         visible_duan: true
       })
@@ -879,7 +915,7 @@ class Hopdong extends React.Component {
   }
   onOk_duan = () => {
 
-    console.log('ddaay  kaf  form nhe', this.saveFormRefCreate)
+    //console.log('ddaay  kaf  form nhe', this.saveFormRefCreate)
 
     // console.log('ok')
     // this.setState({
@@ -923,34 +959,7 @@ class Hopdong extends React.Component {
             </Col>  
           </Row>
           <div>
-            <Select
-              defaultValue={['hd_loai']}
-              showSearch
-              style={{ width: 200 }}
-              //placeholder="Select a person"
-              optionFilterProp="children"
-              onChange={this.onChange}
-              // onFocus={this.onFocus}
-              // onBlur={this.onBlur}
-              onSearch={this.onSearch}
-              filterOption={(input, option) =>
-                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              <Option value="hd_loai">Loại hợp đồng</Option>
-              <Option value="hd_doituong">Đối tượng</Option>
-              <Option value="hd_so">Số hợp đồng</Option>
-              <Option value="hd_thoigianthuchien">Thời gian thực hiện</Option>
-              <Option value="hd_ngayketthuc">Ngày kết thúc</Option>
-              <Option value="hd_diachi">Địa chỉ</Option>
-              <Option value="hd_ngayky">Ngày ký</Option>
-              <Option value="hd_ngaythanhly">Ngày thanh lý</Option>
-              <Option value="hd_ngayxuathoadon">Ngày xuất hóa đơn</Option>
-              <Option value="hd_ngaythanhtoan">Ngày thanh toán</Option>
-              <Option value="hd_trangthai">Trạng thái</Option>
-              <Option value="hd_files">Files</Option>
-              <Option value="hd_ghichu">Ghi chú</Option>
-            </Select>&nbsp;
+            &nbsp;
           {/* <Search style={{ width: 300 }} pla
         
         
@@ -1005,12 +1014,38 @@ class Hopdong extends React.Component {
               <Column title="Tên đối tượng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell} />
               <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} />
               <Column title="Thời gian thực hiện(ngày)" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" 
+              render={   
+                  text => {
+                  if(text===null)
+                  return ' '
+                  else
+                  return dateFormat(text, "dd/mm/yyyy")}} onHeaderCell={this.onHeaderCell} />
               <Column title="Địa chỉ" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" render={text => dateFormat(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" render={   
+                  text => {
+                  if(text===null)
+                  return ' '
+                  else
+                  return dateFormat(text, "dd/mm/yyyy")}} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" render={   
+                  text => {
+                  if(text===null)
+                  return ' '
+                  else
+                  return dateFormat(text, "dd/mm/yyyy")}} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" render={   
+                  text => {
+                  if(text===null)
+                  return ' '
+                  else
+                  return dateFormat(text, "dd/mm/yyyy")}} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" render={   
+                  text => {
+                  if(text===null)
+                  return ' '
+                  else
+                  return dateFormat(text, "dd/mm/yyyy")}} onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" className="an" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Files" dataIndex="hd_files" key="hd_files" onHeaderCell={this.onHeaderCell} />
