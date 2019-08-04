@@ -100,8 +100,6 @@ var UserController = {
                 console.log('vao get claim')
                 this.getClaimsByUser(userName, (cls) => {
                     data.claims = cls;
-                    console.log('claim', cls)
-                    console.log('dataaaaaaaaaaaaaaa', data)
                     callback(data);
                 })
             }
@@ -115,14 +113,11 @@ var UserController = {
     },
     getClaimsByUser: (userName, callback) => {
         userData.getClaims(userName, (data) => {
-            console.log('tra ve data', data)
-            console.log('qweqweqweqweqeqwe', data.data.length)
             if (data.data.length > 0) {
                 var data = data.data.map(function (value) {
                     return value.role + '.' + value.action
 
                 });
-                console.log('data', data)
                 callback(data)
             }
             else {

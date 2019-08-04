@@ -7,6 +7,7 @@ app = express();
 const login = require('./router/login')
 const checked = require('./router/checkrole')
 const setpermiss = require('./router/setpermission')
+const role_action = require('./router/role_action')
 const port = 5000;
 var userRouter = require('./router/index');
 
@@ -46,6 +47,7 @@ app.use('/Login',login);
 app.use('/checkrole',checked)
 
 app.use('/setpermission',setpermiss)
+app.use('/role_action',role_action)
 
 app.use('/', authorize, userRouter);
 

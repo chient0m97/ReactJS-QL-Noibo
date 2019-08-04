@@ -1,7 +1,7 @@
 
 
 var Validator = require('../../validate/common')
-const userData = require('../../data/userData')
+const role_actionData = require('../../data/role_actionData')
 const constant = require('../constant')
 var UserController = {
     /**
@@ -14,117 +14,93 @@ var UserController = {
      * @para
      */
 
-    getUser: function getUser(pageNumber, pageSize,index,sortBy, callback) {
+    getRole: function getRole(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        userData.getUser(limit, offset,index,sortBy,  (data) => {
+        role_actionData.getRole(limit, offset, index, sortBy, (data) => {
             callback(data);
         }
         );
     },
 
-    /**
-     * Get user by Id.
-     * @param {Number} Id The identify of user
-     */
 
-     
-    GetById: function GetById(Id, callback) {
-        userData.GetById(Id, (data) => {
-            console.log('DATA', data)
-            if (data == undefined) {
-                callback({});
-            }
-            callback(data);
-        });
-    },
+    deleteRole: async function deleteRole(Id, callback) {
+        console.log("----delete controller------", Id)
+        role_actionData.deleteRole(Id, (data) => {
 
-    DeleteUserbyId: async function deleteUserbyId(Id, callback) {
-        userData.deleteUserbyId(Id, (data) => {
+            callback(data)
 
-            if (data.success === true) {
-                callback({
-                    success: data.success,
-                    message: data.success === true ? constant.successDelete : constant.errorMessage
-                })
-            }
-            callback(data, 400);
+
+
         })
     },
 
-    insertUser: async function insertUser(user, callback) {
+    insertRoleAction: async function insertRoleAction(roles, callback) {
+        console.log('-----------controler------------')
+        role_actionData.uniqueRole(roles, (data) => {
+            console.log('dataaaaaaaaaaa', data)
+            if (data.length > 0) {
+                console.log('ton tai roi nhoc')
+                callback({ success: false, message: 'da ton tai ' })
 
-        if (Validator.isMail(user.email, 'Email không đúng định dạng')
-            & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
-            & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
-        ) {
-
-            if (await Validator.db.unique('users', 'name', user.name, 'Tên đăng nhập đã tồn tại !')
-                & await Validator.db.unique('users', 'email', user.email, 'Email đã tồn tại !')
-                & await Validator.db.unique('users', 'phone', user.phone, 'Số điện thoại đã tồn tại !')
-                & await Validator.db.unique('users', 'code', user.code, 'Mã đã tồn tại !')) {
-                userData.insertUser(user, (response) => {
-                    var message = constant.successInsert;
-                    var status = 200;
-                    if (!response.success) {
-                        Validator.error.push(constant.errorSys)
-                        message = Validator.getError()
-                        status = 400
-                    }
-                    callback({
-                        message: message,
-                        success: response.success
-                    }, status);
-                })
             } else {
-                callback({
-                    message: Validator.getError(),
-                    success: false
-                }, 400);
-            }
 
-        } else {
-            callback({
-                message: Validator.getError(),
-                success: false
-            }, 400);
-        }
+                role_actionData.insertRoleAction(roles, (data) => {
+                    callback(data)
+                })
+            }
+        })
+
+
+
     },
-    updateUser: function updateUser(user, callback) {
+    updateRoleAction: function updateRoleAction(user, callback) {
         if (Validator.isMail(user.email, 'Email không đúng định dạng')
             & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
             & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
         ) {
-           
-                userData.updateUser(user, (res) => {
-                    callback({
-                        success: res.success,
-                        message: res.success === true ? constant.successUpdate : constant.errorUpdate
-                    })
+
+            role_actionData.updateRole(user, (res) => {
+                callback({
+                    success: res.success,
+                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
                 })
-            
+            })
+
         }
     }
     ,
-    Login: function getUserLogin(userName, callback) {
-        userData.getUserLogin(userName, (data) => {
 
-            callback(data);
-        })
-    },
-    search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
-        console.log('dm')
+    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        userData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
-            console.log('aaaaaaaaa',data)
+        role_actionData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
             callback(data);
         })
     },
-
-    validateCreate: (req, res, next) => {
-        next()
+    getRoleCode: function getRoleCode(callback) {
+        role_actionData.getRoleCode((data) => {
+            callback(data)
+        })
     },
+    getRoleAction: function getRoleAction(callback) {
+        role_actionData.getRoleAction((data) => {
+            callback(data)
+        })
+    },
+    insertRole: function insertRole(name, des, callback) {
+        role_actionData.insertRole(name, des, (data) => {
+            callback(data);
+        })
+    },
+    insertAction: function insertAction(name, callback) {
+        role_actionData.insertAction(name, (data) => {
+            callback(data);
+        })
+    }
+
+
+
 
 }
 module.exports = UserController;

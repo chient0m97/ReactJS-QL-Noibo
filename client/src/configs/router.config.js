@@ -1,4 +1,4 @@
-import About from '@pages/About';
+import RoleAction from '@pages/RoleAction';
 import HomePage from '@pages/HomePage';
 import User from '@pages/User';
 
@@ -11,9 +11,9 @@ const routers = [
         name: 'Home'
     },
     {
-        path: '/about',
-        component: About,
-        name: 'About'
+        path: '/quan-ly-quyen',
+        component: RoleAction,
+        name: 'quản lý quyền'
     },
     {
         path: '/user',

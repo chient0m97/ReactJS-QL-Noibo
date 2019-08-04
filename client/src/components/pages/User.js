@@ -9,10 +9,8 @@ import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import '../../index.css';
 import jwt from 'jsonwebtoken';
-import { check } from 'express-validator';
 import Permission from '../Authen/Permission'
 import TreeRole from '../common/Tree'
-import { async } from 'q';
 const token = cookie.load('token');
 
 
@@ -272,7 +270,7 @@ class User extends React.Component {
       roleVisible: 'none',
       modalRoleVisible: false,
       actionColumn: 'action-hide',
-      datacha: []
+      users:[]
     }
   }
   //--------------DELETE-----------------------
@@ -305,7 +303,7 @@ class User extends React.Component {
         console.log('res', response)
         if (response) {
           let data = response.data;
-          console.log('data', data.data.users)
+          console.log('data', data)
           if (data.data)
             this.setState({
               users: data.data.users,
@@ -460,7 +458,7 @@ class User extends React.Component {
   search = async (xxxx) => {
     console.log('xxxxxxxxxxxx', this.state.pageSize)
     console.log('search text', xxxx)
-    console.log('column search',this.state.columnSearch)
+    console.log('column search', this.state.columnSearch)
     Request('user/search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
@@ -605,14 +603,14 @@ class User extends React.Component {
     }
     let payload = jwt.decode(token);
     let claims = payload.claims;
-    console.log('quyen ',claims)
+    console.log('quyen ', claims)
     let canPermiss = claims.indexOf(Permission.Role.Permiss) >= 0;
-    console.log('permis',canPermiss)
+    console.log('permis', canPermiss)
     let canRead = claims.indexOf(Permission.User.Read) >= 0;
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
     let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-   
+
     const rowSelection = {
       type: 'radio',
       hideDefaultSelections: true,
@@ -669,8 +667,6 @@ class User extends React.Component {
 
         </Row> */}
         <WrappedDynamicFieldSet changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
-
-
         <div style={{ display: 'flex' }}>
           {
             canPermiss ?
@@ -756,10 +752,10 @@ class User extends React.Component {
             />
             <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
             />
-            <Column className="action-hide" title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
             <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
             <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
             <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
+            <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
 
 
           </Table>
