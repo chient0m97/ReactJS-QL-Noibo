@@ -69,7 +69,7 @@ router.post('/unit/insert', function (req, res) {
 })
 
 router.post('/unit/insertkh', function (req, res) {
-    console.log('đây là insert khách hàng')
+    console.log('đây là insert khách hàng', req.body)
     unitController.insertKhachhang(req.body, function (data) {
         console.log('insert data',data)
         res.send(data);

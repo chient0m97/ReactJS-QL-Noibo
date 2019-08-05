@@ -65,7 +65,7 @@ router.delete('/customer/delete', function (req, res) {
 
 router.post('/unit/insertdv', function (req, res) {
     console.log('đây là insert đơn vị')
-    unitController.insertDonvi(req.body, function (data) {
+    customerController.insertDonvi(req.body, function (data) {
         console.log('insert data',data)
         res.send(data);
     })

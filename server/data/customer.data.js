@@ -32,7 +32,7 @@ module.exports = {
         })
     },
     deleteCustomerbyId: function (Id, callback) {
-        knex.from('khachhangs').where('kh_id', Id).del().then(res => {
+        knex.from('khachhangs').whereIn('kh_id', Id).del().then(res => {
             callback({ success:true });
         }).catch(err => {
             console.log(err)
@@ -50,6 +50,7 @@ module.exports = {
     //         callback({ success: false })
     //     })
     // },
+    console.log("day la tang data ", customer)
     if (knex.from('khachhangs').insert(customer).then(res => {
         console.log('inserted');
         callback({ success: true });
@@ -58,13 +59,6 @@ module.exports = {
         callback({ success: false })
     })) {
         return true;
-    }
-    else {
-        knex.withRecursive('donvis', (qb) => {
-            qb.select('*').from('khachhangs').where('kh_id', 1).union((qb) => {
-                qb.select('*').from('khachhangs').join('donvis', 'dm_dv_id', 'kh_id')
-            })
-        }).select('*').from('donvis')
     }
     },
 

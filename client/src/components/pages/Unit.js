@@ -8,8 +8,10 @@ import Request from '@apis/Request'
 // import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import CreateModalUnit from '@pages/Modal/CreateModalUnit';
+import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 // import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 import { async } from 'q';
+
 
 // import { async } from 'q';
 const token = cookie.load('token');
@@ -47,9 +49,18 @@ class Unit extends React.Component {
             select_diabanhuyen: [],
             select_diabanxa: [],
             select_tenkh: [],
+            select_tinh: [],
+            select_huyen: [],
+            select_xa: [],
+            select_tendv: [],
             visible_kh: false,
             formtype_kh: 'horizontal',
-            title_kh: 'Thêm mới khách hàng'
+            title_kh: 'Thêm mới khách hàng',
+            stateconfirmdelete: false,
+            statebuttondelete: false,
+            rowunitselected: true,
+            statebuttonedit: true,
+            stateoption: true
             // kh_tendaydu: []
         }
     }
@@ -132,7 +143,6 @@ class Unit extends React.Component {
 
     //---Insert---
     InsertOrUpdateUnit = () => {
-        console.log('day la them in ser ')
         const { form } = this.formRef.props;
         form.validateFields((err, values) => {
             console.log('ndiwho', values)
@@ -141,7 +151,6 @@ class Unit extends React.Component {
             }
 
             var url = this.state.action === 'insert' ? 'unit/insert' : 'unit/update'
-            console.log('day la them', url)
             Request(url, 'POST', values)
                 .then((response) => {
                     console.log('day la res', response)
@@ -270,7 +279,6 @@ class Unit extends React.Component {
             // form.setFieldsValue({ kh_id: 'Bỏ chọn'})
         }
 
-
         //  form.setFieldsValue({ kh_id_nguoidaidien: 'Bỏ chọn'})
     };
 
@@ -311,6 +319,15 @@ class Unit extends React.Component {
 
     cancel = (e) => {
         console.log(e);
+        this.state({
+            stateconfirmdelete: false
+        })
+    }
+
+    checkStateConfirm = () => {
+        this.setState({
+            stateconfirmdelete: true
+        })
     }
 
     showTotal = (total) => { //hiển thị tổng số
@@ -405,13 +422,9 @@ class Unit extends React.Component {
         };
     }
 
-    saveFormRef = formRef => {
-        this.formRef = formRef;
-    }
-
-    saveFormRef2 = formRef2 => {
-        this.formRef2 = formRef2;
-    }
+    // saveFormRef2 = formRef2 => {
+    //     this.formRef2 = formRef2;
+    // }
 
     removeSearch = () => {
         this.setState({
@@ -425,8 +438,19 @@ class Unit extends React.Component {
             console.log(res.data, 'data khach')
             // res.data.push({ kh_id: '', tennguoidaidien: 'Bỏ chọn'})
             console.log('day la kh id', this.state.kh_id)
+            console.log("hien thi res ", res)
             await this.setState({
                 select_tenkh: res.data
+            })
+        })
+    }
+
+    set_select_tendv = async () => {
+        await Request('customer/getdonvi', 'POST', {
+        }).then(async (res) => {
+            console.log('data donvi', res.data)
+            await this.setState({
+                select_tendv: res.data
             })
         })
     }
@@ -434,7 +458,6 @@ class Unit extends React.Component {
     set_select_diabantinh = async () => {
         await Request('unit/gettinh', 'POST', {
         }).then(async (res) => {
-            console.log(res.data, 'data tinh')
             await this.setState({
                 select_diabantinh: res.data
             })
@@ -446,7 +469,6 @@ class Unit extends React.Component {
         await Request('unit/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            console.log(res.data, 'data res huyen')
             await this.setState({
                 select_diabanhuyen: res.data
             })
@@ -463,31 +485,125 @@ class Unit extends React.Component {
         })
     }
 
+    set_select_tinh = async () => {
+        await Request('unit/gettinh', 'POST', {
+        }).then(async (res) => {
+            console.log(res.data, 'data tinh')
+            await this.setState({
+                select_tinh: res.data
+            })
+        })
+    }
+
+    set_select_huyen = async (id_db_tinh) => {
+        console.log('select diab an tinh', id_db_tinh)
+        await Request('unit/gethuyen', 'POST', {
+            id_db_tinh: id_db_tinh
+        }).then(async (res) => {
+            console.log(res.data, 'data res huyen')
+            await this.setState({
+                select_huyen: res.data
+            })
+        })
+    }
+
+    set_select_xa = async (id_db_huyen) => {
+        await Request('unit/getxa', 'POST', {
+            id_db_huyen: id_db_huyen
+        }).then(async (res) => {
+            await this.setState({
+                select_xa: res.data
+            })
+        })
+    }
+
     onSelectKh = async (value) => {
         if (value === 'add_nguoidaidien') {
-            console.log('dcm vao roif')
-            return this.setState({
-                visible_kh: true
+            await this.setState({
+                visible_kh: true,
+                stateoption: true
             })
+            var form = null
+            if (this.state.visible_kh) {
+                form = this.formRef.props.form
+                form.setFieldsValue({ kh_lienlac: 'DD' })
+                form.setFieldsValue({ kh_gioitinh: 'Nam' })
+                try {
+                    await this.set_select_tinh();
+                    if (this.state.select_tinh.length > 0) {
+                        await form.setFieldsValue({ dm_db_id_tinh_customer: 1 })
+                        await this.set_select_huyen(1);
+                    } else {
+                        await form.setFieldsValue({ dm_db_id_tinh_customer: '' })
+                    }
+                    if (this.state.select_huyen.length > 0) {
+                        await form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
+                        await this.set_select_xa(this.state.select_huyen[0].dm_db_id);
+                    } else {
+                        await form.setFieldsValue({ dm_db_id_huyen_customer: '' })
+                    }
+                    if (this.state.select_xa.length === 0) {
+                        await form.setFieldsValue({ dm_db_id_xa_customer: '' })
+                    }
+                    else {
+                        await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
+                    }
+                    await this.set_select_tendv();
+                    if (this.state.set_select_tendv.length > 0) {
+                        await form.setFieldsValue({ dm_dv_id: 0 })
+                    }
+                    else {
+                        await form.setFieldsValue({ dm_dv_id: '' })
+                    }
+                }
+                catch (err) {
+                    console.log(err)
+                }
+
+                if (value === 'add_donvi'){
+                    form.setFieldsValue({dm_dv_id : ''})
+                }
+
+                // try {
+                //     if (this.state.select_tendv.length > 0) {
+                //         await form.setFieldsValue({ dm_dv_id: 1 })
+                //     } else {
+                //         await form.setFieldsValue({ dm_dv_id: '' })
+                //     }
+                // }
+                // catch (err) {
+                //     console.log(err)
+                // }
+            }
         }
-        const { form } = this.formRef.props
+
+
         await this.set_select_tenkh(value);
         if (this.state.select_tenkh.length === 0) {
             await form.setFieldsValue({ kh_id: '' })
         } else {
             await form.setFieldsValue({ kh_id: 0 })
         }
-        console.log('===========================selected====================', value)
     }
+
+    // onSelectDv = async (value) => {
+    //    if(value === 'add_donvi'){
+    //        res.data.push({ dm_dv_id: '', dm_dv_ten: ''})
+    //    }
+    //    await this.set_select_tendv(value);
+    //    if(this.state.select_tendv.length === 0){
+    //        await form.setFieldsValue({dm_dv_id: ''})
+    //    }
+    // }
 
     onSelectDiaBanTinh = async (value) => {
         console.log('dia ban tinh')
         const { form } = this.formRef.props
+        console.log(form, 'dday laf value')
         await this.set_select_diabanhuyen(value);
         if (this.state.select_diabanhuyen.length === 0) {
             await form.setFieldsValue({ dm_db_id_huyen: '' })
             await this.set_select_diabanxa(-1);
-            // await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
             await form.setFieldsValue({ dm_db_id_xa: '' })
         }
         else {
@@ -500,10 +616,7 @@ class Unit extends React.Component {
                 await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
             }
         }
-
-
     }
-
     onSelectDiaBanHuyen = async (value) => {
         const { form } = this.formRef.props
         await this.set_select_diabanxa(value);
@@ -515,16 +628,38 @@ class Unit extends React.Component {
         }
     }
 
-    // onSelectDiaBanXa = async (value) => {
-    //     const { form } = this.formRef.props
-    //     await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
-    //     if (this.state.select_diabanxa.length !== 0) {
-    //         await form.setFieldsValue(value)
-    //     }else{
-    //         await form.setFieldsValue({ dm_db_id_xa: '' })
-    //     }
-    // }
 
+    onSelectTinh = async (value) => {
+        console.log('dia ban tinh')
+        const { form } = this.formRef.props
+        await this.set_select_huyen(value);
+        if (this.state.select_huyen.length === 0) {
+            await form.setFieldsValue({ dm_db_id_huyen_customer: '' })
+            await this.set_select_xa(-1);
+            // await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
+            await form.setFieldsValue({ dm_db_id_xa_customer: '' })
+        }
+        else {
+            await form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
+            await this.set_select_xa(this.state.select_huyen[0].dm_db_id);
+            if (this.state.select_xa.length === 0) {
+                await form.setFieldsValue({ dm_db_id_xa_customer: ' ' })
+            }
+            else {
+                await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
+            }
+        }
+    }
+    onSelectHuyen = async (value) => {
+        const { form } = this.formRef.props
+        await this.set_select_xa(value);
+        if (this.state.select_xa.length === 0) {
+            await form.setFieldsValue({ dm_db_id_xa_customer: '' })
+        }
+        else {
+            await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id });
+        }
+    }
 
     onCancel_kh = () => {
         console.log('cancel')
@@ -532,59 +667,116 @@ class Unit extends React.Component {
             visible_kh: false
         })
     }
-    onOk_kh = () => {
-        console.log('ddaay  kaf  form nhe', this.saveFormRefCreate)
-        console.log('ok')
-        this.setState({
-            visiblekh: true
-        })
+
+    onOk_kh = async () => {
+        const { form } = this.formRef.props;
+        form.validateFields((err, values) => {
+            if (err) {
+                return
+            }
+            var url = this.state.action === 'insert' ? 'customer/insert' : 'unit/update'
+            Request(url, 'POST', values)
+                .then(async (response) => {
+                    if (response.status === 200 & response.data.success === true) {
+                        console.log("hien thi ", response)
+                        //const { form } = this.formRef.props;
+                        form.resetFields()
+                        await this.setState({
+                            visible_kh: false,
+                            message: response.data.message
+                        })
+
+                        if (!this.state.visible_kh) {
+                            var formkhachhang = this.formRef.props.form
+                            try {
+                                formkhachhang.setFieldsValue({ kh_id_nguoidaidien: response.data.id_customer })
+                            } catch (error) {
+                                console.log(error)
+                            }
+                        }
+                    }
+                    var description = response.data.message
+                    var notifi_type = 'success'
+                    var message = 'Thành công !!'
+
+                    if (!!!response.data.success) {
+                        message = 'Có lỗi xảy ra !!'
+                        notifi_type = 'error'
+                        description = response.data.message.map((values, index) => {
+                            return <Alert type='error' message={values}></Alert>
+                        })
+                    }
+                    notification[notifi_type]({
+                        message: message,
+                        description: description
+                    });
+                    this.set_select_tenkh();
+
+                    // form.setFieldsValue({unit : id_customer})
+                    // if (this.state.visible) {
+                    //     // form = this.formRef.props.form
+                    //     try {
+                    //         this.set_select_tenkh(values);
+                    //         if (this.state.select_tenkh.length === 0) {
+                    //             form.setFieldsValue({ kh_id: '' })
+                    //         } else {
+                    //             form.setFieldsValue({ kh_id : values })
+                    //         }
+                    //     }
+                    //     catch (err) {
+                    //         console.log(err)
+                    //     }
+                    // }
+                })
+        });
     }
+
 
     saveFormRefCreate = formRef => {
-        this.saveFormRefCreate = formRef
+        this.saveFormRefCreate = formRef;
     }
 
-    CreateCustomer = (e) => {
-        e.preventDefault()
-        console.log(e, 'value tu  form')
-
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-            }
-        });
-        // form2.validateFields((err, values) => {
-        //     console.log('hien thi values', values)
-        //     if (err) {
-        //         console.log("day la loi")
-        //     }
-        // })
-        // console.log('Đây là thêm ng đại diện')
-        // e.preventDefault();
-        // Request(`unit/insertkh`, 'POST', {
-        // }).then((res) => {
-        //     console.log("day la insert khach hang", res)
-        //     notification[res.data.success === true ? 'success' : 'error']({
-        //         message: 'Thông báo',
-        //         description: res.data.message
-        //     });
-        // })
-
-        // this.getKhachhangs(this.state.showModal)
+    saveFormRef = formRef => {
+        this.formRef = formRef;
     }
+
+    // CreateCustomer = (e) => {
+    //     
+    // }
 
 
     render() {
 
         const rowSelection = {
+            hideDefaultSelections: true,
             onChange: async (selectedRowKeys, selectedRows) => {
-
+                var arrayselected = []
+                arrayselected.push(selectedRowKeys)
                 console.log('id check', selectedRowKeys[0])
-                if (selectedRows[0]) {
+                if (selectedRowKeys.length > 0) {
                     await this.setState({
-                        selectedId: selectedRowKeys[0],
-                        unit: selectedRows[0]
-
+                        // selectedId: selectedRowKeys[0],
+                        // unit: selectedRows[0]
+                        statebuttondelete: false
+                    })
+                }
+                else {
+                    await this.setState({
+                        statebuttondelete: true
+                    })
+                }
+                if (selectedRowKeys.length === 1) {
+                    await this.setState({
+                        statebuttondelete: false,
+                        rowunitselected: selectedRows[0]
+                    })
+                }
+                else {
+                    this.setState({
+                        statebuttonedit: true
+                    })
+                    await this.setState({
+                        selectedId: arrayselected[0]
                     })
                 }
             },
@@ -605,7 +797,7 @@ class Unit extends React.Component {
                         </Col>
                         <span>
                             <Col span={2}>
-                                <Button shape='circle' type="primary" size="large" onClick={this.showModal.bind(this, this.state.unit)}>
+                                <Button shape='circle' type="primary" size="large" onClick={this.showModal.bind(this, this.state.rowunitselected)} >
                                     <Icon type="edit" /></Button> Sửa
                         </Col>
                             <Col span={2}>
@@ -614,8 +806,9 @@ class Unit extends React.Component {
                                     onConfirm={this.deleteUnit.bind(this, this.state.selectedId)}
                                     onCancel={this.cancel}
                                     okText="Có"
-                                    cancelText="Không">
-                                    <Button shape='circle' type="danger" size="large">
+                                    cancelText="Không"
+                                >
+                                    <Button shape='circle' type="danger" size="large" onClick={this.checkStateConfirm} >
                                         <Icon type="delete" /></Button> Xóa
                             </Popconfirm>
                             </Col>
@@ -632,7 +825,7 @@ class Unit extends React.Component {
                             onChange={this.onChangeSearchType}
                             onSearch={this.onSearch}
                             filterOption={(input, option) =>
-                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
                             <Option value="dm_dv_id">Mã đơn vị</Option>
                             <Option value="dm_dv_id_cha">Mã đơn vị cấp trên</Option>
@@ -653,7 +846,7 @@ class Unit extends React.Component {
                     <Row className="table-margin-bt">
                         <CreateModalUnit
                             datacha={this.state.dataSource_Select_Parent}
-                            wrappedComponentRef={this.saveFormRef}
+                            wrappedComponentRef={!this.state.visible_kh ? this.saveFormRef : this.saveFormRefCreate}
                             visible={this.state.visible}
                             onCancel={this.handleCancel}
                             onSave={this.InsertOrUpdateUnit}
@@ -670,17 +863,25 @@ class Unit extends React.Component {
                             onSelectDiaBanXa={this.onSelectDiaBanXa}
                             onSelectKh={this.onSelectKh}
                         />
-                        {/* <FormModalCustomer
-                            wrappedComponentRef={this.saveFormRef2}
-                            visible_kh={this.state.visible_kh}
+                        <CreateModalCustomer
+                            wrappedComponentRef={this.state.visible_kh ? this.saveFormRef : this.saveFormRefCreate}
+                            visible={this.state.visible_kh}
                             onCancel={this.onCancel_kh}
-                            onSave={this.onOk_kh}
+                            onOk_kh={this.onOk_kh}
                             title={this.state.title_kh}
                             formtype={this.state.formtype_kh}
-                            CreateCustomer={this.CreateCustomer}
-                            getunit = {this.getUnits.bind(this,this.state.page)}
-                            select_tenkh={this.state.select_tenkh}
-                        /> */}
+                            // CreateCustomer={this.CreateCustomer}
+                            getunit={this.getUnits.bind(this, this.state.page)}
+                            select_tendv={this.state.select_tendv}
+                            select_tinh={this.state.select_tinh}
+                            select_huyen={this.state.select_huyen}
+                            select_xa={this.state.select_xa}
+                            onSelectTinh={this.onSelectTinh}
+                            onSelectHuyen={this.onSelectHuyen}
+                            onSelectXa={this.onSelectXa}
+                            onSelectDv={this.onSelectDv}
+                            stateoption={this.state.stateoption}
+                        />
                         <Table className="table-contents" rowSelection={rowSelection} pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: 1000 }} rowKey="dm_dv_id">
                             <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hide" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />

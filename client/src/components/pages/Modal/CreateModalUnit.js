@@ -16,7 +16,7 @@ const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
 
-const CreateModalUnit = Form.create({ name: 'form_in_modal' })(
+const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
     class extends React.Component {
         render() {
             const { Option } = Select;
@@ -26,12 +26,8 @@ const CreateModalUnit = Form.create({ name: 'form_in_modal' })(
             combobox.push(<Option key={'DHD'}>Dừng hoạt động</Option>);
             combobox.push(<Option key={'GT'}>Giải thể</Option>);
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh } = this.props;
-            console.log(dm_dv_id_visible)
-            console.log("hien thi form ", form)
             const { getFieldDecorator } = form;
             var datacha = this.props.datacha
-            console.log('fyuqfgqyu', this.props.settenkh)
-
             return (
                 <div>
                     <Modal
@@ -155,10 +151,10 @@ const CreateModalUnit = Form.create({ name: 'form_in_modal' })(
                                 <Col span={12}>
                                     <Form.Item label='Người Đại Diện'>
                                         {getFieldDecorator('kh_id_nguoidaidien', {
-                                            // rules: [{required: true}],
+                                            rules: [{}], initiaValue : ""
                                         })(<Select onSelect={onSelectKh}
                                         >
-                                            <Option value="add_nguoidaidien">Thêm người đại diện</Option>
+                                            <Option value="add_nguoidaidien" >Thêm người đại diện</Option>
                                             {
                                                 select_tenkh.map((value, index) => {
                                                     return (

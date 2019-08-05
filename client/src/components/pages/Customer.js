@@ -8,6 +8,7 @@ import Request from '@apis/Request'
 // import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
+import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 // import { type } from 'os';
 // import { unwatchFile } from 'fs';
 
@@ -47,7 +48,18 @@ class Customer extends React.Component {
             select_tinh: [],
             select_huyen: [],
             select_xa: [],
-            select_tendv: []
+            select_diabantinh: [],
+            select_diabanhuyen: [],
+            select_diabanxa: [],
+            select_tendv: [],
+            select_tenkh : [],
+            formtype_dv : 'horizontal',
+            rowcustomerselected: true,
+            statebuttondelete: false,
+            statebuttonedit: false,
+            stateconfirmdelete: true,
+            title_dv : 'Thêm mới đơn vị',
+            stateoption: true
         }
     }
 
@@ -62,18 +74,18 @@ class Customer extends React.Component {
             })
     }
 
-    // getDonvis = () => {
-    //     console.log('get dv')
-    //     Request('customer/getdonvi', 'POST', {
-    //     }).then((response) => {
-    //         let data = response.data;
-    //         console.log('data dv', data)
-    //         if (data.data)
-    //             this.setState({
-    //                 customers: data.data.customers,
-    //             })
-    //     })
-    // }
+    getDonvis = () => {
+        console.log('get dv')
+        Request('customer/getdonvi', 'POST', {
+        }).then((response) => {
+            let data = response.data;
+            console.log('data dv', data)
+            if (data.data)
+                this.setState({
+                    customers: data.data.customers,
+                })
+        })
+    }
 
     getCustomers = (pageNumber) => {
         console.log('getdata')
@@ -93,18 +105,23 @@ class Customer extends React.Component {
                 let data = response.data;
                 console.log(data, 'data trả về')
                 if (data.data)
-    
+
                     await this.setState({
                         customers: data.data.customers,
                         count: Number(data.data.count)
                     })
-                    console.log('ccccccccc', this.state.customers)
+                await console.log('ccccccccc', this.state.customers)
                 var i = 0;
-                for (i = 0; i < this.state.count; i++) {
-                    this.state.customers[i].kh_hovaten = this.state.customers[i].kh_ho + " " + this.state.customers[i].kh_tenlot + " " + this.state.customers[i].kh_ten
+                console.log("hien thi count ", this.state.count)
+                for (i = 0; i < 10; i++) {
+                    if (this.state.customers[i].kh_tenlot.length === 0) {
+                        this.state.customers[i].kh_hovaten = this.state.customers[i].kh_ho + " " + this.state.customers[i].kh_ten
+                    }
+                    else {
+                        this.state.customers[i].kh_hovaten = this.state.customers[i].kh_ho + " " + this.state.customers[i].kh_tenlot + " " + this.state.customers[i].kh_ten
+                    }
                 }
                 console.log("Họ và tên", this.state.customers[0].kh_hovaten)
-
                 this.props.fetchLoading({
                     loading: false
                 })
@@ -117,6 +134,7 @@ class Customer extends React.Component {
 
     InsertOrUpdateCustomer = () => {
         const { form } = this.formRef.props;
+
         form.validateFields((err, values) => {
             if (err) {
                 return
@@ -177,16 +195,17 @@ class Customer extends React.Component {
     showModal = async (customer) => {
         const { form } = this.formRef.props
         this.setState({
-            visible: true
+            visible: true,
+            stateoption: false
         });
         form.resetFields();
         form.setFieldsValue({ kh_lienlac: 'DD' })
         form.setFieldsValue({ kh_gioitinh: 'Nam' })
-       
+
         this.setState({
             dataSource_Select_Parent: this.state.customers
         })
-        
+
         if (customer.kh_id !== undefined) {
             await this.setState({
                 kh_id_visible: true,
@@ -195,8 +214,8 @@ class Customer extends React.Component {
 
             var dataSourceCha = []
 
-            this.state.units.map((value, index) => {
-                if (value.dm_dv_id !== unit.dm_dv_id) {
+            this.state.customer.map((value, index) => {
+                if (value.dm_dv_id !== customer.dm_dv_id) {
                     dataSourceCha.push(value)
                 }
             })
@@ -204,7 +223,7 @@ class Customer extends React.Component {
                 dataSource_Select_Parent: dataSourceCha
             })
             this.set_select_tendv();
-            form.setFieldsValue({dm_dv_id: 0})
+            form.setFieldsValue({ dm_dv_id: 0 })
 
             this.set_select_tinh();
             if (this.state.select_tinh.length === 0) {
@@ -218,7 +237,7 @@ class Customer extends React.Component {
             if (this.state.select_xa.length === 0) {
                 form.setFieldsValue({ dm_db_id_xa: '' })
             }
-            
+
             form.setFieldsValue(customer);
         }
 
@@ -246,7 +265,7 @@ class Customer extends React.Component {
                 await form.setFieldsValue({ dm_db_id_xa: this.state.select_xa[0].dm_db_id })
             }
             console.log('chuản bị koad donvi')
-           
+
             // form.setFieldsValue({ kh_id: 'Bỏ chọn'})
         }
 
@@ -258,7 +277,7 @@ class Customer extends React.Component {
     set_select_tendv = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
-            console.log('data donvi',res.data)
+            console.log('data donvi', res.data)
             await this.setState({
                 select_tendv: res.data
             })
@@ -309,7 +328,7 @@ class Customer extends React.Component {
         await this.set_select_tendv(value);
         if (this.state.select_tendv.length === 0) {
             await form.setFieldsValue({ dm_dv_id: '' })
-        } 
+        }
         console.log('===========================selected====================', value)
     }
 
@@ -318,19 +337,19 @@ class Customer extends React.Component {
         const { form } = this.formRef.props
         await this.set_select_huyen(value);
         if (this.state.select_huyen.length === 0) {
-            await form.setFieldsValue({ dm_db_id_huyen: '' })
+            await form.setFieldsValue({ dm_db_id_huyen_customer: '' })
             await this.set_select_xa(-1);
             // await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
-            await form.setFieldsValue({ dm_db_id_xa: '' })
+            await form.setFieldsValue({ dm_db_id_xa_customer: '' })
         }
         else {
-            await form.setFieldsValue({ dm_db_id_huyen: this.state.select_huyen[0].dm_db_id })
+            await form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
             await this.set_select_xa(this.state.select_huyen[0].dm_db_id);
             if (this.state.select_xa.length === 0) {
-                await form.setFieldsValue({ dm_db_id_xa: ' ' })
+                await form.setFieldsValue({ dm_db_id_xa_customer: ' ' })
             }
             else {
-                await form.setFieldsValue({ dm_db_id_xa: this.state.select_xa[0].dm_db_id })
+                await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
             }
         }
 
@@ -341,11 +360,47 @@ class Customer extends React.Component {
         const { form } = this.formRef.props
         await this.set_select_xa(value);
         if (this.state.select_xa.length === 0) {
-            await form.setFieldsValue({ dm_db_id_xa: '' })
+            await form.setFieldsValue({ dm_db_id_xa_customer: '' })
         }
         else {
-            await form.setFieldsValue({ dm_db_id_xa: this.state.select_xa[0].dm_db_id });
+            await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id });
         }
+    }
+
+    set_select_diabantinh = async () => {
+        await Request('unit/gettinh', 'POST', {
+        }).then(async (res) => {
+            await this.setState({
+                select_diabantinh: res.data
+            })
+        })
+    }
+
+    set_select_diabanhuyen = async (id_db_tinh) => {
+        console.log('select diab an tinh', id_db_tinh)
+        await Request('unit/gethuyen', 'POST', {
+            id_db_tinh: id_db_tinh
+        }).then(async (res) => {
+            await this.setState({
+                select_diabanhuyen: res.data
+            })
+        })
+    }
+
+    set_select_diabanxa = async (id_db_huyen) => {
+        await Request('unit/getxa', 'POST', {
+            id_db_huyen: id_db_huyen
+        }).then(async (res) => {
+            await this.setState({
+                select_diabanxa: res.data
+            })
+        })
+    }
+
+    handleOk = e => {
+        this.setState({
+            visible: false,
+        })
     }
 
     handleCancel = e => {
@@ -361,6 +416,10 @@ class Customer extends React.Component {
         this.setState(state);
     }
 
+    handleChange(value) {
+        console.log(`selecet ${value}`);
+    }
+
     handleCount = () => {
         let count = this.state;
         this.setState({
@@ -373,8 +432,17 @@ class Customer extends React.Component {
         message.success('Bấm yes để xác nhận')
     }
 
-    cancle = (e) => {
+    cancel = (e) => {
         console.log(e);
+        this.setState({
+            stateconfirmdelete: true
+        })
+    }
+
+    checkStateConfirm = () => {
+        this.setState({
+            stateconfirmdelete: true
+        })
     }
 
     showTotal = (total) => {
@@ -473,6 +541,10 @@ class Customer extends React.Component {
         this.formRef = formRef;
     }
 
+    saveFormRefCreate = formRef => {
+        this.saveFormRefCreate = formRef;
+    }
+
     removeSearch = () => {
         this.setState({
             textSearch: ''
@@ -482,14 +554,35 @@ class Customer extends React.Component {
     render() {
 
         const rowSelection = {
+            hideDefaultSelections: true,
             onChange: async (selectedRowKeys, selectedRows) => {
-
+                var arrayselected = []
+                arrayselected.push(selectedRowKeys)
                 console.log('id check', selectedRowKeys[0])
-                if (selectedRows[0]) {
+                if (selectedRowKeys.length > 0) {
                     await this.setState({
-                        selectedId: selectedRowKeys[0],
-                        customer: selectedRows[0]
-
+                        // selectedId: selectedRowKeys[0],
+                        // unit: selectedRows[0]
+                        statebuttondelete: false
+                    })
+                }
+                else {
+                    await this.setState({
+                        statebuttondelete: true
+                    })
+                }
+                if (selectedRowKeys.length === 1) {
+                    await this.setState({
+                        statebuttondelete: false,
+                        rowcustomerselected: selectedRows[0]
+                    })
+                }
+                else {
+                    this.setState({
+                        statebuttonedit: true
+                    })
+                    await this.setState({
+                        selectedId: arrayselected[0]
                     })
                 }
             },
@@ -511,7 +604,7 @@ class Customer extends React.Component {
                         </Col>
                         <span>
                             <Col span={2}>
-                                <Button shape='circle' type="primary" size="large" onClick={this.showModal.bind(this, this.state.customer)}>
+                                <Button shape='circle' type="primary" size="large" onClick={this.showModal.bind(this, this.state.rowcustomerselected)} >
                                     <Icon type="edit" /></Button> Sửa
                         </Col>
                             <Col span={2}>
@@ -521,7 +614,7 @@ class Customer extends React.Component {
                                     onCancel={this.cancel}
                                     okText="Có"
                                     cancelText="Không">
-                                    <Button shape='circle' type="danger" size="large">
+                                    <Button shape='circle' type="danger" size="large" onClick={this.checkStateConfirm} >
                                         <Icon type="delete" /></Button> Xóa
                             </Popconfirm>
                             </Col>
@@ -561,10 +654,10 @@ class Customer extends React.Component {
                     <br />
                     <Row className='table-margin-bt'>
                         <CreateModalCustomer
-                            wrappedComponentRef={this.saveFormRef}
+                            wrappedComponentRef={!this.state.visible_kh ? this.saveFormRef : this.saveFormRefCreate}
                             visible={this.state.visible}
                             onCancel={this.handleCancel}
-                            onSave={this.InsertOrUpdateCustomer}
+                            onOk_kh={this.InsertOrUpdateCustomer}
                             title={this.state.title}
                             formtype={this.state.formtype}
                             dateFormat={this.state.formatDate}
@@ -577,6 +670,26 @@ class Customer extends React.Component {
                             onSelectHuyen={this.onSelectHuyen}
                             onSelectXa={this.onSelectXa}
                             onSelectDv={this.onSelectDv}
+                            stateoption={this.state.stateoption}
+                        />
+                        <CreateModalUnit
+                            datacha={this.state.dataSource_Select_Parent}
+                            wrappedComponentRef={this.state.visible_kh ? this.saveFormRef : this.saveFormRefCreate}
+                            visible={this.state.visible_dv}
+                            onCancel={this.onCancel_dv}
+                            onSave={this.onOk_dv}
+                            title={this.state.title_dv}
+                            formtype={this.state.formtype_dv}
+                            // dm_dv_id_visible={this.state.dm_dv_id_visible}
+                            // handleChange={this.handleChange}
+                            select_diabantinh={this.state.select_diabantinh}
+                            select_diabanhuyen={this.state.select_diabanhuyen}
+                            select_diabanxa={this.state.select_diabanxa}
+                            select_tenkh={this.state.select_tenkh}
+                            onSelectDiaBanTinh={this.onSelectDiaBanTinh}
+                            onSelectDiaBanHuyen={this.onSelectDiaBanHuyen}
+                            onSelectDiaBanXa={this.onSelectDiaBanXa}
+                            onSelectKh={this.onSelectKh}
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
                             <Column title="Họ" dataIndex="kh_ho" key="kh_ho" className='hide' disabaled onHeaderCell={this.onHeaderCell} />

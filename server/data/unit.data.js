@@ -31,7 +31,7 @@ module.exports = {
             })
     },
     deleteUnitbyId: function (Id, callback) {
-        knex.from('donvis').where('dm_dv_id', Id).del().then(res => {
+        knex.from('donvis').whereIn('dm_dv_id', Id).del().then(res => {
             callback({ success: true });
         }).catch(err => {
             console.log(err)

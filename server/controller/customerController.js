@@ -17,9 +17,9 @@ var CustomerController = {
         let offset = pageSize * (pageNumber - 1);
         var res_customer = []
         customerData.getCustomer(limit, offset, index, sortBy, async (data) => {
-            console.log('dataaaa',data)
+            console.log('dataaaa', data)
             await data.data.customers.map((value, index) => {
-              
+
                 switch (value.kh_lienlac) {
                     case 'HD':
                         value.kh_lienlac_txt = 'Đại diện'
@@ -72,29 +72,29 @@ var CustomerController = {
         })
     },
 
-    getTinh: function getTinh(callback){
-        customerData.getTinh((data)=>{
-            console.log('data',data)
+    getTinh: function getTinh(callback) {
+        customerData.getTinh((data) => {
+            console.log('data', data)
             callback(data)
         })
     },
 
-    getHuyen: function getHuyeb(body,callback){
-        customerData.getHuyen(body.id_db_tinh ,(data)=>{
-            console.log('data huyennnn',data)
+    getHuyen: function getHuyeb(body, callback) {
+        customerData.getHuyen(body.id_db_tinh, (data) => {
+            console.log('data huyennnn', data)
             callback(data)
         })
     },
 
-    getXa: function getXa(data,callback){
-        customerData.getXa(data.id_db_huyen,(data)=>{
-            console.log('data xaaaaa',data)
+    getXa: function getXa(data, callback) {
+        customerData.getXa(data.id_db_huyen, (data) => {
+            console.log('data xaaaaa', data)
             callback(data)
         })
     },
 
-    getDonvi: function getDonvi(callback){
-        customerData.getDonvi((data) =>{
+    getDonvi: function getDonvi(callback) {
+        customerData.getDonvi((data) => {
             console.log('day la donvi')
             callback(data)
         })
@@ -114,7 +114,7 @@ var CustomerController = {
 
     insertDonvi: function insertDonvi(donvi, callback) {
         customerData.insertDonvi(donvi, (response) => {
-            console.log("hien thi controller ",response)
+            console.log("hien thi controller ", response)
             var message = constant.successInseart;
             var status = 200;
             if (!response.success) {
@@ -124,17 +124,21 @@ var CustomerController = {
             callback({
                 message: message,
                 success: response.success
-            },status);
+            }, status);
         })
     },
 
     insertCustomer: async function insertCustomer(customer, callback) {
         customer.kh_id = uuidv1();
-        if (
-            Validator.isInt(customer.dm_db_id_tinh, 'ID Tỉnh không đúng định dạng !!')
-            & Validator.isInt(customer.dm_db_id_huyen, 'ID Huyện không đúng định dạng !!')
-            & Validator.isInt(customer.dm_db_id_xa, 'ID Xã không đúng định dạng !!')
-            & Validator.isInt(customer.kh_sodienthoai, 'Số điện thoại không đúng định dạng !!')
+
+        customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
+        customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
+        customer.dm_db_id_xa = customer.dm_db_id_xa_customer
+        delete customer.dm_db_id_huyen_customer
+        delete customer.dm_db_id_tinh_customer
+        delete customer.dm_db_id_xa_customer
+        console.log(customer, 'customer custom')
+        if (Validator.isInt(customer.kh_sodienthoai, 'Số điện thoại không đúng định dạng !!')
             // & Validator.Name(customer.kh_ho, 'Họ không đúng định dạng !!')
             // & Validator.Name(customer.kh_tenlot, 'Tên lót không đúng định dạng !!')
             // & Validator.Name(customer.kh_ten, 'Tên không đúng định dạng !!')
@@ -155,7 +159,8 @@ var CustomerController = {
                     }
                     callback({
                         message: message,
-                        success: response.success
+                        success: response.success,
+                        id_customer: customer.kh_id
                     }, status);
                 })
             }
@@ -172,7 +177,7 @@ var CustomerController = {
 
     insertDonvi: function insertDonvi(donvi, callback) {
         customerData.insertDonvi(donvi, (response) => {
-            console.log("hien thi controller ",response)
+            console.log("hien thi controller ", response)
             var message = constant.successInseart;
             var status = 200;
             if (!response.success) {
@@ -182,11 +187,16 @@ var CustomerController = {
             callback({
                 message: message,
                 success: response.success
-            },status);
+            }, status);
         })
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
+        customer.forEach(element => {
+            element.dm_dv_id_tinh = element.dm_dv_id_tinh_customer
+            element.dm_dv_id_huyen = element.dm_dv_id_huyen_customer
+            element.dm_dv_id_xa = element.dm_dv_id_xa_customer
+        });
         customerData.updateCustomer(customer, (res) => {
             callback({
                 success: res.success,
