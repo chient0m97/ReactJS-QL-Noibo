@@ -8,6 +8,7 @@ module.exports = {
                 .then(res => {
                     let roles = res.rows
                     client.query("select count(*) from pq_role_action").then(res1 => {
+                        client.release()
                         console.log(res1.rows[0].count)
                         let data = {
                             roles: roles,
@@ -18,19 +19,26 @@ module.exports = {
                         callback(data)
                     })
                 })
+            
         }).catch(err => {
-            console.log('loi cmnr', err)
+            client.release()
+            console.log(err),
+                callback({
+                    success: false
+                })
         })
     },
     deleteRole: function (Id, callback) {
         console.log('------delete query-------', Id)
         pool.connect().then(client => {
-            let query ="delete from pq_role_action where id='" + Id + "'"
+            let query = "delete from pq_role_action where id='" + Id + "'"
             console.log(query)
             client.query(query).then(res => {
-                callback({ success: true,message:'xoa' });
+                client.release()
+                callback({ success: true, message: 'xoa' });
             })
         }).catch(err => {
+            client.release()
             console.log(err, 'loi cmnr')
             callback({ success: false })
         })
@@ -40,22 +48,27 @@ module.exports = {
         let id = uuidv1()
         pool.connect().then(client => {
             client.query("insert into pq_role_action values((select id from pq_roles where name='" + roles.role + "'),(select id from pq_actions where name='" + roles.action + "'),'" + id + "')").then(res => {
+                client.release()
                 callback({ success: true, message: 'insert thanh cong' })
             })
         }).catch(err => {
+            client.release()
             console.log('loi cmmr', err)
         })
 
 
     },
     updateRoleAction: function (user, callback) {
-        knex.from('users').where('id', user.id)
-            .update(user).then(res => {
-                callback({ success: true })
-            }).catch(err => {
-                console.log(err)
-                callback({ success: false })
+        pool.connect().then(client => {
+            client.query("update pq_role_action set action_code =(select id from pq_actions where name = '" + user.action + "'), role_code = (select id from pq_roles where name = '" + user.role + "') where id='" + user.id + "'").then(res => {
+                client.release()
+                callback({ success: true, message: 'update thanh cong' })
             })
+
+        }).then(err=>{
+            client.release()
+            console.log(err)
+        })
     },
 
 
@@ -94,21 +107,22 @@ module.exports = {
     getRoleCode: function (callback) {
         pool.connect().then(client => {
             client.query("select * from pq_roles").then(res => {
-                console.log('get role code data')
-                console.log(res.rows)
+                client.release()
                 callback({ success: true, data: res.rows })
             })
         }).catch(err => {
+            client.release()
             console.log(err)
         })
     },
     getRoleAction: function (callback) {
         pool.connect().then(client => {
             client.query("select * from pq_actions").then(res => {
-                console.log(res.rows)
+                client.release()
                 callback({ success: true, data: res.rows })
             })
         }).catch(err => {
+            client.release()
             console.log(err)
         })
     },
@@ -116,10 +130,11 @@ module.exports = {
         let id = uuidv1();
         pool.connect().then(client => {
             client.query("insert into pq_roles values('" + name + "','" + des + "','" + id + "')").then(res => {
-                console.log(res)
+                client.release()
                 callback({ success: true, message: 'insert thanh cong' })
             })
         }).catch(err => {
+            client.release()
             console.log('loi cmnr', err)
         })
     },
@@ -128,10 +143,12 @@ module.exports = {
         let id = uuidv1();
         pool.connect().then(client => {
             client.query("insert into pq_actions values('" + name + "','" + id + "')").then(res => {
+                client.release()
                 console.log(res)
                 callback({ success: true, message: 'insert thanh cong' })
             })
         }).catch(err => {
+            client.release()
             console.log('loi cmnr', err)
         })
     },
@@ -139,11 +156,13 @@ module.exports = {
         console.log('---------data-----------------', roles)
         pool.connect().then(client => {
             client.query("select * from pq_role_action where role_code=(select id from pq_roles where name='" + roles.role + "') and action_code=(select id from pq_actions where name='" + roles.action + "')").then(res => {
+                client.release()
                 console.log('ressssssssssssssssss', res.rows)
                 callback(res.rows)
             })
         }).catch(err => {
-            console.log(err)
+            client.release()
+            console.log('lỗi cmnr em ơi', err)
         })
     }
 };

@@ -56,8 +56,6 @@ class DynamicFieldSet extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const { keys, names } = values;
-                console.log('Received values of form: ', values);
-                console.log('Merged values:', keys.map(key => names[key]));
             }
         });
     };
@@ -155,7 +153,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
         }
         render() {
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
-            console.log(id_visible)
             const { getFieldDecorator } = form;
             return (
                 <Modal
@@ -264,7 +261,6 @@ class RoleAction extends React.Component {
     }
     //--------------DELETE-----------------------
     deleteRole = (id) => {
-        console.log('delte id: ', id)
         Request(`role_action/delete`, 'DELETE', { id: id })
             .then((res) => {
                 
@@ -283,8 +279,6 @@ class RoleAction extends React.Component {
 
     getRoles = (pageNumber) => {
 
-        console.log('index', this.state.index)
-        console.log('sortby', this.state.sortBy)
         if (pageNumber <= 0)
             return;
 
@@ -297,7 +291,6 @@ class RoleAction extends React.Component {
             .then((response) => {
                 if (response) {
                     let data = response.data;
-                    console.log('data1111111111111111111111111111111111111', data.roles)
                     if (data)
                         this.setState({
                             roles: data.roles,
@@ -313,19 +306,15 @@ class RoleAction extends React.Component {
     }
 
     InsertOrUpdateRole = () => {
-        console.log('ínertttttttttttttttttttt')
         const { form } = this.formRef.props;
 
         form.validateFields((err, values) => {
             if (err) {
                 return
             }
-            console.log('urllllllllllllllllllll', this.state.action)
-            console.log('valuessssssssssssssssssssssssssssssssssss', values)
             var url = this.state.action === 'insert' ? 'role_action/insert' : 'role_action/update'
             Request(url, 'POST', values)
                 .then((response) => {
-                    console.log('aaaaaaaaaaaaaaaaaaaaaaa res', response.data)
                     if (response.data.success === true) {
                         message.success(response.data.message)
                         this.setState({
@@ -347,7 +336,6 @@ class RoleAction extends React.Component {
         this.getRoles(this.state.pageNumber, this.state.index, this.state.sortBy);
     }
     onchangpage = async (page) => {
-        console.log('page', page)
         await this.setState({
             page: page
         })
@@ -357,12 +345,10 @@ class RoleAction extends React.Component {
         }
         else {
             this.getRoles(page)
-            console.log(this.getRoles(page))
         }
     }
     reqestRole = async () => {
         await Request('role_action/getRoleCode', 'POST', null).then(res => {
-            console.log('data tra ve show model', res.data.data)
             let dataRole = res.data.data;
             this.setState({
                 dataRole: dataRole
@@ -371,43 +357,41 @@ class RoleAction extends React.Component {
     }
     requestAction = async () => {
         await Request('role_action/getRoleAction', 'POST', null).then(res => {
-            console.log('data tra ve show model', res.data.data)
             let dataAction = res.data.data;
             this.setState({
                 dataAction: dataAction
             })
         })
     }
-    showModal = async (user) => {
-        // console.log('lengthhhhhhhhhhhhhhh------------------------------------',this.state.selectedRowKeys.length)
-        // if(this.state.selectedRowKeys.length===1){
+    showModal = async () => {
         const { form } = this.formRef.props
         await form.setFieldsValue({ role: '-----> Chọn role đi nhóc <-----', action: '-----> Chọn action đi nhóc <-----' })
         this.setState({
+            action:'insert',
             visible: true
         });
         this.reqestRole();
         this.requestAction();
-        console.log('modal')
-
-
-
-        if (user.id !== undefined) {
-            console.log('day la update')
-            this.setState({
-                id_visible: true,
-                action: 'update'
-            })
-            form.setFieldsValue(user);
-        }
-        // }
-        // else{
-        //     message.error('Chọn row đã nhóc')
-        // }
-
-
     };
-
+    showModalEdit = (user) =>{
+        if(this.state.selectedRowKeys.length===1){
+            const { form } = this.formRef.props
+            this.reqestRole();
+            this.requestAction();
+            if (user.id !== undefined) {
+                this.setState({
+                    visible: true,
+                    id_visible: true,
+                    action: 'update'
+                })
+                form.setFieldsValue(user);
+            }
+        }
+        else{
+            message.error("chọn một row thôi nhóc")
+        }
+        
+    }
     handleOk = e => {
         this.setState({
             visible: false,
@@ -436,22 +420,16 @@ class RoleAction extends React.Component {
         })
     }
     confirm = (e) => {
-        console.log(e);
         message.success('Bấm yes để xác nhận');
     }
 
     cancel = (e) => {
-        console.log(e);
     }
 
     showTotal = (total) => {
         return `Total ${total} items`;
     }
     onShowSizeChange = async (current, size) => {
-        console.log('size', size);
-        console.log('curent', current);
-        console.log('txt', this.state.isSearch);
-        console.log(this.state.isSearch)
         await this.setState({
             pageSize: size
         });
@@ -465,9 +443,6 @@ class RoleAction extends React.Component {
     }
 
     search = async (xxxx) => {
-        console.log('xxxxxxxxxxxx', this.state.pageSize)
-        console.log('search text', xxxx)
-        console.log('column search', this.state.columnSearch)
         Request('user/search', 'POST', {
             pageSize: this.state.pageSize,
             pageNumber: this.state.page,
@@ -480,7 +455,6 @@ class RoleAction extends React.Component {
             .then((response) => {
                 let data = response.data;
 
-                console.log('aaaaaaaaaaaaa', data)
                 if (data.data)
                     this.setState({
                         roles: data.data.roles,
@@ -489,13 +463,11 @@ class RoleAction extends React.Component {
                         isSearch: 1
                     })
 
-                console.log('data-----------------------------------', data)
             })
 
     }
 
     onChangeSearchType = async (value) => {
-        console.log('hihi', this.state.searchText)
         await this.setState({
             columnSearch: value,
         })
@@ -506,13 +478,11 @@ class RoleAction extends React.Component {
     }
 
     onSearch = (val) => {
-        console.log('search:', val);
     }
 
     onHeaderCell = (column) => {
         return {
             onClick: async () => {
-                console.log('ccmnr', column.dataIndex)
                 if (this.state.isSort) {
                     await this.setState({
                         sortBy: 'DESC',
@@ -531,7 +501,6 @@ class RoleAction extends React.Component {
                     isSort: !this.state.isSort,
                     index: column.dataIndex
                 })
-                console.log('xx', this.state.isSort)
                 if (this.state.isSearch == 1) {
                     this.search(this.state.searchText)
                 }
@@ -573,16 +542,13 @@ class RoleAction extends React.Component {
     onchangeRole = (value) => {
         console.log('valueeeeeeeeeeeeee', value)
         if (value === 'role') {
-            console.log('deo co data ')
             this.setState({
                 roleModaVisible: true
             })
         }
     }
     onchangeAction = async (value) => {
-        console.log('valueeeeeeeeeeeeee', value)
         if (value === 'action') {
-            console.log('deo co data ')
             await this.setState({
                 actionModalVisible: true
             })
@@ -590,19 +556,16 @@ class RoleAction extends React.Component {
 
     }
     roleCancel = () => {
-        console.log('cancel role')
         this.setState({
             roleModaVisible: false
         })
     }
     roleOk = async (value) => {
         const { form } = this.formRef.props
-        console.log(value, 'dcm')
         let name = value.name
         let des = value.description
         await Request('role_action/roleInsert', 'POST', { name, des }).then(res => {
 
-            console.log(res)
             let data = res.data;
             message.success(data.message)
             if (data.success) {
@@ -622,11 +585,9 @@ class RoleAction extends React.Component {
     }
     actionOk = async (value) => {
         const { form } = this.formRef.props
-        console.log(value, 'dcmmmmmmmmmmmmmmmmmmmmmmmmmm')
         let name = value.name
         await Request('role_action/actionInsert', 'POST', { name }).then(res => {
 
-            console.log(res)
             let data = res.data;
             message.success(data.message)
             if (data.success) {
@@ -650,25 +611,23 @@ class RoleAction extends React.Component {
         let payload = jwt.decode(token);
         let claims = payload.claims;
         let canPermiss = claims.indexOf(Permission.Role.Permiss) >= 0;
-        console.log('permis', canPermiss)
         let canUpdate = claims.indexOf(Permission.Role.Update) >= 0;
         let canDelete = claims.indexOf(Permission.Role.Delete) >= 0;
         let canCreate = claims.indexOf(Permission.Role.Insert) >= 0;
 
         const rowSelection = {
+           
             hideDefaultSelections: true,
             onChange: async (selectedRowKeys, selectedRows) => {
                 console.log('select rows', selectedRows)
-                console.log('selected rowkeys', selectedRowKeys[0])
+                console.log('selected rowkeys', selectedRowKeys)
                 if (selectedRows[0]) {
-                    console.log('kkkkkkk')
                     await this.setState({
                         selectedId: selectedRowKeys[0],
                         selectedRowKeys: selectedRowKeys,
                         user: selectedRows[0],
                     })
                 }
-                console.log('id',this.state.selectedId)
 
             },
 
@@ -707,20 +666,20 @@ class RoleAction extends React.Component {
                     {
                         canUpdate ?
                             <div>
-                                <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
+                                <Button style={{ margin: '20px' }} onClick={this.showModalEdit.bind(this, this.state.user)}>
                                     <Icon type="edit" />
                                 </Button> Sửa
-            </div>
+                            </div>
                             : null
                     }
 
                     {
                         canCreate ?
                             <div>
-                                <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
+                                <Button style={{ margin: '20px' }} onClick={this.showModal}>
                                     <Icon type="plus" />
                                 </Button> Thêm
-                </div>
+                            </div>
                             : null
                     }
                     {
@@ -763,10 +722,6 @@ class RoleAction extends React.Component {
                             return {
                                 onClick: event => {
                                     this.handleClickRow.bind(this, rowIndex)
-                                    console.log('aaaaaaaaaaaaaaaaaa', event)
-                                    console.log('reacassadasdad', record.name)
-
-                                    console.log('reacassadasdad', rowIndex)
 
                                 }, // click row
                             };

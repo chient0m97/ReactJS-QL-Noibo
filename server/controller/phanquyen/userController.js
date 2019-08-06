@@ -156,7 +156,7 @@ var UserController = {
 
     setPermission: function (permiss, callback) {
         userData.updateRole(permiss, (data) => {
-           console.log(data)
+            console.log(data)
         })
         console.log('perrrrrrrrrrrrrrrrrrrrrrrrr', permiss)
         //    let per =  permiss.map(function (value) {

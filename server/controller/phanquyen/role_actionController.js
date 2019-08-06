@@ -1,8 +1,5 @@
 
-
-var Validator = require('../../validate/common')
 const role_actionData = require('../../data/role_actionData')
-const constant = require('../constant')
 var UserController = {
     /**
      * Get user paging.
@@ -38,7 +35,6 @@ var UserController = {
     insertRoleAction: async function insertRoleAction(roles, callback) {
         console.log('-----------controler------------')
         role_actionData.uniqueRole(roles, (data) => {
-            console.log('dataaaaaaaaaaa', data)
             if (data.length > 0) {
                 console.log('ton tai roi nhoc')
                 callback({ success: false, message: 'da ton tai ' })
@@ -55,19 +51,22 @@ var UserController = {
 
     },
     updateRoleAction: function updateRoleAction(user, callback) {
-        if (Validator.isMail(user.email, 'Email không đúng định dạng')
-            & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
-            & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
-        ) {
-
-            role_actionData.updateRole(user, (res) => {
-                callback({
-                    success: res.success,
-                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
+        role_actionData.uniqueRole(user, (data) => {
+            console.log(user.id)
+            console.log('dataaaaaaaaaaa', data[0])
+            if(data[0].id == user.id){
+                console.log('update')
+            }
+            if (data.length === 0 || data[0].id === user.id) {
+                role_actionData.updateRoleAction(user, (data) => {
+                    callback(data)
                 })
-            })
+            } else {
+                console.log('ton tai roi nhoc')
+                callback({ success: false, message: 'da ton tai ' })
+            }
 
-        }
+        })
     }
     ,
 

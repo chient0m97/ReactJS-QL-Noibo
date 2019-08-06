@@ -3,15 +3,7 @@ var router = express.Router()
 // middleware that is specific to this router
 var role_actionController = require('../controller/phanquyen/role_actionController');
 
-
-
-router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now())
-    next()
-})
 router.post('/get', function (req, res) {
-    console.log('------------------------------------get  role-----------------------------------')
-    console.log('body',req.body)
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;
@@ -27,16 +19,13 @@ router.post('/get', function (req, res) {
 router.delete('/delete', function (req, res) {
     console.log('----------delete-----------------',req.body.id)
     role_actionController.deleteRole(req.body.id, function (data) {
-        console.log(data)
         res.send(data);
     })
 })
 
 router.post('/insert',function (req, res) {
-    console.log('----------------insert-------------',req.body)
     role_actionController.insertRoleAction(req.body, function (data) {
         res.send(data);
-        console.log('result',data)
 
     })
 

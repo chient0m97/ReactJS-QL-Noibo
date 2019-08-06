@@ -87,7 +87,7 @@ class DynamicFieldSet extends React.Component {
         key={k}
       >
         {getFieldDecorator(`names[${k}]`, {
-          validateTrigger: ['onChange', 'onBlur'],
+          validateTrigger: ['onChange', 'onBlur'],          
 
         })(<div>
           <Select
@@ -216,16 +216,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   {getFieldDecorator('phone', {
                     rules: [{ required: true, message: this.state.messageRequired, }],
                   })(<Input type="phone" />
-                    // <Select>
-                    //   {this.props.datacha.map((item, i) => {
-                    //     return(
-                    //     <Option value={item.ns_id}>{item.ns_id}</Option>
 
-                    //     )
-                    //   })}
-
-
-                    // </Select>
                   )}
                 </Form.Item>
               </Col>
@@ -240,7 +231,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
 class User extends React.Component {
   constructor(props) {
     super(props);
-    //this.child = React.createRef();
     this.state = {
       pageNumber: 1,
       current: 1,
@@ -270,7 +260,7 @@ class User extends React.Component {
       roleVisible: 'none',
       modalRoleVisible: false,
       actionColumn: 'action-hide',
-      users:[]
+      users: []
     }
   }
   //--------------DELETE-----------------------
@@ -315,16 +305,8 @@ class User extends React.Component {
         }
 
       })
-    //   jwt.decode(token)
-    // jwt.verify(token, "heymynameismohamedaymen", (err, decoded) => {
-    //   if (decoded.role == 'admin') {
-    //     this.setState({
-    //       roleVisible: ''
-    //     })
-    //   }
-    // })
+
   }
-  // insert---------------------------------
 
   InsertOrUpdateUser = () => {
     const { form } = this.formRef.props;
@@ -369,7 +351,7 @@ class User extends React.Component {
     this.getUsers(this.state.pageNumber)
   }
   componentDidMount() {
-    this.getUsers(this.state.pageNumber, this.state.index, this.state.sortBy);
+    this.getUsers(this.state.pageNumber);
   }
   onchangpage = async (page) => {
     console.log('page', page)
@@ -713,56 +695,65 @@ class User extends React.Component {
           }
 
         </div>
-        <Row className="table-margin-bt">
-          <FormModal
-            datacha={this.state.datacha}
-            wrappedComponentRef={this.saveFormRef}
-            visible={this.state.visible}
-            onCancel={this.handleCancel}
-            onSave={this.InsertOrUpdateUser}
-            title={this.state.title}
-            formtype={this.state.formtype}
-            id_visible={this.state.id_visible}
-          />
+        <div>
+          {
+            canRead ?
+              <div>
+                <Row className="table-margin-bt">
+                  <FormModal
+                    datacha={this.state.datacha}
+                    wrappedComponentRef={this.saveFormRef}
+                    visible={this.state.visible}
+                    onCancel={this.handleCancel}
+                    onSave={this.InsertOrUpdateUser}
+                    title={this.state.title}
+                    formtype={this.state.formtype}
+                    id_visible={this.state.id_visible}
+                  />
 
 
-          <Table
+                  <Table
 
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: event => {
-                  this.handleClickRow.bind(this, rowIndex)
-                  console.log('aaaaaaaaaaaaaaaaaa', event)
-                  console.log('reacassadasdad', record.name)
+                    onRow={(record, rowIndex) => {
+                      return {
+                        onClick: event => {
+                          this.handleClickRow.bind(this, rowIndex)
+                          console.log('aaaaaaaaaaaaaaaaaa', event)
+                          console.log('reacassadasdad', record.name)
 
-                  console.log('reacassadasdad', rowIndex)
+                          console.log('reacassadasdad', rowIndex)
 
-                }, // click row
-              };
-            }}
-            expandRowByClick="true" onChange={this.changeRows}
-            pagination={false}
-            rowSelection={rowSelection}
-            dataSource={this.state.users} rowKey="name" >
-            <Column className="action-hide"
-              title={<span>Id <Icon type={this.state.orderby} /></span>}
-              dataIndex="id"
-              key="id"
-              onHeaderCell={this.onHeaderCell}
-            />
-            <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
-            />
-            <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
-            <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
-            <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
-            <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
+                        }, // click row
+                      };
+                    }}
+                    expandRowByClick="true" onChange={this.changeRows}
+                    pagination={false}
+                    rowSelection={rowSelection}
+                    dataSource={this.state.users} rowKey="name" >
+                    <Column className="action-hide"
+                      title={<span>Id <Icon type={this.state.orderby} /></span>}
+                      dataIndex="id"
+                      key="id"
+                      onHeaderCell={this.onHeaderCell}
+                    />
+                    <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
+                    />
+                    <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
+                    <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
+                    <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
+                    <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
 
 
-          </Table>
-        </Row>
-        <Row>
-          <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
-        </Row>
+                  </Table>
+                </Row>
+                <Row>
+                  <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+                </Row>
+              </div>
+              : <h1>mày đéo có quyền vào đây</h1>
+          }
+
+        </div>
       </div >
 
     )

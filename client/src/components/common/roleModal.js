@@ -14,8 +14,7 @@ class roleModal extends React.Component {
       }
     } 
     render() {
-      const { visible, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
-      console.log(id_visible)
+      const { visible, form, confirmLoading, formtype,  } = this.props;
       const { getFieldDecorator } = form;
       return (
         <Modal

@@ -109,12 +109,14 @@ module.exports = {
                 query = "select pq_roles.name as role,pq_actions.name as action from pq_role_user_group left join users on users.name = pq_role_user_group.group_user_code left join pq_role_action on pq_role_action.id = pq_role_user_group.role_action_code left join pq_roles on pq_roles.id = pq_role_action.role_code left join pq_actions on pq_actions.id = pq_role_action.action_code where users.name ='" + username + "'"
                 return client.query(query)
                     .then(res => {
+                        client.release()
                         let data = res.rows
                         callback({
                             success: true,
                             data: data,
                         })
                     }).catch(err => {
+                        client.release()
                         console.log('lỗi con mẹ nó rồi em ey', err)
                         callback({
                             success: false
@@ -141,6 +143,7 @@ module.exports = {
                             let idra = res.rows[0].id
                             let idgr = uuidv1();
                             client.query("insert into pq_role_user_group values('"+per.user+"','"+idra+"','"+idgr+"')").then(res=>{
+                                client.release()
                                 console.log('them moi thagnh cong')
                             })
                         })
@@ -150,15 +153,12 @@ module.exports = {
             })
 
 
+        }).catch(err=>{
+            client.release()
+            console.log(err)
         })
     },
 
-    // insertRoleAction = (a)=>{
-
-    // },
-    // insertRoleUserGroup = (a)=>{
-
-    // }
-
+  
 
 };

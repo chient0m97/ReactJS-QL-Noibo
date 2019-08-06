@@ -2,7 +2,7 @@ var UserController = require('../controller/phanquyen/userController')
 var constant = require('./constant')
 var authorize = (req, res, next) => {
     // check header for the token
-
+    console.log('authorize')
     // decode token
     if (JSON.stringify(req.url).trim().toLocaleLowerCase().includes('login') === true) {
         next();

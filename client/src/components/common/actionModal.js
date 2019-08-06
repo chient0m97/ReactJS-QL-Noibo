@@ -13,9 +13,7 @@ class ActionModal extends React.Component {
         }
     }
     render() {
-        const { visible, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
-        console.log(id_visible)
-        console.log('action visbleeeeeeeeeee',visible)
+        const { visible, Data, form, title, confirmLoading, formtype } = this.props;
         const { getFieldDecorator } = form;
         return (
             <Modal

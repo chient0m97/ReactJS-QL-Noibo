@@ -49,7 +49,7 @@ app.use('/checkrole',checked)
 app.use('/setpermission',setpermiss)
 app.use('/role_action',role_action)
 
-app.use('/', authorize, userRouter);
+app.use('/', userRouter);
 
 //app.use('/', authorize, hopdongrouters );
 
