@@ -16,7 +16,8 @@ constructor = (value, errMessage) => {
     }
     
     if ((typeof value) + '' === 'string' & value.length > 0) {
-        console.log('art cool');
+        
+
         return true
     }
 
@@ -68,6 +69,16 @@ var Validator = {
             return false
         }
     },
+    isDate: (value, errMessage) => {
+        if (constructor(value, errMessage)) {
+
+            if (regExpConfig.isDate.test(value)) {
+                return true
+            }
+            Validator.error.push(defaultMessage)
+            return false
+        }
+    },
     isPass: (value, errMessage) => {
         if (constructor(value, errMessage)) {
             if (regExpConfig.password.test(value))
@@ -99,7 +110,17 @@ var Validator = {
             Validator.error.push(defaultMessage)
             return false
         }
-
+    },
+    isNum: (value, errMessage) => {
+        if (constructor(value, errMessage)) {
+            if (regExpConfig.isNum.test(value))
+                return true
+            else {
+                Validator.error.push(defaultMessage)
+                return false
+            }
+        }
+        return false
     },
     // validate database 
     db: {

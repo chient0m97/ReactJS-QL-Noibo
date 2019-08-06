@@ -7,8 +7,9 @@ import Unit from '@pages/Unit'
 import Customer from '@pages/Customer'
 import User from '@pages/User';
 import About from '@pages/About';
-
-
+import Hopdong from '@pages/Hopdong'
+import Diaban from '@pages/Diaban'
+import Duan from '@pages/Duan'
 
 const routers = [
     {
@@ -55,6 +56,21 @@ const routers = [
         path: '/quan-ly-dia-ban',
         component: About,
         name: 'About'
+    },
+    {
+        path: '/hopdong',
+        component: Hopdong,
+        name: 'Hopdong'
+    },
+    {
+        path: '/diaban',
+        component: Diaban,
+        name: 'Diaban'
+    },
+    {
+        path: '/duan',
+        component: Duan,
+        name: 'Duan'
     },
 ]
 

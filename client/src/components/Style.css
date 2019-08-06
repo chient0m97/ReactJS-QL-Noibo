@@ -19,6 +19,7 @@
   width: 40px;
   height: 40px;
 }
+<<<<<<< HEAD
 .modal-dialog {
   max-width: 100%;
   margin: 0;
@@ -30,3 +31,8 @@
   display: flex;
 }
 
+=======
+.ant-form-item-control{
+  padding-bottom: 0px;
+}
+>>>>>>> origin/sonhopdong

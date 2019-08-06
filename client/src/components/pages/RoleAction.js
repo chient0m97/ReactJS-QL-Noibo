@@ -619,11 +619,10 @@ class RoleAction extends React.Component {
            
             hideDefaultSelections: true,
             onChange: async (selectedRowKeys, selectedRows) => {
-                console.log('select rows', selectedRows)
                 console.log('selected rowkeys', selectedRowKeys)
                 if (selectedRows[0]) {
                     await this.setState({
-                        selectedId: selectedRowKeys[0],
+                        selectedId: selectedRows[0].id,
                         selectedRowKeys: selectedRowKeys,
                         user: selectedRows[0],
                     })
