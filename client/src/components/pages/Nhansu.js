@@ -355,6 +355,9 @@ class Nhansu extends React.Component {
             console.log('action is: ', url)
             Request(url, 'POST', values)
                 .then((response) => {
+                    this.setState({
+                        rowthotroselected: values
+                    })
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -385,6 +388,7 @@ class Nhansu extends React.Component {
     }
 
     deleteNhansu = (ns_id) => {
+        console.log("hien thi ns_id ",ns_id)
         Request(`nhansu/delete`, 'DELETE', { ns_id: ns_id })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
@@ -392,6 +396,15 @@ class Nhansu extends React.Component {
                     description: res.data.message
                 });
                 this.getNhansu(this.state.page)
+                this.setState({
+                    stateconfirmdelete: false,
+                    statebuttondelete: true,
+                    statebuttonedit: true,
+                    selectedRowKeys: []
+                })
+            })
+            this.setState({
+                stateconfirmdelete: false,
             })
     }
 
@@ -589,6 +602,12 @@ class Nhansu extends React.Component {
             })
     }
 
+    checkStateConfirm = () => {
+        this.setState({
+            stateconfirmdelete: true
+        })
+    }
+
     render() {
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -610,10 +629,26 @@ class Nhansu extends React.Component {
                             </Tooltip>
                         </Col>
                         <Col span={2}>
-                                <Tooltip title="Sửa Hỗ Trợ">
-                                    <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
-                                        <Icon type="edit" />
-                                    </Button>
+                            <Tooltip title="Sửa Hỗ Trợ">
+                                <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                    <Icon type="edit" />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+                        <Col span={2}>
+                                <Tooltip title="Xóa Hỗ Trợ">
+                                    <Popconfirm
+                                        title="Bạn chắc chắn muốn xóa?"
+                                        onConfirm={this.deleteNhansu.bind(this, this.state.selectedId)}
+                                        onCancel={this.cancel}
+                                        okText="Yes"
+                                        cancelText="No"
+                                        visible={this.state.stateconfirmdelete}
+                                    >
+                                        <Button type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                            <Icon type="delete" />
+                                        </Button>
+                                    </Popconfirm>
                                 </Tooltip>
                             </Col>
                         <Col span={2}>
@@ -646,28 +681,6 @@ class Nhansu extends React.Component {
                         <Column title="Nguyên quán" dataIndex="ns_nguyenquan" key="ns_nguyenquan" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Người liên hệ" dataIndex="ns_nguoilienhe" key="ns_nguoilienhe" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Bằng cấp" dataIndex="ns_bangcap" key="ns_bangcap" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column
-                            visible={false}
-                            title="Action"
-                            key="action"
-                            render={(text, record) => (
-                                <span>
-                                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.ns_id, text)}>
-                                        <Icon type="edit" />
-                                    </Button>
-                                    <Popconfirm
-                                        title="Bạn chắc chắn muốn xóa?"
-                                        onConfirm={this.deleteNhansu.bind(this, record.ns_id)}
-                                        onCancel={this.cancel}
-                                        okText="Yes"
-                                        cancelText="No">
-                                        <Button type="danger"  >
-                                            <Icon type="delete" />
-                                        </Button>
-                                    </Popconfirm>
-                                </span>
-                            )}
-                        />
                     </Table>
                 </Row>
                 <Row>

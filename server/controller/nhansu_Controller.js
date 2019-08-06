@@ -69,14 +69,18 @@ var nhansuController = {
     },
 
     deleteNhansuById: async function deleteNhansuById(ns_id, callback) {
-        nhansuData.deleteNhansuById(ns_id, data => {
+        nhansuData.deleteNhansu(ns_id, data => {
             if (data.success === true) {
                 callback({
                     success: data.success,
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callbackI(data, 400);
+            else
+            callback({
+                success: data.error,
+                message: "foreign key"
+            })
         })
     },
 

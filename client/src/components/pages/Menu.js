@@ -1,13 +1,13 @@
 import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card } from 'antd';
+import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Card } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import Modal_Menu from '@pages/Modal/Modal_Menu.js'
 import '@styles/style.css'
+import { async } from 'q';
 const { Column } = Table;
-const { Option } = Select
 
 class Menu extends React.Component {
     constructor(props) {
@@ -59,7 +59,6 @@ class Menu extends React.Component {
                 res.data.data.menus.map((values, index) => {
                     array.push({ id: values.dm_menu_id, name: values.dm_menu_name, icon: values.dm_menu_icon_class })
                 })
-                console.log('hien thi array ', array)
                 this.setState({
                     listmenu: array
                 })
@@ -74,21 +73,17 @@ class Menu extends React.Component {
     }
 
     insertOrUpdate = () => {
-        console.log("hien thi trong insert")
         const { form } = this.formRef.props;
         form.validateFields((err, values) => {
-            console.log("Hien thi trong err")
             if (err) {
                 return
             }
-            console.log("hien thi values", values)
-            if(values.dm_menu_id_parent==='notmenuparent'){
-                values.dm_menu_id_parent=null
+            if (values.dm_menu_id_parent === 'notmenuparent') {
+                values.dm_menu_id_parent = null
             }
             var url = this.state.action === 'insert' ? 'menu/insert' : 'menu/update'
             Request(url, 'POST', values)
                 .then(async (response) => {
-                    console.log("hien thi response ",values)
                     this.setState({
                         rowthotroselected: values
                     })
@@ -121,7 +116,6 @@ class Menu extends React.Component {
     }
 
     deleteMenu = (dm_menu_id) => {
-        console.log("Hien thi dm_menu_id ", dm_menu_id)
         Request(`menu/delete`, 'DELETE', { dm_menu_id: dm_menu_id })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
@@ -157,14 +151,12 @@ class Menu extends React.Component {
     }
 
     showModal = (menu) => {
-        console.log("hien thi gia tri truyen vao ", menu)
         const { form } = this.formRef.props
         this.setState({
             visible: true
         });
         form.resetFields();
         if (menu.dm_menu_id !== undefined) {
-            console.log("day la update")
             this.setState({
                 id_visible: true,
                 action: 'update',
@@ -186,7 +178,6 @@ class Menu extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys, selectedRows) => {
-        console.log("hien thi selectedrowkeys ",selectedRowKeys)
         this.setState({
             selectedRowKeys,
             selectedId: selectedRowKeys
@@ -240,7 +231,6 @@ class Menu extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Sửa Menu">
                                     <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
-                                        {/* <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled> */}
                                         <Icon type="edit" />
                                     </Button>
                                 </Tooltip>
@@ -273,7 +263,19 @@ class Menu extends React.Component {
                     <Row style={{ marginTop: 5 }}>
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.menu} rowKey="dm_menu_id" bordered >
                             <Column title="Url" dataIndex="dm_menu_url" width={400} />
-                            <Column title="Name" dataIndex="dm_menu_name" width={400} />
+                            <Column title="Name" dataIndex="dm_menu_name" width={250} />
+                            <Column title="Menu parent" dataIndex="dm_menu_id_parent"
+                                render={text => {
+                                    var a = null
+                                    this.state.listmenu.forEach(element => {
+                                        if (element.id === text)
+                                            a = element.name
+                                    });
+                                    if (a === null)
+                                        return ''
+                                    return a
+                                }}
+                            />
                             <Column title="Icon" dataIndex="dm_menu_icon_class"
                                 render={text => {
                                     return <Icon type={text} />

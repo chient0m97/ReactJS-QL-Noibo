@@ -243,7 +243,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
         }
     }
 )
-var arraydelete = []
 var formatDateModal = require('dateformat');
 var array_ht_trangthai = []
 class Hotro extends React.Component {
@@ -410,7 +409,6 @@ class Hotro extends React.Component {
                 ht_id.map((values, index) => {
                     arraydelete.push(values)
                 })
-                console.log("hien thi array delete ", arraydelete)
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
                     description: res.data.message
@@ -418,7 +416,6 @@ class Hotro extends React.Component {
                 this.getHotro(this.state.page)
                 this.setState({
                     stateconfirmdelete: false,
-                    selectedrow: arraydelete,
                     statebuttondelete: true,
                     statebuttonedit: true,
                     selectedRowKeys: []
