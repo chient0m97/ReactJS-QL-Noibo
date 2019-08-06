@@ -141,6 +141,13 @@ module.exports = {
                 callback(res.rows);
             })
     },
+    
+    // getDonvicha : function (callback){
+    //     knex.raw('select dm_dv_id, dm_dv_ten as tendonvicha from donvis where dm_dv_id_cha = ' +data)
+    //     .then((res) => {
+    //         callback(res.rows);
+    //     })
+    // },
 
     getDonvi : function (callback) {
         knex.raw('select dm_dv_id, dm_dv_ten as tendonvi from donvis khs')

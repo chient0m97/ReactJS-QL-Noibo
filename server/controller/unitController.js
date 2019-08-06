@@ -143,7 +143,8 @@ var UnitController = {
                     }
                     callback({
                         message: message,
-                        success: response.success
+                        success: response.success,
+                        id_unit: unit.dm_dv_id
                     }, status);
                 })
             }

@@ -209,13 +209,11 @@ class Unit extends React.Component {
     showModal = async (unit) => {
         const { form } = this.formRef.props
         this.setState({
-            visible: true
+            visible: true,
+            visible_kh : false,
         });
         form.resetFields();
         form.setFieldsValue({ dm_dv_trangthai: 'HD' })
-
-
-
         this.setState({
             dataSource_Select_Parent: this.state.units
         })
@@ -236,9 +234,9 @@ class Unit extends React.Component {
             this.setState({
                 dataSource_Select_Parent: dataSourceCha
             })
-            this.set_select_tenkh();
-            form.setFieldsValue({ kh_id: 0 })
 
+            this.set_select_tenkh();
+            form.setFieldsValue({ kh_id_nguoidaidien: 0})
             this.set_select_diabantinh();
             if (this.state.select_diabantinh.length === 0) {
                 form.setFieldsValue({ dm_db_id_tinh: '' })
@@ -256,7 +254,7 @@ class Unit extends React.Component {
 
         if (this.state.action !== 'update') {
             await this.set_select_tenkh();
-            await form.setFieldsValue({ kh_id: this.state.select_tenkh[0].kh_id })
+            await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
             await this.set_select_diabantinh();
             if (this.state.select_diabantinh.length > 0) {
                 await form.setFieldsValue({ dm_db_id_tinh: 1 })
@@ -435,15 +433,25 @@ class Unit extends React.Component {
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
-            console.log(res.data, 'data khach')
-            // res.data.push({ kh_id: '', tennguoidaidien: 'Bỏ chọn'})
-            console.log('day la kh id', this.state.kh_id)
-            console.log("hien thi res ", res)
+            console.log('data khach hang', res.data)
             await this.setState({
                 select_tenkh: res.data
             })
         })
     }
+
+    // set_select_tenkh = async () => {
+    //     await Request('unit/getkhachhang', 'POST', {
+    //     }).then(async (res) => {
+    //         console.log(res.data, 'data khach')
+    //         // res.data.push({ kh_id: '', tennguoidaidien: 'Bỏ chọn'})
+    //         console.log('day la kh id', this.state.kh_id)
+    //         console.log("hien thi res ", res)
+    //         await this.setState({
+    //             select_tenkh: res.data
+    //         })
+    //     })
+    // }
 
     set_select_tendv = async () => {
         await Request('customer/getdonvi', 'POST', {
@@ -550,7 +558,7 @@ class Unit extends React.Component {
                     }
                     await this.set_select_tendv();
                     if (this.state.set_select_tendv.length > 0) {
-                        await form.setFieldsValue({ dm_dv_id: 0 })
+                        await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id})
                     }
                     else {
                         await form.setFieldsValue({ dm_dv_id: '' })
@@ -560,10 +568,9 @@ class Unit extends React.Component {
                     console.log(err)
                 }
 
-                if (value === 'add_donvi'){
-                    form.setFieldsValue({dm_dv_id : ''})
-                }
-
+                // if (value === 'add_nguoidaidien'){
+                //     form.setFieldsValue({dm_dv_id : ''})
+                // }
                 // try {
                 //     if (this.state.select_tendv.length > 0) {
                 //         await form.setFieldsValue({ dm_dv_id: 1 })
@@ -580,9 +587,7 @@ class Unit extends React.Component {
 
         await this.set_select_tenkh(value);
         if (this.state.select_tenkh.length === 0) {
-            await form.setFieldsValue({ kh_id: '' })
-        } else {
-            await form.setFieldsValue({ kh_id: 0 })
+            await form.setFieldsValue({kh_id_nguoidaidien: '' })
         }
     }
 
@@ -597,9 +602,7 @@ class Unit extends React.Component {
     // }
 
     onSelectDiaBanTinh = async (value) => {
-        console.log('dia ban tinh')
         const { form } = this.formRef.props
-        console.log(form, 'dday laf value')
         await this.set_select_diabanhuyen(value);
         if (this.state.select_diabanhuyen.length === 0) {
             await form.setFieldsValue({ dm_db_id_huyen: '' })
@@ -862,6 +865,7 @@ class Unit extends React.Component {
                             onSelectDiaBanHuyen={this.onSelectDiaBanHuyen}
                             onSelectDiaBanXa={this.onSelectDiaBanXa}
                             onSelectKh={this.onSelectKh}
+                            
                         />
                         <CreateModalCustomer
                             wrappedComponentRef={this.state.visible_kh ? this.saveFormRef : this.saveFormRefCreate}

@@ -34,14 +34,14 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
             comboboxx.push(<Option key={'Khác'}>Khác</Option>);
 
             const dateFormat = "YYYY-MM-DD";
-            const { visible, onCancel, onOk_kh, Data, form, title_kh, confirmLoading, formtype, kh_id_visible, handleChange, select_tinh, select_huyen, select_xa, onSelectTinh, onSelectHuyen, onSelectXa, select_tendv, onSelectDv, stateoption } = this.props;
+            const { visible, onCancel, onOk_kh, Data, form, title, confirmLoading, formtype, kh_id_visible, handleChange, select_tinh, select_huyen, select_xa, onSelectTinh, onSelectHuyen, onSelectXa, select_tendv, onSelectDv, stateoption } = this.props;
             const { getFieldDecorator } = form;
             // var datacha = this.props.datacha
             return (
                 <div>
                     <Modal
                         visible={visible}
-                        title={title_kh}
+                        title="Nhập thông tin khách hàng"
                         okText="Save"
                         onCancel={onCancel}
                         onOk={onOk_kh}
@@ -71,7 +71,7 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={8}>
                                     <Form.Item label='Tên lót:'>
                                         {getFieldDecorator('kh_tenlot', {
-                                           
+                                           rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
@@ -189,7 +189,7 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                             </Row>
                             <Row gutter={24}>
                                 <Col span={8}>
-                                    <Form.Item label='Mã đơn vị:'>
+                                    <Form.Item label='Đơn vị:'>
                                         {getFieldDecorator('dm_dv_id', {
                                             
                                         })(<Select onSelect={onSelectDv}

@@ -25,7 +25,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
             combobox.push(<Option key={'HD'}>Hoạt động</Option>);
             combobox.push(<Option key={'DHD'}>Dừng hoạt động</Option>);
             combobox.push(<Option key={'GT'}>Giải thể</Option>);
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh } = this.props;
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh, stateoption } = this.props;
             const { getFieldDecorator } = form;
             var datacha = this.props.datacha
             return (
@@ -151,10 +151,10 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                 <Col span={12}>
                                     <Form.Item label='Người Đại Diện'>
                                         {getFieldDecorator('kh_id_nguoidaidien', {
-                                            rules: [{}], initiaValue : ""
-                                        })(<Select onSelect={onSelectKh}
+                                            rules: [{}],
+                                        })(<Select onSelect={onSelectKh} 
                                         >
-                                            <Option value="add_nguoidaidien" >Thêm người đại diện</Option>
+                                            <Option value="add_nguoidaidien"  disabled={stateoption}>Thêm người đại diện</Option>
                                             {
                                                 select_tenkh.map((value, index) => {
                                                     return (
