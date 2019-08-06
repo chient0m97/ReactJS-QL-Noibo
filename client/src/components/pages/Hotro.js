@@ -334,7 +334,7 @@ class Hotro extends React.Component {
                     loading: false
                 })
                 var array_duan = []
-                array_ht_trangthai = []
+                array_ht_trangthai = [],
                 res.data.data.hotros.map((data, index) => {
                     array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
                     array_ht_trangthai.push(data.ht_trangthai)
@@ -361,16 +361,21 @@ class Hotro extends React.Component {
                 return
             }
             var url = this.state.action === 'insert' ? 'hotro/insert' : 'hotro/update'
-            if (values.ht_thoigian_dukien_hoanthanh === "")
+            
+            if (values.ht_thoigian_dukien_hoanthanh === null){
+                console.log("hien thi ht_thoigiandukienhoanthanh ",values.ht_thoigian_dukien_hoanthanh)
                 values.ht_thoigian_dukien_hoanthanh = null
-            else
-                if (url === 'hotro/update') {
-                    object = values
-                    object.ht_thoigian_dukien_hoanthanh = object.ht_thoigian_dukien_hoanthanh + "T17:00:00.000Z"
-                    this.setState({
-                        rowthotroselected: object
-                    })
-                }
+            }
+            // else
+            // {
+            //     if (url === 'hotro/update') {
+            //         object = values
+            //         object.ht_thoigian_dukien_hoanthanh = object.ht_thoigian_dukien_hoanthanh + "T17:00:00.000Z"
+            //         this.setState({
+            //             rowthotroselected: object
+            //         })
+            //     }
+            // }
             Request(url, 'POST', values)
                 .then(async (response) => {
                     if (response.status === 200 & response.data.success === true) {
@@ -765,7 +770,10 @@ class Hotro extends React.Component {
                         </Row>
                     </Card>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }} >
+                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }}
+                            expandedRowRender={(record, selectedRowKeys) => {
+                                return this.state.hotro[selectedRowKeys].ht_noidungyeucau
+                            }}>
                             <Column dataIndex="ht_thoigian_dukien_hoanthanh" align='center'
                                 render={
                                     text => {
@@ -843,11 +851,11 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau" width={100}
+                            {/* <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau" width={100}
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
-                                onHeaderCell={this.onHeaderCell} />
+                                onHeaderCell={this.onHeaderCell} /> */}
                             <Column title="Ghi chú" dataIndex="ht_ghichu"
                                 render={text => {
                                     return this.checkDate(i, text, j)

@@ -6,7 +6,6 @@ const { SubMenu } = Menu;
 
 const { Sider } = Layout
 
-
 class AppSider extends Component {
 
     constructor(props) {
@@ -15,7 +14,6 @@ class AppSider extends Component {
             collapsed: props.collapsed,
             menu: []
         }
-
         this.setCollapsed(props.collapsed)
     }
 

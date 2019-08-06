@@ -76,7 +76,7 @@ module.exports = {
 
     updateHotro: function (hotros, callback) {
         console.log("hien thi ho tro ", hotros)
-        console.log("hien thi hotros.ht_thoigian_dukien_hoanthanh ",hotros.ht_thoigian_dukien_hoanthanh)
+        // console.log("hien thi hotros.ht_thoigian_dukien_hoanthanh ",hotros.ht_thoigian_dukien_hoanthanh)
         knex.from('hotros').where('ht_id', hotros.ht_id).update(hotros).then(res => {
             callback({
                 success: true,

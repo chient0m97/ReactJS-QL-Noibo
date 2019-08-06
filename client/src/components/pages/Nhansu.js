@@ -312,7 +312,6 @@ class Nhansu extends React.Component {
 
 
     formatDate(strDate, strFormat) {
-        console.log(strDate, strFormat);
         if (strDate == null)
             return null;
         var d = new Date(strDate);
@@ -347,12 +346,10 @@ class Nhansu extends React.Component {
     insertOrUpdate = () => {
         const { form } = this.formRef.props;
         form.validateFields((err, values) => {
-            console.log("trong validatefields ", values)
             if (err) {
                 return
             }
             var url = this.state.action === 'insert' ? 'nhansu/insert' : 'nhansu/update'
-            console.log('action is: ', url)
             Request(url, 'POST', values)
                 .then((response) => {
                     this.setState({
@@ -377,7 +374,6 @@ class Nhansu extends React.Component {
                             return <Alert type='error' message={value}></Alert>
                         })
                     }
-                    console.log("f")
                     notification[notifi_type]({
                         message: message,
                         description: description
@@ -388,7 +384,6 @@ class Nhansu extends React.Component {
     }
 
     deleteNhansu = (ns_id) => {
-        console.log("hien thi ns_id ",ns_id)
         Request(`nhansu/delete`, 'DELETE', { ns_id: ns_id })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
@@ -411,7 +406,6 @@ class Nhansu extends React.Component {
     refresh = async (pageNumber) => {
 
         await this.getNhansu(this.state.pageNumber)
-        console.log(this.state.nhansu, 'asdasdasdasdasdasdasd')
     }
 
     componentDidMount() {
@@ -443,7 +437,6 @@ class Nhansu extends React.Component {
             p2: this.state.sortBy
         })
             .then((response) => {
-                console.log('text search is: ', response.data)
                 let data = response.data;
                 if (data.data)
                     this.setState({
@@ -453,7 +446,6 @@ class Nhansu extends React.Component {
                         isSearch: 1
                     })
             })
-        console.log('AA', xxxx)
     }
 
     onHeaderCell = (column) => {
@@ -493,7 +485,6 @@ class Nhansu extends React.Component {
         form.resetFields();
         form.setFieldsValue({ ns_trangthai: 'TT' })
         if (nhansu.ns_id !== undefined) {
-            console.log("day la update")
             this.setState({
                 id_visible: true,
                 action: 'update'
@@ -523,7 +514,6 @@ class Nhansu extends React.Component {
         let state = this.state;
         state[e.target.name] = e.target.value;
         this.setState(state);
-        console.log('Change ')
     }
 
     handleCount = () => {
@@ -549,9 +539,7 @@ class Nhansu extends React.Component {
             pageSize: size
         });
         if (this.state.isSearch === 1) {
-            console.log('xxxx')
             this.handleSearch(this.state.page, this.state.searchText, this.confirm, this.state.nameSearch, this.state.codeSearch);
-            console.log(this.state.page)
         }
         else {
             this.getNhansu(this.state.page, this.state.index, this.state.sortBy)

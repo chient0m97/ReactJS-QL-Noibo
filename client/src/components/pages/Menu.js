@@ -134,9 +134,7 @@ class Menu extends React.Component {
     }
 
     refresh = async (pageNumber) => {
-
         await this.getMenu(this.state.pageNumber)
-        console.log(this.state.menu, 'asdasdasdasdasdasdasd')
     }
 
     handleCancel = e => {
@@ -261,10 +259,10 @@ class Menu extends React.Component {
                         </Card>
                     </Row>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.menu} rowKey="dm_menu_id" bordered >
+                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.menu} rowKey="dm_menu_id" bordered>
                             <Column title="Url" dataIndex="dm_menu_url" width={400} />
                             <Column title="Name" dataIndex="dm_menu_name" width={250} />
-                            <Column title="Menu parent" dataIndex="dm_menu_id_parent"
+                            <Column title="Menu parent" dataIndex="dm_menu_id_parent" width={250}
                                 render={text => {
                                     var a = null
                                     this.state.listmenu.forEach(element => {
