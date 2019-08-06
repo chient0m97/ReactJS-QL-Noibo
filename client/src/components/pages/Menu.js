@@ -88,6 +88,10 @@ class Menu extends React.Component {
             var url = this.state.action === 'insert' ? 'menu/insert' : 'menu/update'
             Request(url, 'POST', values)
                 .then(async (response) => {
+                    console.log("hien thi response ",values)
+                    this.setState({
+                        rowthotroselected: values
+                    })
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({

@@ -302,7 +302,11 @@ class Nhansu extends React.Component {
             orderby: 'arrow-up',
             rowthotroselected: {},
             statebuttonedit: true,
-            selectedRowKeys: []
+            statebuttondelete: true,
+            stateconfirmdelete: false,
+            selectedRowKeys: [],
+            selectedId: [],
+            selectedrow: [],
         }
     }
 
@@ -559,7 +563,40 @@ class Nhansu extends React.Component {
         }
     }
 
+    onSelectChange = (selectedRowKeys, selectedRows) => {
+        this.setState({
+            selectedRowKeys,
+            selectedId: selectedRowKeys
+        });
+        if (selectedRowKeys.length > 0) {
+            this.setState({
+                statebuttondelete: false
+            })
+        }
+        else
+            this.setState({
+                statebuttondelete: true
+            })
+        if (selectedRowKeys.length === 1) {
+            this.setState({
+                statebuttonedit: false,
+                rowthotroselected: selectedRows[0]
+            })
+        }
+        else
+            this.setState({
+                statebuttonedit: true
+            })
+    }
+
     render() {
+        const { selectedRowKeys } = this.state
+        const rowSelection = {
+            hideDefaultSelections: true,
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+        }
+
         var formatDate = require('dateformat')
         return (
             <div>
