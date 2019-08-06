@@ -50,7 +50,7 @@ class AppHeader extends Component {
         </Button>
         <Dropdown overlay={this.state.menu} trigger={[ 'click' ]}>
           <a style={{ marginLeft: '90%' }} className="ant-dropdown-link" href="/">
-            <Icon type="user" />
+            <Icon type="user" style={{fontSize:'20px'}} />
           </a>
         </Dropdown>,
               </Header>

@@ -9,7 +9,6 @@ router.get('/get',function(req,res){
     res.send('dcmmhihi')
 })
 router.post('/get', function(req, res) {
-    console.log("Get data f")
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;
@@ -57,19 +56,6 @@ router.post('/update', function(req,res){
 
 router.delete('/delete', function (req, res) {
     hotroController.deleteHotroById(req.body.ht_id, function (data) {
-        res.send(data);
-    })
-})
-
-router.post('/search', function(req, res) {
-    console.log('First sever search')
-    let pageSize = req.body.pageSize;
-    let pageNumber = req.body.pageNumber;
-    let textSearch = req.body.textSearch;
-    let columnSearch = req.body.columnSearch;
-    let index = req.body.p1;
-    let sortBy = req.body.p2;
-    hotroController.getDataSearch(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, function(data){
         res.send(data);
     })
 })

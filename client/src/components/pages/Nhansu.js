@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Spin, Avatar } from 'antd';
+import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Spin, Card } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
@@ -15,134 +15,8 @@ const { Search } = Input;
 
 
 let id = 0;
-var formatDateModal=require('dateformat')
-class DynamicFieldSet extends React.Component {
-    remove = k => {
-        const op = ['ns_ten', 'ns_gioitinh', 'ns_email', 'ns_sodienthoai', 'ns_bangcap', 'ns_trangthai'];
-        //selected.push(<Option value={''})
-        const { form, tk, columnSearch } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        // We need at least one passenger
-        if (keys.length === 1) {
-            return;
-        }
+var formatDateModal = require('dateformat')
 
-        // can use data-binding to set
-        form.setFieldsValue({
-            keys: keys.filter(key => key !== k),
-        });
-    };
-
-    add = () => {
-        const { form } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(id++);
-        // can use data-binding to set
-        // important! notify form to detect changes
-        form.setFieldsValue({
-            keys: nextKeys,
-        });
-    };
-
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                const { keys, names } = values;
-                console.log('Received values of form: ', values);
-                console.log('Merged values:', keys.map(key => names[key]));
-            }
-        });
-    };
-
-    render() {
-        const { getFieldDecorator, getFieldValue } = this.props.form;
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 4 },
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 20 },
-            },
-        };
-        const formItemLayoutWithOutLabel = {
-            wrapperCol: {
-                xs: { span: 24, offset: 0 },
-                sm: { span: 20, offset: 4 },
-            },
-        };
-        getFieldDecorator('keys', { initialValue: [] });
-        const keys = getFieldValue('keys');
-        const formItems = keys.map((k, index) => (
-            <Form.Item
-                {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                label={index === 0 ? 'Passengers' : ''}
-                required={false}
-                key={k}
-            >
-                {getFieldDecorator(`names[${k}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [
-                        {
-                            required: true,
-                            whitespace: true,
-                            message: "Please input passenger's name or delete this field.",
-                        },
-                    ],
-                })(<div>
-                    <Select
-                        defaultValue={['ns_ten']}
-                        showSearch
-                        style={{ width: 200 }}
-                        placeholder="Select a person"
-                        optionFilterProp="children"
-                        onChange={this.props.onCh}
-                        onSearch={this.props.ons}
-                        filterOption={(input, option) =>
-                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                    >
-                        <Option value="ns_ten">Tên</Option>
-                        <Option value="ns_gioitinh">Giới Tính</Option>
-                        <Option value="ns_email">Email</Option>
-                        <Option value="ns_sodienthoai">Số Điện Thoại</Option>
-                        <Option value="ns_bangcap">Bằng Cấp</Option>
-                        <Option value="ns_trangthai">Trạng Thái</Option>
-                    </Select>,
-                    <Search style={{ width: 300 }} placeholder="input search text" onSearch={(value) => { this.props.tk(value) }} enterButton />
-                </div>)}
-                {keys.length > 1 ? (
-                    <Icon
-                        className="dynamic-delete-button"
-                        type="minus-circle-o"
-                        onClick={() => this.remove(k)}
-                    />
-                ) : null}
-            </Form.Item>
-        ));
-        return (
-            // <WrappedDynamicFieldSet2 >
-            <Form onSubmit={this.handleSubmit}>
-                {formItems}
-                <Form.Item {...formItemLayoutWithOutLabel}>
-                    <Tooltip title="Chọn Tìm Kiếm">
-                        <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
-                            <Icon type="search" /> Thêm Tìm Kiếm
-                    </Button>
-                    </Tooltip>
-                </Form.Item>
-                <Form.Item {...formItemLayoutWithOutLabel}>
-                </Form.Item>
-            </Form>
-        );
-    }
-}
-
-const WrappedDynamicFieldSet = Form.create({ name: 'dynamic_form_item' })(DynamicFieldSet);
 const FormModal = Form.create({ name: 'from_in_modal' })(
 
     class extends React.Component {
@@ -426,6 +300,9 @@ class Nhansu extends React.Component {
             sortBy: '',
             index: 'ns_id',
             orderby: 'arrow-up',
+            rowthotroselected: {},
+            statebuttonedit: true,
+            selectedRowKeys: []
         }
     }
 
@@ -471,7 +348,7 @@ class Nhansu extends React.Component {
                 return
             }
             var url = this.state.action === 'insert' ? 'nhansu/insert' : 'nhansu/update'
-            console.log('action is: ',url)
+            console.log('action is: ', url)
             Request(url, 'POST', values)
                 .then((response) => {
                     if (response.status === 200 & response.data.success === true) {
@@ -604,14 +481,13 @@ class Nhansu extends React.Component {
                 id_visible: true,
                 action: 'update'
             })
-            nhansu.ns_ngaysinh=formatDateModal(nhansu.ns_ngaysinh,'yyyy-mm-dd')
-            nhansu.ns_ngayhocviec=formatDateModal(nhansu.ns_ngayhocviec,'yyyy-mm-dd')
-            nhansu.ns_ngaythuviec=formatDateModal(nhansu.ns_ngaythuviec,'yyyy-mm-dd')
-            nhansu.ns_ngaylamchinhthuc=formatDateModal(nhansu.ns_ngaylamchinhthuc,'yyyy-mm-dd')
-            nhansu.ns_ngaydongbaohiem=formatDateModal(nhansu.ns_ngaydongbaohiem,'yyyy-mm-dd')
+            nhansu.ns_ngaysinh = formatDateModal(nhansu.ns_ngaysinh, 'yyyy-mm-dd')
+            nhansu.ns_ngayhocviec = formatDateModal(nhansu.ns_ngayhocviec, 'yyyy-mm-dd')
+            nhansu.ns_ngaythuviec = formatDateModal(nhansu.ns_ngaythuviec, 'yyyy-mm-dd')
+            nhansu.ns_ngaylamchinhthuc = formatDateModal(nhansu.ns_ngaylamchinhthuc, 'yyyy-mm-dd')
+            nhansu.ns_ngaydongbaohiem = formatDateModal(nhansu.ns_ngaydongbaohiem, 'yyyy-mm-dd')
             form.setFieldsValue(nhansu);
         }
-        //console.log("du lieu truyen vao showmodal ",this.state.nhansuget.ns_ngay )
     }
     handleOk = e => {
         this.setState({
@@ -687,26 +563,32 @@ class Nhansu extends React.Component {
         var formatDate = require('dateformat')
         return (
             <div>
-                <Row className="table-margin-bt">
-                    <Col span={1}>
-                        <Tooltip title="Thêm Nhân Sự">
-                            <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
-                            <Icon type="user-add" />
-                            </Button>
-                        </Tooltip>
-                    </Col>
-
-                    <Col span={1}>
-                        <Tooltip title="Tải Lại">
-                            <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
-                                <Icon type="reload" />
-                            </Button>
-                        </Tooltip>
-                    </Col>
-                </Row>
-                <WrappedDynamicFieldSet tk={this.search} onCh={this.onChange} ons={this.onSearch} columnSearch={this.state.columnSearch} />
-
-                <Row className="table-margin-bt">
+                <Card>
+                    <Row>
+                        <Col span={2}>
+                            <Tooltip title="Thêm Nhân Sự">
+                                <Button shape="circle" type="primary" size="default" onClick={this.showModal.bind(null)}>
+                                    <Icon type="user-add" />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+                        <Col span={2}>
+                                <Tooltip title="Sửa Hỗ Trợ">
+                                    <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                        <Icon type="edit" />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
+                        <Col span={2}>
+                            <Tooltip title="Tải Lại">
+                                <Button shape="circle" type="primary" size="default" onClick={this.refresh.bind(null)}>
+                                    <Icon type="reload" />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+                    </Row>
+                </Card>
+                <Row style={{ marginTop: 5 }}>
                     <FormModal
                         wrappedComponentRef={this.saveFormRef}
                         visible={this.state.visible}
@@ -717,18 +599,7 @@ class Nhansu extends React.Component {
                         id_visible={this.state.id_visible}
                     />
                     <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
-                        {/* <Column
-                        
-                                    title={<span> ID <Icon type={this.state.orderby} /></span>}
-                                    dataIndex="ns_id"
-                                    key="ns_id"
-                                    onHeaderCell={this.onHeaderCell}
-                                    disabled
-                                /> */}
                         <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" onHeaderCell={this.onHeaderCell} />
-                        {/* <Column title="Họ"  dataIndex="ns_ho" key="ns_ho" render={text => <a href="javascript:;">{text}</a>} onHeaderCell={this.onHeaderCell} />
-                        <Column title="Tên Lót" dataIndex="ns_tenlot" key="ns_tenlot" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Tên" dataIndex="ns_ten" key="ns_ten" render={text => <a href="javascript:;">{text}</a>} onHeaderCell={this.onHeaderCell} />  */}
                         <Column title="Họ và tên" width={150} dataIndex="ns_hovaten" key="ns_hovaten" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Ngày sinh" dataIndex="ns_ngaysinh" key="ns_ngaysinh" align="center" render={text => formatDate(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
                         <Column title="Giới tính" dataIndex="ns_gioitinh" key="ns_gioitinh" align="center" onHeaderCell={this.onHeaderCell} />
@@ -738,13 +609,6 @@ class Nhansu extends React.Component {
                         <Column title="Nguyên quán" dataIndex="ns_nguyenquan" key="ns_nguyenquan" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Người liên hệ" dataIndex="ns_nguoilienhe" key="ns_nguoilienhe" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Bằng cấp" dataIndex="ns_bangcap" key="ns_bangcap" align="center" onHeaderCell={this.onHeaderCell} />
-                        {/* <Column title="Ngày học việc" dataIndex="ns_ngayhocviec" key="ns_ngayhocviec" render={text => formatDate(text,"dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Ngày thử việc" dataIndex="ns_ngaythuviec" key="ns_ngaythuviec" render={text => formatDate(text,"dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Ngày làm chính thức" dataIndex="ns_ngaylamchinhthuc" key="ns_ngaylamchinhthuc" render={text => formatDate(text,"dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Ngày đóng bảo hiểm" dataIndex="ns_ngaydongbaohiem" key="ns_ngaydongbaohiem" render={text => formatDate(text,"dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} /> */}
-                        {/* <Column title="Các giấy tờ đã nộp" dataIndex="ns_cacgiaytodanop" key="ns_cacgiaytodanop" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Tài khoản ngân hàng" dataIndex="ns_taikhoannganhang" key="ns_taikhoannganhang" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Trạng thái" dataIndex="ns_trangthai" key="ns_trangthai" align="center" render={text => <a href="javascript:;">{text}</a>} onHeaderCell={this.onHeaderCell} /> */}
                         <Column
                             visible={false}
                             title="Action"

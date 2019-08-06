@@ -8,21 +8,16 @@ const port = 5000;
 var routers = require('./router/index');
 var nhansuRoute = require('./router/nhansuRoute');
 var hotroRoute = require('./router/hotroRoute');
+var menuRoute = require('./router/menu_Route')
+var khachhangRoute = require('./router/khachhangRoute')
 var authorize = require('./middleware/authorize')
-/** bodyParser.urlencoded(options)
- * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
- * and exposes the resulting object (containing the keys and values) on req.body
- */
+
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.set('Secret', config.secret);
 
-/**bodyParser.json(options)
- * Parses the text as JSON and exposes the resulting object on req.body.
- */
 app.use(bodyParser.json());
-
 
 var whitelist = ['http://localhost:3000', 'http://localhost:5000']
 var corsOptions = {
@@ -39,6 +34,10 @@ app.use(cors());
 app.use('/nhansu', nhansuRoute);
 
 app.use('/hotro',hotroRoute)
+
+app.use('/menu', menuRoute)
+
+app.use('/khachhangRoute', khachhangRoute)
 
 app.use('/', authorize, routers);
 

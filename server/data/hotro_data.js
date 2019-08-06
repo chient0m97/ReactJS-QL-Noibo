@@ -41,7 +41,7 @@ module.exports = {
     },
 
     getNhanSu(callback) {
-        knex.select('ns_id', knex.raw("ns_ho || ' ' || ns_tenlot || ' ' || ns_ten as ns_hovaten")).from('nhansu').then((res) => {
+        knex.select('ns_id', knex.raw("coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten")).from('nhansu').then((res) => {
             callback({
                 data: {
                     nhansu: res
@@ -51,7 +51,7 @@ module.exports = {
     },
 
     getKhachHang(callback) {
-        knex.select('kh_id', knex.raw("kh_ho || ' ' || kh_tenlot || ' ' || kh_ten as kh_hovaten")).from('khachhangs').then((res) => {
+        knex.select('kh_id', knex.raw("kh_ho || ' ' || coalesce(kh_tenlot, '') || ' ' || kh_ten as kh_hovaten")).from('khachhangs').then((res) => {
             callback({
                 data: {
                     khachhangs: res
@@ -76,9 +76,10 @@ module.exports = {
 
     updateHotro: function (hotros, callback) {
         console.log("hien thi ho tro ", hotros)
+        console.log("hien thi hotros.ht_thoigian_dukien_hoanthanh ",hotros.ht_thoigian_dukien_hoanthanh)
         knex.from('hotros').where('ht_id', hotros.ht_id).update(hotros).then(res => {
             callback({
-                success: true
+                success: true,
             })
         }).catch(err => {
             console.log(err)
@@ -108,35 +109,5 @@ module.exports = {
             console.log(err)
             callback({ success: false })
         })
-    },
-
-    getDataSearch: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        console.log('textsearch', textSearch, 'and column search:', columnSearch);
-
-        textSearch = '%' + textSearch + '%';
-        console.log('textsearch', textSearch, 'and column search:', columnSearch);
-        knex('hotros').where(columnSearch, 'like', textSearch).orderBy(index, sortBy).limit(limit).offset(offset)
-            .then(response => {
-                var hotros = response
-                console.log('=>', response)
-                knex.from('hotros').where(columnSearch, 'like', textSearch).count('*')
-                    .then(resCount => {
-                        var count = resCount[0].count;
-                        let dataCallback = {
-                            success: true,
-                            message: 'Get data success',
-                            data: {
-                                hotros: hotros,
-                                count: count,
-                            }
-                        }
-                        console.log('res', hotros)
-                        callback(dataCallback)
-                    }).catch(err => {
-                        console.log(' Error connect ', err)
-                    })
-            }).catch(err => {
-                console.log('Error connect', err)
-            })
     }
 }
