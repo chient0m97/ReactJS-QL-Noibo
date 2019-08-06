@@ -1,14 +1,16 @@
 import About from '@pages/About';
 import HomePage from '@pages/HomePage';
 import User from '@pages/User'
-
+import NhanSu from '@pages/Nhansu'
+import HoTro from '@pages/Hotro'
+import Menu from '@pages/Menu'
 
 
 const routers = [
     {
-        path: '/',
+        path: '/homepage',
         component: HomePage,
-        name: 'Home'
+        name: 'home'
     },
     {
         path: '/about',
@@ -20,6 +22,21 @@ const routers = [
         component: User,
         name: 'user'
     },
+    {
+        path: '/nhansu',
+        component: NhanSu,
+        name: 'nhansu'
+    },
+    {
+        path: '/hotro',
+        component: HoTro,
+        name: 'hotro'
+    },
+    {
+        path: '/menu',
+        component: Menu,
+        name: 'menu'
+    }
 
 ]
 

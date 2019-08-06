@@ -18,7 +18,6 @@ import Loading from '@components/base/Loading'
 // router 
 import routers from '@configs/router.config'
 import { connect } from 'react-redux'
-import { Value } from 'devextreme-react/range-selector';
 import { fetchLoading } from '@actions/common.action';
 import App from '@src/App';
 
@@ -26,7 +25,6 @@ moment.locale('fr');
 
 
 const { Content } = Layout;
-
 
 class Main extends React.Component {
   constructor(props) {
@@ -83,8 +81,8 @@ class Main extends React.Component {
               {/* header */}
               <Content
                 style={{
-                  margin: '24px 16px',
-                  padding: 24,
+                  margin: '8px',
+                  padding: 8,
                   background: '#fff',
                   minHeight: 580,
                 }}
