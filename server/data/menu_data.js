@@ -46,6 +46,7 @@ module.exports = {
         knex.from('dm_menus').where('dm_menu_id', menus.dm_menu_id).update(menus).then(res => {
             callback({
                 success: true,
+                menus: menus
             })
         }).catch(err => {
             console.log(err)
