@@ -3,8 +3,6 @@ var router = express.Router()
 // middleware that is specific to this router
 var userController = require('../controller/phanquyen/userController');
 
-
-
 router.post('/get', function (req, res) {
     console.log('------------------------------------get-----------------------------------')
     let body = req.body;
@@ -18,7 +16,6 @@ router.post('/get', function (req, res) {
         else
         res.json('error');
     })
-    console.log('get data')
 })
 
 
@@ -65,7 +62,6 @@ router.post('/checkrole', function (req, res) {
         res.send(data);
     })
 })
-
 
 
 module.exports = router

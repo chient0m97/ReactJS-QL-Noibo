@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const cors = require("cors");
 jwt = require('jsonwebtoken');
-config = require('./configurations/config');
+config = require('./configurations/config');  
 app = express();
 const login = require('./router/login')
 const checked = require('./router/checkrole')
@@ -17,16 +17,12 @@ var menuRoute = require('./router/menu_Route')
 var khachhangRoute = require('./router/khachhangRoute')
 var router = require('./router/unitRoute');
 var cusrouter =  require('./router/customerRoute');
-
-//var group_userRouter = require('./router/group_userRoute');
-// var userController = require('./controller/userController');
+var hopdong = require('./router/hopdong')
 var userRouter = require('./router/index');
+var diabanRoute = require('./router/diaban')
+var duanRoute = require('./router/duan')
 
-
-//var group_userRouter = require('./router/group_userRoute');
-var userController = require('./controller/phanquyen/userController');
 var authorize = require('./middleware/authorize')
-
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -49,8 +45,11 @@ app.use(cors());
 app.use('/nhansu', nhansuRoute);
 
 app.use('/hotro',hotroRoute)
-
+app.use('/hopdong',hopdong)
 app.use('/menu', menuRoute)
+
+app.use('/diaban', diabanRoute)
+app.use('/duan', duanRoute)
 
 app.use('/khachhangRoute', khachhangRoute)
 app.use('/customer', cusrouter);
