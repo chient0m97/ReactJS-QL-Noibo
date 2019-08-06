@@ -11,14 +11,14 @@ var routers = require('./router/index');
 //var userController = require('./controller/userController');
 //var hopdongController = require('./controller/hopdongController');
 var authorize = require('./middleware/authorize')
-const storage = multer.diskStorage({
-  destination: './files',
-  filename(req, file, cb) {
-    cb(null, `${new Date()}-${file.originalname}`);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: './files',
+//   filename(req, file, cb) {
+//     cb(null, `${new Date()}-${file.originalname}`);
+//   },
+// });
 
-const upload = multer({ storage });
+// const upload = multer({ storage });
 
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)

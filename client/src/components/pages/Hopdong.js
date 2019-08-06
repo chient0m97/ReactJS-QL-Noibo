@@ -1,6 +1,6 @@
 import React from 'react';
 //import Moment from 'react-moment';
-//import axios from 'axios';
+import axios from 'axios';
 import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button,Upload, Form, Row, Col, notification, Alert, Select } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
@@ -524,9 +524,9 @@ class Hopdong extends React.Component {
   //---Insert---
   InsertOrUpdateHopdong = () => {
     const { form } = this.formRef.props;
-    var file = form.getFieldsValue().hd_files.file
-    var formdata = new FormData()
-    formdata.append('files',file)
+    //var file = form.getFieldsValue().hd_files.file
+    //var formdata = new FormData()
+    //formdata.append('files',file)
     
     form.validateFields((err, values) => {
       if (err) {
@@ -534,7 +534,7 @@ class Hopdong extends React.Component {
       }
       //console.log(values, "day la values");
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
-      values.formdata = formdata
+      //values.formdata = formdata
       Request(url, 'POST', values)
         .then((response) => {
           if (response.status === 200 & response.data.success === true) {
@@ -939,12 +939,22 @@ class Hopdong extends React.Component {
       this.getHopdongs(this.state.page)
     })
   }
+  onchangpagefile = e=> {
+    const data = new FormData()
+   data.append('file', e.target.files[0])
+   axios.post("http://localhost:8000/upload", data, { 
+    //Request('/upload', 'POST', data )
 
+    }).then(res => {
+
+    })
+}
   render() {
     var dateFormat = require('dateformat');
     if (token)
       return (
         <div>
+          <input type='file' name='files' onChange= {this.onchangpagefile}/>
           <Row className="table-margin-bt">
             <Col span={1}>
               <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
@@ -960,6 +970,7 @@ class Hopdong extends React.Component {
           </Row>
           <div>
             &nbsp;
+            <hr/>
           {/* <Search style={{ width: 300 }} pla
         
         
@@ -985,6 +996,7 @@ class Hopdong extends React.Component {
               //comboBoxDatasource1 = {this.state.comboBoxDatasource1}
               onChangeClick_loaihopdong={this.onChangeClick_loaihopdong}
               propDatasourceSelectLoaiHopDong={this.state.propDatasourceSelectLoaiHopDong}
+              onchangpagefile={this.onchangpagefile}
             //onhiddenbutton =  {this.onhiddenbutton}
             />
 
@@ -1079,6 +1091,7 @@ class Hopdong extends React.Component {
             </Table>
 
           </Row>
+          <hr/>
           <Row>
             <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
           </Row>
