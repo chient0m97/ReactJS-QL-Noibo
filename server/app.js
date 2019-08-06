@@ -10,6 +10,11 @@ var nhansuRoute = require('./router/nhansuRoute');
 var hotroRoute = require('./router/hotroRoute');
 var menuRoute = require('./router/menu_Route')
 var khachhangRoute = require('./router/khachhangRoute')
+var router = require('./router/unitRoute');
+var cusrouter =  require('./router/customerRoute');
+
+//var group_userRouter = require('./router/group_userRoute');
+// var userController = require('./controller/userController');
 var authorize = require('./middleware/authorize')
 
 app.use(bodyParser.urlencoded({
@@ -38,8 +43,11 @@ app.use('/hotro',hotroRoute)
 app.use('/menu', menuRoute)
 
 app.use('/khachhangRoute', khachhangRoute)
+app.use('/', cusrouter);
 
 app.use('/', authorize, routers);
+
+app.use('/', router);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 

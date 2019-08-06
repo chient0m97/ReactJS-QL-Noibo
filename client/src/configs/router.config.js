@@ -4,6 +4,9 @@ import User from '@pages/User'
 import NhanSu from '@pages/Nhansu'
 import HoTro from '@pages/Hotro'
 import Menu from '@pages/Menu'
+import Unit from '@pages/Unit'
+import Customer from '@pages/Customer'
+
 
 
 const routers = [
@@ -36,8 +39,17 @@ const routers = [
         path: '/menu',
         component: Menu,
         name: 'menu'
-    }
+    },
 
+       path: '/unit',
+       component: Unit,
+       name: 'unit' 
+    },
+    {
+        path: '/customer',
+        component: Customer,
+        name: 'customer' 
+    },
 ]
 
 export default routers

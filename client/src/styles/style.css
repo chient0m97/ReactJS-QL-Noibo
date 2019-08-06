@@ -123,6 +123,13 @@
   margin-bottom:8px
 }
 
+<<<<<<< HEAD
+=======
+.hide{
+  display: none;
+}
+
+>>>>>>> origin/chien
 .ant-form-item-control {
   position: relative;
   line-height: 20px;
@@ -145,10 +152,17 @@
 }
 .ant-input-sm {
 
+<<<<<<< HEAD
   height: 24px ;
   padding: 1px 3px;
   line-height: 12px ;
   /* text-align: center; */
+=======
+  height: 24px;
+  padding: 5px 30px;
+  line-height: 12px;
+  text-align: center;
+>>>>>>> origin/chien
 
 }
 .ant-modal-title {
@@ -158,7 +172,10 @@
   font-size: 22px;
   line-height: 22px;
   word-wrap: break-word;
+<<<<<<< HEAD
   color: #fff
+=======
+>>>>>>> origin/chien
 }
 .ant-form label {
   font-size: 15px;
@@ -173,6 +190,7 @@
 margin-top: 0px;
 
 margin-bottom: 0px;
+<<<<<<< HEAD
 }
 
 .ant-table table {
@@ -204,4 +222,6 @@ margin-bottom: 0px;
 thead[class*="ant-table-thead"] th{
   background-color: cornflowerblue !important;
   color: #fff
+=======
+>>>>>>> origin/chien
 }
