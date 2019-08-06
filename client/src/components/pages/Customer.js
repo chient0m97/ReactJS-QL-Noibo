@@ -220,7 +220,7 @@ class Customer extends React.Component {
             // })
 
             this.set_select_tendv();
-            form.setFieldsValue({ dm_dv_id: this.state.select_tenkh[0].dm_dv_id })
+            form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
 
             this.set_select_tinh();
             if (this.state.select_tinh.length === 0) {
