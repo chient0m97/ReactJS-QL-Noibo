@@ -7,10 +7,7 @@
     "antd": "^3.20.1",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
-<<<<<<< HEAD
     "date-format": "^2.1.0",
-=======
->>>>>>> origin/chien
     "dateformat": "^3.0.3",
     "devextreme": "^19.1.4",
     "devextreme-aspnet-data-nojquery": "^2.3.0",

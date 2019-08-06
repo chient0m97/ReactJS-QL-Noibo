@@ -108,7 +108,7 @@ var Validator = {
             var is_valid = await knex(table).where(column, value)
                 .then((res) =>  {
                     if (res.length > 0) {
-                        Validator.error.push(defaultMessageUnique)
+                        Validator.error.push(defaultMessageUnique) 
                         return false
                     } else {
                         return true
@@ -116,7 +116,8 @@ var Validator = {
                 }).catch((err) => {
                     Validator.error.push(err)
                 })
-                console.log(is_valid, 'dcm' + column)
+                console.log(is_valid, 'unique : ' + column)
+                console.log(defaultMessageUnique,'message error')
                 return is_valid
         },
         uniqueIgrone: async (table, column, value, errMessage) => {

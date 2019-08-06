@@ -1,11 +1,12 @@
-import About from '@pages/About';
+import RoleAction from '@pages/RoleAction';
 import HomePage from '@pages/HomePage';
-import User from '@pages/User'
 import NhanSu from '@pages/Nhansu'
 import HoTro from '@pages/Hotro'
 import Menu from '@pages/Menu'
 import Unit from '@pages/Unit'
 import Customer from '@pages/Customer'
+import User from '@pages/User';
+import About from '@pages/About';
 
 
 
@@ -16,9 +17,9 @@ const routers = [
         name: 'home'
     },
     {
-        path: '/about',
-        component: About,
-        name: 'About'
+        path: '/quan-ly-quyen',
+        component: RoleAction,
+        name: 'quản lý quyền'
     },
     {
         path: '/user',
@@ -40,15 +41,20 @@ const routers = [
         component: Menu,
         name: 'menu'
     },
-
-       path: '/unit',
-       component: Unit,
-       name: 'unit' 
+    {
+        path: '/unit',
+        component: Unit,
+        name: 'unit'
     },
     {
         path: '/customer',
         component: Customer,
-        name: 'customer' 
+        name: 'customer'
+    },
+    {
+        path: '/quan-ly-dia-ban',
+        component: About,
+        name: 'About'
     },
 ]
 

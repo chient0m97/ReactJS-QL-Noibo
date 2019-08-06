@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 class Loading extends Component {
-    constructor(props) {
-        super(props);
-    }
+    // constructor(props) {
+    //     super(props);
+    // }
     render() {
         return (
             <div className="modal-loading" style={{display: this.props.loading ? 'block' : 'none'}}>

@@ -8,12 +8,13 @@ const { Sider } = Layout
 
 
 class AppSider extends Component {
-
+    rootSubmenuKeys = ['sub1', 'sub2'];
     constructor(props) {
         super(props);
         this.state = {
             collapsed: props.collapsed,
-            menu: []
+            menu: [],
+            openKeys: [],
         }
 
         this.setCollapsed(props.collapsed)
@@ -21,9 +22,19 @@ class AppSider extends Component {
 
     setCollapsed = (value) => {
         this.setState({
-            collapsed : value 
+            collapsed: value
         })
     }
+    onOpenChange = openKeys => {
+        const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
+        if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+            this.setState({ openKeys });
+        } else {
+            this.setState({
+                openKeys: latestOpenKey ? [latestOpenKey] : [],
+            });
+        }
+    };
 
     componentDidMount(){
         
@@ -33,9 +44,12 @@ class AppSider extends Component {
         return (
             <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
                 <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={[ '1' ]} mode="inline">
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline"
+                    openKeys={this.state.openKeys}
+                    onOpenChange={this.onOpenChange}
+                >
                     <Menu.Item key="1">
-                        <Icon type="home"/>
+                        <Icon type="home" />
                         <span><NavLink to="/HomePage" className="">Home</NavLink ></span>
                     </Menu.Item>
                     <SubMenu
@@ -43,29 +57,32 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="user" />
-                                <span>Menu</span>
+                                <span>Quản lý người dùng</span>
                             </span>
                         }
                     >
-                        <Menu.Item key="5"><NavLink to="/user" className="">User</NavLink ></Menu.Item>
-                        <Menu.Item key="10"><NavLink to="/nhansu" >Nhân Sự</NavLink></Menu.Item>
-                        <Menu.Item key="11"><NavLink to="/hotro" >Hỗ Trợ</NavLink></Menu.Item>
-                        <Menu.Item key="12"><NavLink to="/menu">Menu</NavLink></Menu.Item>
-                        <Menu.Item key="4"><NavLink to="/about" className="">About</NavLink ></Menu.Item>
-                        <Menu.Item key="10"><NavLink to="/unit" className="">Unit</NavLink></Menu.Item>
-                        <Menu.Item key="11"><NavLink to="/customer" className="">Customer</NavLink></Menu.Item>
+                        <Menu.Item key="2"><NavLink to="/user" className="">User</NavLink ></Menu.Item>
+                        <Menu.Item key="3"><NavLink to="/nhansu" >Nhân Sự</NavLink></Menu.Item>
+                        <Menu.Item key="4"><NavLink to="/hotro" >Hỗ Trợ</NavLink></Menu.Item>
+                        <Menu.Item key="5"><NavLink to="/menu">Menu</NavLink></Menu.Item>
+                        <Menu.Item key="7"><NavLink to="/unit" className="">Unit</NavLink></Menu.Item>
+                        <Menu.Item key="8"><NavLink to="/customer" className="">Customer</NavLink></Menu.Item>
+                        <Menu.Item key="10"><NavLink to="/quan-ly-quyen" className="">Quản lý quyền</NavLink ></Menu.Item>
+                        <Menu.Item key="11"><NavLink to="/quan-ly-san-pham" className="">Quản lý sản phẩm</NavLink ></Menu.Item>
                     </SubMenu>
                     <SubMenu
                         key="sub2"
                         title={
                             <span>
                                 <Icon type="team" />
-                                <span>Team</span>
+                                <span>Menu gì</span>
                             </span>
                         }
                     >
+                        <Menu.Item key="12"><NavLink to="/quan-ly-nhan-su" className="">Quản lý khách hàng</NavLink ></Menu.Item>
+                        <Menu.Item key="13"><NavLink to="/quan-ly-dia-ban" className="">Quản lý địa bàn</NavLink ></Menu.Item>
                     </SubMenu>
-                    <Menu.Item key="9">
+                    <Menu.Item key="14">
                         <Icon type="file" />
                         <span>File</span>
                     </Menu.Item>

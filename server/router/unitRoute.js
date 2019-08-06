@@ -7,7 +7,7 @@ router.use(function timelog(req, res, next) {
     next()
 })
 
-router.post('/unit/get', function (req, res) {
+router.post('/get', function (req, res) {
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;
@@ -23,52 +23,52 @@ router.post('/unit/get', function (req, res) {
 //     res.send(data);
 // })
 
-router.post('/unit/gettinh', function (req, res) {
+router.post('/gettinh', function (req, res) {
     console.log('reqesy tinh', req.data)
     unitController.getTinh(function(data){
         res.send(data);
     })
 })
 
-router.post('/unit/gethuyen', function (req, res) {
+router.post('/gethuyen', function (req, res) {
     console.log('req huuyen', req.body)
     unitController.getHuyen(req.body, function(data){
         res.send(data);
     })
 })
 
-router.post('/unit/getxa', function (req, res) {
+router.post('/getxa', function (req, res) {
     console.log('req xa',req.body)
     unitController.getXa(req.body, function(data){
         res.send(data);
     })
 })
 
-router.post('/unit/getkhachhang', function (req, res) {
+router.post('/getkhachhang', function (req, res) {
     unitController.getKhachhang(function(data){
         res.send(data);
     })
 })
 
-router.get('/unit/get/:Id', function (req, res) {
+router.get('/get/:Id', function (req, res) {
     unitController.GetById(req.params.Id, function (data) {
         res.send(data);
     })
 })
 
-router.delete('/unit/delete', function (req, res) {
+router.delete('/delete', function (req, res) {
     unitController.DeleteUnitbyId(req.body.dm_dv_id, function (data) {
         res.send(data);
     })
 })
 
-router.post('/unit/insert', function (req, res) {
+router.post('/insert', function (req, res) {
     unitController.insertUnit(req.body, function (data) {
         res.send(data);
     })
 })
 
-router.post('/unit/insertkh', function (req, res) {
+router.post('/insertkh', function (req, res) {
     console.log('đây là insert khách hàng', req.body)
     unitController.insertKhachhang(req.body, function (data) {
         console.log('insert data',data)
@@ -76,7 +76,7 @@ router.post('/unit/insertkh', function (req, res) {
     })
 })
 
-router.post('/unit/update', function (req, res) {
+router.post('/update', function (req, res) {
     console.log('data res', req) 
     unitController.updateUnit(req.body,function (data) {
         console.log('----------------------------------------------------',data)
@@ -92,7 +92,7 @@ router.post('/unit/update', function (req, res) {
     })
 })
 
-router.post('/unit/search',function(req,res){
+router.post('/search',function(req,res){
     let pageSize=req.body.pageSize;
     let pageNumber=req.body.pageNumber;
     let textSearch = req.body.textSearch;
@@ -107,8 +107,6 @@ router.post('/unit/search',function(req,res){
   
   })
 
-router.get('/about', function (req, res) {
-    res.send('About Unit')
-})
+
 
 module.exports = router 

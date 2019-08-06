@@ -52,7 +52,7 @@ class AppHeader extends Component {
           <a style={{ marginLeft: '90%' }} className="ant-dropdown-link" href="/">
             <Icon type="user" style={{fontSize:'20px'}} />
           </a>
-        </Dropdown>,
+        </Dropdown>
               </Header>
     )
   }

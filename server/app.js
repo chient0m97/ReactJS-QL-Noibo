@@ -4,8 +4,13 @@ const cors = require("cors");
 jwt = require('jsonwebtoken');
 config = require('./configurations/config');
 app = express();
+const login = require('./router/login')
+const checked = require('./router/checkrole')
+const setpermiss = require('./router/setpermission')
+const role_action = require('./router/role_action')
 const port = 5000;
-var routers = require('./router/index');
+
+
 var nhansuRoute = require('./router/nhansuRoute');
 var hotroRoute = require('./router/hotroRoute');
 var menuRoute = require('./router/menu_Route')
@@ -15,6 +20,11 @@ var cusrouter =  require('./router/customerRoute');
 
 //var group_userRouter = require('./router/group_userRoute');
 // var userController = require('./controller/userController');
+var userRouter = require('./router/index');
+
+
+//var group_userRouter = require('./router/group_userRoute');
+var userController = require('./controller/phanquyen/userController');
 var authorize = require('./middleware/authorize')
 
 app.use(bodyParser.urlencoded({
@@ -43,11 +53,19 @@ app.use('/hotro',hotroRoute)
 app.use('/menu', menuRoute)
 
 app.use('/khachhangRoute', khachhangRoute)
-app.use('/', cusrouter);
+app.use('/customer', cusrouter);
+app.use('/Login',login);
 
-app.use('/', authorize, routers);
+app.use('/checkrole',checked)
 
-app.use('/', router);
+app.use('/setpermission',setpermiss)
+app.use('/role_action',role_action)
+
+app.use('/user', userRouter);
+
+//app.use('/', authorize, hopdongrouters );
+
+app.use('/unit', router);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 

@@ -7,7 +7,7 @@ router.use(function timelog(req, res, next) {
     next()
 })
 
-router.post('/customer/get', function (req, res) {
+router.post('/get', function (req, res) {
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;
@@ -23,41 +23,41 @@ router.post('/customer/get', function (req, res) {
 //     res.send(data);
 // })
 
-router.get('/customer/get/:Id', function (req, res) {
+router.get('/get/:Id', function (req, res) {
     customerController.GetById(req.params.Id, function (data) {
         res.send(data);
     })
 })
 
-router.post('/customer/getdonvi', function(req, res){
+router.post('/getdonvi', function(req, res){
     console.log('cdm dv')
     customerController.getDonvi( function(data) {
         res.send(data);
     })
 })
 
-router.post('/customer/gettinh', function (req, res) {
+router.post('/gettinh', function (req, res) {
     console.log('reqesy tinh', req.data)
     customerController.getTinh(function(data){
         res.send(data);
     })
 })
 
-router.post('/customer/gethuyen', function (req, res) {
+router.post('/gethuyen', function (req, res) {
     console.log('req huuyen', req.body)
     customerController.getHuyen(req.body, function(data){
         res.send(data);
     })
 })
 
-router.post('/customer/getxa', function (req, res) {
+router.post('/getxa', function (req, res) {
     console.log('req xa',req.body)
     customerController.getXa(req.body, function(data){
         res.send(data);
     })
 })
 
-router.delete('/customer/delete', function (req, res) {
+router.delete('/delete', function (req, res) {
     customerController.DeleteCustomerbyId(req.body.kh_id, function (data) {
         res.send(data);
     })
@@ -71,20 +71,20 @@ router.post('/unit/insertdv', function (req, res) {
     })
 })
 
-router.post('/customer/insert', function (req, res) {
+router.post('/insert', function (req, res) {
     customerController.insertCustomer(req.body, function (data) {
         res.send(data);
     })
 })
 
-router.post('/customer/update', function (req, res) {
+router.post('/update', function (req, res) {
     console.log('data res', req.body)
     customerController.updateCustomer(req.body, function (data) {
         res.send(data);
     })
 })
 
-router.post('/customer/search',function(req,res){
+router.post('/search',function(req,res){
     let pageSize=req.body.pageSize;
     let pageNumber=req.body.pageNumber;
     let textSearch = req.body.textSearch;
@@ -99,8 +99,5 @@ router.post('/customer/search',function(req,res){
   
   })
 
-router.get('/about', function (req, res) {
-    res.send('About Unit')
-})
 
 module.exports = router 

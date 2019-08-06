@@ -1,0 +1,15 @@
+diff a/server/app.js b/server/app.js	(rejected hunks)
+@@ -43,9 +43,12 @@
+ app.use('/menu', menuRoute)
+ 
+ app.use('/khachhangRoute', khachhangRoute)
++app.use('/', cusrouter);
+ 
+ app.use('/', authorize, routers);
+ 
++app.use('/', router);
++
+ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+ 
+ app.post('/verify')
+\ No newline at end of file
