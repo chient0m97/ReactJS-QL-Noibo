@@ -21,13 +21,13 @@ var CustomerController = {
             await data.data.customers.map((value, index) => {
 
                 switch (value.kh_lienlac) {
-                    case 'HD':
+                    case 'DD':
                         value.kh_lienlac_txt = 'Đại diện'
                         break;
-                    case 'DHD':
+                    case 'DM':
                         value.kh_lienlac_txt = 'Đầu mối liên lạc'
                         break;
-                    case 'GT':
+                    case 'TXLL':
                         value.kh_lienlac_txt = 'Thường xuyên lien lạc'
                         break;
                 }
