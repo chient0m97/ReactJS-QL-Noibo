@@ -232,8 +232,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
         }
     }
 )
-
-
 const mapStateToProps = state => ({
     ...state
 })

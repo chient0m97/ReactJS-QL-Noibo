@@ -30,24 +30,16 @@ module.exports = {
                     })
             })
     },
-    deleteUnitbyId: function (Id, callback) {
-        knex.from('donvis').whereIn('dm_dv_id', Id).del().then(res => {
+
+    deleteUnitbyId: function (dm_dv_id, callback) {
+        console.log('console',dm_dv_id)
+        knex.from('donvis').whereIn('dm_dv_id', dm_dv_id).del().then(res => {
             callback({ success: true });
         }).catch(err => {
             console.log(err)
             callback({ success: false })
         })
     },
-
-    // deleteUnitbyId: function(Id, callback) {
-    //     knex.from('donvis').where('dm_dv_id', Id).del().then(res => {
-    //         callback({success: true, message: 'Delete Success'});
-    //     })
-    //     .catch(err => {
-    //         console.log(err)
-    //         callback({success: false})
-    //     })
-    // },
 
     insertUnit: function (unit, callback) {
         knex.from('donvis').insert(unit).then(res => {
@@ -77,12 +69,6 @@ module.exports = {
             console.log('uiwhihw', err)
             callback({ success: false })
         })
-        // knex.from('donvis').select('*').where('dm_dv_id', unit.dm_dv_id).then(res => {
-        //     callback(res[0]);
-        // }).catch(err => {
-        //     console.log(err)
-        //     callback({ success: false })
-        // })
     },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
         console.log('cai dkm')
@@ -113,11 +99,11 @@ module.exports = {
                 console.log('lỗi  kết nối', err)
             })
     },
-    // getcha:function(callback){
-    //     knex('donvis').select('dm_dv_id_cha').then(res=>{
-    //         callback(res);
-    //     })
-    // }
+    getcha:function(callback){
+        knex('donvis').select('dm_dv_id_cha').then(res=>{
+            callback(res);
+        })
+    },
 
     getTinh: function (callback) {
         knex.from('diabans').select('*').where('dm_db_cap', 1)
@@ -163,12 +149,4 @@ module.exports = {
             callback({ success: false })
         })    
     }
-    // getXa : function (id_db_huyen, callback) {
-    //     console.log('đây là id huyện',id_db_huyen)
-    //     knex.raw('select dm_db_id, dm_db_ten from diabans where dm_db_id_cha =' + id_db_huyen)
-    //     .then((res) => {
-    //         console.log('data row', res.rows)
-    //         callback(res.rows);
-    //     })
-    // }
 };

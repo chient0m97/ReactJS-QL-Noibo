@@ -25,9 +25,10 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
             combobox.push(<Option key={'HD'}>Hoạt động</Option>);
             combobox.push(<Option key={'DHD'}>Dừng hoạt động</Option>);
             combobox.push(<Option key={'GT'}>Giải thể</Option>);
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh, stateoption } = this.props;
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh, stateoption} = this.props;
             const { getFieldDecorator } = form;
             var datacha = this.props.datacha
+            console.log(datacha, 'prop don vi cha')
             return (
                 <div>
                     <Modal
@@ -43,9 +44,9 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                             <Row gutter={24}>
                                 <Col span={24}>
                                     <div style={{ display: dm_dv_id_visible === true ? 'block' : 'none' }}>
-                                        <Form.Item label="">
+                                        <Form.Item>
                                             {getFieldDecorator('dm_dv_id', {
-                                                rules: [{}],
+                                                
                                             })(<Input type="text" disabled hidden />)}
                                         </Form.Item>
                                     </div>
@@ -172,7 +173,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                             <Select>
                                                 {datacha.map((item, i) => {
                                                     return (
-                                                        <Option value={item.dm_dv_id}>{item.dm_dv_ten}</Option>
+                                                        <Option value={item.dm_dv_id}>{item.tendonvi}</Option>
                                                     )
                                                 })}
                                             </Select>

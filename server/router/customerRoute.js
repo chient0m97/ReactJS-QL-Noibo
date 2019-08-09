@@ -30,14 +30,12 @@ router.get('/customer/get/:Id', function (req, res) {
 })
 
 router.post('/customer/getdonvi', function(req, res){
-    console.log('cdm dv')
     customerController.getDonvi( function(data) {
         res.send(data);
     })
 })
 
 router.post('/customer/gettinh', function (req, res) {
-    console.log('reqesy tinh', req.data)
     customerController.getTinh(function(data){
         res.send(data);
     })

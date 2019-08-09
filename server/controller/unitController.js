@@ -17,9 +17,7 @@ var UnitController = {
         let offset = pageSize * (pageNumber - 1);
         var res_unit = []
         unitData.getUnit(limit, offset, index, sortBy, async (data) => {
-            console.log('cttyuv',data)
             await data.data.units.map((value, index) => {
-
                 switch (value.dm_dv_trangthai) {
                     case 'HD':
                         value.dm_dv_trangthai_txt = 'Hoạt Động'
@@ -31,17 +29,9 @@ var UnitController = {
                         value.dm_dv_trangthai_txt = 'Giải Thể'
                         break;
                 }
-            
+
                 res_unit.push(value)
             })
-
-            // await data.data.units.map((value, index)=>{
-            //     switch (value.dm_dv_trangthai_txt) {
-            //         case 1:
-            //             value.dm_dv_id_cha_txt = units.dm_dv_id > units.dm_dv_ten
-            //             break;
-            // })
-            console.log(res_unit, 'data')
             data.data.units = res_unit
             callback(data);
         });
@@ -51,35 +41,35 @@ var UnitController = {
     * @param {Number} Id The identify of user
     */
 
-    // getcha: function getcha(callback) {
-    //     unitData.getcha((data)=>{
-    //         callback(data)
-    //     })
-    // },
-
-    getTinh: function getTinh(callback){
-        unitData.getTinh((data)=>{
-            console.log('data',data)
+    getcha: function getcha(callback) {
+        unitData.getcha((data) => {
             callback(data)
         })
     },
 
-    getHuyen: function getHuyeb(body,callback){
-        unitData.getHuyen(body.id_db_tinh ,(data)=>{
-            console.log('data huyennnn',data)
+    getTinh: function getTinh(callback) {
+        unitData.getTinh((data) => {
+            console.log('data', data)
             callback(data)
         })
     },
 
-    getXa: function getXa(data,callback){
-        unitData.getXa(data.id_db_huyen,(data)=>{
-            console.log('data xaaaaa',data)
+    getHuyen: function getHuyeb(body, callback) {
+        unitData.getHuyen(body.id_db_tinh, (data) => {
+            console.log('data huyennnn', data)
             callback(data)
         })
     },
 
-    getKhachhang: function getKhachhang(callback){
-        unitData.getKhachhang((data) =>{
+    getXa: function getXa(data, callback) {
+        unitData.getXa(data.id_db_huyen, (data) => {
+            console.log('data xaaaaa', data)
+            callback(data)
+        })
+    },
+
+    getKhachhang: function getKhachhang(callback) {
+        unitData.getKhachhang((data) => {
             callback(data)
         })
     },
@@ -94,21 +84,25 @@ var UnitController = {
         })
     },
 
-    DeleteUnitbyId: async function deleteUnitbyId(Id, callback) {
-        unitData.deleteUnitbyId(Id, (data) => {
+    DeleteUnitbyId: async function deleteUnitbyId(dm_dv_id, callback) {
+        unitData.deleteUnitbyId(dm_dv_id, (data) => {
             if (data.success === true) {
                 callback({
                     success: data.success,
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callback(data, 400);
+            else
+                callback({
+                    success: data.eror,
+                    message: "Lỗi!!!"
+                });
         })
     },
 
     insertKhachhang: function insertKhachhang(khachhang, callback) {
         unitData.insertKhachhang(khachhang, (response) => {
-            console.log("hien thi controller ",response)
+            console.log("hien thi controller ", response)
             var message = constant.successInseart;
             var status = 200;
             if (!response.success) {
@@ -118,46 +112,46 @@ var UnitController = {
             callback({
                 message: message,
                 success: response.success
-            },status);
+            }, status);
         })
     },
 
     insertUnit: async function insertUnit(unit, callback) {
         console.log('inserted controller', unit);
-        unit.dm_dv_id = uuidv1();      
-            if (
-                await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
-                & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
-                & await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!')
-            ) {
-                console.log('ddax validate')
-                unitData.insertUnit(unit, (response) => {
-                    var message = constant.successInseart;
-                    var status = 200;
-                    if (!response.success) {
-                        Validator.error.push(constant.errorSys)
-                        message = Validator.getError()
-                        // status = 400
-                        // console.log('message',message)
+        unit.dm_dv_id = uuidv1();
+        if (
+            await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
+            & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
+            & await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!')
+        ) {
+            console.log('ddax validate')
+            unitData.insertUnit(unit, (response) => {
+                var message = constant.successInseart;
+                var status = 200;
+                if (!response.success) {
+                    Validator.error.push(constant.errorSys)
+                    message = Validator.getError()
+                    // status = 400
+                    // console.log('message',message)
 
-                    }
-                    callback({
-                        message: message,
-                        success: response.success,
-                        id_unit: unit.dm_dv_id
-                    }, status);
-                })
-            }
-            else {
-                var eror = Validator.getError()
-                console.log('looix tra ve', eror)
+                }
                 callback({
-                    message: eror,
-                    success: false
-                }, 400);
-            }
+                    message: message,
+                    success: response.success,
+                    id_unit: unit.dm_dv_id
+                }, status);
+            })
+        }
+        else {
+            var eror = Validator.getError()
+            console.log('looix tra ve', eror)
+            callback({
+                message: eror,
+                success: false
+            }, 400);
+        }
     },
-    updateUnit: function updateUnit(unit, callback) { 
+    updateUnit: function updateUnit(unit, callback) {
         // if(await Validator.db.unique('donvis', 'dm_dv_id_cha', unit.dm_dv_id_cha, 'Error!!')){
         //     callback({success: false, message: res.success == false})
         // }else{
@@ -171,8 +165,7 @@ var UnitController = {
                 message: res.success === true ? constant.successUpdate : callback.errorUpdate
             })
         })
-    // }
-// }
+        // }
     },
     search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;

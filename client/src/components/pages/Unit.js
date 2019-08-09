@@ -1,19 +1,17 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Divider } from 'antd';
+import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-// import { fetchUser } from '@actions/user.action';
+import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 // import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 import { async } from 'q';
 
-
-// import { async } from 'q';
 const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select
@@ -43,6 +41,9 @@ class Unit extends React.Component {
             index: 'dm_dv_ten',
             orderby: 'arrow-up',
             corlor: '#d9d9d9',
+            visible_kh: false,
+            formtype_kh: 'horizontal',
+            title_kh: 'Thêm mới khách hàng',
             dataSource_Select_Parent: [],
             units: [],
             select_diabantinh: [],
@@ -53,33 +54,36 @@ class Unit extends React.Component {
             select_huyen: [],
             select_xa: [],
             select_tendv: [],
-            visible_kh: false,
-            formtype_kh: 'horizontal',
-            title_kh: 'Thêm mới khách hàng',
             stateconfirmdelete: false,
-            statebuttondelete: false,
-            rowunitselected: true,
+            statebuttondelete: true,
             statebuttonedit: true,
-            stateoption: true
-            // kh_tendaydu: []
+            stateoption: true,
+            selectedRowKeys: [],
+            selectedrow: [],
+            selectedId: [],
+            rowunitselected: {}
         }
     }
     //---Delete---
     deleteUnit = (dm_dv_id) => {
-        Request(`unit/delete`, 'DELETE', { dm_dv_id: dm_dv_id })
+        Request('unit/delete', 'DELETE', { dm_dv_id: dm_dv_id })
             .then((res) => {
-                // let data = response.data;
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thông báo',
                     description: res.data.message
-
                 });
                 this.getUnits(this.state.page)
-                // message: (data.message + 'id là' + dm_dv_id)
+                this.setState({
+                    stateconfirmdelete: false,
+                    statebuttondelete: true,
+                    statebuttonedit: true,
+                    selectedRowKeys: []
+                })
             })
+        this.setState({
+            stateconfirmdelete: false
+        })
     }
-
-    //xxxx
 
     getKhachhangs = () => {
         console.log('get kh')
@@ -122,39 +126,21 @@ class Unit extends React.Component {
 
     }
 
-    // InsertKhachhang = () => {
-    //     console.log('thêm khách hàng')
-    //     const {form} = this.formRef.props;
-    //     if (err) {
-    //         return
-    //     }
-    //     var link = this.sta
-    //     Request('POST')
-    // }
-
-    // getLocation = () => {
-    //     Request('unit/getlocation', 'POST', {
-
-    //     }).then((response) =>{
-    //         let data = response.data;
-    //         console.log('data', data)
-    //     })
-    // }
-
     //---Insert---
     InsertOrUpdateUnit = () => {
         const { form } = this.formRef.props;
         form.validateFields((err, values) => {
-            console.log('ndiwho', values)
             if (err) {
                 return
             }
-
             var url = this.state.action === 'insert' ? 'unit/insert' : 'unit/update'
             Request(url, 'POST', values)
                 .then((response) => {
+                    this.setState({
+                        rowunitselected: values
+                    })
                     console.log('day la res', response)
-                    if (response.data.success === true) {
+                    if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
                             visible: false,
@@ -206,37 +192,26 @@ class Unit extends React.Component {
         this.getUnits(this.state.dataSource_Select_Parent);
     }
 
-    showModal = async (unit) => {
+    showModalUpdate = async (unit) => {
         const { form } = this.formRef.props
         this.setState({
             visible: true,
-            visible_kh : false,
+            visible_kh: false,
         });
-        form.resetFields();
-        form.setFieldsValue({ dm_dv_trangthai: 'HD' })
-        this.setState({
-            dataSource_Select_Parent: this.state.units
+        var arrayfilloption = []
+        this.state.units.map((value, index) => {
+            arrayfilloption.push({ dm_dv_id: value.dm_dv_id, tendonvi: value.dm_dv_ten })
+        })
+        await this.setState({
+            dataSource_Select_Parent: arrayfilloption
         })
         if (unit.dm_dv_id !== undefined) {
-
             await this.setState({
                 dm_dv_id_visible: true,
                 action: 'update'
             })
-
-            var dataSourceCha = []
-
-            this.state.units.map((value, index) => {
-                if (value.dm_dv_id !== unit.dm_dv_id) {
-                    dataSourceCha.push(value)
-                }
-            })
-            this.setState({
-                dataSource_Select_Parent: dataSourceCha
-            })
-
             this.set_select_tenkh();
-            form.setFieldsValue({ kh_id_nguoidaidien: 0})
+            form.setFieldsValue({ kh_id_nguoidaidien: 0 })
             this.set_select_diabantinh();
             if (this.state.select_diabantinh.length === 0) {
                 form.setFieldsValue({ dm_db_id_tinh: '' })
@@ -251,8 +226,27 @@ class Unit extends React.Component {
             }
             form.setFieldsValue(unit);
         }
+    };
 
-        if (this.state.action !== 'update') {
+    showModalInsert = async (unit) => {
+        const { form } = this.formRef.props
+        this.setState({
+            visible: true,
+            visible_kh: false
+        });
+        form.resetFields();
+        form.setFieldsValue({ dm_dv_trangthai: 'HD' })
+        var arrayfilloption = []
+        this.state.units.map((value, index) => {
+            arrayfilloption.push({ dm_dv_id: value.dm_dv_id, tendonvi: value.dm_dv_ten })
+        })
+        await this.setState({
+            dataSource_Select_Parent: arrayfilloption
+        })
+        if (unit.dm_db_id === undefined) {
+            await this.setState({
+                action: 'insert'
+            })
             await this.set_select_tenkh();
             await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
             await this.set_select_diabantinh();
@@ -274,11 +268,9 @@ class Unit extends React.Component {
             else {
                 await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
             }
-            // form.setFieldsValue({ kh_id: 'Bỏ chọn'})
+            form.setFieldsValue(unit);
         }
-
-        //  form.setFieldsValue({ kh_id_nguoidaidien: 'Bỏ chọn'})
-    };
+    }
 
     handleOK = e => {
         this.setState({
@@ -317,9 +309,6 @@ class Unit extends React.Component {
 
     cancel = (e) => {
         console.log(e);
-        this.state({
-            stateconfirmdelete: false
-        })
     }
 
     checkStateConfirm = () => {
@@ -333,8 +322,6 @@ class Unit extends React.Component {
     }
 
     onShowSizeChange = async (current, size) => {
-        console.log('size', size);
-        console.log('curent', current);
         await this.setState({
             pageSize: size
         });
@@ -557,37 +544,18 @@ class Unit extends React.Component {
                         await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
                     }
                     await this.set_select_tendv();
-                    if (this.state.set_select_tendv.length > 0) {
-                        await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id})
-                    }
-                    else {
-                        await form.setFieldsValue({ dm_dv_id: '' })
-                    }
+                    await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
                 }
                 catch (err) {
                     console.log(err)
                 }
-
-                // if (value === 'add_nguoidaidien'){
-                //     form.setFieldsValue({dm_dv_id : ''})
-                // }
-                // try {
-                //     if (this.state.select_tendv.length > 0) {
-                //         await form.setFieldsValue({ dm_dv_id: 1 })
-                //     } else {
-                //         await form.setFieldsValue({ dm_dv_id: '' })
-                //     }
-                // }
-                // catch (err) {
-                //     console.log(err)
-                // }
             }
         }
 
 
         await this.set_select_tenkh(value);
         if (this.state.select_tenkh.length === 0) {
-            await form.setFieldsValue({kh_id_nguoidaidien: '' })
+            await form.setFieldsValue({ kh_id_nguoidaidien: '' })
         }
     }
 
@@ -681,8 +649,6 @@ class Unit extends React.Component {
             Request(url, 'POST', values)
                 .then(async (response) => {
                     if (response.status === 200 & response.data.success === true) {
-                        console.log("hien thi ", response)
-                        //const { form } = this.formRef.props;
                         form.resetFields()
                         await this.setState({
                             visible_kh: false,
@@ -714,26 +680,9 @@ class Unit extends React.Component {
                         description: description
                     });
                     this.set_select_tenkh();
-
-                    // form.setFieldsValue({unit : id_customer})
-                    // if (this.state.visible) {
-                    //     // form = this.formRef.props.form
-                    //     try {
-                    //         this.set_select_tenkh(values);
-                    //         if (this.state.select_tenkh.length === 0) {
-                    //             form.setFieldsValue({ kh_id: '' })
-                    //         } else {
-                    //             form.setFieldsValue({ kh_id : values })
-                    //         }
-                    //     }
-                    //     catch (err) {
-                    //         console.log(err)
-                    //     }
-                    // }
                 })
         });
     }
-
 
     saveFormRefCreate = formRef => {
         this.saveFormRefCreate = formRef;
@@ -743,48 +692,41 @@ class Unit extends React.Component {
         this.formRef = formRef;
     }
 
-    // CreateCustomer = (e) => {
-    //     
-    // }
-
+    onSelectChange = (selectedRowKeys, selectedRows) => {
+        this.setState({
+            selectedRowKeys,
+            selectedId: selectedRowKeys
+        });
+        if (selectedRowKeys.length > 0) {
+            this.setState({
+                statebuttondelete: false
+            })
+        }
+        else {
+            this.setState({
+                statebuttondelete: true
+            })
+        }
+        if (selectedRowKeys.length === 1) {
+            this.setState({
+                statebuttonedit: false,
+                rowunitselected: selectedRows[0]
+            })
+        }
+        else {
+            this.setState({
+                statebuttonedit: true
+            })
+        }
+    }
 
     render() {
-
+        const { selectedRowKeys } = this.state
         const rowSelection = {
             hideDefaultSelections: true,
-            onChange: async (selectedRowKeys, selectedRows) => {
-                var arrayselected = []
-                arrayselected.push(selectedRowKeys)
-                console.log('id check', selectedRowKeys[0])
-                if (selectedRowKeys.length > 0) {
-                    await this.setState({
-                        // selectedId: selectedRowKeys[0],
-                        // unit: selectedRows[0]
-                        statebuttondelete: false
-                    })
-                }
-                else {
-                    await this.setState({
-                        statebuttondelete: true
-                    })
-                }
-                if (selectedRowKeys.length === 1) {
-                    await this.setState({
-                        statebuttondelete: false,
-                        rowunitselected: selectedRows[0]
-                    })
-                }
-                else {
-                    this.setState({
-                        statebuttonedit: true
-                    })
-                    await this.setState({
-                        selectedId: arrayselected[0]
-                    })
-                }
-            },
+            selectedRowKeys,
+            onChange: this.onSelectChange,
             getCheckboxProps: record => ({
-
                 disabled: Column.title === 'Id', // Column configuration not to be checked
                 name: record.name,
             }),
@@ -794,26 +736,40 @@ class Unit extends React.Component {
                 <div>
                     <Row className='table-margin-bt'>
                         <Col span={2}>
-                            <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
-                                <Icon type="plus" />
-                            </Button> Thêm
+                            <Tooltip title="Thêm đơn vị">
+                                <Button shape="circle" type="primary" size="large" onClick={this.showModalInsert.bind(null)}>
+                                    <Icon type="plus" />
+                                </Button>
+                            </Tooltip>
                         </Col>
                         <span>
                             <Col span={2}>
-                                <Button shape='circle' type="primary" size="large" onClick={this.showModal.bind(this, this.state.rowunitselected)} >
-                                    <Icon type="edit" /></Button> Sửa
-                        </Col>
+                                <Tooltip title="Sửa đơn vị">
+                                    <Button shape='circle' type="primary" size="large" onClick={this.showModalUpdate.bind(this, this.state.rowunitselected)} disabled={this.state.statebuttonedit} >
+                                        <Icon type="edit" /></Button>
+                                </Tooltip>
+                            </Col>
                             <Col span={2}>
-                                <Popconfirm
-                                    title="Bạn có chắc chắn muốn xóa ?"
-                                    onConfirm={this.deleteUnit.bind(this, this.state.selectedId)}
-                                    onCancel={this.cancel}
-                                    okText="Có"
-                                    cancelText="Không"
-                                >
-                                    <Button shape='circle' type="danger" size="large" onClick={this.checkStateConfirm} >
-                                        <Icon type="delete" /></Button> Xóa
-                            </Popconfirm>
+                                <Tooltip title="Xóa đơn vị">
+                                    <Popconfirm
+                                        title="Bạn có chắc chắn muốn xóa ?"
+                                        onConfirm={this.deleteUnit.bind(this, this.state.selectedId)}
+                                        onCancel={this.cancel}
+                                        okText="Có"
+                                        cancelText="Không"
+                                        visible={this.state.stateconfirmdelete}
+                                    >
+                                        <Button shape='circle' type="danger" size="large" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                            <Icon type="delete" /></Button>
+                                    </Popconfirm>
+                                </Tooltip>
+                            </Col>
+                            <Col span={2}>
+                                <Tooltip title="Tải Lại">
+                                    <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
+                                        <Icon type="reload" />
+                                    </Button>
+                                </Tooltip>
                             </Col>
                         </span>
                     </Row>
@@ -865,7 +821,7 @@ class Unit extends React.Component {
                             onSelectDiaBanHuyen={this.onSelectDiaBanHuyen}
                             onSelectDiaBanXa={this.onSelectDiaBanXa}
                             onSelectKh={this.onSelectKh}
-                            
+
                         />
                         <CreateModalCustomer
                             wrappedComponentRef={this.state.visible_kh ? this.saveFormRef : this.saveFormRefCreate}
@@ -887,9 +843,9 @@ class Unit extends React.Component {
                             stateoption={this.state.stateoption}
                         />
                         <Table className="table-contents" rowSelection={rowSelection} pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: 1000 }} rowKey="dm_dv_id">
+                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} />
                             <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hide" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} />
                             <Column title="Địa chỉ đơn vị" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hide" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
@@ -924,7 +880,7 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps,
     {
-        //   fetchUser,
+        fetchUser,
         fetchLoading
     })
     (Unit);

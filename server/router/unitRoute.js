@@ -18,10 +18,10 @@ router.post('/unit/get', function (req, res) {
     })
 })
 
-// router.post('/unit/getCha', function (req, res) {
-//     unitController.(function(data){})
-//     res.send(data);
-// })
+router.post('/unit/getCha', function (req, res) {
+    unitController.getcha(function(data){})
+    res.send(data);
+})
 
 router.post('/unit/gettinh', function (req, res) {
     console.log('reqesy tinh', req.data)
@@ -57,7 +57,7 @@ router.get('/unit/get/:Id', function (req, res) {
 })
 
 router.delete('/unit/delete', function (req, res) {
-    unitController.DeleteUnitbyId(req.body.dm_dv_id, function (data) {
+    unitController.DeleteUnitbyId(req.body.dm_dv_id, function(data) {
         res.send(data);
     })
 })
