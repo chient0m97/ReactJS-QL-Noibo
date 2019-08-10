@@ -90,7 +90,7 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                             // rules: [{}],
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(
-                                            <Input type="date" size="small" format={dateFormat} />
+                                            <Input type="date" size="default" format={dateFormat}/>
                                         )}
                                     </Form.Item>
                                 </Col>
@@ -188,11 +188,11 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 </Col>
                             </Row>
                             <Row gutter={24}>
-                                <Col span={8}>
+                                <Col span={10}>
                                     <Form.Item label='Đơn vị:'>
                                         {getFieldDecorator('dm_dv_id', {
                                             
-                                        })(<Select onSelect={onSelectDv}
+                                        })(<Select onSelect={onSelectDv} placeholder="---Không có đơn vị có thể bỏ qua trường này---"
                                             >
                                                 <Option value="add_donvi" disabled={stateoption}>Thêm đơn vị</Option>
                                                 {
@@ -204,14 +204,14 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                             </Select>)}
                                     </Form.Item>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={7}>
                                     <Form.Item label='Vị trí công tác:'>
                                         {getFieldDecorator('kh_vitricongtac', {
                                             
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={7}>
                                     <Form.Item label='Liên lạc:'>
                                         {getFieldDecorator('kh_lienlac', {
                                             rules: [{required: true, message: 'Vui lòng nhập vào ô này !!',}],
@@ -232,8 +232,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
         }
     }
 )
-
-
 const mapStateToProps = state => ({
     ...state
 })

@@ -100,15 +100,18 @@ var CustomerController = {
         })
     },
 
-    DeleteCustomerbyId: async function deleteCustomerbyId(Id, callback) {
-        customerData.deleteCustomerbyId(Id, (data) => {
+    DeleteCustomerbyId: async function deleteCustomerbyId(kh_id, callback) {
+        customerData.deleteCustomerbyId(kh_id, (data) => {
             if (data.success === true) {
                 callback({
                     success: data.success,
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callback(data, 400);
+            callback({
+                success: data.eror,
+                message: "Lỗi!!!"
+            });
         })
     },
 
@@ -130,7 +133,6 @@ var CustomerController = {
 
     insertCustomer: async function insertCustomer(customer, callback) {
         customer.kh_id = uuidv1();
-
         customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
         customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
         customer.dm_db_id_xa = customer.dm_db_id_xa_customer
@@ -139,9 +141,6 @@ var CustomerController = {
         delete customer.dm_db_id_xa_customer
         console.log(customer, 'customer custom')
         if (Validator.isInt(customer.kh_sodienthoai, 'Số điện thoại không đúng định dạng !!')
-            // & Validator.Name(customer.kh_ho, 'Họ không đúng định dạng !!')
-            // & Validator.Name(customer.kh_tenlot, 'Tên lót không đúng định dạng !!')
-            // & Validator.Name(customer.kh_ten, 'Tên không đúng định dạng !!')
             // & Validator.isMail(customer.kh_email, 'Email không đúng định dạng !!')
         ) {
             if (
@@ -192,11 +191,12 @@ var CustomerController = {
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
-        customer.forEach(element => {
-            element.dm_dv_id_tinh = element.dm_dv_id_tinh_customer
-            element.dm_dv_id_huyen = element.dm_dv_id_huyen_customer
-            element.dm_dv_id_xa = element.dm_dv_id_xa_customer
-        });
+        customer.dm_dv_id_tinh = customer.dm_dv_id_tinh_customer
+        customer.dm_dv_id_huyen = customer.dm_dv_id_huyen_customer
+        customer.dm_dv_id_xa = customer.dm_dv_id_xa_customer
+        delete customer.dm_db_id_huyen_customer
+        delete customer.dm_db_id_tinh_customer
+        delete customer.dm_db_id_xa_customer
         customerData.updateCustomer(customer, (res) => {
             callback({
                 success: res.success,

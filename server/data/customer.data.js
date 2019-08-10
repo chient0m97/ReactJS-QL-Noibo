@@ -31,8 +31,8 @@ module.exports = {
             })
         })
     },
-    deleteCustomerbyId: function (Id, callback) {
-        knex.from('khachhangs').whereIn('kh_id', Id).del().then(res => {
+    deleteCustomerbyId: function (kh_id, callback) {
+        knex.from('khachhangs').whereIn('kh_id', kh_id).del().then(res => {
             callback({ success:true });
         }).catch(err => {
             console.log(err)
