@@ -135,7 +135,7 @@ class RoleAction extends React.Component {
             roleModaVisible: false,
             actionModalVisible: false,
             selectedId: '',
-            selectedRowKeys: ['13b90820-b9c5-11e9-b113-9149299f5376'],
+            selectedRowKeys: [],
             roles:[]
 
         }
