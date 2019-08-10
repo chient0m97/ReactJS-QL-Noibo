@@ -289,7 +289,7 @@ class Customer extends React.Component {
                 action: 'insert'
             })
             await this.set_select_tendv();
-            await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
+            // await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
             await this.set_select_tinh();
             if (this.state.select_tinh.length > 0) {
                 await form.setFieldsValue({ dm_db_id_tinh_customer: 1 })
@@ -407,7 +407,7 @@ class Customer extends React.Component {
                         await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
                     }
                     await this.set_select_tenkh();
-                    await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
+                    // await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
                 }
                 catch (err) {
                     console.log(err)

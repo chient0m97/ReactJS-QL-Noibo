@@ -11,6 +11,7 @@ import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 // import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 import { async } from 'q';
+import { CheckBox } from 'devextreme-react';
 
 const token = cookie.load('token');
 const { Column } = Table;
@@ -61,7 +62,8 @@ class Unit extends React.Component {
             selectedRowKeys: [],
             selectedrow: [],
             selectedId: [],
-            rowunitselected: {}
+            rowunitselected: {},
+            checked: true
         }
     }
     //---Delete---
@@ -248,7 +250,7 @@ class Unit extends React.Component {
                 action: 'insert'
             })
             await this.set_select_tenkh();
-            await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
+            // await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
             await this.set_select_diabantinh();
             if (this.state.select_diabantinh.length > 0) {
                 await form.setFieldsValue({ dm_db_id_tinh: 1 })
@@ -544,7 +546,7 @@ class Unit extends React.Component {
                         await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
                     }
                     await this.set_select_tendv();
-                    await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
+                    // await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
                 }
                 catch (err) {
                     console.log(err)
@@ -607,7 +609,6 @@ class Unit extends React.Component {
         if (this.state.select_huyen.length === 0) {
             await form.setFieldsValue({ dm_db_id_huyen_customer: '' })
             await this.set_select_xa(-1);
-            // await this.set_select_diabanxa({ dm_db_id_huyen: 0 });
             await form.setFieldsValue({ dm_db_id_xa_customer: '' })
         }
         else {
@@ -695,7 +696,7 @@ class Unit extends React.Component {
     onSelectChange = (selectedRowKeys, selectedRows) => {
         this.setState({
             selectedRowKeys,
-            selectedId: selectedRowKeys
+            selectedId: selectedRowKeys,
         });
         if (selectedRowKeys.length > 0) {
             this.setState({
@@ -719,6 +720,13 @@ class Unit extends React.Component {
             })
         }
     }
+
+    // onChange = e => {
+    //     console.log('checked =', e.target.checked);
+    //     this.setState({
+    //         checked: e.target.checked,
+    //     });
+    // }
 
     render() {
         const { selectedRowKeys } = this.state

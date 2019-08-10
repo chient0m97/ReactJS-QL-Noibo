@@ -153,7 +153,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                     <Form.Item label='Người Đại Diện'>
                                         {getFieldDecorator('kh_id_nguoidaidien', {
                                             rules: [{}],
-                                        })(<Select onSelect={onSelectKh} 
+                                        })(<Select onSelect={onSelectKh} placeholder="---Không có người đại diện có thể bỏ qua trường này---"
                                         >
                                             <Option value="add_nguoidaidien"  disabled={stateoption}>Thêm người đại diện</Option>
                                             {
