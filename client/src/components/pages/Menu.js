@@ -1,12 +1,11 @@
 import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Card } from 'antd';
+import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import Modal_Menu from '@pages/Modal/Modal_Menu.js'
 import '@styles/style.css'
-import { async } from 'q';
 const { Column } = Table;
 
 class Menu extends React.Component {
@@ -134,6 +133,7 @@ class Menu extends React.Component {
     }
 
     refresh = async (pageNumber) => {
+        message.success('Refresh success', 1);
         await this.getMenu(this.state.pageNumber)
     }
 
@@ -207,6 +207,14 @@ class Menu extends React.Component {
         })
     }
 
+    clearChecked = () => {
+        this.onSelectChange([],[])
+    };
+
+    onRowClick = (row) => {
+        this.onSelectChange([row.dm_menu_id], [row])
+    }
+
     render() {
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -221,14 +229,14 @@ class Menu extends React.Component {
                         <Card>
                             <Col span={2}>
                                 <Tooltip title="Thêm Menu">
-                                    <Button shape="circle" type="primary" size="default" onClick={this.showModal.bind(null)}>
+                                    <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                                         <Icon type="user-add" />
                                     </Button>
                                 </Tooltip>
                             </Col>
                             <Col span={2}>
                                 <Tooltip title="Sửa Menu">
-                                    <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                    <Button type="primary" size="default" shape="round" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                                         <Icon type="edit" />
                                     </Button>
                                 </Tooltip>
@@ -243,7 +251,7 @@ class Menu extends React.Component {
                                         cancelText="No"
                                         visible={this.state.stateconfirmdelete}
                                     >
-                                        <Button type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                        <Button type="danger" style={{ marginLeft: '10px' }} shape="round" size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
                                             <Icon type="delete" />
                                         </Button>
                                     </Popconfirm>
@@ -251,15 +259,18 @@ class Menu extends React.Component {
                             </Col>
                             <Col span={2}>
                                 <Tooltip title="Tải Lại">
-                                    <Button shape="circle" type="primary" size="default" style={{ marginLeft: '18px' }} onClick={this.refresh.bind(null)}>
+                                    <Button shape="round" type="primary" size="default" style={{ marginLeft: '18px' }} onClick={this.refresh.bind(null)}>
                                         <Icon type="reload" />
                                     </Button>
                                 </Tooltip>
                             </Col>
+                            <Col span={3}>
+                                <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
+                            </Col>
                         </Card>
                     </Row>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.menu} rowKey="dm_menu_id" bordered>
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.menu} rowKey="dm_menu_id" bordered>
                             <Column title="Url" dataIndex="dm_menu_url" width={400} />
                             <Column title="Name" dataIndex="dm_menu_name" width={250} />
                             <Column title="Menu parent" dataIndex="dm_menu_id_parent" width={250}

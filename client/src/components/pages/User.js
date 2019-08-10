@@ -426,13 +426,6 @@ class User extends React.Component {
 
 
             <Table pagination={false} dataSource={this.state.users} rowKey="id" >
-              <Column
-                title={<span>Id <Icon type={this.state.orderby} /></span>}
-                dataIndex="id"
-                key="id"
-                onHeaderCell={this.onHeaderCell}
-
-              />
               <Column title="User Name" dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
               />
               <Column title="Code" dataIndex="code" key="code" onHeaderCell={this.onHeaderCell} />

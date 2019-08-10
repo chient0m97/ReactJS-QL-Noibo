@@ -55,6 +55,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             );
             return (
                 <Modal
+                    centered
                     visible={visible}
                     title={title}
                     okText="Lưu lại"
@@ -398,13 +399,13 @@ class Nhansu extends React.Component {
                     selectedRowKeys: []
                 })
             })
-            this.setState({
-                stateconfirmdelete: false,
-            })
+        this.setState({
+            stateconfirmdelete: false,
+        })
     }
 
     refresh = async (pageNumber) => {
-
+        message.success('Refresh success', 1);
         await this.getNhansu(this.state.pageNumber)
     }
 
@@ -596,6 +597,14 @@ class Nhansu extends React.Component {
         })
     }
 
+    clearChecked = () => {
+        this.onSelectChange([],[])
+    };
+
+    onRowClick = (row) => {
+        this.onSelectChange([row.ns_id], [row])
+    }
+
     render() {
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -611,40 +620,43 @@ class Nhansu extends React.Component {
                     <Row>
                         <Col span={2}>
                             <Tooltip title="Thêm Nhân Sự">
-                                <Button shape="circle" type="primary" size="default" onClick={this.showModal.bind(null)}>
+                                <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                                     <Icon type="user-add" />
                                 </Button>
                             </Tooltip>
                         </Col>
                         <Col span={2}>
                             <Tooltip title="Sửa Hỗ Trợ">
-                                <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                                     <Icon type="edit" />
                                 </Button>
                             </Tooltip>
                         </Col>
                         <Col span={2}>
-                                <Tooltip title="Xóa Hỗ Trợ">
-                                    <Popconfirm
-                                        title="Bạn chắc chắn muốn xóa?"
-                                        onConfirm={this.deleteNhansu.bind(this, this.state.selectedId)}
-                                        onCancel={this.cancel}
-                                        okText="Yes"
-                                        cancelText="No"
-                                        visible={this.state.stateconfirmdelete}
-                                    >
-                                        <Button type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
-                                            <Icon type="delete" />
-                                        </Button>
-                                    </Popconfirm>
-                                </Tooltip>
-                            </Col>
+                            <Tooltip title="Xóa Hỗ Trợ">
+                                <Popconfirm
+                                    title="Bạn chắc chắn muốn xóa?"
+                                    onConfirm={this.deleteNhansu.bind(this, this.state.selectedId)}
+                                    onCancel={this.cancel}
+                                    okText="Yes"
+                                    cancelText="No"
+                                    visible={this.state.stateconfirmdelete}
+                                >
+                                    <Button shape="round" type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                        <Icon type="delete" />
+                                    </Button>
+                                </Popconfirm>
+                            </Tooltip>
+                        </Col>
                         <Col span={2}>
                             <Tooltip title="Tải Lại">
-                                <Button shape="circle" type="primary" size="default" onClick={this.refresh.bind(null)}>
+                                <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
                                     <Icon type="reload" />
                                 </Button>
                             </Tooltip>
+                        </Col>
+                        <Col span={3}>
+                            <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
                         </Col>
                     </Row>
                 </Card>
@@ -658,7 +670,7 @@ class Nhansu extends React.Component {
                         formtype={this.state.formtype}
                         id_visible={this.state.id_visible}
                     />
-                    <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
+                    <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
                         <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Họ và tên" width={150} dataIndex="ns_hovaten" key="ns_hovaten" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Ngày sinh" dataIndex="ns_ngaysinh" key="ns_ngaysinh" align="center" render={text => formatDate(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
