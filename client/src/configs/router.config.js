@@ -18,7 +18,7 @@ const routers = [
         name: 'home'
     },
     {
-        path: '/quan-ly-quyen',
+        path: '/role',
         component: RoleAction,
         name: 'quản lý quyền'
     },
@@ -48,9 +48,9 @@ const routers = [
         name: 'unit'
     },
     {
-        path: '/customer',
+        path: '/khachhang',
         component: Customer,
-        name: 'customer'
+        name: 'khachhang'
     },
     {
         path: '/quan-ly-dia-ban',

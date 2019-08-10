@@ -2,7 +2,8 @@ module.exports =
 [
     {
         url:'/user/get',
-        claim:'USER.READ'
+        claim:'USER.READ',
+        
     },
     {
         url:'/user/search',

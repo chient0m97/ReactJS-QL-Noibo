@@ -41,6 +41,19 @@ module.exports = {
         Insert: "HOTRO.INSERT",
         Delete: "HOTRO.DELETE",
         Update:"HOTRO.UPDATE",
+    },
+    Nhansu:{
+        Read: "NHANSU.READ",
+        Insert: "NHANSU.INSERT",
+        Delete: "NHANSU.DELETE",
+        Update:"NHANSU.UPDATE",
+    }
+    ,
+    Hopdong:{
+        Read: "HOPDONG.READ",
+        Insert: "HOPDONG.INSERT",
+        Delete: "HOPDONG.DELETE",
+        Update:"HOPDONG.UPDATE",
     }
     ,
     Group:{

@@ -12,133 +12,13 @@ import jwt from 'jsonwebtoken';
 import Permission from '../Authen/Permission'
 import RoleModal from '../common/roleModal'
 import ActionModal from '../common/actionModal'
-import { async } from 'q';
+import SearchModal from '../common/searchModal'
 const token = cookie.load('token');
 
 
 const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
-
-let id = 0;
-class DynamicFieldSet extends React.Component {
-    remove = k => {
-        const { form } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        // We need at least one passenger
-        if (keys.length === 0) {
-            return;
-        }
-
-        // can use data-binding to set
-        form.setFieldsValue({
-            keys: keys.filter(key => key !== k),
-        });
-        this.props.remove();
-        this.props.callback('');
-    };
-
-    add = () => {
-        const { form } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(id++);
-        // can use data-binding to set
-        // important! notify form to detect changes
-        form.setFieldsValue({
-            keys: nextKeys,
-        });
-    };
-
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                const { keys, names } = values;
-            }
-        });
-    };
-    render() {
-        const { getFieldDecorator, getFieldValue } = this.props.form;
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 4 },
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 20 },
-            },
-        };
-        const formItemLayoutWithOutLabel = {
-            wrapperCol: {
-                xs: { span: 24, offset: 0 },
-                sm: { span: 20, offset: 4 },
-            },
-        };
-        getFieldDecorator('keys', { initialValue: [] });
-        const keys = getFieldValue('keys');
-        const formItems = keys.map((k, index) => (
-            <Form.Item
-                {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                label={index === 0 ? '' : ''}
-                required={false}
-                key={k}
-            >
-                {getFieldDecorator(`names[${k}]`, {
-                    validateTrigger: ['onChange', 'onBlur'],
-
-                })(<div>
-                    <Select
-                        defaultValue={['name']}
-                        showSearch
-                        style={{ width: 200 }}
-                        placeholder="Select a person"
-                        optionFilterProp="children"
-                        onChange={this.props.onchangeSearch}
-                        // onFocus={this.onFocus}
-                        // onBlur={this.onBlur}
-                        onSearch={this.onSearch}
-                        filterOption={(input, option) =>
-                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                    >
-                        <Option value="name">User Name</Option>
-                        <Option value="email">Email</Option>
-                        <Option value="password">Password</Option>
-                        <Option value="phone">Phone Number</Option>
-                        <Option value="fullname">Full name</Option>
-
-
-                    </Select>,
-        <Search style={{ width: 300 }} placeholder="input search text" onChange={this.props.changesearch.bind(this)} onSearch={(value) => { this.props.callback(value) }} enterButton />
-
-                </div>)}
-                {keys.length > 0 ? (
-                    <Icon
-                        className="dynamic-delete-button"
-                        type="minus-circle-o"
-                        onClick={() => this.remove(k)}
-                    />
-                ) : null}
-            </Form.Item>
-        ));
-        return (
-            <Form onSubmit={this.handleSubmit}>
-                {formItems}
-                <Form.Item {...formItemLayoutWithOutLabel}>
-                    <Button type="dashed" onClick={this.add} style={{ color: 'red' }} >
-                        Click vào đây để Search Bờ rô
-          </Button>
-                </Form.Item>
-
-            </Form>
-        );
-    }
-}
-
-const WrappedDynamicFieldSet = Form.create({ name: 'dynamic_form_item' })(DynamicFieldSet);
 
 
 const FormModal = Form.create({ name: 'form_in_modal' })(
@@ -255,7 +135,8 @@ class RoleAction extends React.Component {
             roleModaVisible: false,
             actionModalVisible: false,
             selectedId: '',
-            selectedRowKeys: []
+            selectedRowKeys: ['13b90820-b9c5-11e9-b113-9149299f5376'],
+            roles:[]
 
         }
     }
@@ -263,17 +144,17 @@ class RoleAction extends React.Component {
     deleteRole = (id) => {
         Request(`role_action/delete`, 'DELETE', { id: id })
             .then((res) => {
-                
+
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thông báo',
                     description: res.data.message
-                   
+
                 });
                 this.setState({
-                        selectedId:''
+                    selectedId: ''
                 })
                 this.getRoles(this.state.page)
-                
+
             })
     }
 
@@ -289,11 +170,14 @@ class RoleAction extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((response) => {
+                console.log('------------------------====-=-=-=-=-=-',response.data)
                 if (response) {
                     let data = response.data;
+                   let  objRoles = Object.keys(data.roles[0])
                     if (data)
                         this.setState({
                             roles: data.roles,
+                            objRoles:objRoles,
                             count: Number(data.count)//eps kieeru veef
                         })
                     this.props.fetchLoading({
@@ -367,14 +251,14 @@ class RoleAction extends React.Component {
         const { form } = this.formRef.props
         await form.setFieldsValue({ role: '-----> Chọn role đi nhóc <-----', action: '-----> Chọn action đi nhóc <-----' })
         this.setState({
-            action:'insert',
+            action: 'insert',
             visible: true
         });
         this.reqestRole();
         this.requestAction();
     };
-    showModalEdit = (user) =>{
-        if(this.state.selectedRowKeys.length===1){
+    showModalEdit = (user) => {
+        if (this.state.selectedRowKeys.length === 1) {
             const { form } = this.formRef.props
             this.reqestRole();
             this.requestAction();
@@ -387,10 +271,10 @@ class RoleAction extends React.Component {
                 form.setFieldsValue(user);
             }
         }
-        else{
+        else {
             message.error("chọn một row thôi nhóc")
         }
-        
+
     }
     handleOk = e => {
         this.setState({
@@ -600,7 +484,11 @@ class RoleAction extends React.Component {
             }
         })
     }
-   
+    set = (val)=>{
+        this.setState({
+            selectedRowKeys:[]
+        })
+    }
     render() {
         let token = cookie.load('token');
         if (!token || !jwt.decode(token)) {
@@ -614,9 +502,10 @@ class RoleAction extends React.Component {
         let canUpdate = claims.indexOf(Permission.Role.Update) >= 0;
         let canDelete = claims.indexOf(Permission.Role.Delete) >= 0;
         let canCreate = claims.indexOf(Permission.Role.Insert) >= 0;
+        let canRead = claims.indexOf(Permission.Role.Read) >= 0;
 
         const rowSelection = {
-           
+            selectedRowKeys,
             hideDefaultSelections: true,
             onChange: async (selectedRowKeys, selectedRows) => {
                 console.log('selected rowkeys', selectedRowKeys)
@@ -630,121 +519,119 @@ class RoleAction extends React.Component {
 
             },
 
-            getCheckboxProps: record => ({
+            // getCheckboxProps: record => ({
 
-                disabled: Column.title === 'Id', // Column configuration not to be checked
-                name: record.name,
-            }),
+            //     disabled: Column.title === 'Id', // Column configuration not to be checked
+            //     name: record.name,
+            // }),
 
         };
         return (
             <div>
+                {
+                    canRead ?
+                        <div>
+                            {/* <SearchModal col={this.state.objRoles} changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} /> */}
+                            <RoleModal
+                                visible={this.state.roleModaVisible}
+                                roleCancel={this.roleCancel}
+                                roleOk={this.roleOk}
+                            />
+                            <ActionModal
+                                visible={this.state.actionModalVisible}
+                                actionCancel={this.actionCancel}
+                                actionOk={this.actionOk}
+                            />
+                            <Button onClick={this.set}>setting</Button>
+                            <div style={{ display: 'flex' }}>
 
-                {/* <Row className="table-margin-bt">
-          <Col span={1}>
-            <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
-              <Icon type="reload" />
-            </Button>
-          </Col>
+                                {
+                                    canUpdate ?
+                                        <div>
+                                            <Button style={{ margin: '20px' }} onClick={this.showModalEdit.bind(this, this.state.user)}>
+                                                <Icon type="edit" />
+                                            </Button> Sửa
+                                        </div>
+                                        : null
+                                }
 
-        </Row> */}
-                <WrappedDynamicFieldSet changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
-                <RoleModal
-                    visible={this.state.roleModaVisible}
-                    roleCancel={this.roleCancel}
-                    roleOk={this.roleOk}
-                />
-                <ActionModal
-                    visible={this.state.actionModalVisible}
-                    actionCancel={this.actionCancel}
-                    actionOk={this.actionOk}
-                />
+                                {
+                                    canCreate ?
+                                        <div>
+                                            <Button style={{ margin: '20px' }} onClick={this.showModal}>
+                                                <Icon type="plus" />
+                                            </Button> Thêm
+                                        </div>
+                                        : null
+                                }
+                                {
+                                    canDelete ?
+                                        <Popconfirm
+                                            title="Bạn chắc chắn muốn xóa?"
+                                            onConfirm={this.deleteRole.bind(this, this.state.selectedId)}
+                                            onCancel={this.cancel}
+                                            okText="Yes"
+                                            cancelText="No">
+                                            <Button type="danger" style={{ margin: '20px' }} >
+                                                <Icon type="delete" />
+                                            </Button> Xóa
+                                        </Popconfirm>
+                                        :
+                                        null
+                                }
 
-                <div style={{ display: 'flex' }}>
-
-                    {
-                        canUpdate ?
-                            <div>
-                                <Button style={{ margin: '20px' }} onClick={this.showModalEdit.bind(this, this.state.user)}>
-                                    <Icon type="edit" />
-                                </Button> Sửa
                             </div>
-                            : null
-                    }
-
-                    {
-                        canCreate ?
-                            <div>
-                                <Button style={{ margin: '20px' }} onClick={this.showModal}>
-                                    <Icon type="plus" />
-                                </Button> Thêm
-                            </div>
-                            : null
-                    }
-                    {
-                        canDelete ?
-                            <Popconfirm
-                                title="Bạn chắc chắn muốn xóa?"
-                                onConfirm={this.deleteRole.bind(this, this.state.selectedId)}
-                                onCancel={this.cancel}
-                                okText="Yes"
-                                cancelText="No">
-                                <Button type="danger" style={{ margin: '20px' }} >
-                                    <Icon type="delete" />
-                                </Button> Xóa
-                </Popconfirm>
-                            :
-                            null
-                    }
-
-                </div>
-                <Row className="table-margin-bt">
-                    <FormModal
-                        datacha={this.state.datacha}
-                        wrappedComponentRef={this.saveFormRef}
-                        visible={this.state.visible}
-                        onCancel={this.handleCancel}
-                        onSave={this.InsertOrUpdateRole}
-                        title={this.state.title}
-                        formtype={this.state.formtype}
-                        id_visible={this.state.id_visible}
-                        dataRole={this.state.dataRole}
-                        dataAction={this.state.dataAction}
-                        onchangeRole={this.onchangeRole}
-                        onchangeAction={this.onchangeAction}
-                    />
+                            <Row className="table-margin-bt">
+                                <FormModal
+                                    datacha={this.state.datacha}
+                                    wrappedComponentRef={this.saveFormRef}
+                                    visible={this.state.visible}
+                                    onCancel={this.handleCancel}
+                                    onSave={this.InsertOrUpdateRole}
+                                    title={this.state.title}
+                                    formtype={this.state.formtype}
+                                    id_visible={this.state.id_visible}
+                                    dataRole={this.state.dataRole}
+                                    dataAction={this.state.dataAction}
+                                    onchangeRole={this.onchangeRole}
+                                    onchangeAction={this.onchangeAction}
+                                />
 
 
-                    <Table
+                                <Table
 
-                        onRow={(record, rowIndex) => {
-                            return {
-                                onClick: event => {
-                                    this.handleClickRow.bind(this, rowIndex)
+                                    onRow={(record, rowIndex) => {
+                                        return {
+                                            onClick: event => {
+                                                this.handleClickRow.bind(this, rowIndex)
 
-                                }, // click row
-                            };
-                        }}
-                        expandRowByClick="true" onChange={this.changeRows}
-                        pagination={false}
-                        rowSelection={rowSelection}
-                        dataSource={this.state.roles} rowKey="id" >
-                        <Column className="action-hide"
-                            title={<span>Id <Icon type={this.state.orderby} /></span>}
-                            dataIndex="id"
-                            key="id"
-                            onHeaderCell={this.onHeaderCell}
-                        />
+                                            }, // click row
+                                        };
+                                    }}
+                                    expandRowByClick="true" onChange={this.changeRows}
+                                    pagination={false}
+                                    rowSelection={rowSelection}
+                                    dataSource={this.state.roles} rowKey="id" >
+                                    <Column className="action-hide"
+                                        title={<span>Id <Icon type={this.state.orderby} /></span>}
+                                        dataIndex="id"
+                                        key="id"
+                                        onHeaderCell={this.onHeaderCell}
+                                    />
 
-                        <Column title="Role Code" dataIndex="role" key="role" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Action Code" dataIndex="action" key="action" onHeaderCell={this.onHeaderCell} />
+                                    <Column title="Role Code" dataIndex="role" key="role" onHeaderCell={this.onHeaderCell} />
+                                    <Column title="Action Code" dataIndex="action" key="action" onHeaderCell={this.onHeaderCell} />
 
 
-                    </Table>
-                </Row>
-                <Row>
-                    <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
-                </Row>
+                                </Table>
+                            </Row>
+                            <Row>
+                                <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+                            </Row>
+                        </div>
+                        : <h1>Mày đéo có quyền vào đây</h1>
+                }
+
             </div >
 
         )
