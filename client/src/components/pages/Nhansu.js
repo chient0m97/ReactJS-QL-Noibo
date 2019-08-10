@@ -13,8 +13,8 @@ const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
 
-
-const columnFilter = [{column: 'ns_ho', name: 'Họ', type: 'text'},{column: 'ns_tenlot', name: 'Tên lót', type: 'date'}]
+let id = 0
+const columnFilter = [{column: 'ns_ho', name: 'Họ', type: 'text'},{column: 'ns_tenlot', name: 'Tên lót', type: 'date'}, {column: 'ns_ten', name: 'Tên', type: 'number'}]
 
 
 class DynamicFieldSet extends React.Component {
@@ -473,14 +473,7 @@ class Nhansu extends React.Component {
                     })
                 var i = 0;
                 //dateFormat(this.state.nhansu[0].ns_ngaysinh,"fullDate")
-                for (i = 0; i < this.state.count; i++) {
-                    this.state.nhansu[i].ns_ngaysinh = dateFormat(this.state.nhansu[i].ns_ngaysinh, "dd/mm/yyyy");
-                    this.state.nhansu[i].ns_ngayhocviec = dateFormat(this.state.nhansu[i].ns_ngayhocviec, "dd/mm/yyyy")
-                    this.state.nhansu[i].ns_ngaythuviec = dateFormat(this.state.nhansu[i].ns_ngaythuviec, "dd/mm/yyyy")
-                    this.state.nhansu[i].ns_ngaylamchinhthuc = dateFormat(this.state.nhansu[i].ns_ngaylamchinhthuc, "dd/mm/yyyy")
-                    this.state.nhansu[i].ns_ngaydongbaohiem = dateFormat(this.state.nhansu[i].ns_ngaydongbaohiem, "dd/mm/yyyy")
-                    this.state.nhansu[i].ns_hovaten = this.state.nhansu[i].ns_ho + " "+ this.state.nhansu[i].ns_tenlot + " " + this.state.nhansu[i].ns_ten
-                }
+    
                 console.log("Ho Va Ten", this.state.nhansu[0].ns_hovaten)
                 this.props.fetchLoading({
                     loading: false

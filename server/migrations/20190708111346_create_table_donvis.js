@@ -13,7 +13,7 @@ exports.up = function(knex) {
       table.string('kh_id_nguoidaidien', 36);
       table.string('dm_dv_trangthai', 50);
       table.foreign('dm_dv_id_cha').references('dm_dv_id').inTable('donvis')
-      table.foreign('kh_id_nguoidaidien').references('dm_dv_id').inTable('donvis')
+      table.foreign('kh_id_nguoidaidien').references('kh_id').inTable('khachhangs')
   })
 };
 

@@ -1,30 +1,25 @@
 import React from 'react';
-
-import { Pagination, Checkbox, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+// import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
-import '../../index.css';
-import jwt from 'jsonwebtoken';
-import { check } from 'express-validator';
-import Permission from '../Authen/Permission'
+
 const token = cookie.load('token');
-
-
 const { Column } = Table;
-const { Option } = Select
+const {Option} = Select
 const { Search } = Input;
 
 let id = 0;
-console.log('token', token)
+
 class DynamicFieldSet extends React.Component {
   remove = k => {
     const { form } = this.props;
     // can use data-binding to get
-    const keys = form.getFieldValue('keys');
+    const keys = form.getFieldValue('keys');             
     // We need at least one passenger
     if (keys.length === 0) {
       return;
@@ -56,7 +51,7 @@ class DynamicFieldSet extends React.Component {
       if (!err) {
         const { keys, names } = values;
         console.log('Received values of form: ', values);
-        console.log('Merged values:', keys.map(key => names[ key ]));
+        console.log('Merged values:', keys.map(key => names[key]));
       }
     });
   };
@@ -88,11 +83,11 @@ class DynamicFieldSet extends React.Component {
         key={k}
       >
         {getFieldDecorator(`names[${k}]`, {
-          validateTrigger: [ 'onChange', 'onBlur' ],
+          validateTrigger: ['onChange', 'onBlur'],         
 
         })(<div>
           <Select
-            defaultValue={[ 'name' ]}
+            defaultValue={['name']}
             showSearch
             style={{ width: 200 }}
             placeholder="Select a person"
@@ -115,7 +110,7 @@ class DynamicFieldSet extends React.Component {
 
           </Select>,
         <Search style={{ width: 300 }} placeholder="input search text" onChange={this.props.changesearch.bind(this)} onSearch={(value) => { this.props.callback(value) }} enterButton />
-
+        
         </div>)}
         {keys.length > 0 ? (
           <Icon
@@ -130,11 +125,11 @@ class DynamicFieldSet extends React.Component {
       <Form onSubmit={this.handleSubmit}>
         {formItems}
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button type="dashed" onClick={this.add} style={{ color: 'red' }} >
-            Click vào đây để Search Bờ rô
+          <Button type="dashed" onClick={this.add} style={{color:'red'}} >
+             Click vào đây để Search Bờ rô
           </Button>
         </Form.Item>
-
+        
       </Form>
     );
   }
@@ -145,16 +140,16 @@ const WrappedDynamicFieldSet = Form.create({ name: 'dynamic_form_item' })(Dynami
 
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
-    constructor(props) {
+    constructor(props){
       super(props);
-      this.state = {
-        messageRequired: 'Trường này không được bỏ trống!'
+    this.state = {
+      messageRequired:'Trường này không được bỏ trống!'
+     
 
-
-      }
-    }
+    }}
     render() {
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
+      console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
         <Modal
@@ -167,11 +162,12 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
           width={1000}
         >
           <Form layout={formtype}>
-            <Row gutter={24} >
+            <Row gutter={24}>
               <Col span={24}>
-                <div style={{ display: 'none' }}>
+                <div style={{ display: id_visible === true ? 'block' : 'none' }}>
                   <Form.Item label="Id:" >
                     {getFieldDecorator('id', {
+                      rules: [ {} ],
                     })(<Input type="number" disabled />)}
                   </Form.Item>
                 </div>
@@ -179,19 +175,18 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label="Code:">
+                <Form.Item label="Mã:">
                   {getFieldDecorator('code', {
-
-                    rules: [ { required: true, message: 'Trường này không được bỏ trống!', validateStatus: 'error' },
-                    ],
-                  })(<Input type="text" />)}
+                    rules: [ { required: true, message: this.state.messageRequired, } ],
+                  })(<Input type="text" />)
+                  }
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Tên đầy đủ:">
-                  {getFieldDecorator('fullname', {
-                    rules: [ { required: true, message: this.state.messageRequired, } ],
-                  })(<Input type="text" />)}
+                  {getFieldDecorator('fullname', {     
+                    rules: [ { required: true, message:this.state.messageRequired, } ],
+                  })(<Input type="text" />)}       
                 </Form.Item>
               </Col>
             </Row>
@@ -223,18 +218,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Số điện thoại:">
                   {getFieldDecorator('phone', {
                     rules: [ { required: true, message: this.state.messageRequired, } ],
-                  })(<Input type="phone" />
-                    // <Select>
-                    //   {this.props.datacha.map((item, i) => {
-                    //     return(
-                    //     <Option value={item.ns_id}>{item.ns_id}</Option>
-
-                    //     )
-                    //   })}
-
-
-                    // </Select>
-                  )}
+                  })(<Input type="text" />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -245,10 +229,9 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
   },
 )
 
-class User extends React.Component {
+class Action extends React.Component {
   constructor(props) {
     super(props);
-    //this.child = React.createRef();
     this.state = {
       pageNumber: 1,
       current: 1,
@@ -266,24 +249,20 @@ class User extends React.Component {
       searchText: '',
       columnSearch: 'name',
       isSort: true,
-      sortBy: 'ASC',
-      index: 'name',
+      sortBy: '',
+      index: 'id',
       orderby: 'arrow-up',
-      nameSearch: '',
-      emailSearch: '',
-      phoneSearch: '',
-      passwordSearch: '',
-      fullnameSearch: '',
-      codeSearch: '',
-      roleVisible: 'none',
-      modalRoleVisible: false,
-      actionColumn: 'action-hide',
-      datacha: []
+      nameSearch:'',
+      emailSearch:'',
+      phoneSearch:'',
+      passwordSearch:'',
+      fullnameSearch:'',
+      codeSearch:''
+
     }
   }
   //--------------DELETE-----------------------
   deleteUser = (id) => {
-    console.log('delte id: ', id)
     Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
         notification[ res.data.success === true ? 'success' : 'error' ]({
@@ -295,12 +274,13 @@ class User extends React.Component {
   }
 
   getUsers = (pageNumber) => {
-
-    console.log('index', this.state.index)
-    console.log('sortby', this.state.sortBy)
+    console.log('index',this.state.index)
+    console.log('sortby',this.state.sortBy)
     if (pageNumber <= 0)
       return;
-
+    this.props.fetchLoading({
+      loading: true
+    })
     Request('user/get', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
@@ -309,7 +289,6 @@ class User extends React.Component {
     })
       .then((response) => {
         let data = response.data;
-        console.log('data', data.data.users)
         if (data.data)
           this.setState({
             users: data.data.users,
@@ -319,39 +298,22 @@ class User extends React.Component {
           loading: false
         })
       })
-    //   jwt.decode(token)
-    // jwt.verify(token, "heymynameismohamedaymen", (err, decoded) => {
-    //   if (decoded.role == 'admin') {
-    //     this.setState({
-    //       roleVisible: ''
-    //     })
-    //   }
-    // })
   }
   // insert---------------------------------
 
   InsertOrUpdateUser = () => {
     const { form } = this.formRef.props;
-    form.setFields({
-      name: {
-        value: 'sdsdsds',
-        errors: [ new Error('forbid ha') ],
-      },
-    });
-
     form.validateFields((err, values) => {
-
       if (err) {
         return
       }
-      console.log('urllllllllllllllllllll', this.state.action)
       var url = this.state.action === 'insert' ? 'user/insert' : 'user/update'
       Request(url, 'POST', values)
         .then((response) => {
           if (response.status === 200 & response.data.success === true) {
             form.resetFields();
             this.setState({
-              visible: false,
+              visible: false, 
               message: response.data.message
             })
           }
@@ -379,38 +341,23 @@ class User extends React.Component {
   refresh = (pageNumber) => {
     this.getUsers(this.state.pageNumber)
   }
-
   componentDidMount() {
     this.getUsers(this.state.pageNumber, this.state.index, this.state.sortBy);
   }
-
   onchangpage = async (page) => {
-    console.log('page', page)
     await this.setState({
       page: page
     })
 
-    if (this.state.isSearch === 1) {
+   if (this.state.isSearch === 1) {
       this.search(this.state.searchText)
     }
     else {
       this.getUsers(page)
-      console.log(this.getUsers(page))
     }
   }
 
   showModal = (user) => {
-    Request('user/getcha', 'POST', null).then((res) => {
-      let data = res.data;
-      console.log('--', data)
-      this.setState({
-        datacha: data
-      })
-    })
-    console.log('data', this.state.datacha)
-
-
-
     const { form } = this.formRef.props
     this.setState({
       visible: true
@@ -469,18 +416,14 @@ class User extends React.Component {
     await this.setState({
       pageSize: size
     });
-    if (this.state.searchText) {
-      this.search(this.state.searchText);
-
-    }
-    else {
-      this.getUsers(this.state.page)
-    }
+    
+    this.search(this.state.searchText);
+    
   }
 
   search = async (xxxx) => {
-    console.log('xxxxxxxxxxxx', this.state.pageSize)
-    console.log('search text', xxxx)
+    console.log('xxxxxxxxxxxx',this.state.pageSize)
+    console.log('search text',xxxx)
     Request('user/search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
@@ -488,12 +431,12 @@ class User extends React.Component {
       columnSearch: this.state.columnSearch,
       p1: this.state.index,
       p2: this.state.sortBy,
-
+      
     })
       .then((response) => {
         let data = response.data;
-
-        console.log('aaaaaaaaaaaaa', data)
+        
+        console.log('aaaaaaaaaaaaa',data)
         if (data.data)
           this.setState({
             users: data.data.users,
@@ -558,196 +501,98 @@ class User extends React.Component {
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
-  removeSearch = () => {
+  removeSearch =()=>{
     this.setState({
-      searchText: ''
+      searchText:''
     })
   }
-  onchangeSearch = (event) => {
+  onchangeSearch = (event) =>{
     let value = event.target.value
     this.search(value)
-
-  }
-  ChangeCheckbox = () => {
-    console.log('dcm')
-  }
-  showmodalRole = () => {
-    this.setState({
-      modalRoleVisible: true
-    })
-  }
-  okRole = e => {
-    console.log(e);
-    this.setState({
-      modalRoleVisible: false,
-    });
-  };
-
-  cancelRole = e => {
-    console.log(e);
-    this.setState({
-      modalRoleVisible: false,
-    });
-  };
-  changeRows = (selectedRowKeys, selectedRows) => {
-    console.log('checked')
-  }
-
-  handleClickRow(rowIndex) {
-    let users = this.state.users;
-    users[ rowIndex ].Selected = true;
-    this.setState({
-      users: users
-    })
+    
   }
   render() {
-    if (!token || !jwt.decode(token)) {
+    if (token)
+      return (
+        <div>
+          <Row className="table-margin-bt">
+            <Col span={1}>
+              <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
+                <Icon type="plus" />
+              </Button>
+            </Col>
+
+            <Col span={1}>
+              <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
+                <Icon type="reload" />
+              </Button>
+            </Col>
+
+          </Row>
+          <WrappedDynamicFieldSet changesearch={this.onchangeSearch}  remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
+          <Row className="table-margin-bt">
+            <FormModal
+              wrappedComponentRef={this.saveFormRef}
+              visible={this.state.visible}
+              onCancel={this.handleCancel}
+              onSave={this.InsertOrUpdateUser}
+              title={this.state.title}
+              formtype={this.state.formtype}
+              id_visible={this.state.id_visible}
+            />
+
+
+            <Table pagination={false} dataSource={this.state.users} rowKey="id" >
+              <Column
+                title={<span>Id <Icon type={this.state.orderby} /></span>}
+                dataIndex="id"
+                key="id"
+                onHeaderCell={this.onHeaderCell}
+
+              />
+              <Column title="User Name" dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
+              />
+              <Column title="Code" dataIndex="code" key="code"  onHeaderCell={this.onHeaderCell}/>
+              <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
+              <Column title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
+              <Column title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
+              <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
+              <Column
+                visible={false}
+                title="Action"
+                key="action"
+                render={(text, record) => (
+
+                  <span>
+                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.id, text)}>
+                      <Icon type="edit" />
+                    </Button>
+                    <Popconfirm
+                      title="Bạn chắc chắn muốn xóa?"
+                      onConfirm={this.deleteUser.bind(this, record.id)}
+                      onCancel={this.cancel}
+                      okText="Yes"
+                      cancelText="No">
+                      <Button type="danger"  >
+                        <Icon type="delete" />
+                      </Button>
+                    </Popconfirm>
+                  </span>
+                )}
+              />
+
+            </Table>
+          </Row>
+          <Row>
+            <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+          </Row>
+        </div>
+
+      );
+    else
       return (
         <Login />
       )
-    }
-    let payload = jwt.decode(token);
-    let claims = payload.claims;
-    console.log(claims);
-    let canRead = claims.indexOf(Permission.User.Read) >= 0;
-    let canEdit = claims.indexOf(Permission.User.Edit) >= 0;
-    let canDelete = claims.indexOf(Permission.User.DELETE) >= 0;
-    // if(!canRead)
-    // {
-    //   return (
-    //     <AccessDenied />
-    //   )
-    // }
-    const rowSelection = {
-      hideDefaultSelections: true,
-      onChange: async (selectedRowKeys, selectedRows) => {
-
-        console.log('id check', selectedRowKeys[ 0 ])
-        if (selectedRows[ 0 ]) {
-          console.log('kkkkkkk')
-          await this.setState({
-            selectedId: selectedRowKeys[ 0 ],
-            user: selectedRows[ 0 ],
-
-          })
-        }
-      },
-
-      getCheckboxProps: record => ({
-
-        disabled: Column.title === 'Id', // Column configuration not to be checked
-        name: record.name,
-      }),
-
-    };
-    return (
-      <div>
-        <Modal
-          title="Phân quyền "
-          visible={this.state.modalRoleVisible}
-          onOk={this.okRole}
-          onCancel={this.cancelRole}
-        >
-          <Checkbox>Quản lý người dùng</Checkbox>
-        </Modal>
-        {/* <Row className="table-margin-bt">
-          <Col span={1}>
-            <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
-              <Icon type="reload" />
-            </Button>
-          </Col>
-
-        </Row> */}
-        <WrappedDynamicFieldSet changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
-
-
-        <div>
-          {
-            canEdit ?
-              <div>
-                <Button style={{ margin: '20px' }} onClick={this.showmodalRole}>
-                  <Icon type="user" />
-                </Button> Phân Quyền
-          <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
-                  <Icon type="plus" />
-                </Button> Thêm
-          <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
-                  <Icon type="edit" />
-                </Button> Sửa
-            </div>
-              : null
-          }
-          {
-            canDelete ?
-              <Popconfirm
-                title="Bạn chắc chắn muốn xóa?"
-                onConfirm={this.deleteUser.bind(this, this.state.selectedId)}
-                onCancel={this.cancel}
-                okText="Yes"
-                cancelText="No">
-                <Button type="danger" style={{ margin: '20px' }} >
-                  <Icon type="delete" />
-                </Button> Xóa
-          </Popconfirm>
-              :
-              null
-          }
-
-        </div>
-        <Row className="table-margin-bt">
-          <FormModal
-            datacha={this.state.datacha}
-            wrappedComponentRef={this.saveFormRef}
-            visible={this.state.visible}
-            onCancel={this.handleCancel}
-            onSave={this.InsertOrUpdateUser}
-            title={this.state.title}
-            formtype={this.state.formtype}
-            id_visible={this.state.id_visible}
-          />
-
-
-          <Table
-
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: event => {
-                  this.handleClickRow.bind(this, rowIndex)
-                  console.log('aaaaaaaaaaaaaaaaaa', event)
-                  console.log('reacassadasdad', record)
-
-                  console.log('reacassadasdad', rowIndex)
-
-                }, // click row
-              };
-            }}
-            expandRowByClick="true" onChange={this.changeRows}
-            pagination={false}
-            rowSelection={rowSelection}
-            dataSource={this.state.users} rowKey="id" >
-            <Column className="action-hide"
-              title={<span>Id <Icon type={this.state.orderby} /></span>}
-              dataIndex="id"
-              key="id"
-              onHeaderCell={this.onHeaderCell}
-            />
-            <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
-            />
-            <Column title="Code" dataIndex="code" key="code" onHeaderCell={this.onHeaderCell} />
-            <Column className="action-hide" title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
-            <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
-            <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
-            <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
-
-
-          </Table>
-        </Row>
-        <Row>
-          <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
-        </Row>
-      </div>
-
-    )
   }
 }
 const mapStateToProps = state => ({

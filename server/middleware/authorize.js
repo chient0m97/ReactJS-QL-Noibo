@@ -1,6 +1,5 @@
 
  
-var UserController = require('../controller/userController')
 var authorize = (req, res, next) => {
     // check header for the token
     
@@ -18,27 +17,8 @@ var authorize = (req, res, next) => {
                     return res.json({ message: 'invalid token' });
                 } else {
                     // if everything is good, save to request for use in other routes
-                    if (decoded.userName) {
-                        // UserController.getClaims(decoded.userName, (claims) => {
-                        //     let isValid = false;
-                        //     if (claims && claims.length > 0) {
-                        //         let resource = req.originalUrl
-                        //         console.log('url: ', resource)
-                        //         for (let i = 0; i < claims.length; i++) {
-                        //             const element = claims[i].split('.')[0];
-                        //             if (resource.toUpperCase().indexOf(element) >= 0) {
-                        //                 isValid = true;
-                        //                 next();
-                        //                 break; 
-                        //             }
-                        //         }
-                        //     }
-                        //     if (!isValid) {
-                        //         res.send({
-                        //             message: 'Chưa được phân quyền.'
-                        //         });
-                        //     }
-                        // })
+                    if (decoded.userName==='admin') {
+                       
                         next();
                     } else {
                         if (decoded.userName) {  
