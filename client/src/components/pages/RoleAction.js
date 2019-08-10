@@ -484,11 +484,7 @@ class RoleAction extends React.Component {
             }
         })
     }
-    set = (val)=>{
-        this.setState({
-            selectedRowKeys:[]
-        })
-    }
+    
     render() {
         let token = cookie.load('token');
         if (!token || !jwt.decode(token)) {
@@ -505,7 +501,6 @@ class RoleAction extends React.Component {
         let canRead = claims.indexOf(Permission.Role.Read) >= 0;
 
         const rowSelection = {
-            selectedRowKeys,
             hideDefaultSelections: true,
             onChange: async (selectedRowKeys, selectedRows) => {
                 console.log('selected rowkeys', selectedRowKeys)
@@ -542,7 +537,6 @@ class RoleAction extends React.Component {
                                 actionCancel={this.actionCancel}
                                 actionOk={this.actionOk}
                             />
-                            <Button onClick={this.set}>setting</Button>
                             <div style={{ display: 'flex' }}>
 
                                 {
