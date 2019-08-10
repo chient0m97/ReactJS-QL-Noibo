@@ -12,6 +12,7 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
             const { getFieldDecorator } = form;
             return (
                 <Modal
+                    centered
                     title={title}
                     visible={visible}
                     onCancel={onCancel}
@@ -58,14 +59,12 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                                             filterOption={(input, option) =>
                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
-
                                         >
                                             <Option value="notmenuparent">Do not have menu Parent</Option>
                                             {
                                                 listmenu.map((data, index) => {
                                                     return <Option value={data.id} > {data.name}  </Option>
                                                 })
-
                                             }
                                         </Select>
                                     )}

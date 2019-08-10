@@ -10,7 +10,6 @@ const { SubMenu } = Menu;
 
 const { Sider } = Layout
 
-
 class AppSider extends Component {
     rootSubmenuKeys = ['sub1', 'sub2', 'sub3'];
     constructor(props) {
@@ -20,7 +19,6 @@ class AppSider extends Component {
             menu: [],
             openKeys: [],
         }
-
         this.setCollapsed(props.collapsed)
     }
 

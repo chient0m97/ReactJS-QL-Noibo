@@ -48,6 +48,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             const { getFieldDecorator } = form;
             return (
                 <Modal
+                    centered
                     visible={visible}
                     title={title}
                     okText="Lưu lại"
@@ -243,7 +244,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
         }
     }
 )
-var arraydelete = []
 var formatDateModal = require('dateformat');
 var array_ht_trangthai = []
 class Hotro extends React.Component {
@@ -335,11 +335,11 @@ class Hotro extends React.Component {
                     loading: false
                 })
                 var array_duan = []
-                array_ht_trangthai = []
-                res.data.data.hotros.map((data, index) => {
-                    array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
-                    array_ht_trangthai.push(data.ht_trangthai)
-                })
+                array_ht_trangthai = [],
+                    res.data.data.hotros.map((data, index) => {
+                        array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
+                        array_ht_trangthai.push(data.ht_trangthai)
+                    })
                 this.setState({
                     id_duanfilltable: array_duan
                 })
@@ -362,16 +362,21 @@ class Hotro extends React.Component {
                 return
             }
             var url = this.state.action === 'insert' ? 'hotro/insert' : 'hotro/update'
-            if (values.ht_thoigian_dukien_hoanthanh === "")
+
+            if (values.ht_thoigian_dukien_hoanthanh === null) {
+                console.log("hien thi ht_thoigiandukienhoanthanh ", values.ht_thoigian_dukien_hoanthanh)
                 values.ht_thoigian_dukien_hoanthanh = null
-            else
-                if (url === 'hotro/update') {
-                    object = values
-                    object.ht_thoigian_dukien_hoanthanh = object.ht_thoigian_dukien_hoanthanh + "T17:00:00.000Z"
-                    this.setState({
-                        rowthotroselected: object
-                    })
-                }
+            }
+            // else
+            // {
+            //     if (url === 'hotro/update') {
+            //         object = values
+            //         object.ht_thoigian_dukien_hoanthanh = object.ht_thoigian_dukien_hoanthanh + "T17:00:00.000Z"
+            //         this.setState({
+            //             rowthotroselected: object
+            //         })
+            //     }
+            // }
             Request(url, 'POST', values)
                 .then(async (response) => {
                     if (response.status === 200 & response.data.success === true) {
@@ -410,7 +415,6 @@ class Hotro extends React.Component {
                 ht_id.map((values, index) => {
                     arraydelete.push(values)
                 })
-                console.log("hien thi array delete ", arraydelete)
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
                     description: res.data.message
@@ -418,7 +422,6 @@ class Hotro extends React.Component {
                 this.getHotro(this.state.page)
                 this.setState({
                     stateconfirmdelete: false,
-                    selectedrow: arraydelete,
                     statebuttondelete: true,
                     statebuttonedit: true,
                     selectedRowKeys: []
@@ -429,13 +432,13 @@ class Hotro extends React.Component {
     }
 
     refresh = async (pageNumber) => {
-
+        message.success('Refresh success', 1);
         await this.getHotro(this.state.pageNumber)
-        console.log(this.state.hotro, 'asdasdasdasdasdasdasd')
     }
 
-    componentDidMount() {
-        this.getHotro(this.state.pageNumber, this.state.index, this.state.sortBy);
+    async componentDidMount  () {
+        await this.getHotro(this.state.pageNumber, this.state.index, this.state.sortBy);
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu'
     }
 
     onchangpage = (page) => {
@@ -686,15 +689,30 @@ class Hotro extends React.Component {
             })
     };
 
+    click = () => {
+        console.log("day la ham click")
+    }
+
+    clearChecked = () => {
+        this.onSelectChange([],[])
+    };
+
+    onRowClick = (row) => {
+        
+        this.onSelectChange([row.ht_id], [row])
+    }
+
     render() {
         var i = 0
         var j = 0
         var formatDate = require('dateformat')
         const { selectedRowKeys } = this.state
         const rowSelection = {
+            columnTitle: 'Select',
             hideDefaultSelections: true,
             selectedRowKeys,
             onChange: this.onSelectChange,
+           onHeaderCell: this.click
             // onChange: async (selectedRowKeys, selectedRows) => {
             //     console.log("Hien thi selectedrows ", selectedRows)
             //     array = []
@@ -730,14 +748,14 @@ class Hotro extends React.Component {
                         <Row >
                             <Col span={2}>
                                 <Tooltip title="Thêm Hỗ Trợ">
-                                    <Button shape="circle" type="primary" size="default" onClick={this.showModal.bind(null)}>
+                                    <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                                         <Icon type="user-add" />
                                     </Button>
                                 </Tooltip>
                             </Col>
                             <Col span={2}>
                                 <Tooltip title="Sửa Hỗ Trợ">
-                                    <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                    <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                                         <Icon type="edit" />
                                     </Button>
                                 </Tooltip>
@@ -752,7 +770,7 @@ class Hotro extends React.Component {
                                         cancelText="No"
                                         visible={this.state.stateconfirmdelete}
                                     >
-                                        <Button type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                        <Button shape="round" type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
                                             <Icon type="delete" />
                                         </Button>
                                     </Popconfirm>
@@ -760,15 +778,21 @@ class Hotro extends React.Component {
                             </Col>
                             <Col span={2}>
                                 <Tooltip title="Tải Lại">
-                                    <Button shape="circle" type="primary" size="default" style={{ marginLeft: '18px' }} onClick={this.refresh.bind(null)}>
+                                    <Button shape="round" type="primary" size="default" style={{ marginLeft: '18px' }} onClick={this.refresh.bind(null)}>
                                         <Icon type="reload" />
                                     </Button>
                                 </Tooltip>
                             </Col>
+                            <Col span={3}>
+                                <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
+                            </Col>
                         </Row>
                     </Card>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }} >
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }}
+                            expandedRowRender={(record, selectedRowKeys) => {
+                                return this.state.hotro[selectedRowKeys].ht_noidungyeucau
+                            }}>
                             <Column dataIndex="ht_thoigian_dukien_hoanthanh" align='center'
                                 render={
                                     text => {
@@ -846,11 +870,11 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau" width={100}
+                            {/* <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau" width={100}
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
-                                onHeaderCell={this.onHeaderCell} />
+                                onHeaderCell={this.onHeaderCell} /> */}
                             <Column title="Ghi chú" dataIndex="ht_ghichu"
                                 render={text => {
                                     return this.checkDate(i, text, j)

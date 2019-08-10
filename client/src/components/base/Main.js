@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment';
 import vi_VN from 'antd/lib/locale-provider/vi_VN'
 import 'moment/locale/vi';
-
+import { Upload, Button, Icon } from 'antd';
 //import componen
 import { Layout } from 'antd';
 
@@ -32,7 +32,7 @@ class Main extends React.Component {
     super(props);
     this.state = {
       routers: null,
-      collapsed: false
+      collapsed: false,
     };
   }
 
@@ -95,6 +95,9 @@ class Main extends React.Component {
               {/* footer */}
               <AppFooter></AppFooter>
               {/* footer */}
+              <Button>
+                <Icon type="upload" /> Upload
+              </Button>
             </Layout>
             <Loading loading={this.props.todoCommon.loading} />
           </Layout>

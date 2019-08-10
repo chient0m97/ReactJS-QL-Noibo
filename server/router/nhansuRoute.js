@@ -34,6 +34,12 @@ router.post('/update', function(req,res){
     })
 })
 
+router.delete('/delete', function (req, res) {
+    nhansuController.deleteNhansuById(req.body.ns_id, function (data) {
+        res.send(data);
+    })
+})
+
 router.post('/search', function(req, res) {
     console.log('First sever search')
     let pageSize = req.body.pageSize;

@@ -55,6 +55,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             );
             return (
                 <Modal
+                    centered
                     visible={visible}
                     title={title}
                     okText="Lưu lại"
@@ -312,7 +313,6 @@ class Nhansu extends React.Component {
 
 
     formatDate(strDate, strFormat) {
-        console.log(strDate, strFormat);
         if (strDate == null)
             return null;
         var d = new Date(strDate);
@@ -347,14 +347,15 @@ class Nhansu extends React.Component {
     insertOrUpdate = () => {
         const { form } = this.formRef.props;
         form.validateFields((err, values) => {
-            console.log("trong validatefields ", values)
             if (err) {
                 return
             }
             var url = this.state.action === 'insert' ? 'nhansu/insert' : 'nhansu/update'
-            console.log('action is: ', url)
             Request(url, 'POST', values)
                 .then((response) => {
+                    this.setState({
+                        rowthotroselected: values
+                    })
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -374,7 +375,6 @@ class Nhansu extends React.Component {
                             return <Alert type='error' message={value}></Alert>
                         })
                     }
-                    console.log("f")
                     notification[notifi_type]({
                         message: message,
                         description: description
@@ -392,13 +392,21 @@ class Nhansu extends React.Component {
                     description: res.data.message
                 });
                 this.getNhansu(this.state.page)
+                this.setState({
+                    stateconfirmdelete: false,
+                    statebuttondelete: true,
+                    statebuttonedit: true,
+                    selectedRowKeys: []
+                })
             })
+        this.setState({
+            stateconfirmdelete: false,
+        })
     }
 
     refresh = async (pageNumber) => {
-
+        message.success('Refresh success', 1);
         await this.getNhansu(this.state.pageNumber)
-        console.log(this.state.nhansu, 'asdasdasdasdasdasdasd')
     }
 
     componentDidMount() {
@@ -430,7 +438,6 @@ class Nhansu extends React.Component {
             p2: this.state.sortBy
         })
             .then((response) => {
-                console.log('text search is: ', response.data)
                 let data = response.data;
                 if (data.data)
                     this.setState({
@@ -440,7 +447,6 @@ class Nhansu extends React.Component {
                         isSearch: 1
                     })
             })
-        console.log('AA', xxxx)
     }
 
     onHeaderCell = (column) => {
@@ -480,7 +486,6 @@ class Nhansu extends React.Component {
         form.resetFields();
         form.setFieldsValue({ ns_trangthai: 'TT' })
         if (nhansu.ns_id !== undefined) {
-            console.log("day la update")
             this.setState({
                 id_visible: true,
                 action: 'update'
@@ -510,7 +515,6 @@ class Nhansu extends React.Component {
         let state = this.state;
         state[e.target.name] = e.target.value;
         this.setState(state);
-        console.log('Change ')
     }
 
     handleCount = () => {
@@ -536,9 +540,7 @@ class Nhansu extends React.Component {
             pageSize: size
         });
         if (this.state.isSearch === 1) {
-            console.log('xxxx')
             this.handleSearch(this.state.page, this.state.searchText, this.confirm, this.state.nameSearch, this.state.codeSearch);
-            console.log(this.state.page)
         }
         else {
             this.getNhansu(this.state.page, this.state.index, this.state.sortBy)
@@ -589,6 +591,20 @@ class Nhansu extends React.Component {
             })
     }
 
+    checkStateConfirm = () => {
+        this.setState({
+            stateconfirmdelete: true
+        })
+    }
+
+    clearChecked = () => {
+        this.onSelectChange([],[])
+    };
+
+    onRowClick = (row) => {
+        this.onSelectChange([row.ns_id], [row])
+    }
+
     render() {
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -604,24 +620,43 @@ class Nhansu extends React.Component {
                     <Row>
                         <Col span={2}>
                             <Tooltip title="Thêm Nhân Sự">
-                                <Button shape="circle" type="primary" size="default" onClick={this.showModal.bind(null)}>
+                                <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                                     <Icon type="user-add" />
                                 </Button>
                             </Tooltip>
                         </Col>
                         <Col span={2}>
-                                <Tooltip title="Sửa Hỗ Trợ">
-                                    <Button type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
-                                        <Icon type="edit" />
+                            <Tooltip title="Sửa Hỗ Trợ">
+                                <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                    <Icon type="edit" />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+                        <Col span={2}>
+                            <Tooltip title="Xóa Hỗ Trợ">
+                                <Popconfirm
+                                    title="Bạn chắc chắn muốn xóa?"
+                                    onConfirm={this.deleteNhansu.bind(this, this.state.selectedId)}
+                                    onCancel={this.cancel}
+                                    okText="Yes"
+                                    cancelText="No"
+                                    visible={this.state.stateconfirmdelete}
+                                >
+                                    <Button shape="round" type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                        <Icon type="delete" />
                                     </Button>
-                                </Tooltip>
-                            </Col>
+                                </Popconfirm>
+                            </Tooltip>
+                        </Col>
                         <Col span={2}>
                             <Tooltip title="Tải Lại">
-                                <Button shape="circle" type="primary" size="default" onClick={this.refresh.bind(null)}>
+                                <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
                                     <Icon type="reload" />
                                 </Button>
                             </Tooltip>
+                        </Col>
+                        <Col span={3}>
+                            <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
                         </Col>
                     </Row>
                 </Card>
@@ -635,7 +670,7 @@ class Nhansu extends React.Component {
                         formtype={this.state.formtype}
                         id_visible={this.state.id_visible}
                     />
-                    <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
+                    <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
                         <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Họ và tên" width={150} dataIndex="ns_hovaten" key="ns_hovaten" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Ngày sinh" dataIndex="ns_ngaysinh" key="ns_ngaysinh" align="center" render={text => formatDate(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
@@ -646,28 +681,6 @@ class Nhansu extends React.Component {
                         <Column title="Nguyên quán" dataIndex="ns_nguyenquan" key="ns_nguyenquan" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Người liên hệ" dataIndex="ns_nguoilienhe" key="ns_nguoilienhe" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Bằng cấp" dataIndex="ns_bangcap" key="ns_bangcap" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column
-                            visible={false}
-                            title="Action"
-                            key="action"
-                            render={(text, record) => (
-                                <span>
-                                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.ns_id, text)}>
-                                        <Icon type="edit" />
-                                    </Button>
-                                    <Popconfirm
-                                        title="Bạn chắc chắn muốn xóa?"
-                                        onConfirm={this.deleteNhansu.bind(this, record.ns_id)}
-                                        onCancel={this.cancel}
-                                        okText="Yes"
-                                        cancelText="No">
-                                        <Button type="danger"  >
-                                            <Icon type="delete" />
-                                        </Button>
-                                    </Popconfirm>
-                                </span>
-                            )}
-                        />
                     </Table>
                 </Row>
                 <Row>

@@ -70,12 +70,8 @@ module.exports = {
     },
 
     deleteNhansu: function(ns_id, callback){
-        nhansu.ns_ngaysinh=dateFormat(nhansu.ns_ngaysinh, "yyyy/mm/dd")
-        nhansu.ns_ngayhocviec=dateFormat(nhansu.ns_ngayhocviec, "yyyy/mm/dd")
-        nhansu.ns_ngaythuviec=dateFormat(nhansu.ns_ngaythuviec, "yyyy/mm/dd")
-        nhansu.ns_ngaylamchinhthuc=dateFormat(nhansu.ns_ngaylamchinhthuc, "yyyy/mm/dd")
-        nhansu.ns_ngaydongbaohiem=dateFormat(nhansu.ns_ngaydongbaohiem, "yyyy/mm/dd")
-        knex.from('nhansu').where('ns_id',ns_id).del().then(res =>{
+        console.log("console ",ns_id)
+        knex.from('nhansu').whereIn('ns_id',ns_id).del().then(res =>{
             callback({
                 success:true
             })
