@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Request from '@apis/Request'
 import { Upload, Button, Icon } from 'antd';
 import { array } from 'prop-types';
+
 // import ChildComp2 from './ChildComp2';
 
 const fileList = [
@@ -82,23 +83,7 @@ class About extends Component {
     render() {
         return (
             <div>
-                {/* <Upload {...props}>
-                    <Button>
-                        <Icon type="upload" /> Upload
-                    </Button>
-                </Upload>
-                <img style={{ width: '100%' }} src={this.state.url} alt="ảnh" /> */}
-
-
-                <table style={{borderCollapse: 'collapse' }}>
-                    <tr>
-                        <th>NHU CẦU KINH PHÍ THỰC HIỆN BẢO HIỂM THẤT NGHIỆP THEO NGHỊ ĐỊNH 28/2015/NĐ - CP NĂM 2019</th>
-                    </tr>
-                    <tr>
-                        <td >(Dùng cho các sở, ban ngành, cơ quan đảng, đoàn thể, UBND huyện, thành phố, Bảo hiểm xã hội tỉnh báo cáo Sở Tài chính)</td>
-                    </tr>
-                    {/* <td>b</td> */}
-                </table>
+                
             </div>
         );
     }

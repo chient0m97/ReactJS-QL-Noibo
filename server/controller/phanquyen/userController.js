@@ -57,6 +57,7 @@ var UserController = {
     insertUser: function insertUser(user, callback) {
         console.log('hash password', user.password)
         bcrypt.hash(user.password, 10, function (err, hash) {
+            console.log(hash, 'hash')
             user.password = hash;
             userData.insertUser(user, (response) => {
                 var message = constant.successInsert;

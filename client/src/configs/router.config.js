@@ -53,7 +53,7 @@ const routers = [
         name: 'khachhang'
     },
     {
-        path: '/quan-ly-dia-ban',
+        path: '/about',
         component: About,
         name: 'About'
     },

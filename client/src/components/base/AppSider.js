@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
 import Permission from '../Authen/Permission'
-import menu from '../Authen/GetMenu'
+// import menu from '../Authen/GetMenu'
 const { SubMenu } = Menu;
 
 const { Sider } = Layout
@@ -39,7 +39,7 @@ class AppSider extends Component {
     };
 
     componentDidMount() {
-        console.log('asssssssssssssssssssssss-----------', menu)
+       
     }
 
     render() {
@@ -48,38 +48,40 @@ class AppSider extends Component {
         let payload = jwt.decode(token);
         let claims = payload.claims;
         console.log('quyen ban oiiiiiiiiiiiiiiiiiii ', claims)
-        for (let i = 0; i < claims.length; i++) {
-            if (claims[i] === Permission.Role.Read) {
-                claims[i] = { url: '/role', des: 'Phân quyền',menu:1 }
+        if(claims !== undefined){
+            for (let i = 0; i < claims.length; i++) {
+                if (claims[i] === Permission.Role.Read) {
+                    claims[i] = { url: '/role', des: 'Phân quyền',menu:1 }
+                }
+                else if (claims[i] === Permission.User.Read) {
+                    claims[i] = { url: '/user', des: 'user',menu:1 }
+                }
+                else if (claims[i] === Permission.Hotro.Read) {
+                    claims[i] = { url: '/hotro', des: 'Hỗ trợ',menu:2 }
+                }
+                else if (claims[i] === Permission.Nhansu.Read) {
+                    claims[i] = { url: '/nhansu', des: 'Nhân sự',menu:2 }
+                }
+                else if (claims[i] === Permission.Diaban.Read) {
+                    claims[i] = { url: '/diaban', des: 'Địa bàn',menu:3 }
+                }
+                else if (claims[i] === Permission.Duan.Read) {
+                    claims[i] = { url: '/duan', des: 'Dự án',menu:3 }
+                }
+                else if (claims[i] === Permission.Khachhang.Read) {
+                    claims[i] = { url: '/khachhang', des: 'Khách hàng',menu:2 }
+                }
+                else if (claims[i] === Permission.Donvi.Read) {
+                    claims[i] = { url: '/donvi', des: 'Đơn vị',menu:2 }
+                }
+                else if (claims[i] === Permission.Hopdong.Read) {
+                    claims[i] = { url: '/hopdong', des: 'Hợp đồng',menu:3}
+                }
+    
+    
             }
-            else if (claims[i] === Permission.User.Read) {
-                claims[i] = { url: '/user', des: 'user',menu:1 }
-            }
-            else if (claims[i] === Permission.Hotro.Read) {
-                claims[i] = { url: '/hotro', des: 'Hỗ trợ',menu:2 }
-            }
-            else if (claims[i] === Permission.Nhansu.Read) {
-                claims[i] = { url: '/nhansu', des: 'Nhân sự',menu:2 }
-            }
-            else if (claims[i] === Permission.Diaban.Read) {
-                claims[i] = { url: '/diaban', des: 'Địa bàn',menu:3 }
-            }
-            else if (claims[i] === Permission.Duan.Read) {
-                claims[i] = { url: '/duan', des: 'Dự án',menu:3 }
-            }
-            else if (claims[i] === Permission.Khachhang.Read) {
-                claims[i] = { url: '/khachhang', des: 'Khách hàng',menu:2 }
-            }
-            else if (claims[i] === Permission.Donvi.Read) {
-                claims[i] = { url: '/donvi', des: 'Đơn vị',menu:2 }
-            }
-            else if (claims[i] === Permission.Hopdong.Read) {
-                claims[i] = { url: '/hopdong', des: 'Hợp đồng',menu:3}
-            }
-
-
         }
-        console.log('quyen ban oiiiiiiiiiiiiiiiiiii112121212 ', claims)
+    
         return (
 
             <Sider trigger={null} collapsible collapsed={this.props.collapsed}>

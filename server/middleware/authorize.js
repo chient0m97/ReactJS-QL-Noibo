@@ -22,7 +22,6 @@ var authorize = (req, res, next) => {
                                 let clm = constant[i].claim
                                 for (j = 0; j < claims.length; j++) {
                                     if (claims[j] == clm) {
-                                        console.log('nexttttttttttttttttttttttttttt')
                                         next();
                                         break;
 
