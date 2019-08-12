@@ -602,7 +602,12 @@ class Nhansu extends React.Component {
     };
 
     onRowClick = (row) => {
-        this.onSelectChange([row.ns_id], [row])
+        if(this.state.selectedRowKeys[0]===row.ns_id){
+            this.onSelectChange([], [])
+        }
+        else{
+            this.onSelectChange([row.ns_id], [row])
+        }
     }
 
     render() {
@@ -654,9 +659,6 @@ class Nhansu extends React.Component {
                                     <Icon type="reload" />
                                 </Button>
                             </Tooltip>
-                        </Col>
-                        <Col span={3}>
-                            <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
                         </Col>
                     </Row>
                 </Card>

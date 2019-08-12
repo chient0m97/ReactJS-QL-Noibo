@@ -43,7 +43,10 @@ class NormalLoginForm extends Component {
         });
     }
     handleChangeInput = (e) => {
+
+        
         var user = this.props.form.getFieldsValue([ 'username', 'password' ]);
+        console.log("hien thi change input", user)
         this.setState(user);
     }
 

@@ -86,19 +86,18 @@ class About extends Component {
                     <Button>
                         <Icon type="upload" /> Upload
                     </Button>
-                </Upload>
-                <img style={{ width: '100%' }} src={this.state.url} alt="ảnh" /> */}
+                </Upload> */}
+                <img style={{ width: '100%' }} src='https://cdn.pixabay.com/photo/2015/01/07/11/31/tiger-591359_960_720.jpg' alt="ảnh" />
 
 
-                <table style={{borderCollapse: 'collapse' }}>
+                {/* <table style={{borderCollapse: 'collapse' }}>
                     <tr>
                         <th>NHU CẦU KINH PHÍ THỰC HIỆN BẢO HIỂM THẤT NGHIỆP THEO NGHỊ ĐỊNH 28/2015/NĐ - CP NĂM 2019</th>
                     </tr>
                     <tr>
                         <td >(Dùng cho các sở, ban ngành, cơ quan đảng, đoàn thể, UBND huyện, thành phố, Bảo hiểm xã hội tỉnh báo cáo Sở Tài chính)</td>
                     </tr>
-                    {/* <td>b</td> */}
-                </table>
+                </table> */}
             </div>
         );
     }
