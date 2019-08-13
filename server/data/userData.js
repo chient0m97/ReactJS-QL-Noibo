@@ -82,7 +82,7 @@ module.exports = {
         console.log('name:', username)
         knex('users').select('password').where('name', username).then(res => {
 
-            console.log('result', res[0])
+            console.log('result', res)
             callback(res[0])
         }).catch(err => {
 

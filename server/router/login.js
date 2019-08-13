@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
     userController.Login(req.body.username, function (data) {
         console.log(req.body.username)
         console.log(req.body.password);
-        console.log('data bay oi', data)
+        console.log('data bay oi', data,)
         bcrypt.compare(req.body.password, data.password, function (err, match) {
             console.log('matching ',match)
             if (match) {
