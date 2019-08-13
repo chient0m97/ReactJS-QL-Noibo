@@ -7,7 +7,7 @@ import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
-import '../../index.css';
+import '@styles/style.css';
 import jwt from 'jsonwebtoken';
 import Permission from '../Authen/Permission'
 import TreeRole from '../common/Tree'

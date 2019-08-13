@@ -2,9 +2,21 @@ var knex = require('./common/DB')
 
 module.exports = {
     getDiaban: (limit, offset, callback) => {
-        knex.select('*').from('diabans').limit(limit).offset(offset)
-            .then((res) => {
-                var diabans = res
+        knex.raw("select diaban.dm_db_id, \
+        diaban.dm_db_ten,\
+        diaban.dm_db_cap,\
+        case (diaban.dm_db_cap)\
+            when 1 then 'Tỉnh'\
+            when 2 then 'Huyện'\
+            else 'Xã'\
+        end as ten_dm_db_cap,\
+        diaban.dm_db_id_cha,\
+    diabancha.dm_db_ten tencha\
+        from diabans diaban left join diabans diabancha on diaban.dm_db_id_cha = diabancha.dm_db_id limit " + limit + " offset " + offset
+        )
+            .then(res => {
+                var diabans = res.rows
+                console.log(diabans, 'data quẻy')
                 knex('diabans').count()
                     .then((resCount) => {
                         callback({
@@ -48,6 +60,7 @@ module.exports = {
         })
     },
     updateDiaban: function (diaban, callback) {
+        console.log('data upadte',diaban)
         knex.from('diabans').where('dm_db_id', diaban.dm_db_id)
         .update(diaban).then(res=>{
             console.log("Day la update")

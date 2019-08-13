@@ -2,13 +2,10 @@ import React from 'react';
 import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Spin, Card } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
-import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
+import MultiFilter from '@components/common/GroupFilter'
 import '@styles/style.css'
-import { Value } from 'devextreme-react/range-selector';
 //import { format } from 'util';
-import { async } from 'q';
-import { array } from 'prop-types';
 const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
@@ -43,7 +40,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
         }
 
         handleChange = async (value) => {
-            //console.log(`selected ${value}`);
         }
         render() {
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
@@ -268,7 +264,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
 
 const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
     getCheckboxProps: record => ({
         disabled: record.name === 'Disabled User',
@@ -598,7 +593,7 @@ class Nhansu extends React.Component {
     }
 
     clearChecked = () => {
-        this.onSelectChange([],[])
+        this.onSelectChange([], [])
     };
 
     onRowClick = (row) => {
@@ -606,6 +601,7 @@ class Nhansu extends React.Component {
     }
 
     render() {
+        const columnFilter = [{column: 'ns_ho', type: 'text', name: 'Họ'},{column: 'ns_ten', type: 'text', name:'Tên'}, {column: 'ns_ngaysinh', type: 'date', name: 'Ngày sinh'} ]
         const { selectedRowKeys } = this.state
         const rowSelection = {
             hideDefaultSelections: true,
@@ -616,6 +612,9 @@ class Nhansu extends React.Component {
         var formatDate = require('dateformat')
         return (
             <div>
+                <MultiFilter 
+                    columnFilter = {columnFilter}
+                />
                 <Card>
                     <Row>
                         <Col span={2}>
@@ -698,7 +697,6 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps,
     {
-        fetchUser,
         fetchLoading
     }
 )(Nhansu);

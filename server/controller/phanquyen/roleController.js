@@ -1,8 +1,8 @@
 
 
-var Validator = require('../validate/common')
-const userData = require('../data/user_data')
-const constant = require('./constant')
+var Validator = require('../../validate/common')
+const userData = require('../../data/userData')
+const constant = require('../constant')
 var UserController = {
     /**
      * Get user paging.
@@ -14,10 +14,10 @@ var UserController = {
      * @para
      */
 
-    getUser: function getUser(pageNumber, pageSize, callback) {
+    getRole: function getRole(pageNumber, pageSize,index,sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        userData.getUser(limit, offset, (data) => {
+        userData.getRole(limit, offset,index,sortBy,  (data) => {
             callback(data);
         }
         );
@@ -26,18 +26,9 @@ var UserController = {
      * Get user by Id.
      * @param {Number} Id The identify of user
      */
-    GetById: function GetById(Id, callback) {
-        userData.GetById(Id, (data) => {
-            console.log('DATA', data)
-            if (data == undefined) {
-                callback({});
-            }
-            callback(data);
-        });
-    },
 
-    DeleteUserbyId: async function deleteUserbyId(Id, callback) {
-        userData.deleteUserbyId(Id, (data) => {
+    DeleteRolebyId: async function DeleteRolebyId(Id, callback) {
+        userData.DeleteRolebyId(Id, (data) => {
 
             if (data.success === true) {
                 callback({
@@ -49,7 +40,7 @@ var UserController = {
         })
     },
 
-    insertUser: async function insertUser(user, callback) {
+    insertRole: async function insertRole(user, callback) {
 
         if (Validator.isMail(user.email, 'Email không đúng định dạng')
             & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
@@ -72,7 +63,7 @@ var UserController = {
                         message: message,
                         success: response.success
                     }, status);
-                });
+                })
             } else {
                 callback({
                     message: Validator.getError(),
@@ -87,19 +78,19 @@ var UserController = {
             }, 400);
         }
     },
-    updateUser: function updateUser(user, callback) {
+    updateRole: function updateRole(user, callback) {
         if (Validator.isMail(user.email, 'Email không đúng định dạng')
             & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
             & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
         ) {
-            if (1) {
-                userData.updateUser(user, (res) => {
+           
+                userData.updateRole(user, (res) => {
                     callback({
                         success: res.success,
                         message: res.success === true ? constant.successUpdate : constant.errorUpdate
                     })
                 })
-            }
+            
         }
     }
     ,
@@ -110,6 +101,7 @@ var UserController = {
         })
     },
     search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
+        console.log('dm')
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         userData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{

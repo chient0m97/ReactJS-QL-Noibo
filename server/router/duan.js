@@ -43,6 +43,11 @@ router.post('/update',function (req, res) {
       res.send(data);
   })
 })
+router.post('/getcha',function(req,res){
+  duanController.getcha(function(data){
+    res.send(data);
+  })
+})
 router.post('/search',function(req,res){
   let pageSize=req.body.pageSize;
   let pageNumber=req.body.pageNumber;

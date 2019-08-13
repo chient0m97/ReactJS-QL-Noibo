@@ -47,7 +47,6 @@ class AppSider extends Component {
 
         let payload = jwt.decode(token);
         let claims = payload.claims;
-        console.log('quyen ban oiiiiiiiiiiiiiiiiiii ', claims)
         for (let i = 0; i < claims.length; i++) {
             if (claims[i] === Permission.Role.Read) {
                 claims[i] = { url: '/role', des: 'Phân quyền',menu:1 }
@@ -79,7 +78,6 @@ class AppSider extends Component {
 
 
         }
-        console.log('quyen ban oiiiiiiiiiiiiiiiiiii112121212 ', claims)
         return (
 
             <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
@@ -90,7 +88,7 @@ class AppSider extends Component {
                 >
                     <Menu.Item key="1">
                         <Icon type="home" />
-                        <span><NavLink to="/HomePage" className="">Home</NavLink ></span>
+                        <span><NavLink to="/homepage" className="">Home</NavLink ></span>
                     </Menu.Item>
                     <SubMenu
                         key="sub1"

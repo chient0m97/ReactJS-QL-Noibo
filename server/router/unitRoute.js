@@ -18,10 +18,10 @@ router.post('/get', function (req, res) {
     })
 })
 
-// router.post('/unit/getCha', function (req, res) {
-//     unitController.(function(data){})
-//     res.send(data);
-// })
+router.post('/unit/getCha', function (req, res) {
+    unitController.getcha(function(data){})
+    res.send(data);
+})
 
 router.post('/gettinh', function (req, res) {
     console.log('reqesy tinh', req.data)

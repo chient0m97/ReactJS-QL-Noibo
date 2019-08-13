@@ -20,6 +20,8 @@
     "history": "^4.9.0",
     "jquery": "^3.4.1",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.14",
+    "mdbreact": "^4.19.0",
     "moment": "^2.24.0",
     "multer": "^1.4.2",
     "react": "^16.8.6",

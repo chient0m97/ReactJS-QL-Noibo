@@ -1,14 +1,14 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('hotros', function(table){
-      table.increments('ht_id').primary();
-      table.integer('dm_duan_id').notNullable();
+      table.increments('ht_id', 36).unique().primary();
+      table.string('dm_duan_id', 36).notNullable();
       table.date('ht_thoigiantiepnhan').notNullable();
       table.date('ht_thoigian_hoanthanh');
-      table.integer('ns_id_ass').notNullable();
-      table.integer('ns_id_nguoitao').notNullable();
+      table.string('ns_id_ass', 36).notNullable();
+      table.string('ns_id_nguoitao', 36).notNullable();
       table.string('ht_noidungyeucau', 250).notNullable();
-      table.integer('kh_id');
+      table.string('kh_id', 36);
       table.string('ht_trangthai', 20).notNullable();
       table.string('ht_phanloai', 5).notNullable();
       table.string('ht_uutien', 5).notNullable();

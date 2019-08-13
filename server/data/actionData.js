@@ -70,28 +70,35 @@ module.exports = {
         })
     },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-         knex('users').where(columnSearch,'like', '%'+textSearch+'%').orderBy(index,sortBy).limit(limit).offset(offset)
-        .then(res=> {
-            var users = res
-            knex('users').where(columnSearch,'like', textSearch).count()
-            .then(resCount=>{
-                var count = resCount[0].count
-                let dataCallback = {
-                    success: true,
-                    message: 'Get data success',
-                    data: {
-                        users: users,
-                        count: count
-                    }
-                }
-                callback(dataCallback)
+        pool.connect()
+            .then(client => {
+                query = "SELECT * FROM users WHERE " + columnSearch + " LIKE '%" + textSearch + "%'  ORDER BY " + index + " " + sortBy + " LIMIT " + limit + " OFFSET " + offset
+                console.log('aaaaaaaaaaaa', query)
+                return client.query(query)
+                    .then(res => {
+                        let users = res.rows;
+                        console.log('uuuuuuuuuuuuuu', users)
+                        client.query("SELECT count(*) as count FROM users WHERE " + columnSearch + " LIKE '%" + textSearch + "%'  ").then(res2 => {
+                            client.release();
+                            let count = res2.rows[0].count;
+                            //callback to controller:
+                            let dataCallback = {
+                                success: true,
+                                message: 'Get data success',
+                                data: {
+                                    users: users,
+                                    count: count
+                                }
+                            };
+                            callback(dataCallback)
+                            console.log('---datacallback-------', dataCallback)
+
+                        })
+                    })
+                    .catch(e => {
+                        client.release()
+                        console.log(e.stack)
+                    })
             })
-            .catch((err)=>{
-                console.log('lỗi  kết nối', err)
-            })
-        })
-        .catch((err)=> {
-            console.log('lỗi  kết nối', err)
-        })
     },
 };

@@ -4,32 +4,6 @@ var pool = require('./connect')
 module.exports = {
     getHopdong: (limit, offset, callback) => {
 
-        // knex.select('*').from('hopdongs').limit(limit).offset(offset).then((res) => {     
-        //                 var hopdongs = res
-        //                 console.log(res, 'res')
-        //                 knex('hopdongs').count()
-        //                     .then((resCount) => {
-        //                         callback({
-        //                             success: true,
-        //                             data: {
-
-        //                                 hopdongs: hopdongs,
-        //                                 count: resCount[0].count
-        //                             }
-        //                         })
-        //                     }).catch((err) => {
-        //                         console.log(err),
-        //                             callback({
-        //                                 success: false
-        //                             })
-        //                     })
-        //             })
-        // .catch((err) => {
-        //     console.log(err),
-        //         callback({
-        //             success: false
-        //         })
-        // })
         pool.connect()
             .then(client => {
                 let sql_SelectHopDongs = "select hd.hd_id, \

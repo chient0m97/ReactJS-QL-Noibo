@@ -42,6 +42,7 @@ var corsOptions = {
 }
 app.use(cors());
 
+
 app.use('/nhansu', nhansuRoute);
 
 app.use('/hotro',hotroRoute)

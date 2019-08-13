@@ -5,7 +5,7 @@ import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-import { fetchDuan } from '@actions/duan.action';
+import '@styles/style.css';
 import { fetchDiaban } from '@actions/diaban.action';
 import { fetchLoading } from '@actions/common.action';
 const token = cookie.load('token');
@@ -31,29 +31,22 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
           onCancel={onCancel}
           onOk={onSave}
           confirmLoading={confirmLoading}
-          width={1000}
+          width={500}
         >
           <Form layout={formtype}>
             <Row gutter={24}>
               <Col span={24}>
                 <div style={{display: id_visible === true ? 'block' : 'none' }}>
                   <Form.Item label="Id:" >
-                    {getFieldDecorator('id', {
-                      rules: [ {} ],
+                    {getFieldDecorator('dm_db_id', {
                     })(<Input type="number" disabled />)}
                   </Form.Item>
                 </div>
               </Col>
             </Row>
             <Row gutter={24}>
-              <Col span={12}>
-                <Form.Item label="">
-                  {getFieldDecorator('dm_db_id', {
-                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
-                  })(<Input type="hidden" placeholder="Id địa bàn" hidden="true"  />)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
+              
+              <Col span={24}>
                 <Form.Item label="Nhập thông tin địa bàn:">
                   {getFieldDecorator('dm_db_ten', {
                     rules: [{ required: true, message: 'Trường này không được để trống!', }],
@@ -143,6 +136,7 @@ class Diaban extends React.Component {
     })
       .then((response) => {
         let data = response.data;
+        console.log(data, 'data')
         if (data.data)
           this.setState({
             diabans: data.data.diabans,
@@ -167,6 +161,7 @@ class Diaban extends React.Component {
         .then((response) => {
           if (response.status === 200 & response.data.success === true) {
             form.resetFields();
+            console.log('response',response)
             this.setState({
               visible: false,
               message: response.data.message
@@ -212,7 +207,7 @@ class Diaban extends React.Component {
     }
   }
 
-  showModal = (diaban) => {
+  showModalUpdate = (diaban) => {
     Request('diaban/getcha', 'POST', { cap: 1 }).then(res => {
       console.log(res.data, 'data res combobox')
       this.setState({
@@ -232,6 +227,24 @@ class Diaban extends React.Component {
       form.setFieldsValue(diaban);
     }
   };
+  showModalInsert = (diaban) => {
+    Request('diaban/getcha', 'POST', { cap: 1 }).then(res => {
+      console.log(res.data, 'data res combobox')
+      this.setState({
+        comboBoxDatasource: res.data
+      })
+    })
+    const { form } = this.formRef.props
+    this.setState({
+      visible: true
+    });
+    form.resetFields();
+    if (diaban.dm_db_id === undefined) {
+      this.setState({
+        action: 'insert'
+      })
+    }
+  }
 
   handleOk = e => {
     this.setState({
@@ -380,7 +393,7 @@ class Diaban extends React.Component {
         <div>
           <Row className="table-margin-bt">
             <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
+              <Button shape="circle" type="primary" size="large" onClick={this.showModalInsert.bind(null)}>
                 <Icon type="plus" />
               </Button>
             </Col>
@@ -439,8 +452,12 @@ class Diaban extends React.Component {
               />
               <Column title="Tên địa bàn" dataIndex="dm_db_ten" key="dm_db_ten" onHeaderCell={this.onHeaderCell}
               />
-              <Column title="Cấp địa bàn" dataIndex="dm_db_cap" key="dm_db_cap" onHeaderCell={this.onHeaderCell} />
-              <Column title="Địa bàn cha" dataIndex="dm_db_id_cha" key="dm_db_id_cha" onHeaderCell={this.onHeaderCell} />
+
+              <Column className="action-hide" title="Cấp địa bàn" dataIndex="dm_db_cap" key="dm_db_cap" onHeaderCell={this.onHeaderCell} />
+              <Column title="Cấp địa bàn" dataIndex="ten_dm_db_cap" key="ten_dm_db_cap" onHeaderCell={this.onHeaderCell} />
+              <Column title="Địa bàn cha" dataIndex="tencha" key="tencha" onHeaderCell={this.onHeaderCell} />
+              
+              <Column className="action-hide" title="Địa bàn cha" dataIndex="dm_db_id_cha" key="dm_db_id_cha" onHeaderCell={this.onHeaderCell} />
               <Column
                 visible={false}
                 title="Hành động"
@@ -448,7 +465,7 @@ class Diaban extends React.Component {
                 render={(text, record) => (
 
                   <span>
-                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.dm_db_id, text)}>
+                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModalUpdate.bind(record.dm_db_id, text)}>
                       <Icon type="edit" />
                     </Button>
                     <Popconfirm

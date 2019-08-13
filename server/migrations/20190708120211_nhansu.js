@@ -1,7 +1,7 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('nhansu',function(table){
-      table.increments('ns_id').primary();
+      table.string('ns_id').unique().primary();
       table.string('ns_ho', 50).notNullable();
       table.string('ns_tenlot', 50);
       table.string('ns_ten', 50).notNullable();

@@ -1,7 +1,9 @@
+
+
 var Validator = require('../validate/common')
-const diabanData = require('../data/Diaban.data')
+const userData = require('../data/userData')
 const constant = require('./constant')
-var DiabanController = {
+var UserController = {
     /**
      * Get user paging.
      * @param {Number} pageNumber Page number
@@ -12,10 +14,10 @@ var DiabanController = {
      * @para
      */
 
-    getDiaban: function getDiaban(pageNumber, pageSize, index, sortBy, callback) {
+    getUser: function getUser(pageNumber, pageSize,index,sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        diabanData.getDiaban(limit, offset, index, sortBy, (data) => {
+        userData.getUser(limit, offset,index,sortBy,  (data) => {
             callback(data);
         }
         );
@@ -25,7 +27,7 @@ var DiabanController = {
      * @param {Number} Id The identify of user
      */
     GetById: function GetById(Id, callback) {
-        diabanData.GetById(Id, (data) => {
+        userData.GetById(Id, (data) => {
             console.log('DATA', data)
             if (data == undefined) {
                 callback({});
@@ -34,8 +36,9 @@ var DiabanController = {
         });
     },
 
-    DeleteDiabanbyId: async function deleteDiabanbyId(dm_db_id, callback) {
-        diabanData.deleteDiabanbyId(dm_db_id, (data) => {
+    DeleteUserbyId: async function deleteUserbyId(Id, callback) {
+        userData.deleteUserbyId(Id, (data) => {
+
             if (data.success === true) {
                 callback({
                     success: data.success,
@@ -46,16 +49,18 @@ var DiabanController = {
         })
     },
 
-    insertDiaban: async function insertDiaban(diaban, callback) {
-        console.log('dia ban',diaban)
-        if (1)
-            
-         {
+    insertUser: async function insertUser(user, callback) {
 
-            //if (await Validator.db.unique('duans', 'ns_id_qtda', duan.ns_id_qtda, 'Ns_id_qtda đã tồn tại !')){
-                let firstInsert;
-                firstInsert = diaban;
-                diabanData.insertDiaban(firstInsert, (response) => {
+        if (Validator.isMail(user.email, 'Email không đúng định dạng')
+            & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
+            & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
+        ) {
+
+            if (await Validator.db.unique('users', 'name', user.name, 'Tên đăng nhập đã tồn tại !')
+                & await Validator.db.unique('users', 'email', user.email, 'Email đã tồn tại !')
+                & await Validator.db.unique('users', 'phone', user.phone, 'Số điện thoại đã tồn tại !')
+                & await Validator.db.unique('users', 'code', user.code, 'Mã đã tồn tại !')) {
+                userData.insertUser(user, (response) => {
                     var message = constant.successInsert;
                     var status = 200;
                     if (!response.success) {
@@ -74,27 +79,30 @@ var DiabanController = {
                     success: false
                 }, 400);
             }
+
+        } else {
+            callback({
+                message: Validator.getError(),
+                success: false
+            }, 400);
+        }
     },
-    updateDiaban: async function updateDiaban(diaban, callback) {
-      
-            if (1) {
-                console.log("Day la update data", diaban)
-                diabanData.updateDiaban(diaban, (res) => {
+    updateUser: function updateUser(user, callback) {
+        if (Validator.isMail(user.email, 'Email không đúng định dạng')
+            & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
+            & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
+        ) {
+           
+                userData.updateUser(user, (res) => {
                     callback({
                         success: res.success,
                         message: res.success === true ? constant.successUpdate : constant.errorUpdate
                     })
                 })
-          }
-        
+            
+        }
     }
     ,
-    getcha:function getcha(data, callback){
-        console.log("day la controller diaban cha")
-        diabanData.getcha(data.cap,(data)=>{
-            callback(data)
-        })
-    },
     Login: function getUserLogin(userName, callback) {
         userData.getUserLogin(userName, (data) => {
 
@@ -102,11 +110,10 @@ var DiabanController = {
         })
     },
     search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
+        console.log('dm')
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        diabanData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
-            console.log(limit)
-            console.log(offset)
+        userData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
             console.log('aaaaaaaaa',data)
             callback(data);
         })
@@ -117,4 +124,4 @@ var DiabanController = {
     },
 
 }
-module.exports = DiabanController;
+module.exports = UserController;

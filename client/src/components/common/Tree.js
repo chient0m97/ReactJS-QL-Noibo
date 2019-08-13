@@ -1,7 +1,15 @@
 import { Tree } from 'antd';
 import React from 'react';
 const { TreeNode } = Tree;
-
+const menuData = [
+  {
+    title: 'ql user',
+    key: 'user',
+    children:[
+      {title:'a',key:'b',children:[{title:'x',key:'y'}]}
+    ]
+  }
+]
 const treeData = [
 
   {
@@ -25,19 +33,10 @@ const treeData = [
       { title: 'phân quyền', key: 'ROLE.PERMISISON' },
     ],
   },
-  {
-    title: 'quản lý lt',
-    key: 'customer',
-    children: [
-      { title: 'xem', key: 'CUSTOMER.READ' },
-      { title: 'thêm', key: 'CUSTOMER.INSERT' },
-      { title: 'sửa', key: 'CUSTOMER.UPDATE' },
-      { title: 'xóa', key: 'CUSTOMER.DELETE' },
-    ],
-  },
+
   {
     title: 'hỗ trợ',
-    key: 'support',
+    key: 'hotro',
     children: [
       { title: 'xem', key: 'HOTRO.READ' },
       { title: 'thêm', key: 'HOTRO.INSERT' },
@@ -97,6 +96,17 @@ const treeData = [
     ],
   },
 
+  {
+    title: 'Đơn vị',
+    key: 'donvi',
+    children: [
+      { title: 'xem', key: 'DONVI.READ' },
+      { title: 'thêm', key: 'DONVI.INSERT' },
+      { title: 'sửa', key: 'DONVI.UPDATE' },
+      { title: 'xóa', key: 'DONVI.DELETE' },
+    ],
+  },
+
 
 
 ];
@@ -110,9 +120,7 @@ class Demo extends React.Component {
   };
 
   onExpand = expandedKeys => {
-    console.log('onExpand', expandedKeys);
-    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
+
     this.setState({
       expandedKeys,
       autoExpandParent: false,
@@ -122,13 +130,10 @@ class Demo extends React.Component {
     return this.state.checkedKeys;
   }
   onCheck = async checkedKeys => {
-    console.log('onCheck', checkedKeys);
     await this.setState({ checkedKeys });
-    console.log('tree', this.state.checkedKeys)
   };
 
   onSelect = (selectedKeys, info) => {
-    console.log('onSelect', info);
     this.setState({ selectedKeys });
   };
 
@@ -152,18 +157,32 @@ class Demo extends React.Component {
   }
   render() {
     return (
-      <Tree
-        checkable
-        onExpand={this.onExpand}
-        expandedKeys={this.state.expandedKeys}
-        autoExpandParent={this.state.autoExpandParent}
-        onCheck={this.onCheck}
-        checkedKeys={this.state.checkedKeys}
-        onSelect={this.onSelect}
-        selectedKeys={this.state.selectedKeys}
-      >
-        {this.renderTreeNodes(treeData)}
-      </Tree>
+      <div style={{ display: 'flex' }}>
+        <div>
+          <h2>Phân quyền chức năng</h2>
+          <Tree
+            checkable
+            onExpand={this.onExpand}
+            expandedKeys={this.state.expandedKeys}
+            autoExpandParent={this.state.autoExpandParent}
+            onCheck={this.onCheck}
+            checkedKeys={this.state.checkedKeys}
+            onSelect={this.onSelect}
+            selectedKeys={this.state.selectedKeys}
+          >
+            {this.renderTreeNodes(treeData)}
+          </Tree>
+        </div>
+        <div style={{ marginLeft: '50px' }}>
+          <h2>Phân quyền Menu</h2>
+          <Tree
+            checkable
+          >
+            {this.renderTreeNodes(menuData)}
+          </Tree>
+        </div>
+      </div>
+
     );
   }
 }

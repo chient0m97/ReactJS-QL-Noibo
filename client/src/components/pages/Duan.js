@@ -5,9 +5,8 @@ import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-import { fetchDuan } from '@actions/duan.action';
 import { fetchLoading } from '@actions/common.action';
-
+import '@styles/style.css';
 const token = cookie.load('token');
 const { Column } = Table;
 const {Option} = Select
@@ -416,11 +415,10 @@ class Duan extends React.Component {
 
 
             <Table pagination={false} dataSource={this.state.duans} rowKey="dm_duan_id" >
-              <Column
+              <Column className="action-hide"
                 title={<span>Id dự án <Icon type={this.state.orderby} /></span>}
                 dataIndex="dm_duan_id"
                 key="dm_duan_id"
-                className = "hidden"
                 onHeaderCell={this.onHeaderCell}
 
               />
@@ -473,7 +471,6 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps,
   {
-    fetchDuan,
     fetchLoading
   }
 )(Duan);

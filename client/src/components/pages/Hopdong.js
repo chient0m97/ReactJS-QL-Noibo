@@ -1,25 +1,18 @@
 import React from 'react';
-//import Moment from 'react-moment';
 import axios from 'axios';
 import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button,Upload, Form, Row, Col, notification, Alert, Select } from 'antd';
-// import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-//import { fetchHopdong } from '@actions/hopdong.action';
-//import { Cascader } from 'antd';
-//mport { Menu, Dropdown } from 'antd';
+import '@styles/style.css';
 import { fetchLoading } from '@actions/common.action';
 
 
 
-//const dateformat = 'YYYY-MM-DD HH:mm:ss';
 const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select;
-//const { Option, OptGroup } = Select
-//const { Search } = Input;
 const { Dragger } = Upload;
 const { TextArea } = Input;
 const formatdate = require('dateformat')
@@ -36,20 +29,6 @@ const props = {
     if (status === 'done') {
       message.success(`${info.file.name} file uploaded successfully.`);
       var data = new FormData()
-      // var multer = require('multer')
-      // var storage = multer.diskStorage({
-      //   destination: function(req, file, cb){
-      //     cb(null, 'hopdong/upload')
-      //   },
-      //   filename: function(req, file, cb){
-      //     cb(null, file.originalname)
-      //   }
-      // })
-      // var upload = multer({storage:storage})
-      // axios.post('hopdong/upload', upload.single("file"),function(req, res){
-      //   console.log(req.file)
-      //   res.send("UPLOAD THANH CONG")
-      // })
       data.append('file',info.file)
       console.log(data, 'file day nhe')
       console.log(info.file, 'info file')
@@ -58,11 +37,7 @@ const props = {
     }
   },
 };
-// axios.post("/hopdong/upload", FormData, { // receive two parameter endpoint url ,form data 
-// })
-// .then(res => { // then print response status
-//   console.log(res.statusText)
-// })
+
 const FormModalDuan = Form.create({ name: 'form_create_duan' })(
   class extends React.Component {
     render() {
@@ -1017,12 +992,12 @@ class Hopdong extends React.Component {
                 dataIndex="hd_id"
                 key="hd_id"
                 onHeaderCell={this.onHeaderCell}
-                className="an"
+                className="action-hide"
               />
               <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} />
-              <Column title="Loại hợp đồng" className="an" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
+              <Column title="Loại hợp đồng" className="action-hide" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
               <Column title="Loại hợp đồng" dataIndex="ten_hd_loai" key="ten_hd_loai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Tên đối tượng" className='an' dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
+              <Column title="Tên đối tượng" className='action-hide' dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
               <Column title="Tên đối tượng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell} />
               <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} />
               <Column title="Thời gian thực hiện(ngày)" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} />
@@ -1058,7 +1033,7 @@ class Hopdong extends React.Component {
                   return ' '
                   else
                   return dateFormat(text, "dd/mm/yyyy")}} onHeaderCell={this.onHeaderCell} />
-              <Column title="Trạng thái" className="an" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
+              <Column title="Trạng thái" className="action-hide" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Files" dataIndex="hd_files" key="hd_files" onHeaderCell={this.onHeaderCell} />
               <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" onHeaderCell={this.onHeaderCell} />

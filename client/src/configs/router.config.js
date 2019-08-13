@@ -1,20 +1,20 @@
 import RoleAction from '@pages/RoleAction';
-import HomePage from '@pages/HomePage';
+import Action from '@pages/Action';
 import NhanSu from '@pages/Nhansu'
 import HoTro from '@pages/Hotro'
 import Menu from '@pages/Menu'
 import Unit from '@pages/Unit'
 import Customer from '@pages/Customer'
 import User from '@pages/User';
-import About from '@pages/About';
 import Hopdong from '@pages/Hopdong'
 import Diaban from '@pages/Diaban'
 import Duan from '@pages/Duan'
+import Donvi from '@pages/Unit'
 
 const routers = [
     {
         path: '/homepage',
-        component: HomePage,
+        component: Action,
         name: 'home'
     },
     {
@@ -53,11 +53,6 @@ const routers = [
         name: 'khachhang'
     },
     {
-        path: '/quan-ly-dia-ban',
-        component: About,
-        name: 'About'
-    },
-    {
         path: '/hopdong',
         component: Hopdong,
         name: 'Hopdong'
@@ -70,6 +65,11 @@ const routers = [
     {
         path: '/duan',
         component: Duan,
+        name: 'Duan'
+    },
+    {
+        path: '/donvi',
+        component: Donvi,
         name: 'Duan'
     },
 ]
