@@ -1,5 +1,5 @@
 import RoleAction from '@pages/RoleAction';
-import Action from '@pages/Action';
+import HomePage from '@pages/homepage';
 import NhanSu from '@pages/Nhansu'
 import HoTro from '@pages/Hotro'
 import Menu from '@pages/Menu'
@@ -14,7 +14,7 @@ import Donvi from '@pages/Unit'
 const routers = [
     {
         path: '/homepage',
-        component: Action,
+        component: HomePage,
         name: 'home'
     },
     {

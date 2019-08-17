@@ -14,7 +14,6 @@ import AppHeader from '@components/base/AppHeader'
 import AppFooter from '@components/base/AppFooter'
 import Loading from '@components/base/Loading'
 
-
 // router 
 import routers from '@configs/router.config'
 import { connect } from 'react-redux'
@@ -23,7 +22,6 @@ import { fetchLoading } from '@actions/common.action';
 //import App from '@src/App';
 
 moment.locale('fr');
-
 
 const { Content } = Layout;
 
@@ -49,10 +47,8 @@ class Main extends React.Component {
             })
           }
         </Switch>
-
       )
     })
-
   }
 
   ChangeCollapsed = (collapsed) => {
@@ -61,7 +57,6 @@ class Main extends React.Component {
       collapsed: collapsed
     })
   }
-
 
   componentDidMount() {
     this.renderRouter()
@@ -95,9 +90,6 @@ class Main extends React.Component {
               {/* footer */}
               <AppFooter></AppFooter>
               {/* footer */}
-              <Button>
-                <Icon type="upload" /> Upload
-              </Button>
             </Layout>
             <Loading loading={this.props.todoCommon.loading} />
           </Layout>

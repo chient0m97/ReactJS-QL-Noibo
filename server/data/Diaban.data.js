@@ -16,7 +16,6 @@ module.exports = {
         )
             .then(res => {
                 var diabans = res.rows
-                console.log(diabans, 'data quẻy')
                 knex('diabans').count()
                     .then((resCount) => {
                         callback({
@@ -41,7 +40,6 @@ module.exports = {
             })
     },
     deleteDiabanbyId: function (dm_db_id, callback) {
-        console.log('iu delete', dm_db_id)
         knex.from('diabans').where('dm_db_id', dm_db_id).del().then(res => {
             callback({ success: true });
         }).catch(err => {
@@ -50,9 +48,7 @@ module.exports = {
         })
     },
     insertDiaban: function (diaban, callback) {
-        console.log(diaban, 'data insert')
         knex.from('diabans').insert(diaban).then(res => {
-            console.log('inserted');
             callback({ success: true});
         }).catch(err => {
             console.log(err)
@@ -60,10 +56,8 @@ module.exports = {
         })
     },
     updateDiaban: function (diaban, callback) {
-        console.log('data upadte',diaban)
         knex.from('diabans').where('dm_db_id', diaban.dm_db_id)
         .update(diaban).then(res=>{
-            console.log("Day la update")
             callback({ success: true })
          }).catch(err=>{
             console.log(err)
@@ -79,7 +73,6 @@ module.exports = {
         })
     },
     getcha:function(data,callback){
-        console.log("hien thi data ",data)
         // knex('diabans').select('dm_db_id','dm_db_ten').whereIn('dm_db_cap', Number(data) - 1 ).then(res=>{
             knex('diabans').select('dm_db_id','dm_db_ten').whereIn('dm_db_cap', [Number(data) - 1] ).then(res=>{
             callback(res);

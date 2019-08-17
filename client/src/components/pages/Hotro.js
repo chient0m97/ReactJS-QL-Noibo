@@ -5,8 +5,9 @@ import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import Modal_Khachhangs from '@pages/Modal/Modal_Khachhangs.js';
+import cookie from 'react-cookies'
 import '@styles/style.css'
-import { async } from 'q';
+
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
@@ -44,8 +45,12 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
+            var first_kh_id = null;
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton } = this.props;
             const { getFieldDecorator } = form;
+            if (khachhang.length !== 0) {
+                first_kh_id = khachhang[0].kh_id
+            }
             return (
                 <Modal
                     centered
@@ -113,10 +118,11 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value="GAP"><Badge color={"red"} />  Gấp</Option>
-                                        <Option value="CAO"><Badge color={"orange"} />  Cao</Option>
-                                        <Option value="TB"><Badge color={"gold"} />  Trung Bình</Option>
-                                        <Option value="THAP"><Badge color={"lime"} />  Thấp</Option>
+                                        <Option value="GAP"> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /> &ensp; Gấp </Option>
+                                        <Option value="CAO"> <Icon type="up" style={{ color: 'orange' }} /> &ensp; Cao</Option>
+                                        <Option value="TB"> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /> &ensp; Trung Bình</Option>
+                                        <Option value="THAP"> <Icon type="down" style={{ color: '#ccff33' }} /> &ensp; Thấp</Option>
+                                        <Option value="RT"> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /> &ensp; Rất Thấp </Option>
                                     </Select>)}
                                 </Form.Item>
                             </Col>
@@ -134,16 +140,14 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={8}>
                                 <Form.Item label="Khách hàng">
                                     {getFieldDecorator('kh_id', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "KH000001"
+                                        rules: [{ required: true, message: 'Trường không được để trống' }], //initialValue: first_kh_id
                                     })(<Select
                                         size={"small"}
                                         // onChange={this.handleChange}
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
-                                        onSelect={this.props.showModalKhachhangs}
                                     >
-                                        <Option value="addkhachhangs" >--- Thêm khách hàng ---</Option>
                                         {
                                             khachhang.map((value, index) => {
                                                 return (<Option value={value.kh_id}>{value.kh_hovaten}</Option>)
@@ -209,7 +213,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="TG dự kiến hoàn thành">
                                     {getFieldDecorator('ht_thoigian_dukien_hoanthanh', {
                                         rules: [{}],
-                                    })(<Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} />)}
+                                    })(<Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -286,14 +290,14 @@ class Hotro extends React.Component {
             visible_kh: false,
             khachhangs: [],
             selectedrow: [],
-            selectedRowKeys: []
+            selectedRowKeys: [],
         }
     }
 
     set_Select_id_duan() {
         Request('hotro/getidduan', 'POST', {}).then((res) => {
             this.setState({
-                id_duanfillmodal: res.data.data.hotros
+                id_duanfillmodal: res.data.data.duans
             })
         })
     }
@@ -356,13 +360,22 @@ class Hotro extends React.Component {
 
     insertOrUpdate = async () => {
         const { form } = await this.formRef.props;
-        var object = {}
+
         await form.validateFields((err, values) => {
             if (err) {
                 return
             }
-            var url = this.state.action === 'insert' ? 'hotro/insert' : 'hotro/update'
 
+            var url = this.state.action === 'insert' ? 'hotro/insert' : 'hotro/update'
+            this.setState({
+                rowthotroselected: values
+            })
+            if (url === 'hotro/update') {
+                let user_cookie = cookie.load('user');
+                console.log("Hien thi user ", user_cookie)
+                values.ns_id_capnhat = user_cookie
+                values.nkht_thoigiancapnhat = new Date()
+            }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
                 console.log("hien thi ht_thoigiandukienhoanthanh ", values.ht_thoigian_dukien_hoanthanh)
                 values.ht_thoigian_dukien_hoanthanh = null
@@ -379,6 +392,7 @@ class Hotro extends React.Component {
             // }
             Request(url, 'POST', values)
                 .then(async (response) => {
+                    console.log("Hien thi values ", values)
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -391,7 +405,7 @@ class Hotro extends React.Component {
                     var message = 'Thanh Cong'
 
                     console.log("check response ", response.data.success)
-                    if (!!!response.data.success) {
+                    if (await !!!response.data.success) {
                         message = 'Co loi xay ra !'
                         notifi_type = 'error'
                         description = response.data.message.map((value, index) => {
@@ -436,9 +450,11 @@ class Hotro extends React.Component {
         await this.getHotro(this.state.pageNumber)
     }
 
-    async componentDidMount  () {
+    async componentDidMount() {
         await this.getHotro(this.state.pageNumber, this.state.index, this.state.sortBy);
-        document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
     }
 
     onchangpage = (page) => {
@@ -481,7 +497,6 @@ class Hotro extends React.Component {
     }
 
     showModal = async (hotro) => {
-        console.log("hien thi gia tri truyen vao ", hotro)
         this.setState({
             action: 'insert'
         })
@@ -516,21 +531,6 @@ class Hotro extends React.Component {
         this.set_Select_id_duan();
         this.set_Select_NhanSu();
         this.set_Select_KhachHang();
-    }
-
-    showModalKhachhangs = async (selected) => {
-        console.log("modalkhachhang")
-        if (selected === 'addkhachhangs') {
-            await this.setState({
-                visible_kh: true
-            })
-            const form2 = this.formRef.props.form
-            form2.setFieldsValue({})
-        }
-        else
-            this.setState({
-                visible_kh: false
-            })
     }
 
     handleOk = e => {
@@ -645,8 +645,8 @@ class Hotro extends React.Component {
             return <a style={{ color: 'brown' }}>{text}</a>
         }
         if (check === 1)
-            return <a style={{ color: 'red' }}>{text}</a>
-        return <span>{text}</span>
+            return <a style={{ color: 'red' }} >{text}</a>
+        return <span >{text}</span>
     }
 
     checkDateConvert = (x) => {
@@ -689,18 +689,24 @@ class Hotro extends React.Component {
             })
     };
 
-    click = () => {
-        console.log("day la ham click")
-    }
-
-    clearChecked = () => {
-        this.onSelectChange([],[])
-    };
-
     onRowClick = (row) => {
-        
-        this.onSelectChange([row.ht_id], [row])
+        if (this.state.selectedRowKeys[0] === row.ht_id) {
+            this.onSelectChange([], [])
+        }
+        else {
+            this.onSelectChange([row.ht_id], [row])
+        }
+        // if (stateRowSelected === false) {
+
+        //     this.onSelectChange([row.ht_id], [row])
+        //     stateRowSelected = !stateRowSelected
+        // }
+        // else {
+        //     this.onSelectChange([], [])
+        //     stateRowSelected = !stateRowSelected
+        // }
     }
+
 
     render() {
         var i = 0
@@ -708,11 +714,11 @@ class Hotro extends React.Component {
         var formatDate = require('dateformat')
         const { selectedRowKeys } = this.state
         const rowSelection = {
-            columnTitle: 'Select',
+            // columnTitle: 'Select',
             hideDefaultSelections: true,
             selectedRowKeys,
             onChange: this.onSelectChange,
-           onHeaderCell: this.click
+            onHeaderCell: this.click
             // onChange: async (selectedRowKeys, selectedRows) => {
             //     console.log("Hien thi selectedrows ", selectedRows)
             //     array = []
@@ -739,7 +745,6 @@ class Hotro extends React.Component {
 
             // },
         };
-
 
         return (
             <div>
@@ -783,17 +788,21 @@ class Hotro extends React.Component {
                                     </Button>
                                 </Tooltip>
                             </Col>
-                            <Col span={3}>
-                                <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
-                            </Col>
                         </Row>
                     </Card>
                     <Row style={{ marginTop: 5 }}>
                         <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }}
                             expandedRowRender={(record, selectedRowKeys) => {
-                                return this.state.hotro[selectedRowKeys].ht_noidungyeucau
+                                return (
+                                    <div style={{ textAlign: 'left' }}>
+                                        <div style={{ fontSize: '18px' }}> Yêu cầu: </div>
+                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1200' }} >{this.state.hotro[selectedRowKeys].ht_noidungyeucau}</Row>
+                                        <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
+                                        <Row style={{ paddingTop: '7px' }}>{this.state.hotro[selectedRowKeys].ht_ghichu}</Row>
+                                    </div>
+                                )
                             }}>
-                            <Column dataIndex="ht_thoigian_dukien_hoanthanh" align='center'
+                            <Column dataIndex="ht_thoigian_dukien_hoanthanh" align='center' className="hidden-action" width={150}
                                 render={
                                     text => {
                                         j++
@@ -812,22 +821,22 @@ class Hotro extends React.Component {
                                         }
                                     }}
                             />
-                            <Column title="Dự án" dataIndex="dm_duan_ten" width={100}
+                            <Column title="Dự án" dataIndex="dm_duan_ten" width={150}
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="ns_hovaten" width={100}
+                            <Column title="Khách hàng" dataIndex="kh_hovaten" width={100}
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
                                 width={150} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Người được giao" dataIndex="kh_hovaten"
+                            <Column title="Người được giao" dataIndex="ns_hovaten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
                                 width={150} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
+                            <Column title="Trạng thái" dataIndex="ht_trangthai" width={150}
                                 render={
                                     text => {
                                         if (text === 'tiepnhan') { return this.checkDate(i, "Tiếp nhận", j) }
@@ -837,28 +846,32 @@ class Hotro extends React.Component {
                                     }
                                 }
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Phân loại" dataIndex="ht_phanloai" width={100}
+                            <Column title="Phân loại" dataIndex="ht_phanloai" width={150}
                                 render={text => {
                                     if (text === 'bug') { return this.checkDate(i, "Lỗi", j) }
-                                    if (text === 'new') { return this.checkDate(i, "Việc mới", j) }
+                                    if (text === 'new') {
+                                        return this.checkDate(i, "Việc mới", j)
+                                    }
                                     return this.checkDate(i, this.checkDate(i, "Việc tương lai", j))
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Ưu tiên" dataIndex="ht_uutien"
-                                width={100}
+                                width={150}
+                                align='left'
                                 render={text => {
-                                    if (text === 'GAP') { return this.checkDate(i, "Gấp", j) }
-                                    if (text === 'CAO') { return this.checkDate(i, "Cao", j) }
-                                    if (text === 'TB') { return this.checkDate(i, "Trung bình", j) }
-                                    return this.checkDate(i, "Thấp", j)
+                                    if (text === 'GAP') { return <span> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /> &nbsp; {this.checkDate(i, "Gấp", j)} </span> }
+                                    if (text === 'CAO') { return <span> <Icon type="up" style={{ color: 'orange' }} /> &nbsp; {this.checkDate(i, "Cao", j)} </span> }
+                                    if (text === 'TB') { return <span> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /> &nbsp; {this.checkDate(i, "Trung bình", j)}</span> }
+                                    if (text === 'THAP') { return <span> <Icon type="down" style={{ color: '#ccff33' }} /> &nbsp; {this.checkDate(i, "Thấp", j)} </span> }
+                                    return <span> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /> &nbsp; {this.checkDate(i, "Rất Thấp", j)} </span>
                                 }}
-                                onHeaderCell={this.onHeaderCell} />
-                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={100}
+                            />
+                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
                                 render={text => {
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={100}
+                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
                                 render={text => {
                                     if (text === null) { return '' }
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
@@ -868,16 +881,6 @@ class Hotro extends React.Component {
                                 render={text => {
                                     if (text === null) { return '' }
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
-                                }}
-                                onHeaderCell={this.onHeaderCell} />
-                            {/* <Column title="Nội dung yêu cầu" dataIndex="ht_noidungyeucau" width={100}
-                                render={text => {
-                                    return this.checkDate(i, text, j)
-                                }}
-                                onHeaderCell={this.onHeaderCell} /> */}
-                            <Column title="Ghi chú" dataIndex="ht_ghichu"
-                                render={text => {
-                                    return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                         </Table>
@@ -902,12 +905,10 @@ class Hotro extends React.Component {
                         assignme={this.Assignme}
                         trangthaibutton={this.state.trangthaibutton}
                         changeButton={this.changeButton}
-                        showModalKhachhangs={this.showModalKhachhangs}
                     />
                     <Modal_Khachhangs
                         title="Thêm Khách Hàng"
                         visible={true}
-                        showModalKhachhangs={this.showModalKhachhangs}
                         visible_kh={this.state.visible_kh}
                         onCancel={this.handleCancelModalKhachhang}
                         formtype={this.state.formtype}

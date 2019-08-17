@@ -405,12 +405,8 @@ class User extends React.Component {
 
   }
   ChangeCheckbox = () => {
-    console.log('dcm')
   }
   showmodalRole = async (name) => {
-    console.log('show nodadadasaasdasd')
-    console.log('user name', name)
-
 
     if (name) {
       this.setState({
@@ -426,7 +422,6 @@ class User extends React.Component {
   okRole = async e => {
     let user = this.state.selectedId
     let a = this.child.state.checkedKeys
-    console.log('permission cahnge', a)
     Request('setpermission', 'POST', { a, user }).then(res => {
 
     })

@@ -17,32 +17,27 @@ router.post('/get', function(req, res) {
     hotroController.getHotro(pageNumber, pageSize, index, sortBy, function(data){
         res.send(data);
     })
-    console.log("Get data and limit & offset", pageNumber,' ', pageSize)
 })
 
 router.post('/getidduan', function(req, res){
     hotroController.getIdDuan(function(data){
         res.send(data)
     })
-    console.log("getidduan")
 })
 
 router.post('/getnhansu', function(req, res){
     hotroController.getNhanSu(function(data){
         res.send(data)
     })
-    console.log("getnhansu")
 })
 
 router.post('/getkhachhang', function(req, res){
     hotroController.getKhachHang(function(data){
         res.send(data)
     })
-    console.log("getkhachhang")
 })
 
 router.post('/insert', function(req,res) {
-    console.log('INSERT')
     hotroController.insertHotro(req.body, function(data){
         res.send(data);
     })
@@ -60,8 +55,8 @@ router.delete('/delete', function (req, res) {
     })
 })
 
-router.get('/get/:ns_id', function(req, res){
-    hotroController.getById(req.params.ht_id, function(data){
+router.post('/getfollowmonth', function(req, res){
+    hotroController.getHotroFollowMonth(req.body, function(data){
         res.send(data)
     })
 })

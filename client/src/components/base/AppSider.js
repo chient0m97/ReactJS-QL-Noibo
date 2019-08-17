@@ -39,7 +39,6 @@ class AppSider extends Component {
     };
 
     componentDidMount() {
-        console.log('asssssssssssssssssssssss-----------', menu)
     }
 
     render() {

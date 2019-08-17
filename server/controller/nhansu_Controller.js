@@ -14,11 +14,8 @@ var nhansuController = {
     },
 
     insertNhansu: async function insertNhansu(nhansu, callback) {
-        console.log('Controller : ', uuidv1())
         nhansu.ns_id=uuidv1();
         nhansu.ns_sodienthoai+="0";
-        //nhansu.data.ns_id=uuidv1;g
-        console.log('console :', nhansu)
         if ( nhansu.ns_email===undefined|| Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng')
         ) {
 
@@ -53,8 +50,6 @@ var nhansuController = {
     },
 
     updateNhansu: function updateNhansu(nhansu, callback){
-        console.log(nhansu, 'day la nhan su')
-        
         if (Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng'))
         {
             if (1){
