@@ -34,6 +34,7 @@ class AppHeader extends Component {
 
   logOut = (e) => {
     cookie.remove('token', { path: '/' })
+    cookie.remove('user',this.state.username)
     window.location.reload();
   }
 

@@ -9,13 +9,15 @@ module.exports = {
             .then((res) =>{
                 knex('nhansu').count()
                     .then((resCount) => {
-                        console.log("hien thi count ",resCount[0].count)
-                        callback({
-                            success : true,
-                            data: {
-                                nhansu: res,
-                                count: resCount[0].count
-                            }
+                        knex.select('ns_gioitinh').from('nhansu').then((resGioitinh) => {
+                            callback({
+                                success : true,
+                                data: {
+                                    nhansu: res,
+                                    count: resCount[0].count,
+                                    resGioitinh: resGioitinh
+                                }
+                            })
                         })
                     }).catch((err) => {
                         console.log(err),

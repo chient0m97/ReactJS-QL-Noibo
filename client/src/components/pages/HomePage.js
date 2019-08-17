@@ -1,92 +1,279 @@
 import React, { Component } from 'react';
 import Request from '@apis/Request'
-import { Upload, Button, Icon } from 'antd';
-import { array } from 'prop-types';
+import { Pie, Bar, Line } from 'react-chartjs-2';
+import { Card, Form, Col, Row, Icon, Tooltip, DatePicker, Tabs } from 'antd';
+import { FiUsers } from 'react-icons/fi';
+import { GoFile, GoOrganization, GoCreditCard } from 'react-icons/go';
+import { Value } from 'devextreme-react/range-selector';
+import { async } from 'q';
+var formatDate = require('dateformat')
+const { RangePicker } = DatePicker;
+const { TabPane } = Tabs;
 
-// import ChildComp2 from './ChildComp2';
-
-const fileList = [
-    {
-        uid: '-1',
-        name: 'xxx.png',
-        status: 'done',
-        url: 'https://cdn.pixabay.com/photo/2015/01/07/11/31/tiger-591359_960_720.jpg',
-        thumbUrl: 'https://cdn.pixabay.com/photo/2015/01/07/11/31/tiger-591359_960_720.jpg',
-    }]
-
-const props = {
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    listType: 'picture',
-    defaultFileList: [...fileList],
+var data = {
+    labels: [
+        'Nam',
+        'Nữ',
+        'Giới Tính'
+    ],
+    datasets: [{
+        data: [],
+        backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56'
+        ],
+        hoverBackgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56'
+        ]
+    }],
 };
 
-class About extends Component {
+export default class HomePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            menu: [],
             pageNumber: 1,
+            nhansu: [],
+            hopdongs: [],
+            nhansuget: [],
             current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
-            count: 1,
-            show: false,
-            visible: false,
-            formtype: 'horizontal',
-            title: 'Nhập thông tin Menu',
-            id_visible: false,
-            action: 'insert',
-            isSearch: 0,
-            isSort: true,
+            countNhanSu: 1,
+            countKhachHang: 1,
+            countDuAn: 1,
+            countHopDong: 1,
             sortBy: '',
-            index: 'dm_menu_id',
-            orderby: 'arrow-up',
-            stateconfirmdelete: false,
-            checkStateConfirm: true,
-            statebuttondelete: true,
-            statebuttonedit: true,
-            rowthotroselected: [],
-            selectedId: [],
-            selectedRowKeys: [],
-            url: null
+            index: 'ns_id',
+            khachhangs: [],
+            dataChartjs: [],
+            dataGetFollowMonth: {},
+            value: [],
+            stateOpenRangePicker: false
         }
     }
-    getUrl = (pageNumber) => {
-        var array = null
+
+    getNhansu = (pageNumber) => {
         if (pageNumber <= 0)
             return;
-        Request('menu/get', 'POST', {
+        Request('nhansu/get', 'POST', {
             pageSize: this.state.pageSize,
             pageNumber: pageNumber,
             index: this.state.index,
             sortBy: this.state.sortBy
         })
-            .then((res) => {
-
-                array = res.data.data.menus[res.data.data.menus.length - 1].dm_menu_url
-                this.setState({
-                    url: array
+            .then(async (res) => {
+                var countGioiTinhNam = 0
+                var countGioiTinhNu = 0
+                await res.data.data.resGioitinh.forEach(element => {
+                    if (element.ns_gioitinh === "Nam") {
+                        countGioiTinhNam++
+                    }
+                    if (element.ns_gioitinh === "Nữ")
+                        countGioiTinhNu++
+                });
+                await this.setState({
+                    nhansu: res.data.data.nhansu,
+                    countNhanSu: res.data.data.count,
+                    dataChartjs: [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
                 })
-                console.log("Hien thi ", res.data.data.menus.length)
-                this.setState({
-                    menu: res.data.data.menus,
-                    count: res.data.data.count
+                data.datasets[0].data = await [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
+            })
+
+        Request('hotro/getkhachhang', 'POST', {}).then((res) => {
+            this.setState({
+                countKhachHang: res.data.data.khachhangs.length
+            })
+        })
+
+        Request('hotro/getidduan', 'POST', {}).then(async (res) => {
+            await this.setState({
+                countDuAn: res.data.data.duans.length
+            })
+        })
+
+        Request('hopdong/get', 'POST', {
+            pageSize: this.state.pageSize,
+            pageNumber: pageNumber,
+            index: this.state.index,
+            sortBy: this.state.sortBy
+        })
+            .then(async (response) => {
+                await this.setState({
+                    countHopDong: Number(response.data.data.count)
                 })
             })
     }
 
     componentDidMount() {
-        this.getUrl(this.state.pageNumber, this.state.index, this.state.sortBy);
+        this.getNhansu(this.state.pageNumber, this.state.index, this.state.sortBy);
+
+    }
+
+    onClick = () => {
+        console.log("Hien thi click")
+    }
+
+    setValue = (value) => {
+        this.setState({ value })
+    }
+
+    getHotroFollowMonth = (monthStart, monthEnd) => {
+        Request('hotro/getfollowmonth', 'POST', { monthStart, monthEnd }).then(async (res) => {
+            var arrayName = []
+            var arrayCount = []
+            var arrayBackGround = []
+            res.data.rows.map((value, index) => {
+                arrayName.push(value.ns_hovaten)
+                arrayCount.push(value.count)
+                arrayBackGround.push(this.getRandomColor())
+            })
+            var dataFollowMonth = {
+                labels: [],
+                datasets: [{ data: [], backgroundColor: [], hoverBackgroundColor: [] }]
+            }
+            dataFollowMonth.labels = arrayName
+            dataFollowMonth.datasets[0].data = arrayCount
+            dataFollowMonth.datasets[0].backgroundColor = arrayBackGround
+            dataFollowMonth.datasets[0].hoverBackgroundColor = arrayBackGround
+            await this.setState({
+                dataGetFollowMonth: dataFollowMonth
+            })
+
+            // document.getElementsByTagName('body')[0].click()
+        })
+    }
+
+    getRandomColor = () => {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 
     render() {
         return (
             <div>
-                
+                <Form>
+                    <div style={{ background: '#ECECEC', padding: '20px' }}>
+                        <Row>
+                            <Col span={6} >
+                                <Card bordered={false} style={{ float: 'left', background: 'red' }}>
+                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Nhân Sự </span><Tooltip title="Số Lượng Nhân Sự"><Icon style={{ marginLeft: '70px' }} type="info-circle" /></Tooltip>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <FiUsers />  {this.state.countNhanSu}</span>
+                                </Card>
+                            </Col>
+                            <Col span={6} >
+                                <Card bordered={false} style={{ float: 'left', background: 'orange' }}>
+                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Khách Hàng </span><Tooltip title="Số Lượng Khách Hàng"><Icon style={{ marginLeft: '33px' }} type="info-circle" /></Tooltip>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <GoOrganization /> {this.state.countKhachHang}</span>
+                                </Card>
+                            </Col>
+                            <Col span={6} >
+                                <Card bordered={false} style={{ float: 'right', background: 'lime' }}>
+                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Dự Án </span><Tooltip title="Số Lượng Dự Án"><Icon style={{ marginLeft: '93px' }} type="info-circle" /></Tooltip>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <GoCreditCard /> {this.state.countDuAn}</span>
+                                </Card>
+                            </Col>
+                            <Col span={6} >
+                                <Card bordered={false} style={{ float: 'right', background: 'blue' }}>
+                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Hợp Đồng </span><Tooltip title="Số Lượng Hợp Đồng"><Icon style={{ marginLeft: '50px' }} type="info-circle" /></Tooltip>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <GoFile /> {this.state.countHopDong}</span>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row style={{ marginTop: '15px' }}>
+                            <Card bordered={false}>
+                                {/* <Col span={9}>
+                                    <Pie data={data} />
+                                </Col>
+                                <Col span={3} style={{ fontSize: '24px', width: '10%', marginRight: 20 }}>
+                                    <div style={{ color: 'red', }} >Giới Tính</div>
+                                    <div style={{ fontSize: '18px', borderTop: '1px solid #e8e8e8' }}>Nam : {this.state.dataChartjs[0]}</div>
+                                    <div style={{ fontSize: '18px' }}>Nữ:  {this.state.dataChartjs[1]}</div>
+                                    <div style={{ fontSize: '18px' }}>Khác: {this.state.dataChartjs[2]}</div>
+                                </Col> */}
+                                <Col span={9}>
+                                    <Tabs>
+                                        <TabPane
+                                            tab={
+                                                <span>Chọn Theo Tháng</span>
+                                            }
+                                            key="1"
+                                        >
+                                            <p style={{ fontSize: '14px' }}>Thống kê biểu đồ từng người đã hỗ trợ bao nhiêu trong tháng</p>
+                                            <RangePicker
+                                                placeholder={['Start month', 'End month']}
+                                                format="YYYY-MM"
+                                                mode={['month', 'month']}
+                                                onPanelChange={(value, datestring) => {
+                                                    this.setValue(value)
+                                                    this.getHotroFollowMonth(formatDate(value[0]._d, 'yyyy-mm-01'), formatDate(value[1]._d, 'yyyy-mm-01'))
+                                                }}
+                                                value={this.state.value}
+                                                // open={this.state.stateOpenRangePicker}
+                                                separator="-->"
+                                            />
+                                        </TabPane>
+                                        <TabPane
+                                            tab={
+                                                <span>Chọn Theo Năm</span>
+                                            }
+                                            key="2"
+                                        >
+                                            Content Năm
+                                        </TabPane>
+                                    </Tabs>
+
+                                </Col>
+                                <Col span={15}>
+                                    <Tabs style={{ marginLeft: '200px' }}>
+                                        <TabPane
+                                            tab={
+                                                <span>Biểu Đồ Dạng Tròn</span>
+                                            }
+                                            key="3"
+                                        >
+                                            <div style={{ marginLeft: '70px' }}>
+                                                <Pie data={this.state.dataGetFollowMonth} />
+                                            </div>
+                                        </TabPane>
+                                        <TabPane
+                                            tab={
+                                                <span>Biểu Đồ Dạng Cột</span>
+                                            }
+                                            key="4"
+                                        >
+                                            <div style={{ marginLeft: '20px' }}>
+                                                <Bar 
+                                                data={this.state.dataGetFollowMonth} 
+                                                options={{scales: {
+                                                    xAxes:[{
+                                                        maxBarThickness: 8,
+                                                        minBarLength: 0
+                                                    }]
+                                                }}}
+                                                />
+                                            </div>
+                                        </TabPane>
+                                    </Tabs>
+
+                                </Col>
+                            </Card>
+                        </Row>
+                        <Row style={{ marginTop: '15px' }}>
+                            <Card bordered={false}>
+                                Khach hang
+                            </Card>
+                        </Row>
+                    </div>,
+                </Form>
             </div>
         );
     }
 }
-
-export default About;

@@ -4,7 +4,6 @@ var router = express.Router()
 var userController = require('../controller/phanquyen/userController');
 
 router.post('/get', function (req, res) {
-    console.log('------------------------------------get-----------------------------------')
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;

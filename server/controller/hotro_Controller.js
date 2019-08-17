@@ -14,9 +14,7 @@ var hotroController = {
     },
 
     insertHotro: async function insertHotro(hotros, callback) {
-        console.log('Controller : ', uuidv1())
         hotros.ht_id = uuidv1();
-        console.log('console :', hotros)
         hotroData.insertHotro(hotros, (response) => {
             var message = constant.successInsert;
             var status = 200;
@@ -33,7 +31,6 @@ var hotroController = {
     },
 
     updateHotro: function updateHotro(hotros, callback) {
-        console.log(hotros, 'day la ho tro')
         hotroData.updateHotro(hotros, (res) => {
             callback({
                 success: res.success,
@@ -79,8 +76,8 @@ var hotroController = {
         })
     },
 
-    getById: function getById(ns_id, callback) {
-        hotroData.getById(ns_id, data => {
+    getHotroFollowMonth: function getHotroFollowMonth(monthToMonth, callback) {
+        hotroData.getHotroFollowMonth(monthToMonth, data => {
             if (data == undefined) {
                 callback({});
             }
