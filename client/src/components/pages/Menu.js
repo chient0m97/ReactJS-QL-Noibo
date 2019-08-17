@@ -212,7 +212,12 @@ class Menu extends React.Component {
     };
 
     onRowClick = (row) => {
-        this.onSelectChange([row.dm_menu_id], [row])
+        if(this.state.selectedRowKeys[0]===row.dm_menu_id){
+            this.onSelectChange([], [])
+        }
+        else{
+            this.onSelectChange([row.dm_menu_id], [row])
+        }
     }
 
     render() {
@@ -263,9 +268,6 @@ class Menu extends React.Component {
                                         <Icon type="reload" />
                                     </Button>
                                 </Tooltip>
-                            </Col>
-                            <Col span={3}>
-                                <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
                             </Col>
                         </Card>
                     </Row>

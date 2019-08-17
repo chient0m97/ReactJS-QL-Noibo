@@ -5,7 +5,7 @@ import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-import '@styles/style.css';
+import { fetchDuan } from '@actions/duan.action';
 import { fetchDiaban } from '@actions/diaban.action';
 import { fetchLoading } from '@actions/common.action';
 const token = cookie.load('token');
@@ -31,21 +31,21 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
           onCancel={onCancel}
           onOk={onSave}
           confirmLoading={confirmLoading}
-          width={500}
+          width={1000}
         >
           <Form layout={formtype}>
             <Row gutter={24}>
               <Col span={24}>
                 <div style={{display: id_visible === true ? 'block' : 'none' }}>
                   <Form.Item label="Id:" >
-                    {getFieldDecorator('dm_db_id', {
+                    {getFieldDecorator('id', {
+                      rules: [ {} ],
                     })(<Input type="number" disabled />)}
                   </Form.Item>
                 </div>
               </Col>
             </Row>
             <Row gutter={24}>
-              
               <Col span={24}>
                 <Form.Item label="Nhập thông tin địa bàn:">
                   {getFieldDecorator('dm_db_ten', {
@@ -100,9 +100,14 @@ class Diaban extends React.Component {
       id_visible: false,
       action: 'insert',
       isSearch: 0,
-      searchText: '',
+      textSearch: '',
       columnSearch: '',
       isSort: true,
+      rowdiabanselected: {},
+      statebuttondelete: true,
+      statebuttonedit: true,
+      selectedId: [],
+      selectedrow: [],
       sortBy: '',
       index: 'id',
       orderby: 'arrow-up',
@@ -136,7 +141,6 @@ class Diaban extends React.Component {
     })
       .then((response) => {
         let data = response.data;
-        console.log(data, 'data')
         if (data.data)
           this.setState({
             diabans: data.data.diabans,
@@ -161,7 +165,6 @@ class Diaban extends React.Component {
         .then((response) => {
           if (response.status === 200 & response.data.success === true) {
             form.resetFields();
-            console.log('response',response)
             this.setState({
               visible: false,
               message: response.data.message
@@ -200,14 +203,14 @@ class Diaban extends React.Component {
     })
 
     this.getDiabans(page); if (this.state.isSearch === 1) {
-      this.search(this.state.searchText)
+      this.search(this.state.textSearch)
     }
     else {
       this.getDiabans(page)
     }
   }
 
-  showModalUpdate = (diaban) => {
+  showModal = (diaban) => {
     Request('diaban/getcha', 'POST', { cap: 1 }).then(res => {
       console.log(res.data, 'data res combobox')
       this.setState({
@@ -227,24 +230,6 @@ class Diaban extends React.Component {
       form.setFieldsValue(diaban);
     }
   };
-  showModalInsert = (diaban) => {
-    Request('diaban/getcha', 'POST', { cap: 1 }).then(res => {
-      console.log(res.data, 'data res combobox')
-      this.setState({
-        comboBoxDatasource: res.data
-      })
-    })
-    const { form } = this.formRef.props
-    this.setState({
-      visible: true
-    });
-    form.resetFields();
-    if (diaban.dm_db_id === undefined) {
-      this.setState({
-        action: 'insert'
-      })
-    }
-  }
 
   handleOk = e => {
     this.setState({
@@ -290,7 +275,7 @@ class Diaban extends React.Component {
     });
     if (this.state.isSearch === 1) {
       console.log('xxxx')
-      this.handleSearch(this.state.page, this.state.searchText, this.confirm, this.state.nameSearch, this.state.codeSearch);
+      this.handleSearch(this.state.page, this.state.textSearch, this.confirm, this.state.nameSearch, this.state.codeSearch);
       console.log(this.state.page)
     }
     else {
@@ -299,7 +284,6 @@ class Diaban extends React.Component {
   }
 
   search = async (xxxx) => {
-
     Request('diaban/Search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
@@ -315,7 +299,7 @@ class Diaban extends React.Component {
           this.setState({
             diabans: data.data.diabans,
             count: Number(data.data.count),//eps kieeru veef,
-            searchText: xxxx,
+            textSearch: xxxx,
             isSearch: 1
           })
 
@@ -323,14 +307,21 @@ class Diaban extends React.Component {
       })
 
   }
-
+  onSearch = (val) => {
+    console.log('search:', val);
+  }
+  removeSearch = () => {
+    this.setState({
+        textSearch: ''
+    })
+  }
   onChangeSearchType = async (value) => {
-    console.log('hihi', this.state.searchText)
+    console.log('hihi', this.state.textSearch)
     await this.setState({
       columnSearch: value,
     })
-    if (this.state.searchText) {
-      this.search(this.state.searchText);
+    if (this.state.textSearch) {
+      this.search(this.state.textSearch);
     }
     console.log(`selected ${value}`);
   }
@@ -363,7 +354,7 @@ class Diaban extends React.Component {
         })
         console.log('xx', this.state.isSort)
         if (this.state.isSearch == 1) {
-          this.search(this.state.searchText)
+          this.search(this.state.textSearch)
         }
         else {
           this.getDiabans(this.state.page)
@@ -385,15 +376,52 @@ class Diaban extends React.Component {
       })
     })
   }
+  onSelectChange = (selectedRowKeys, selectedRows) => {
+    this.setState({
+        selectedRowKeys,
+        selectedId: selectedRowKeys
+    });
+    if (selectedRowKeys.length > 0) {
+        this.setState({
+            statebuttondelete: false
+        })
+    }
+    else {
+        this.setState({
+            statebuttondelete: true
+        })
+    }
+    if (selectedRowKeys.length === 1) {
+        this.setState({
+            statebuttonedit: false,
+            rowdiabanselected: selectedRows[0]
+        })
+    }
+    else {
+        this.setState({
+            statebuttonedit: true
+        })
+    }
+}
 
 
   render() {
+    const { selectedRowKeys } = this.state
+        const rowSelection = {
+            hideDefaultSelections: true,
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+            getCheckboxProps: record => ({
+                disabled: Column.title === 'Id', // Column configuration not to be checked
+                name: record.name,
+            }),
+        };
     if (token)
       return (
         <div>
           <Row className="table-margin-bt">
             <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.showModalInsert.bind(null)}>
+              <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
                 <Icon type="plus" />
               </Button>
             </Col>
@@ -441,22 +469,20 @@ class Diaban extends React.Component {
             />
 
 
-            <Table pagination={false} dataSource={this.state.diabans} rowKey="dm_db_id" >
+            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.diabans} bordered='1' scroll={{ x: 1000 }} rowKey="dm_db_id" >
               <Column
                 title={<span>Id địa bàn <Icon type={this.state.orderby} /></span>}
                 dataIndex="dm_db_id"
                 key="dm_db_id"
-                className="hidden"
+                className = "hidden"
                 onHeaderCell={this.onHeaderCell}
 
               />
               <Column title="Tên địa bàn" dataIndex="dm_db_ten" key="dm_db_ten" onHeaderCell={this.onHeaderCell}
               />
-
               <Column className="action-hide" title="Cấp địa bàn" dataIndex="dm_db_cap" key="dm_db_cap" onHeaderCell={this.onHeaderCell} />
               <Column title="Cấp địa bàn" dataIndex="ten_dm_db_cap" key="ten_dm_db_cap" onHeaderCell={this.onHeaderCell} />
               <Column title="Địa bàn cha" dataIndex="tencha" key="tencha" onHeaderCell={this.onHeaderCell} />
-              
               <Column className="action-hide" title="Địa bàn cha" dataIndex="dm_db_id_cha" key="dm_db_id_cha" onHeaderCell={this.onHeaderCell} />
               <Column
                 visible={false}
@@ -465,7 +491,7 @@ class Diaban extends React.Component {
                 render={(text, record) => (
 
                   <span>
-                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModalUpdate.bind(record.dm_db_id, text)}>
+                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.dm_db_id, text)}>
                       <Icon type="edit" />
                     </Button>
                     <Popconfirm

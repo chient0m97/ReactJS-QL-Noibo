@@ -26,7 +26,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
     }
     render() {
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
-      console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
         <Modal
@@ -139,7 +138,6 @@ class User extends React.Component {
   }
   //--------------DELETE-----------------------
   deleteUser = (id) => {
-    console.log('delte id: ', id)
     Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
@@ -152,8 +150,6 @@ class User extends React.Component {
 
   getUsers = (pageNumber) => {
 
-    console.log('index', this.state.index)
-    console.log('sortby', this.state.sortBy)
     if (pageNumber <= 0)
       return;
 
@@ -164,10 +160,8 @@ class User extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        console.log('res', response)
         if (response) {
           let data = response.data;
-          console.log('data', data.data.users[0])
           let objUsers = Object.keys(data.data.users[0])
           if (data.data)
             this.setState({
@@ -191,7 +185,6 @@ class User extends React.Component {
       if (err) {
         return
       }
-      console.log('urllllllllllllllllllll', this.state.action)
       var url = this.state.action === 'insert' ? 'user/insert' : 'user/update'
       Request(url, 'POST', values)
         .then((response) => {
@@ -230,7 +223,6 @@ class User extends React.Component {
     this.getUsers(this.state.pageNumber);
   }
   onchangpage = async (page) => {
-    console.log('page', page)
     await this.setState({
       page: page
     })
@@ -240,7 +232,6 @@ class User extends React.Component {
     }
     else {
       this.getUsers(page)
-      console.log(this.getUsers(page))
     }
   }
 
@@ -251,7 +242,6 @@ class User extends React.Component {
     });
     form.resetFields();
     if (user.id !== undefined) {
-      console.log('day la update')
       this.setState({
         id_visible: true,
         action: 'update'
@@ -297,10 +287,6 @@ class User extends React.Component {
     return `Total ${total} items`;
   }
   onShowSizeChange = async (current, size) => {
-    console.log('size', size);
-    console.log('curent', current);
-    console.log('txt', this.state.isSearch);
-    console.log(this.state.isSearch)
     await this.setState({
       pageSize: size
     });
@@ -314,9 +300,6 @@ class User extends React.Component {
   }
 
   search = async (xxxx) => {
-    console.log('xxxxxxxxxxxx', this.state.pageSize)
-    console.log('search text', xxxx)
-    console.log('column search', this.state.columnSearch)
     Request('user/search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
@@ -329,7 +312,6 @@ class User extends React.Component {
       .then((response) => {
         let data = response.data;
 
-        console.log('aaaaaaaaaaaaa', data)
         if (data.data)
           this.setState({
             users: data.data.users,
@@ -338,30 +320,25 @@ class User extends React.Component {
             isSearch: 1
           })
 
-        console.log('data-----------------------------------', data)
       })
 
   }
 
   onChangeSearchType = async (value) => {
-    console.log('hihi', this.state.searchText)
     await this.setState({
       columnSearch: value,
     })
     if (this.state.searchText) {
       this.search(this.state.searchText);
     }
-    console.log(`selected ${value}`);
   }
 
   onSearch = (val) => {
-    console.log('search:', val);
   }
 
   onHeaderCell = (column) => {
     return {
       onClick: async () => {
-        console.log('ccmnr', column.dataIndex)
         if (this.state.isSort) {
           await this.setState({
             sortBy: 'DESC',
@@ -380,7 +357,6 @@ class User extends React.Component {
           isSort: !this.state.isSort,
           index: column.dataIndex
         })
-        console.log('xx', this.state.isSort)
         if (this.state.isSearch == 1) {
           this.search(this.state.searchText)
         }
@@ -405,11 +381,8 @@ class User extends React.Component {
 
   }
   ChangeCheckbox = () => {
-    console.log('dcm')
   }
   showmodalRole = async (name) => {
-    console.log('show nodadadasaasdasd')
-    console.log('user name', name)
 
 
     if (name) {
@@ -437,13 +410,11 @@ class User extends React.Component {
   };
 
   cancelRole = e => {
-    console.log('cancel')
     this.setState({
       modalRoleVisible: false,
     });
   };
   changeRows = (selectedRowKeys, selectedRows) => {
-    console.log('checked')
   }
 
   handleClickRow(rowIndex) {
@@ -462,9 +433,7 @@ class User extends React.Component {
     }
     let payload = jwt.decode(token);
     let claims = payload.claims;
-    console.log('quyen ', claims)
     let canPermiss = claims.indexOf(Permission.Role.Permiss) >= 0;
-    console.log('permis', canPermiss)
     let canRead = claims.indexOf(Permission.User.Read) >= 0;
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
@@ -474,7 +443,6 @@ class User extends React.Component {
       type: 'radio',
       hideDefaultSelections: true,
       onChange: async (selectedRowKeys, selectedRows) => {
-        console.log('click rowwwwwwwwwwwwwwwww')
         let sl = selectedRowKeys[0]
         Request('checkrole', 'POST', { sl }).then((res) => {
           let data = res.data;
@@ -484,12 +452,9 @@ class User extends React.Component {
           this.setState({
             dataTree: data,
           })
-          console.log('ROLEeeee', this.state.dataTree)
 
         })
-        console.log('selected rowkeys', selectedRowKeys)
         if (selectedRows[0]) {
-          console.log('kkkkkkk')
           await this.setState({
             selectedId: selectedRowKeys[0],
             user: selectedRows[0],
@@ -509,8 +474,7 @@ class User extends React.Component {
     return (
 
       <div>
-        {
-          canRead ?
+       
             <div>
               <Modal
                 title="Phân quyền "
@@ -628,8 +592,7 @@ class User extends React.Component {
 
               </div>
             </div>
-            : <h1>Mày đéo có quyền vào đây</h1>
-        }
+      
 
       </div >
 

@@ -2,43 +2,42 @@ var knex = require('./common/DB')
 
 module.exports = {
     getDiaban: (limit, offset, callback) => {
-        knex.raw("select diaban.dm_db_id, \
+        knex.raw("select diaban.dm_db_id,\
         diaban.dm_db_ten,\
         diaban.dm_db_cap,\
-        case (diaban.dm_db_cap)\
+        case(diaban.dm_db_cap)\
             when 1 then 'Tỉnh'\
             when 2 then 'Huyện'\
             else 'Xã'\
         end as ten_dm_db_cap,\
         diaban.dm_db_id_cha,\
-    diabancha.dm_db_ten tencha\
-        from diabans diaban left join diabans diabancha on diaban.dm_db_id_cha = diabancha.dm_db_id limit " + limit + " offset " + offset
-        )
-            .then(res => {
-                var diabans = res.rows
-                console.log(diabans, 'data quẻy')
-                knex('diabans').count()
-                    .then((resCount) => {
-                        callback({
-                            success: true,
-                            data: {
-                                diabans: diabans,
-                                count: resCount[0].count
-                            }
-                        })
-                    }).catch((err) => {
-                        console.log(err),
-                            callback({
-                                success: false
-                            })
-                    })
-            })
-            .catch((err) => {
+        diabancha.dm_db_ten tencha\
+        from diabans diaban left join diabans diabancha on diaban.dm_db_id_cha = diabancha.dm_db_id limit " + limit + " offset " + offset)
+        .then(res => {
+            var diabans = res.rows
+            console.log(diabans, 'data query')
+            knex('diabans').count()
+            .then((resCount) => {
+                callback({
+                    success: true,
+                    data:{
+                        diabans: diabans,
+                        count: resCount[0].count
+                    }
+                })
+            }).catch((err) => {
                 console.log(err),
-                    callback({
-                        success: false
-                    })
+                callback({
+                    success: false
+                })
             })
+        })
+        .catch((err) => {
+            console.log(err),
+            callback({
+                success: false
+            })
+        })
     },
     deleteDiabanbyId: function (dm_db_id, callback) {
         console.log('iu delete', dm_db_id)
@@ -60,7 +59,6 @@ module.exports = {
         })
     },
     updateDiaban: function (diaban, callback) {
-        console.log('data upadte',diaban)
         knex.from('diabans').where('dm_db_id', diaban.dm_db_id)
         .update(diaban).then(res=>{
             console.log("Day la update")
@@ -96,10 +94,10 @@ module.exports = {
         })
     },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        knex('diabans').where(columnSearch,'like', textSearch).orderBy(index,sortBy).limit(limit).offset(offset)
+        knex('diabans').where(columnSearch,'like','%'+textSearch+'%').orderBy(index,sortBy).limit(limit).offset(offset)
         .then(res=> {
             var diabans = res
-            knex('diabans').where(columnSearch,'like', textSearch).count()
+            knex('diabans').where(columnSearch,'like','%'+textSearch+'%').count()
             .then(resCount=>{
                 var count = resCount[0].count
                 let dataCallback = {

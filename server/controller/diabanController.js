@@ -47,10 +47,9 @@ var DiabanController = {
     },
 
     insertDiaban: async function insertDiaban(diaban, callback) {
-        console.log('dia ban',diaban)
-        if (1)
-            
-         {
+
+        if (Validator.isAlpha(diaban.dm_db_ten, 'Tên địa bàn không đúng định dạng')
+        ) {
 
             //if (await Validator.db.unique('duans', 'ns_id_qtda', duan.ns_id_qtda, 'Ns_id_qtda đã tồn tại !')){
                 let firstInsert;
@@ -76,7 +75,8 @@ var DiabanController = {
             }
     },
     updateDiaban: async function updateDiaban(diaban, callback) {
-      
+        if (Validator.isAlpha(diaban.dm_db_ten, 'Tên địa bàn không đúng định dạng')
+        ) {
             if (1) {
                 console.log("Day la update data", diaban)
                 diabanData.updateDiaban(diaban, (res) => {
@@ -86,7 +86,7 @@ var DiabanController = {
                     })
                 })
           }
-        
+        }
     }
     ,
     getcha:function getcha(data, callback){

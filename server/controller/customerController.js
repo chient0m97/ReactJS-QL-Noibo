@@ -17,9 +17,7 @@ var CustomerController = {
         let offset = pageSize * (pageNumber - 1);
         var res_customer = []
         customerData.getCustomer(limit, offset, index, sortBy, async (data) => {
-            console.log('dataaaa', data)
             await data.data.customers.map((value, index) => {
-
                 switch (value.kh_lienlac) {
                     case 'DD':
                         value.kh_lienlac_txt = 'Đại diện'
@@ -45,7 +43,6 @@ var CustomerController = {
 
                 res_customer.push(value)
             })
-            console.log(res_customer, 'data')
             data.data.customers = res_customer
             callback(data);
         });
@@ -140,9 +137,6 @@ var CustomerController = {
         delete customer.dm_db_id_tinh_customer
         delete customer.dm_db_id_xa_customer
         console.log(customer, 'customer custom')
-        if (Validator.isInt(customer.kh_sodienthoai, 'Số điện thoại không đúng định dạng !!')
-            // & Validator.isMail(customer.kh_email, 'Email không đúng định dạng !!')
-        ) {
             if (
                 await Validator.db.unique('khachhangs', 'kh_email', customer.kh_email, 'Email khách hàng này đã tồn tại !!')
                 & await Validator.db.unique('khachhangs', 'kh_sodienthoai', customer.kh_sodienthoai, 'Số điện thoại khách hàng này đã tồn tại !!')
@@ -154,7 +148,6 @@ var CustomerController = {
                     if (!response.success) {
                         Validator.error.push(constant.errorSys)
                         message = Validator.getError()
-                        status = 400
                     }
                     callback({
                         message: message,
@@ -171,7 +164,6 @@ var CustomerController = {
                     success: false
                 }, 400);
             }
-        }
     },
 
     insertDonvi: function insertDonvi(donvi, callback) {

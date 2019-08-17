@@ -10,7 +10,8 @@ const setpermiss = require('./router/setpermission')
 const role_action = require('./router/role_action')
 const port = 5000;
 
-
+var groupRoute = require('./router/group')
+var setGroupPermission = require('./router/setGroupPermission')
 var nhansuRoute = require('./router/nhansuRoute');
 var hotroRoute = require('./router/hotroRoute');
 var menuRoute = require('./router/menu_Route')
@@ -21,7 +22,8 @@ var hopdong = require('./router/hopdong')
 var userRouter = require('./router/index');
 var diabanRoute = require('./router/diaban')
 var duanRoute = require('./router/duan')
-
+var memberRoute = require('./router/memberRoute')
+var ChangePass = require('./router/changepass')
 var authorize = require('./middleware/authorize')
 app.use(bodyParser.urlencoded({
   extended: true
@@ -44,10 +46,13 @@ app.use(cors());
 
 
 app.use('/nhansu', nhansuRoute);
+app.use('/member', memberRoute);
+app.use('/changepass', ChangePass);
 
 app.use('/hotro',hotroRoute)
 app.use('/hopdong',hopdong)
 app.use('/menu', menuRoute)
+app.use('/group', groupRoute)
 
 app.use('/diaban', diabanRoute)
 app.use('/duan', duanRoute)
@@ -55,13 +60,14 @@ app.use('/duan', duanRoute)
 app.use('/khachhangRoute', khachhangRoute)
 app.use('/customer', cusrouter);
 app.use('/Login',login);
+app.use('/setGroupPermission',setGroupPermission);
 
 app.use('/checkrole',checked)
 
 app.use('/setpermission',setpermiss)
 app.use('/role_action',role_action)
 
-app.use('/user', userRouter);
+app.use('/user',userRouter);
 
 //app.use('/', authorize, hopdongrouters );
 

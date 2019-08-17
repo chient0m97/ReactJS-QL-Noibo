@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
+import Request from '@apis/Request'
 import { Form, Icon, Input, Button, message } from 'antd';
 import cookie from 'react-cookies'
 import logo from '@images/logo.png'
-
 import '@styles/login.css'
 
 class NormalLoginForm extends Component {
@@ -24,7 +23,7 @@ class NormalLoginForm extends Component {
                     password: this.state.password,
                 };
                 console.log('data post: ', user);
-                Axios.post('http://localhost:5000/Login', user)
+                Request('Login','POST',user)
                     .then((response) => {
                         if (response.data.success === true) {
                             let data = response.data;
@@ -47,7 +46,10 @@ class NormalLoginForm extends Component {
         console.log('heeeeeeeeeeeeeeeeee')
     }
     handleChangeInput = (e) => {
+
+        
         var user = this.props.form.getFieldsValue([ 'username', 'password' ]);
+        console.log("hien thi change input", user)
         this.setState(user);
     }
 

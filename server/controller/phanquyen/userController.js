@@ -76,23 +76,31 @@ var UserController = {
     },
     updateUser: function updateUser(user, callback) {
         console.log('controller')
-        if (Validator.isMail(user.email, 'Email không đúng định dạng')
-            & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
-            & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
-        ) {
-            console.log('go to db')
-            bcrypt.hash(user.password, 10, function (err, hash) {
-                user.password = hash;
-                userData.updateUser(user, (res) => {
-                    callback({
-                        success: res.success,
-                        message: res.success === true ? constant.successUpdate : constant.errorUpdate
-                    })
+        bcrypt.hash(user.password, 10, function (err, hash) {
+            user.password = hash;
+            userData.updateUser(user, (res) => {
+                callback({
+                    success: res.success,
+                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
                 })
-            });
+            })
+        });
 
 
-        }
+    },
+    changePass: function changePass(user, callback) {
+        console.log('controller',user)
+        bcrypt.hash(user.password, 10, function (err, hash) {
+            user.password = hash;
+            userData.changePass(user, (res) => {
+                callback({
+                    success: res.success,
+                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
+                })
+            })
+        });
+
+
     },
     Login: function getUserLogin(userName, callback) {
         userData.getUserLogin(userName, (data) => {
@@ -117,13 +125,13 @@ var UserController = {
             if (data.data.length > 0) {
                 var data = data.data.map(function (value) {
                     return value.role + '.' + value.action
-                    
+
                 });
                 callback(data)
             }
             else {
                 console.log('readdddd')
-                
+
                 callback(data.data)
             }
         })

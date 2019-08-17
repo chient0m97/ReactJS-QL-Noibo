@@ -16,7 +16,7 @@ class AppHeader extends Component {
     return (
       <Menu>
         <Menu.Item key="0">
-          <a href="/">Change Password</a>
+          <a href="/changepassword">Change Password</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a onClick={this.logOut} href="/">Log Out</a>
