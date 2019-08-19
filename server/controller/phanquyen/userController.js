@@ -125,13 +125,11 @@ var UserController = {
             if (data.data.length > 0) {
                 var data = data.data.map(function (value) {
                     return value.role + '.' + value.action
-
                 });
                 callback(data)
             }
             else {
                 console.log('readdddd')
-
                 callback(data.data)
             }
         })

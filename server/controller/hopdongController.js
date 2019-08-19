@@ -1,10 +1,19 @@
 
-var multer = require('multer')
-var Validator = require('../validate/common')
-const hopdongData = require('../data/hopdong.data')
-const constant = require('./constant')
+var multer = require('multer');
+var Validator = require('../validate/common');
+const hopdongData = require('../data/hopdong.data');
+const constant = require('./constant');
 const uuidv4 = require('uuid/v4');
-var path = require('path')
+var path = require('path');
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'public/upload/')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, Date.now() + '-' + file.originalname)
+//     }
+// })
+// var upload = multer({ storage: storage }).single('file')
 var HopdongController = {
     /**
      * Get user paging.
@@ -39,7 +48,6 @@ var HopdongController = {
 
     DeleteHopdongbyId: async function deleteHopdongbyId(Id, callback) {
         hopdongData.deleteHopdongbyId(Id, (data) => {
-
             if (data.success === true) {
                 callback({
                     success: data.success,
@@ -51,21 +59,18 @@ var HopdongController = {
     },
 
     insertHopdong: async function insertHopdong(hopdong, callback) {
-        var listfile = hopdong.hd_files.file
-        const storage = multer.diskStorage({
-            destination: '../uploads/',
-            filename:  function(req,file, cb){
-                cb(null, file.name )
-            }
-        })
-
-        const upload = multer({
-            storage: storage
-        }).single('myfile')
-
-        upload(listfile, (err)=> {
-            console.log(err, 'loi upload')
-        })
+        // var storage = multer.diskStorage({
+        //     destination: function (req, file, cb) {
+        //         cb(null, 'public/upload/')
+        //     },
+        //     filename: function (req, file, cb) {
+        //         cb(null, Date.now() + '-' + file.originalname)
+        //     }
+        // })
+        // var upload = multer({ storage: storage }).single('file')
+        // upload(hopdong, callback, (err) => {
+        //     console.log(err, 'loi upload')
+        // })
         // console.log(listfile, 'file list')
         // listfile.map((value, index)=> {
         //    var z = window.atob(value)

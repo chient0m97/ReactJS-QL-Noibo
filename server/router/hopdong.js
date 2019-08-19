@@ -19,14 +19,11 @@ router.post('/get', function (req, res) {
         res.send(data);
     })
 })
-
-
 router.delete('/delete', function (req, res) {
-  hopdongController.DeleteHopdongbyId(req.body.id, function (data) {
+  hopdongController.DeleteHopdongbyId(req.body.hd_id, function (data) {
         res.send(data);
     })
 })
-
 router.post('/insert',function (req, res) {
   hopdongController.insertHopdong(req.body, function (data) {
         res.send(data);
@@ -36,7 +33,7 @@ router.post('/insert',function (req, res) {
 
 router.post('/update',function (req, res) {
   //console.log('data res',req)
-  hopdongController.updateHopdong(req.body, function (data) {
+  hopdongController.UpdateHopdong(req.body, function (data) {
       res.send(data);
   })
 })

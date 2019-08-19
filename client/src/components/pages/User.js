@@ -138,6 +138,7 @@ class User extends React.Component {
   }
   //--------------DELETE-----------------------
   deleteUser = (id) => {
+    console.log('delte id: ', id)
     Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
@@ -185,6 +186,7 @@ class User extends React.Component {
       if (err) {
         return
       }
+      console.log('urllllllllllllllllllll', this.state.action)
       var url = this.state.action === 'insert' ? 'user/insert' : 'user/update'
       Request(url, 'POST', values)
         .then((response) => {
@@ -232,6 +234,7 @@ class User extends React.Component {
     }
     else {
       this.getUsers(page)
+      console.log(this.getUsers(page))
     }
   }
 
@@ -242,6 +245,7 @@ class User extends React.Component {
     });
     form.resetFields();
     if (user.id !== undefined) {
+      console.log('day la update')
       this.setState({
         id_visible: true,
         action: 'update'
