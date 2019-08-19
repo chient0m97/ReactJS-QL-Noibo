@@ -1,20 +1,19 @@
 
-var multer = require('multer')
-var Validator = require('../validate/common')
-const hopdongData = require('../data/hopdong.data')
-const constant = require('./constant')
+var multer = require('multer');
+var Validator = require('../validate/common');
+const hopdongData = require('../data/hopdong.data');
+const constant = require('./constant');
 const uuidv4 = require('uuid/v4');
-var path = require('path')
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/upload/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname)
-    }
-})
-var upload = multer({ storage: storage }).single('file')
-
+var path = require('path');
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'public/upload/')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, Date.now() + '-' + file.originalname)
+//     }
+// })
+// var upload = multer({ storage: storage }).single('file')
 var HopdongController = {
     /**
      * Get user paging.
@@ -26,10 +25,10 @@ var HopdongController = {
      * @param
      */
 
-    getHopdong: function getHopdong(pageNumber, pageSize, index, sortBy, callback) {
+    getHopdong: function getHopdong(pageNumber, pageSize,index, sortBy, callback){
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        hopdongData.getHopdong(limit, offset, index, sortBy, (data) => {
+        hopdongData.getHopdong(limit, offset,index, sortBy, (data) => {
             callback(data);
         });
     },
@@ -49,7 +48,6 @@ var HopdongController = {
 
     DeleteHopdongbyId: async function deleteHopdongbyId(Id, callback) {
         hopdongData.deleteHopdongbyId(Id, (data) => {
-
             if (data.success === true) {
                 callback({
                     success: data.success,
@@ -61,38 +59,59 @@ var HopdongController = {
     },
 
     insertHopdong: async function insertHopdong(hopdong, callback) {
-        var storage = multer.diskStorage({
-            destination: function (req, file, cb) {
-                cb(null, 'public/upload/')
-            },
-            filename: function (req, file, cb) {
-                cb(null, Date.now() + '-' + file.originalname)
-            }
-        })
-        var upload = multer({ storage: storage }).single('file')
-        upload(hopdong, callback, (err) => {
-            console.log(err, 'loi upload')
-        })
-        // upload(hopdong, function (err) {
-        //     if (err instanceof multer.MulterError) {
-        //       return 'res.status(500).json(err)'
-        //     } else if (err) {
-        //       return 'res.status(500).json(err)'
+        // var storage = multer.diskStorage({
+        //     destination: function (req, file, cb) {
+        //         cb(null, 'public/upload/')
+        //     },
+        //     filename: function (req, file, cb) {
+        //         cb(null, Date.now() + '-' + file.originalname)
         //     }
-        //     return hopdong.file
+        // })
+        // var upload = multer({ storage: storage }).single('file')
+        // upload(hopdong, callback, (err) => {
+        //     console.log(err, 'loi upload')
+        // })
+        // console.log(listfile, 'file list')
+        // listfile.map((value, index)=> {
+        //    var z = window.atob(value)
+        //    console.log(z, 'abcd')
+        // })
+        // var storage = multer.diskStorage({
+        //     destination: function(req, file, cb){
+        //       cb(null, './upload')
+        //     },
+        //     filename: function(req, file, cb){
+        //       cb(null, file.originalname)
+        //     }
         //   })
-        if (1) {
-            if (1) {
+        //   var upload = multer({storage:storage})
+        // if (Validator.isDate(hopdong.hd_ngayketthuc, 'Ngày kết thúc không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngayky, 'Ngày ký không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngaythanhly, 'Ngày thanh lý không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngayxuathoadon, 'Ngày xuất hóa đơn không đúng định dạng')
+        //     & Validator.isDate(hopdong.hd_ngaythanhtoan, 'Ngày thanh toán không đúng định dạng')
+        //     & 
+            if(1
+            //Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
+            //& Validator.isNum(hopdong.dm_duan_id, 'Dự án id không đúng định dạng')
+            //& 
+            // Validator.isAlpha(hopdong.hd_loai, 'Loại hợp đồng không đúng định dạng')
+            // & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')
+            
+        ) {
+
+            if (1
+                //await Validator.db.unique('hopdongs', 'hd_so', hopdong.hd_so, 'Số hợp đồng đã tồn tại !'
+                ) 
+            {
+                //console.log('ddax validate')
+                
                 let firtInsert;
                 firtInsert = hopdong;
                 //firtInsert.hd_so = 'Toi la chien: ' + firtInsert.hd_so;
-                // filename:  function filename(req, file) {
-                //     //cb(null, Date.now() + '-' +file.originalname ) 
-                //     firtInsert.hd_files = (Date.now() + '-' + file.originalname);
-                // }
-                //firtInsert.hd_files = (Date.now() + '-' + file.originalname);
                 firtInsert.hd_id = uuidv4();
-                hopdongData.insertHopdong(firtInsert, (response) => {
+
+                    hopdongData.insertHopdong(firtInsert, (response) => {
                     var message = constant.successInsert;
                     var status = 200;
                     if (!response.success) {
@@ -113,8 +132,8 @@ var HopdongController = {
             }
 
         } else {
-            var eror = Validator.getError()
-            //console.log('looix tra ve', eror)
+            var eror =  Validator.getError()
+                //console.log('looix tra ve', eror)
             callback({
                 message: eror,
                 success: false
@@ -122,71 +141,67 @@ var HopdongController = {
         }
     },
     UpdateHopdong: async function updateHopdong(hopdong, callback) {
-        //     if (
-        //     Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
-        //     & Validator.isNum(hopdong.dm_duan_id, 'Dự án id không đúng định dạng')
-        //     & Validator.isAlpha(hopdong.hd_loai, 'Loại hợp đồng không đúng định dạng')
-        //     & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')  
-        //  ) {
-        if (1) {
-            //console.log('hopdongController')
-            hopdongData.updateHopdong(hopdong, (res) => {
-                //console.log('hopdongController')
-                callback({
-                    success: res.success,
-                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
+    //     if (
+    //     Validator.isNum(hopdong.hd_thoigianthuchien, 'Thời gian thực hiện không đúng định dạng')
+    //     & Validator.isNum(hopdong.dm_duan_id, 'Dự án id không đúng định dạng')
+    //     & Validator.isAlpha(hopdong.hd_loai, 'Loại hợp đồng không đúng định dạng')
+    //     & Validator.isAlpha(hopdong.hd_trangthai, 'Trạng thái không đúng định dạng')  
+    //  ) {
+             if (1) {
+                 //console.log('hopdongController')
+                hopdongData.updateHopdong(hopdong, (res) => {
+                    //console.log('hopdongController')
+                    callback({
+                        success: res.success,
+                        message: res.success === true ? constant.successUpdate : constant.errorUpdate
+                    })
                 })
-            })
-        }
+           }
         //}
     },
-    //     Login: function getUserLogin(userName, callback) {
-    //         hopdongData.getUserLogin(userName, (data) => {
+//     Login: function getUserLogin(userName, callback) {
+//         hopdongData.getUserLogin(userName, (data) => {
 
-    //             callback(data);
-    //         })
-    //     },
-    getcha: function getcha(callback) {
-        hopdongData.getcha((data) => {
-            callback(data)
-        })
-    },
-    getdonvi: function getdonvi(callback) {
-        hopdongData.getdonvi((data) => {
-            callback(data)
-        })
-    },
-    getkhachhang: function getkhachhang(callback) {
-        hopdongData.getkhachhang((data) => {
-            callback(data)
-        })
-    },
-    getduan: function getduan(callback) {
-        hopdongData.getduan((data) => {
-            callback(data)
-        })
-    },
+//             callback(data);
+//         })
+//     },
+getcha: function getcha(callback){
+    hopdongData.getcha((data)=>{
+        callback(data)
+    })
+},
+getdonvi: function getdonvi(callback){
+    hopdongData.getdonvi((data)=>{
+        callback(data)
+    })
+},
+getkhachhang: function getkhachhang(callback){
+    hopdongData.getkhachhang((data)=>{
+        callback(data)
+    })
+},
+getduan: function getduan(callback){
+    hopdongData.getduan((data)=>{
+        callback(data)
+    })
+},
 
-    getinsertduan: function getinsertduan(callback) {
-        hopdongData.getinsertduan((data) => {
-            callback(data)
-        })
-    },
-    getupload: function getupload(callback){
-        hopdongData.getupload((data)=>{
-            callback(data)
-        })
-    },
-    
-    
-    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
+getinsertduan: function getinsertduan(callback){
+    hopdongData.getinsertduan((data)=>{
+        callback(data)
+    })
+},
+getupload: function getupload(callback){
+    // hopdongData.getupload((data)=>{
+    //     callback(data)
+    // })
+        
+},
+    search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        hopdongData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
-            console.log(limit)
-            console.log(offset)
-
-            console.log('aaaaaaaaa', data)
+        hopdongData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
+            //console.log('aaaaaaaaa',data)
             callback(data);
         })
     },
@@ -195,5 +210,5 @@ var HopdongController = {
         next()
     },
 
-}
+ }
 module.exports = HopdongController;

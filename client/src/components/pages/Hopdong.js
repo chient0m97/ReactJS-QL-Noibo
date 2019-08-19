@@ -1,39 +1,27 @@
 import React from 'react';
-//import Moment from 'react-moment';
 import axios from 'axios';
-import {  Card, Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
-// import ChildComp from './component/ChildComp';
+import { Pagination,Card, Tooltip, Icon, Table, Input, Modal, Popconfirm, message, Button, Upload, Form, Row, Col, notification, Alert, Select } from 'antd';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
-import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-//import { fetchHopdong } from '@actions/hopdong.action';
-//import { Cascader } from 'antd';
-//mport { Menu, Dropdown } from 'antd';
+import '@styles/style.css';
 import { fetchLoading } from '@actions/common.action';
 
 
 
-//const dateformat = 'YYYY-MM-DD HH:mm:ss';
 const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select;
-//const { Option, OptGroup } = Select
-const { Search } = Input;
-//const { Dragger } = Upload;
 const { TextArea } = Input;
 const formatdate = require('dateformat')
-
-
-// axios.post("/hopdong/upload", FormData, { // receive two parameter endpoint url ,form data 
-// })
-// .then(res => { // then print response status
-//   console.log(res.statusText)
-// })
 const FormModalDuan = Form.create({ name: 'form_create_duan' })(
   class extends React.Component {
     render() {
-      const { visible_duan, onCancel, onSave, form, title, confirmLoading, formtype, CreateDuan } = this.props;
+      const { visible_duan, onCancel, onSave, form, title, confirmLoading, formtype, CreateDuan, comboBoxDatasourceDuan } = this.props;
+      var comboboxduan = []
+      comboBoxDatasourceDuan.map((value, index) => {
+        comboboxduan.push(<Option value={value.ns_id}>{value.ns_ten}</Option>)
+      })
       const { getFieldDecorator } = form;
       return (
         <Modal
@@ -41,43 +29,43 @@ const FormModalDuan = Form.create({ name: 'form_create_duan' })(
           title={title}
           okText="Save"
           onCancel={onCancel}
-          onOk={onSave}
+          onOk={CreateDuan}
           confirmLoading={confirmLoading}
           width={1000}
         >
-          <Form layout={formtype} onSubmit={CreateDuan}>
-            <Row gutter={24}>
-              <Col span={24}>
-                <Form.Item label='Tên dự án:'>
-                  {getFieldDecorator('dm_duan_ten', {
-                    rules: [{}]
-                  })(<Input type="text" />)}
-                </Form.Item>
-              </Col>
-            </Row>
+          <Form layout={formtype}>
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label='Tiền tố:'>
-                  {getFieldDecorator('dm_duan_key', {
-                    rules: [{}]
-                  })(<Input type="text" />)}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label='Tên người quản trị:'>
-                  {getFieldDecorator('ns_id_qtda', {
-                    rules: [{}]
-                  })(<Input type="text" />)}
-                </Form.Item>
-              </Col>
-            </Row>
-            {/* <Row gutter={24}>
-              <Col>
                 <Form.Item>
-                  <Button type='primary' htmlType='submit'>Lưu</Button>
+                  {getFieldDecorator('dm_duan_id', {})}
                 </Form.Item>
               </Col>
-            </Row> */}
+              <Col span={24}>
+                <Form.Item label="Nhập thông tin dự án:">
+                  {getFieldDecorator('dm_duan_ten', {
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
+                  })(<Input type="text" placeholder="Tên dự án" />)}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={24}>
+              <Col span={12}>
+                <Form.Item label="Tiền tố">
+                  {getFieldDecorator('dm_duan_key', {
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
+                  })(<Input type="text" />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Quản trị dự án">
+                  {getFieldDecorator('ns_id_qtda', {
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
+                  })(<Select>
+                    {comboboxduan}
+                  </Select>)}
+                </Form.Item>
+              </Col>
+            </Row>
           </Form>
         </Modal>
       )
@@ -123,14 +111,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       comboBoxDuanSource.map((value) => {
         combobox1.push(<Option value={value.dm_duan_id}>{value.dm_duan_ten}</Option>)
       })
-
-      combobox1.push(
-
-        <Option value='add_duan'>
-          <Icon type="plus" />Thêm
-         </Option>
-
-      )
 
       // eslint-disable-next-line array-callback-return
       //console.log(propDatasourceSelectLoaiHopDong, 'datasource loaihopdong')
@@ -195,9 +175,10 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                       //   </div>
                       // )}
                       >
-
+                        <Option value='add_duan'>
+                          <Icon type="plus" />Thêm dự án
+                        </Option>
                         {combobox1}
-
                       </Select>
 
                     )}
@@ -379,10 +360,19 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     //rules: [ { required: true, message: 'Trường này không được để trống!' } ],
                   })(
                     //<Input type="txt" size="small" />
-                    <div>
+                    // <Dragger name="file"  onChange={onchangpagefile}>
+                    //   <p className="ant-upload-drag-icon" style={{ height: '39px' }}>
+                    //     <Icon type="inbox" />
+                    //   </p>
+                      /* <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                  <p className="ant-upload-hint">
+                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                    band files
+                  </p> */
+                   // </Dragger>
+                   <div>
                       <label>Upload your file</label>
-                      <input type="file" name="file" onChange={onchangpagefile} />
-
+                      <input type="file" name="file" />
                     </div>
                   )}
                 </Form.Item>
@@ -409,7 +399,15 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
     }
   },
 )
-
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: record => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+}
 class Hopdong extends React.Component {
   constructor(props) {
     super(props);
@@ -439,49 +437,41 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false,
       selectedRowKeys: [],
       selectedId: [],
-      selectedrow: [],
+      selected_file: null,
+      selectedFile: null,
       comboBoxDatasource: [],
+      comboBoxDatasourceDuan: [],
       comboBoxDuanSource: [],
       propDatasourceSelectLoaiHopDong: {
         dataSource: [],
         label: 'Chọn khách hàng là đơn vị:',
         type: 'DV'
-      },
-      selected_file: null,
-      selectedFile: null
+      }
     }
   }
   //--------------DELETE-----------------------
   //tu day den render
-  // deleteHopdong = (hd_id) => {
-  //   Request(`hopdong/delete`, 'DELETE', { hd_id: hd_id })
-  //     .then((res) => {
-  //       notification[res.data.success === true ? 'success' : 'error']({
-  //         message: 'Thông báo',
-  //         description: res.data.message
-  //       });
-  //       this.getHopdongs(this.state.page)
-  //     })
-  // }
   deleteHopdong = (hd_id) => {
-    Request(`hopdong/delete`, 'DELETE', { hd_id: hd_id })
-        .then((res) => {
-            notification[res.data.success === true ? 'success' : 'error']({
-                message: 'Thông báo',
-                description: res.data.message
-            });
-            this.getHopdongs(this.state.page)
-            this.setState({
-                stateconfirmdelete: false,
-                statebuttondelete: true,
-                statebuttonedit: true,
-                selectedRowKeys: []
-            })
+    console.log('asfsdfasdfasd',hd_id);
+
+    Request('hopdong/delete', 'DELETE', { hd_id: hd_id })
+      .then((res) => {
+        notification[res.data.success === true ? 'success' : 'error']({
+          message: 'Thông báo',
+          description: res.data.message
+        });
+        this.getHopdongs(this.state.page)
+        this.setState({
+          stateconfirmdelete: false,
+          statebuttondelete: true,
+          statebuttonedit: true,
+          selectedRowKeys: []
         })
+      })
     this.setState({
-        stateconfirmdelete: false
+      stateconfirmdelete: false
     })
-}
+  }
 
   getHopdongs = (pageNumber) => {
     if (pageNumber <= 0)
@@ -500,7 +490,7 @@ class Hopdong extends React.Component {
         //console.log('data trả về:', data)
         if (data.data)
           this.setState({
-            hopdongs: data.data.hopdongs,
+            hopdongs: data.data.hopdongs.rows,
             count: Number(data.data.count) // ép kiểu về    
           })
         //console.log('------------------------', this.state.hopdongs)
@@ -518,24 +508,23 @@ class Hopdong extends React.Component {
     //var formdata = new FormData()
     //formdata.append('files',file)
 
-    form.validateFields(async (err, values) => {
+    form.validateFields(async(err, values) => {
       if (err) {
         return
       }
       //console.log(values, "day la values");
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
+      //values.formdata = formdata
       const data = new FormData()
       if (this.state.selected_file !== null) {
         await data.append('file', this.state.selected_file)
-        console.log(this.state.selected_file, 'fil day')
-
-        // await data.append('files', this.state.selected_file)
-        // values.formfile = await data
-        // console.log(data, 'data form')
+        console.log(this.state.selected_file, 'file day')
       }
-      //values.formdata = formdata
-      Request(url, 'POST', data)
+      Request(url, 'POST', values)
         .then((response) => {
+          this.setState({
+            rowthotroselected: values
+          })
           if (response.status === 200 & response.data.success === true) {
 
             form.resetFields();
@@ -570,11 +559,8 @@ class Hopdong extends React.Component {
   }
   componentDidMount() {
     this.getHopdongs(this.state.pageNumber, this.state.index, this.state.sortBy);
-
-
-
-
   }
+
   onchangpage = (page) => {
     this.setState({
       page: page
@@ -618,7 +604,12 @@ class Hopdong extends React.Component {
     })
   }
   showModal = async (hopdong) => {
-
+    Request('duan/getcha', 'POST', null).then(res => {
+      console.log(res.data, 'data res combobox')
+      this.setState({
+        comboBoxDatasourceDuan: res.data
+      })
+    })
     Request('hopdong/getdonvi', 'POST', null).then(res => {
       this.setState({
         propDatasourceSelectLoaiHopDong: {
@@ -718,7 +709,7 @@ class Hopdong extends React.Component {
       })
 
       // }
-      await console.log(hopdong, 'hopdong truoc format')
+      // await console.log(hopdong, 'hopdong truoc format')
       hopdong.hd_ngayky = hopdong.hd_ngayky === null ? null : formatdate(hopdong.hd_ngayky, 'yyyy-mm-dd')
       hopdong.hd_ngaythanhly = hopdong.hd_ngaythanhly === null ? null : formatdate(hopdong.hd_ngaythanhly, 'yyyy-mm-dd')
       hopdong.hd_ngaythanhtoan = hopdong.hd_ngaythanhtoan === null ? null : formatdate(hopdong.hd_ngaythanhtoan, 'yyyy-mm-dd')
@@ -771,66 +762,41 @@ class Hopdong extends React.Component {
   }
 
   onShowSizeChange = async (current, size) => {
-    console.log('size', size);
-    console.log('curent', current);
+    // console.log('size', size);
+    // console.log('curent', current);
     await this.setState({
       pageSize: size
     });
     if (this.state.isSearch === 1) {
-      console.log('xxxx')
+      // console.log('xxxx')
       this.handleSearch(this.state.page, this.state.searchText, this.confirm, this.state.nameSearch,
         this.state.codeSearch);
-      console.log(this.state.page)
+      // console.log(this.state.page)
     }
     else {
       this.getHopdongs(this.state.page, this.state.index, this.state.sortBy)
     }
   }
 
-  search = async (xxxx) => {
-    console.log("đây là tìm kiếm", xxxx)
-    console.log('cai dkm', this.state.columnSearch)
-    Request('hopdong/search', 'POST', {
-        pageSize: this.state.pageSize,
-        pageNumber: this.state.page,
-        textSearch: xxxx,
-        columnSearch: this.state.columnSearch,
-        p1: this.state.index,
-        p2: this.state.sortBy
-    })
-        .then((response) => {
-            let data = response.data;
-            console.log('aaaaaaaaaaaaaaaaaa', data)
-            if (data.data)
-                this.setState({
-                    hopdongs: data.data.hopdongs,
-                    count: Number(data.data.count), // ép kiểu về
-                    textSearch: xxxx,
-                    isSearch: 1
-                })
-            console.log('data---------------------------', data);
-        })
-}
 
   onChangeSearchType = async (value) => {
-    console.log('hihi', this.state.searchText)
+    // console.log('hihi', this.state.searchText)
     await this.setState({
       columnSearch: value,
     })
     if (this.state.searchText) {
       this.search(this.state.searchText);
     }
-    console.log(`selected ${value}`);
+    // console.log(`selected ${value}`);
   }
 
   onSearch = (val) => {
-    console.log('search:', val);
+    // console.log('search:', val);
   }
 
   onHeaderCell = (column) => {
     return {
       onClick: async () => {
-        console.log('ccmnr', column.dataIndex)
         if (this.state.isSort) {
           await this.setState({
             sortBy: 'DESC',
@@ -847,7 +813,6 @@ class Hopdong extends React.Component {
           isSort: !this.state.isSort,
           index: column.dataIndex
         })
-        console.log('xx', this.state.isSort)
         if (this.state.isSearch === 1) {
           this.search(this.state.searchText)
         }
@@ -888,25 +853,6 @@ class Hopdong extends React.Component {
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
-
-  onSelectDuan = async (value) => {
-    if (value === 'add_duan') {
-      //console.log('dcm vao roif')
-      return this.setState({
-        visible_duan: true
-      })
-    }
-    // const { form } = this.formRef.props
-    // await this.set_select_tenkh(value);
-    // if (this.state.select_tenkh.length === 0) {
-    //     await form.setFieldsValue({ kh_id: '' })
-    // } else {
-    //     await form.setFieldsValue({ kh_id: 0})
-    // }
-    // console.log('===========================selected====================', value)
-  }
-
-
   onSelectChange = (selectedRowKeys, selectedRows) => {
     this.setState({
       selectedRowKeys,
@@ -933,11 +879,29 @@ class Hopdong extends React.Component {
       })
   }
 
+  onSelectDuan = async (value) => {
+    if (value === 'add_duan') {
+      //console.log('dcm vao roif')
+      return this.setState({
+        visible_duan: true
+      })
+    }
+    // const { form } = this.formRef.props
+    // await this.set_select_tenkh(value);
+    // if (this.state.select_tenkh.length === 0) {
+    //     await form.setFieldsValue({ kh_id: '' })
+    // } else {
+    //     await form.setFieldsValue({ kh_id: 0})
+    // }
+    // console.log('===========================selected====================', value)
+  }
+
   checkStateConfirm = () => {
     this.setState({
       stateconfirmdelete: true
     })
   }
+  
 
   clearChecked = () => {
     this.onSelectChange([], [])
@@ -946,9 +910,10 @@ class Hopdong extends React.Component {
   onRowClick = (row) => {
     this.onSelectChange([row.hd_id], [row])
   }
+ 
 
   onCancel_duan = () => {
-    console.log('cancel')
+    // console.log('cancel')
     this.setState({
       visible_duan: false
     })
@@ -968,19 +933,18 @@ class Hopdong extends React.Component {
   }
 
   CreateDuan = e => {
-    console.log('Đây là thêm dự án')
+    // console.log('Đây là thêm dự án')
+    console.log('da vao create duan');
     e.preventDefault();
-    Request(`hopdong/insertduan`, 'POST', null, {
-    }).then((res) => {
-      notification[res.data.success === true ? 'success' : 'error']({
-        message: 'Thông báo',
-        description: res.data.message
-      });
-      this.getHopdongs(this.state.page)
-    })
+    Request(`duan/insert`, 'POST', null)
+      .then((response) => {
+        if (response.status === 200 & response.data.success === true) {
+          console.log('them thanh cong');
+        }
+      })
   }
   onchangpagefile = e => {
-    console.log(e.target.files[0], 'file change')
+    console.log(e.target.files[0].name, 'file name')
     //var ob = 
     //const file = new FileReader();
 
@@ -1013,7 +977,11 @@ class Hopdong extends React.Component {
       hideDefaultSelections: true,
       selectedRowKeys,
       onChange: this.onSelectChange,
-    }
+      getCheckboxProps: record => ({
+        disabled: Column.title === 'Id', // Column configuration not to be checked
+        name: record.name,
+      }),
+    };
     var dateFormat = require('dateformat');
     if (token)
       return (
@@ -1039,7 +1007,6 @@ class Hopdong extends React.Component {
                   <Popconfirm
                     title="Bạn chắc chắn muốn xóa?"
                     onConfirm={this.deleteHopdong.bind(this, this.state.selectedId)}
-                    //onConfirm={this.deleteHopdong.bind(this, record.hd_id)}
                     onCancel={this.cancel}
                     okText="Yes"
                     cancelText="No"
@@ -1049,16 +1016,6 @@ class Hopdong extends React.Component {
                       <Icon type="delete" />
                     </Button>
                   </Popconfirm>
-                  {/* <Popconfirm
-                      title="Bạn chắc chắn muốn xóa?"
-                      onConfirm={this.deleteHopdong.bind(this, record.hd_id)}
-                      onCancel={this.cancel}
-                      okText="Yes"
-                      cancelText="No">
-                      <Button type="danger"  >
-                        <Icon type="delete" />
-                      </Button>
-                    </Popconfirm> */}
                 </Tooltip>
               </Col>
               <Col span={2}>
@@ -1073,43 +1030,9 @@ class Hopdong extends React.Component {
               </Col>
             </Row>
           </Card>
-
-          {/* <div className="container">
-            <div className="row">
-              <div className="offset-md-3 col-md-6">
-                <div className="form-group files">
-                  <label>Upload your file</label>
-                  <input type="file" name="file" onChange={this.onChangeHandler} />
-                </div>
-                <button type="button" className="btn btn-success btn-block" onClick={this.onClickHandler}>Upload</button>
-              </div>
-            </div>
-          </div> */}
           <hr />
-          {/* <Row className="table-margin-bt">
-            <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
-                <Icon type="plus" />
-              </Button>
-            </Col>
-
-            <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
-                <Icon type="reload" />
-              </Button>
-            </Col>
-          </Row> */}
-          
-          
-            {/* <Search style={{ width: 300 }} pla
-        
-        
-        
-        ceholder="input search text" onSearch={(value) => { this.search(value) }} enterButton /> */}
-               
-          <Row className="table-margin-bt" >
+          <Row  className="table-margin-bt">
             <FormModal
-
               wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
               onCancel={this.handleCancel}
@@ -1126,8 +1049,8 @@ class Hopdong extends React.Component {
               onChangeClick_loaihopdong={this.onChangeClick_loaihopdong}
               propDatasourceSelectLoaiHopDong={this.state.propDatasourceSelectLoaiHopDong}
               onchangpagefile={this.onchangpagefile}
+              //onhiddenbutton =  {this.onhiddenbutton}
               onClickHandler={this.onClickHandler}
-            //onhiddenbutton =  {this.onhiddenbutton}
             />
 
             <FormModalDuan
@@ -1138,33 +1061,43 @@ class Hopdong extends React.Component {
               title={this.state.title_duan}
               formtype={this.state.formtype_duan}
               CreateDuan={this.CreateDuan}
+              comboBoxDatasourceDuan={this.state.comboBoxDatasourceDuan}
             />
 
-
-            <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} rowKey="hd_id" scroll={{ x: 1000 }} >
+            <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1300 }}>
               <Column
                 title={<span>id hợp đồng<Icon type={this.state.orderby} /></span>}
                 dataIndex="hd_id"
                 key="hd_id"
                 onHeaderCell={this.onHeaderCell}
-                className="an"
+                className="hidden-action"
+                width={150}
               />
               <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} />
-              <Column title="Loại hợp đồng" className="an" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Loại hợp đồng" dataIndex="ten_hd_loai" key="ten_hd_loai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Tên đối tượng" className='an' dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
-              <Column title="Tên đối tượng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell} />
-              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} />
-              <Column title="Thời gian thực hiện(ngày)" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc"
+              <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
+              {/* <Column title="Loại hợp đồng" dataIndex="ten_hd_loai" key="ten_hd_loai" onHeaderCell={this.onHeaderCell} /> */}
+              <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
+              {/* <Column title="Tên đối tượng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell} width={150} /> */}
+              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} />
+              <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} width={150}
+                render={
+                  text => {
+                    if (text === null)
+                      return ' '
+                    else
+                      return text + ' ngày'
+                  }}
+              />
+              <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
                 render={
                   text => {
                     if (text === null)
                       return ' '
                     else
                       return dateFormat(text, "dd/mm/yyyy")
-                  }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Địa chỉ" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} />
+                  }}
+                onHeaderCell={this.onHeaderCell} />
+              <Column title="Địa chỉ" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} width={150} />
               <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" render={
                 text => {
                   if (text === null)
@@ -1193,50 +1126,18 @@ class Hopdong extends React.Component {
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Trạng thái" className="an" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
+              <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Files" dataIndex="hd_files" key="hd_files" onHeaderCell={this.onHeaderCell} />
               <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" onHeaderCell={this.onHeaderCell} />
-              <Column
-                visible={false}
-                title="hành động"
-                key="action"
-                render={(text, record) => (
-
-                  <span>
-
-                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.hd_id, text)}>
-                      <Icon type="edit" />
-
-                    </Button>
-                    <Popconfirm
-                      title="Bạn chắc chắn muốn xóa?"
-                      onConfirm={this.deleteHopdong.bind(this, record.hd_id)}
-                      onCancel={this.cancel}
-                      okText="Yes"
-                      cancelText="No">
-                      <Button type="danger"  >
-                        <Icon type="delete" />
-                      </Button>
-                    </Popconfirm>
-                  </span>
-                )}
-              />
-
             </Table>
-
           </Row>
           <hr />
           <Row>
             <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
           </Row>
         </div>
-
       );
-    else
-      return (
-        <Login />
-      )
   }
 }
 const mapStateToProps = state => ({
@@ -1245,7 +1146,6 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps,
   {
-    //fetchHopdong,
     fetchLoading
   }
 )(Hopdong);

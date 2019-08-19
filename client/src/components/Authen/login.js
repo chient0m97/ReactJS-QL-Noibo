@@ -19,16 +19,18 @@ class NormalLoginForm extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let user = {
+                var user = {
                     username: this.state.username,
                     password: this.state.password,
                 };
                 console.log('data post: ', user);
-                Axios.post('http://localhost:5000/login', user)
+                Axios.post('http://localhost:5000/Login', user)
                     .then((response) => {
                         if (response.data.success === true) {
                             let data = response.data;
                             cookie.save('token', data.token, { path: '/' })
+                            cookie.save('role',data.role,{})
+                            cookie.save('user',this.state.username)
                             window.location.reload()
                         }
                         else {
@@ -41,6 +43,9 @@ class NormalLoginForm extends Component {
                     })
             }
         });
+    }
+    getState = ()=>{
+        console.log('heeeeeeeeeeeeeeeeee')
     }
     handleChangeInput = (e) => {
         var user = this.props.form.getFieldsValue([ 'username', 'password' ]);

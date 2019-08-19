@@ -7,7 +7,7 @@ class Loading extends Component {
         return (
             <div className="modal-loading" style={{display: this.props.loading ? 'block' : 'none'}}>
                 <div class="loading-ring">
-                    Loading
+                    Đợi Tý
                 <span></span>
                 </div>
             </div>

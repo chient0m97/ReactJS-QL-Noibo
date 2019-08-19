@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Checkbox, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -7,54 +7,55 @@ import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
-
+import '@styles/style.css';
+import jwt from 'jsonwebtoken';
+import Permission from '../Authen/Permission'
+import TreeRole from '../common/Tree'
+import SearchModal from '../common/searchModal'
 const token = cookie.load('token');
 const { Column } = Table;
-const {Option} = Select
-const { Search } = Input;
-
-
-
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        messageRequired: 'Trường này không được bỏ trống!'
+
+
+      }
+    }
     render() {
-      const { visible, onCancel, onSave, form, title, confirmLoading, formtype, id_visible } = this.props;
+      const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
       console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
         <Modal
           visible={visible}
           title={title}
-          okText="Save"
+          okText="Lưu"
           onCancel={onCancel}
           onOk={onSave}
           confirmLoading={confirmLoading}
           width={1000}
         >
           <Form layout={formtype}>
-            <Row gutter={24}>
+            <Row gutter={24} >
               <Col span={24}>
-                <div style={{ display: id_visible === true ? 'block' : 'none' }}>
+                <div style={{ display: 'none' }}>
                   <Form.Item label="Id:" >
                     {getFieldDecorator('id', {
-                      rules: [ {} ],
+
                     })(<Input type="number" disabled />)}
                   </Form.Item>
                 </div>
               </Col>
             </Row>
             <Row gutter={24}>
-              <Col span={12}>
-                <Form.Item label="Mã:">
-                  {getFieldDecorator('code', {
-                    rules: [ { required: true, message: 'Trường này không được bỏ trống!', } ],
-                  })(<Input type="text" />)}
-                </Form.Item>
-              </Col>
+
               <Col span={12}>
                 <Form.Item label="Tên đầy đủ:">
                   {getFieldDecorator('fullname', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [{ required: true, message: this.state.messageRequired, }],
                   })(<Input type="text" />)}
                 </Form.Item>
               </Col>
@@ -63,15 +64,15 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Tên đăng nhập">
                   {getFieldDecorator('name', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
+                    rules: [{ required: true, message: this.state.messageRequired, }],
                   })(<Input type="text" placeholder="user name" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Mật khẩu:">
                   {getFieldDecorator('password', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" />)}
+                    rules: [{ required: true, message: this.state.messageRequired, }],
+                  })(<Input type="password" />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -79,15 +80,17 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Email:">
                   {getFieldDecorator('email', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!' }, { email: true, message: 'Trường này phải là email!' } ],
+                    rules: [{ required: true, message: this.state.messageRequired }, { email: true, message: 'Trường này phải là email!' }],
                   })(<Input type="email" />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label="Số điện thoại:">
                   {getFieldDecorator('phone', {
-                    rules: [ { required: true, message: 'Trường này không được để trống!', } ],
-                  })(<Input type="text" />)}
+                    rules: [{ required: true, message: this.state.messageRequired, }],
+                  })(<Input type="phone" />
+
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -116,18 +119,30 @@ class User extends React.Component {
       action: 'insert',
       isSearch: 0,
       searchText: '',
-      columnSearch: '',
+      columnSearch: 'name',
       isSort: true,
-      sortBy: '',
-      index: 'id',
+      sortBy: 'ASC',
+      index: 'name',
       orderby: 'arrow-up',
+      nameSearch: '',
+      emailSearch: '',
+      phoneSearch: '',
+      passwordSearch: '',
+      fullnameSearch: '',
+      codeSearch: '',
+      roleVisible: 'none',
+      modalRoleVisible: false,
+      actionColumn: 'action-hide',
+      users: [],
+      selectedRowKeys:[]
     }
   }
   //--------------DELETE-----------------------
   deleteUser = (id) => {
+    console.log('delte id: ', id)
     Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
-        notification[ res.data.success === true ? 'success' : 'error' ]({
+        notification[res.data.success === true ? 'success' : 'error']({
           message: 'Thông báo',
           description: res.data.message
         });
@@ -136,11 +151,12 @@ class User extends React.Component {
   }
 
   getUsers = (pageNumber) => {
+
+    console.log('index', this.state.index)
+    console.log('sortby', this.state.sortBy)
     if (pageNumber <= 0)
       return;
-    this.props.fetchLoading({
-      loading: true
-    })
+
     Request('user/get', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
@@ -148,25 +164,34 @@ class User extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        let data = response.data;
-        if (data.data)
-          this.setState({
-            users: data.data.users,
-            count: Number(data.data.count)//eps kieeru veef
+        console.log('res', response)
+        if (response) {
+          let data = response.data;
+          console.log('data', data.data.users[0])
+          let objUsers = Object.keys(data.data.users[0])
+          if (data.data)
+            this.setState({
+              objUsers: objUsers,
+              users: data.data.users,
+              count: Number(data.data.count)//eps kieeru veef
+            })
+          this.props.fetchLoading({
+            loading: false
           })
-        this.props.fetchLoading({
-          loading: false
-        })
+        }
+
       })
+
   }
-  // insert---------------------------------
 
   InsertOrUpdateUser = () => {
     const { form } = this.formRef.props;
+
     form.validateFields((err, values) => {
       if (err) {
         return
       }
+      console.log('urllllllllllllllllllll', this.state.action)
       var url = this.state.action === 'insert' ? 'user/insert' : 'user/update'
       Request(url, 'POST', values)
         .then((response) => {
@@ -182,14 +207,14 @@ class User extends React.Component {
           var message = 'Thành công'
 
           if (!!!response.data.success) {
-            message = 'Có lỗi xảy ra!'
+            message = 'Lỗi Cmnr'
             notifi_type = 'error'
             description = response.data.message.map((value, index) => {
               return <Alert type='error' message={value}></Alert>
             })
           }
           //thông báo lỗi vòa thành công
-          notification[ notifi_type ]({
+          notification[notifi_type]({
             message: message,
             description: description
           });
@@ -202,18 +227,20 @@ class User extends React.Component {
     this.getUsers(this.state.pageNumber)
   }
   componentDidMount() {
-    this.getUsers(this.state.pageNumber, this.state.index, this.state.sortBy);
+    this.getUsers(this.state.pageNumber);
   }
-  onchangpage = (page) => {
-    this.setState({
+  onchangpage = async (page) => {
+    console.log('page', page)
+    await this.setState({
       page: page
     })
 
-    this.getUsers(page); if (this.state.isSearch === 1) {
+    if (this.state.isSearch === 1) {
       this.search(this.state.searchText)
     }
     else {
       this.getUsers(page)
+      console.log(this.getUsers(page))
     }
   }
 
@@ -224,6 +251,7 @@ class User extends React.Component {
     });
     form.resetFields();
     if (user.id !== undefined) {
+      console.log('day la update')
       this.setState({
         id_visible: true,
         action: 'update'
@@ -247,7 +275,7 @@ class User extends React.Component {
 
   handleChangeInput = (e) => {
     let state = this.state;
-    state[ e.target.name ] = e.target.value;
+    state[e.target.name] = e.target.value;
     this.setState(state);
   }
   handleCount = () => {
@@ -271,32 +299,37 @@ class User extends React.Component {
   onShowSizeChange = async (current, size) => {
     console.log('size', size);
     console.log('curent', current);
+    console.log('txt', this.state.isSearch);
+    console.log(this.state.isSearch)
     await this.setState({
       pageSize: size
     });
-    if (this.state.isSearch === 1) {
-      console.log('xxxx')
-      this.handleSearch(this.state.page, this.state.searchText, this.confirm, this.state.nameSearch, this.state.codeSearch);
-      console.log(this.state.page)
+    if (this.state.searchText) {
+      this.search(this.state.searchText);
+
     }
     else {
-      this.getUsers(this.state.page, this.state.index, this.state.sortBy)
+      this.getUsers(this.state.page)
     }
   }
 
   search = async (xxxx) => {
-
-    Request('user/Search', 'POST', {
+    console.log('xxxxxxxxxxxx', this.state.pageSize)
+    console.log('search text', xxxx)
+    console.log('column search', this.state.columnSearch)
+    Request('user/search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
-      textSearch: xxxx,
+      searchText: xxxx,
       columnSearch: this.state.columnSearch,
       p1: this.state.index,
-      p2: this.state.sortBy
+      p2: this.state.sortBy,
+
     })
       .then((response) => {
         let data = response.data;
-        console.log(data)
+
+        console.log('aaaaaaaaaaaaa', data)
         if (data.data)
           this.setState({
             users: data.data.users,
@@ -348,7 +381,7 @@ class User extends React.Component {
           index: column.dataIndex
         })
         console.log('xx', this.state.isSort)
-        if (this.state.isSearch === 1) {
+        if (this.state.isSearch == 1) {
           this.search(this.state.searchText)
         }
         else {
@@ -361,114 +394,241 @@ class User extends React.Component {
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
+  removeSearch = () => {
+    this.setState({
+      searchText: ''
+    })
+  }
+  onchangeSearch = (event) => {
+    let value = event.target.value
+    this.search(value)
 
+  }
+  ChangeCheckbox = () => {
+  }
+  showmodalRole = async (name) => {
 
+    if (name) {
+      this.setState({
+        modalRoleVisible: true,
+
+      })
+    }
+    else {
+      message.info('chọn user đã nhóc');
+    }
+
+  }
+  okRole = async e => {
+    let user = this.state.selectedId
+    let a = this.child.state.checkedKeys
+    Request('setpermission', 'POST', { a, user }).then(res => {
+
+    })
+    console.log('data con ', a)
+    await this.setState({
+      modalRoleVisible: false,
+    });
+  };
+
+  cancelRole = e => {
+    console.log('cancel')
+    this.setState({
+      modalRoleVisible: false,
+    });
+  };
+  changeRows = (selectedRowKeys, selectedRows) => {
+    console.log('checked')
+  }
+
+  handleClickRow(rowIndex) {
+    let users = this.state.users;
+    users[rowIndex].Selected = true;
+    this.setState({
+      users: users
+    })
+  }
   render() {
-    if (token)
-      return (
-        <div>
-          <Row className="table-margin-bt">
-            <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.showModal.bind(null)}>
-                <Icon type="plus" />
-              </Button>
-            </Col>
-
-            <Col span={1}>
-              <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
-                <Icon type="reload" />
-              </Button>
-            </Col>
-
-          </Row>
-          <div>
-            <Select
-              defaultValue={[ 'name' ]}
-              showSearch
-              style={{ width: 200 }}
-              placeholder="Select a person"
-              optionFilterProp="children"
-              onChange={this.onChange}
-              // onFocus={this.onFocus}
-              // onBlur={this.onBlur}
-              onSearch={this.onSearch}
-              filterOption={(input, option) =>
-                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              <Option value="name">User Name</Option>
-              <Option value="code">Code</Option>
-              <Option value="email">Email</Option>
-              <Option value="password">Password</Option>
-              <Option value="phone">Phone Number</Option>
-              <Option value="fullname">Full name</Option>
-            </Select>&nbsp;
-          <Search style={{ width: 300 }} placeholder="input search text" onSearch={(value) => { this.search(value) }} enterButton />
-
-          </div>
-          <Row className="table-margin-bt">
-            <FormModal
-              wrappedComponentRef={this.saveFormRef}
-              visible={this.state.visible}
-              onCancel={this.handleCancel}
-              onSave={this.InsertOrUpdateUser}
-              title={this.state.title}
-              formtype={this.state.formtype}
-              id_visible={this.state.id_visible}
-            />
-
-
-            <Table pagination={false} scroll={{x: 1000}} dataSource={this.state.users} rowKey="id" >
-              <Column
-                title={<span>Id <Icon type={this.state.orderby} /></span>}
-                dataIndex="id"
-                key="id"
-                onHeaderCell={this.onHeaderCell}
-
-              />
-              <Column title="User Name" dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
-              />
-              <Column title="Code" dataIndex="code" key="code"  onHeaderCell={this.onHeaderCell}/>
-              <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
-              <Column title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
-              <Column title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
-              <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
-              <Column
-                visible={false}
-                title="Action"
-                key="action"
-                render={(text, record) => (
-
-                  <span>
-                    <Button style={{ marginRight: 20 }} type="primary" onClick={this.showModal.bind(record.id, text)}>
-                      <Icon type="edit" />
-                    </Button>
-                    <Popconfirm
-                      title="Bạn chắc chắn muốn xóa?"
-                      onConfirm={this.deleteUser.bind(this, record.id)}
-                      onCancel={this.cancel}
-                      okText="Yes"
-                      cancelText="No">
-                      <Button type="danger"  >
-                        <Icon type="delete" />
-                      </Button>
-                    </Popconfirm>
-                  </span>
-                )}
-              />
-
-            </Table>
-          </Row>
-          <Row>
-            <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
-          </Row>
-        </div>
-
-      );
-    else
+    let token = cookie.load('token');
+    if (!token || !jwt.decode(token)) {
       return (
         <Login />
       )
+    }
+    let payload = jwt.decode(token);
+    let claims = payload.claims;
+    console.log('quyen ', claims)
+    let canPermiss = claims.indexOf(Permission.Role.Permiss) >= 0;
+    console.log('permis', canPermiss)
+    let canRead = claims.indexOf(Permission.User.Read) >= 0;
+    let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
+    let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
+    let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
+
+    const rowSelection = {
+      type: 'radio',
+      hideDefaultSelections: true,
+      onChange: async (selectedRowKeys, selectedRows) => {
+        console.log('click rowwwwwwwwwwwwwwwww')
+        let sl = selectedRowKeys[0]
+        Request('checkrole', 'POST', { sl }).then((res) => {
+          let data = res.data;
+          let a = data.map(function (value) {
+            return a = { role: value.split('.')[0], acton: value.split('.')[1] }
+          })
+          this.setState({
+            dataTree: data,
+          })
+          console.log('ROLEeeee', this.state.dataTree)
+
+        })
+        console.log('selected rowkeys', selectedRowKeys)
+        if (selectedRows[0]) {
+          console.log('kkkkkkk')
+          await this.setState({
+            selectedId: selectedRowKeys[0],
+            user: selectedRows[0],
+            selectedRowKeys
+          })
+        }
+
+      },
+
+      getCheckboxProps: record => ({
+
+        disabled: Column.title === 'Id', // Column configuration not to be checked
+        name: record.name,
+      }),
+
+    };
+    return (
+
+      <div>
+        {
+          canRead ?
+            <div>
+              <Modal
+                title="Phân quyền "
+                visible={this.state.modalRoleVisible}
+                onOk={this.okRole}
+                onCancel={this.cancelRole}
+              >
+                <TreeRole ref={instance => this.child = instance} dataTree={this.state.dataTree} />
+              </Modal>
+
+              <SearchModal col={this.state.objUsers} changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
+              <div style={{ display: 'flex' }}>
+                {
+                  canPermiss ?
+                    <div>
+                      <Button style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
+                        <Icon type="user" />
+                      </Button> Phân Quyền
+                    </div>
+                    : null
+                }
+                {
+                  canUpdate ?
+                    <div>
+                      <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
+                        <Icon type="edit" />
+                      </Button> Sửa
+                    </div>
+                    : null
+                }
+
+                {
+                  canCreate ?
+                    <div>
+                      <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
+                        <Icon type="plus" />
+                      </Button> Thêm
+                </div>
+                    : null
+                }
+                {
+                  canDelete ?
+                    <Popconfirm
+                      title="Bạn chắc chắn muốn xóa?"
+                      onConfirm={this.deleteUser.bind(this, this.state.selectedId)}
+                      onCancel={this.cancel}
+                      okText="Yes"
+                      cancelText="No">
+                      <Button type="danger" style={{ margin: '20px' }} >
+                        <Icon type="delete" />
+                      </Button> Xóa
+                    </Popconfirm>
+                    :
+                    null
+                }
+
+              </div>
+              <div>
+
+                <div>
+                  <Row className="table-margin-bt">
+                    <FormModal
+                      datacha={this.state.datacha}
+                      wrappedComponentRef={this.saveFormRef}
+                      visible={this.state.visible}
+                      onCancel={this.handleCancel}
+                      onSave={this.InsertOrUpdateUser}
+                      title={this.state.title}
+                      formtype={this.state.formtype}
+                      id_visible={this.state.id_visible}
+                    />
+
+
+                    <Table
+
+                      onRow={(record, rowIndex) => {
+                        return {
+                          onClick: event => {
+                            this.handleClickRow.bind(this, rowIndex)
+                            console.log('aaaaaaaaaaaaaaaaaa', event)
+                            console.log('reacassadasdad', record.name)
+                            this.setState({
+                              selectedRowKeys:[rowIndex]
+                            })
+                            console.log('reacassadasdad', rowIndex)
+
+                          },
+                        };
+                      }}
+                      expandRowByClick="true" onChange={this.changeRows}
+                      pagination={false}
+                      rowSelection={rowSelection}
+                      dataSource={this.state.users} rowKey="name" >
+                      <Column className="action-hide"
+                        title={<span>Id <Icon type={this.state.orderby} /></span>}
+                        dataIndex="id"
+                        key="id"
+                        onHeaderCell={this.onHeaderCell}
+                      />
+                      <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
+                      />
+                      <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
+                      <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
+                      <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
+                      <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
+
+
+                    </Table>
+                  </Row>
+                  <Row>
+                    <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+                  </Row>
+                </div>
+
+
+              </div>
+            </div>
+            : <h1>Mày đéo có quyền vào đây</h1>
+        }
+
+      </div >
+
+    )
   }
 }
 const mapStateToProps = state => ({

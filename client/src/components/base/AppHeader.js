@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu } from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col } from 'antd'
 import cookie from 'react-cookies'
 
 const { Header } = Layout
 
 class AppHeader extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       menu: null,
@@ -34,23 +34,25 @@ class AppHeader extends Component {
 
   logOut = (e) => {
     cookie.remove('token', { path: '/' })
+    cookie.remove('user',this.state.username)
     window.location.reload();
   }
 
   componentDidMount() {
     this.setState({
-      menu: this.renderMenuUser
+      menu: this.renderMenuUser,
     })
   }
+
   render() {
     return (
       <Header style={{ background: '#fff', padding: 0 }}>
-        <Button type="primary" onClick={this.toggleCollapsed} style={{ marginLeft: 12 }}>
+        <Button type="dashed" onClick={this.toggleCollapsed} style={{ marginLeft: 12 }}>
           <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
         </Button>
-        <Dropdown overlay={this.state.menu} trigger={[ 'click' ]}>
+        <Dropdown overlay={this.state.menu} trigger={['click']}>
           <a style={{ marginLeft: '90%' }} className="ant-dropdown-link" href="/">
-            <Icon type="user" />
+            <Icon type="user" style={{ fontSize: '20px' }} />
           </a>
         </Dropdown>
               </Header>

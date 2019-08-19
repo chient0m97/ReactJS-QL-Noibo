@@ -16,13 +16,13 @@ constructor = (value, errMessage) => {
     }
     
     if ((typeof value) + '' === 'string' & value.length > 0) {
-        console.log('igui',value)
+        
 
         return true
     }
 
     return false
-}
+}       
 
 asyncQuery = async (table, column, value) => {
     await knex(table).where(column, value)
@@ -90,6 +90,27 @@ var Validator = {
         }
         return false
     },
+    isInt: (value, errMessage) => {
+        if (constructor(value, errMessage)) {
+            if(regExpConfig.isInt.test(value)) 
+            return true
+        }
+        else {
+            Validator.error.push(defaultMessage)
+            return false
+        }
+
+    },
+    Name: (value, errMessage) => {
+        if (constructor(value, errMessage)) {
+            if(regExpConfig.Name.test(value)) 
+            return true
+        }
+        else {
+            Validator.error.push(defaultMessage)
+            return false
+        }
+    },
     isNum: (value, errMessage) => {
         if (constructor(value, errMessage)) {
             if (regExpConfig.isNum.test(value))
@@ -107,7 +128,8 @@ var Validator = {
             defaultMessageUnique = errMessage
             var is_valid = await knex(table).where(column, value)
                 .then((res) =>  {
-                    if (res.length > 0) { 
+                    if (res.length > 0) {
+                        Validator.error.push(defaultMessageUnique) 
                         return false
                     } else {
                         return true
@@ -115,7 +137,8 @@ var Validator = {
                 }).catch((err) => {
                     Validator.error.push(err)
                 })
-                console.log(is_valid, 'dcm' + column)
+                console.log(is_valid, 'unique : ' + column)
+                console.log(defaultMessageUnique,'message error')
                 return is_valid
         },
         uniqueIgrone: async (table, column, value, errMessage) => {

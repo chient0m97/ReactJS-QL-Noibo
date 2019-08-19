@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment';
 import vi_VN from 'antd/lib/locale-provider/vi_VN'
 import 'moment/locale/vi';
-
+import { Upload, Button, Icon } from 'antd';
 //import componen
 import { Layout } from 'antd';
 
@@ -14,7 +14,6 @@ import AppHeader from '@components/base/AppHeader'
 import AppFooter from '@components/base/AppFooter'
 import Loading from '@components/base/Loading'
 
-
 // router 
 import routers from '@configs/router.config'
 import { connect } from 'react-redux'
@@ -24,16 +23,14 @@ import { fetchLoading } from '@actions/common.action';
 
 moment.locale('fr');
 
-
 const { Content } = Layout;
-
 
 class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       routers: null,
-      collapsed: false
+      collapsed: false,
     };
   }
 
@@ -50,10 +47,8 @@ class Main extends React.Component {
             })
           }
         </Switch>
-
       )
     })
-
   }
 
   ChangeCollapsed = (collapsed) => {
@@ -62,7 +57,6 @@ class Main extends React.Component {
       collapsed: collapsed
     })
   }
-
 
   componentDidMount() {
     this.renderRouter()
@@ -83,8 +77,8 @@ class Main extends React.Component {
               {/* header */}
               <Content
                 style={{
-                  margin: '24px 16px',
-                  padding: 24,
+                  margin: '8px',
+                  padding: 8,
                   background: '#fff',
                   minHeight: 580,
                 }}

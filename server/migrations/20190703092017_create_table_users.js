@@ -1,7 +1,7 @@
 
 exports.up = function (knex) {
     return knex.schema.createTable('dcms', function (table) {
-        table.increments('id').primary();
+        table.string('id').unique().primary();
         table.string('name');
         table.string('fullname');
         table.string('password');
@@ -11,5 +11,5 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
     return knex.schema
-    .dropTable("dcms")
+    .dropTableIfExists("dcms")
 };
