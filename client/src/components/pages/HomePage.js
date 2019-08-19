@@ -194,15 +194,6 @@ export default class HomePage extends Component {
                         </Row>
                         <Row style={{ marginTop: '15px' }}>
                             <Card bordered={false}>
-                                {/* <Col span={9}>
-                                    <Pie data={data} />
-                                </Col>
-                                <Col span={3} style={{ fontSize: '24px', width: '10%', marginRight: 20 }}>
-                                    <div style={{ color: 'red', }} >Giới Tính</div>
-                                    <div style={{ fontSize: '18px', borderTop: '1px solid #e8e8e8' }}>Nam : {this.state.dataChartjs[0]}</div>
-                                    <div style={{ fontSize: '18px' }}>Nữ:  {this.state.dataChartjs[1]}</div>
-                                    <div style={{ fontSize: '18px' }}>Khác: {this.state.dataChartjs[2]}</div>
-                                </Col> */}
                                 <Col span={9}>
                                     <Tabs>
                                         <TabPane
