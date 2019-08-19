@@ -46,17 +46,5 @@ router.post('/getqtda',function(req,res){
     res.send(data);
   })
 })
-router.post('/search',function(req,res){
-  let pageSize=req.body.pageSize;
-  let pageNumber=req.body.pageNumber;
-  let textSearch = req.body.textSearch;
-  let columnSearch = req.body.columnSearch;
-  let index = req.body.p1;
-  let sortBy = req.body.p2
-  duanController.search(pageSize,pageNumber,textSearch, columnSearch,index,sortBy ,function(data){
-      res.send(data);
-  })
-
-})
 
 module.exports = router

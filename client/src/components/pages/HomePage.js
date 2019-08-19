@@ -126,10 +126,11 @@ export default class HomePage extends Component {
 
     getHotroFollowMonth = (monthStart, monthEnd) => {
         Request('hotro/getfollowmonth', 'POST', { monthStart, monthEnd }).then(async (res) => {
+            console.log("hien thi res ",res.data.rows)
             var arrayName = []
             var arrayCount = []
             var arrayBackGround = []
-            if(res.data.rows===undefined){return}
+            if (res.data.rows === undefined) { return }
             res.data.rows.map((value, index) => {
                 arrayName.push(value.ns_hovaten)
                 arrayCount.push(value.count)
@@ -147,7 +148,7 @@ export default class HomePage extends Component {
             await this.setState({
                 dataGetFollowMonth: dataFollowMonth
             })
-
+            console.log("Hien thi datastate ", this.state.dataGetFollowMonth)
         })
     }
 
