@@ -1,5 +1,5 @@
 import RoleAction from '@pages/RoleAction';
-import Action from '@pages/Action';
+import HomePage from '@pages/homepage';
 import NhanSu from '@pages/Nhansu'
 import HoTro from '@pages/Hotro'
 import Menu from '@pages/Menu'
@@ -16,11 +16,7 @@ import ChangePassword from '../components/pages/Modal/ChangePassword';
 import ok from '../components/common/ok';
 
 const routers = [
-    {
-        path: '/homepage',
-        component: Action,
-        name: 'homepage'
-    },
+  
     {
         path: '/member',
         component: Member,

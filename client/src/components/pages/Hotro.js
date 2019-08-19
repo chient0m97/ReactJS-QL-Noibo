@@ -5,6 +5,7 @@ import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import Modal_Khachhangs from '@pages/Modal/Modal_Khachhangs.js';
+import cookie from 'react-cookies'
 import '@styles/style.css'
 const { Column } = Table;
 const { Option } = Select
@@ -294,7 +295,7 @@ class Hotro extends React.Component {
     set_Select_id_duan() {
         Request('hotro/getidduan', 'POST', {}).then((res) => {
             this.setState({
-                id_duanfillmodal: res.data.data.hotros
+                id_duanfillmodal: res.data.data.duans
             })
         })
     }
@@ -357,13 +358,22 @@ class Hotro extends React.Component {
 
     insertOrUpdate = async () => {
         const { form } = await this.formRef.props;
-        var object = {}
+
         await form.validateFields((err, values) => {
             if (err) {
                 return
             }
-            var url = this.state.action === 'insert' ? 'hotro/insert' : 'hotro/update'
 
+            var url = this.state.action === 'insert' ? 'hotro/insert' : 'hotro/update'
+            this.setState({
+                rowthotroselected: values
+            })
+            if (url === 'hotro/update') {
+                let user_cookie = cookie.load('user');
+                console.log("Hien thi user ", user_cookie)
+                values.ns_id_capnhat = user_cookie
+                values.nkht_thoigiancapnhat = new Date()
+            }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
                 console.log("hien thi ht_thoigiandukienhoanthanh ", values.ht_thoigian_dukien_hoanthanh)
                 values.ht_thoigian_dukien_hoanthanh = null
@@ -380,6 +390,7 @@ class Hotro extends React.Component {
             // }
             Request(url, 'POST', values)
                 .then(async (response) => {
+                    console.log("Hien thi values ", values)
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -392,7 +403,7 @@ class Hotro extends React.Component {
                     var message = 'Thanh Cong'
 
                     console.log("check response ", response.data.success)
-                    if (!!!response.data.success) {
+                    if (await !!!response.data.success) {
                         message = 'Co loi xay ra !'
                         notifi_type = 'error'
                         description = response.data.message.map((value, index) => {
@@ -484,7 +495,6 @@ class Hotro extends React.Component {
     }
 
     showModal = async (hotro) => {
-        console.log("hien thi gia tri truyen vao ", hotro)
         this.setState({
             action: 'insert'
         })
@@ -734,7 +744,6 @@ class Hotro extends React.Component {
             // },
         };
 
-
         return (
             <div>
                 <Form>
@@ -819,12 +828,12 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="ns_hovaten" width={100}
+                            <Column title="Khách hàng" dataIndex="kh_hovaten" width={100}
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
                                 width={150} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Người được giao" dataIndex="kh_hovaten"
+                            <Column title="Người được giao" dataIndex="ns_hovaten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}

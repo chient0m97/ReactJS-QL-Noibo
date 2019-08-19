@@ -131,7 +131,7 @@ class User extends React.Component {
       codeSearch: '',
       roleVisible: 'none',
       modalRoleVisible: false,
-      actionColumn: 'action-hide',
+      actionColumn: 'hidden-action',
       users: [],
       selectedRowKeys:[]
     }
@@ -384,7 +384,6 @@ class User extends React.Component {
   }
   showmodalRole = async (name) => {
 
-
     if (name) {
       this.setState({
         modalRoleVisible: true,
@@ -399,7 +398,6 @@ class User extends React.Component {
   okRole = async e => {
     let user = this.state.selectedId
     let a = this.child.state.checkedKeys
-    console.log('permission cahnge', a)
     Request('setpermission', 'POST', { a, user }).then(res => {
 
     })
@@ -568,7 +566,7 @@ class User extends React.Component {
                       pagination={false}
                       rowSelection={rowSelection}
                       dataSource={this.state.users} rowKey="name" >
-                      <Column className="action-hide"
+                      <Column className="hidden-action"
                         title={<span>Id <Icon type={this.state.orderby} /></span>}
                         dataIndex="id"
                         key="id"
@@ -576,8 +574,8 @@ class User extends React.Component {
                       />
                       <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
                       />
-                      <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
-                      <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
+                      <Column className="hidden-action" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
+                      <Column className="hidden-action" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
                       <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
                       <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
 

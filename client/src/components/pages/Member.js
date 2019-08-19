@@ -37,7 +37,7 @@ class Member extends Component {
             codeSearch: '',
             roleVisible: 'none',
             modalRoleVisible: false,
-            actionColumn: 'action-hide',
+            actionColumn: 'hidden-action',
             users: [],
             selectedRowKeys: [],
             showModal: false,
@@ -76,12 +76,10 @@ class Member extends Component {
                 if (response) {
                     let data = response.data;
                     console.log(data)
-                    let objUsers = Object.keys(data.data.users[0])
                     if (data.data)
                         this.setState({
-                            objUsers: objUsers,
                             users: data.data.users,
-                            count: Number(data.data.count)//eps kieeru veef
+                            // count: Number(data.data.count)//eps kieeru veef
                         })
 
                 }
@@ -232,7 +230,7 @@ class Member extends Component {
                         Pagination={false}
 
                         >
-                        <Column className="action-hide"
+                        <Column className="hidden-action"
                             title={<span>Id <Icon type={this.state.orderby} /></span>}
                             dataIndex="id"
                             key="id"
@@ -240,8 +238,8 @@ class Member extends Component {
                         />
                         <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name"
                         />
-                        <Column className="action-hide" title="Password" dataIndex="password" key="password" />
-                        <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" />
+                        <Column className="hidden-action" title="Password" dataIndex="password" key="password" />
+                        <Column className="hidden-action" title="Phone Number" dataIndex="phone" key="phone" />
                         <Column title="Full Name" dataIndex="fullname" key="fullname" />
                         <Column title="Email" dataIndex="email" key="email" />
 

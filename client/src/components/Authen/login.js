@@ -18,7 +18,7 @@ class NormalLoginForm extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let user = {
+                var user = {
                     username: this.state.username,
                     password: this.state.password,
                 };
@@ -29,6 +29,7 @@ class NormalLoginForm extends Component {
                             let data = response.data;
                             cookie.save('token', data.token, { path: '/' })
                             cookie.save('role',data.role,{})
+                            cookie.save('user',this.state.username)
                             window.location.reload()
                         }
                         else {

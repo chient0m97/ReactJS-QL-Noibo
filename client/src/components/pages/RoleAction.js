@@ -129,7 +129,7 @@ class RoleAction extends React.Component {
             orderby: 'arrow-up',
             roleVisible: 'none',
             modalRoleVisible: false,
-            actionColumn: 'action-hide',
+            actionColumn: 'hidden-action',
             dataRole: [],
             dataAction: [],
             roleModaVisible: false,
@@ -606,7 +606,7 @@ class RoleAction extends React.Component {
                                     pagination={false}
                                     rowSelection={rowSelection}
                                     dataSource={this.state.roles} rowKey="id" >
-                                    <Column className="action-hide"
+                                    <Column className="hidden-action"
                                         title={<span>Id <Icon type={this.state.orderby} /></span>}
                                         dataIndex="id"
                                         key="id"

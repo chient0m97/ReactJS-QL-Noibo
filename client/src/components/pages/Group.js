@@ -107,7 +107,7 @@ class Group extends React.Component {
             codeSearch: '',
             roleVisible: 'none',
             modalRoleVisible: false,
-            actionColumn: 'action-hide',
+            actionColumn: 'hidden-action',
             groups: [],
             selectedRowKeys: []
         }
@@ -557,7 +557,7 @@ class Group extends React.Component {
                                             pagination={false}
                                             rowSelection={rowSelection}
                                             dataSource={this.state.groups} rowKey="name" >
-                                            <Column className="action-hide"
+                                            <Column className="hidden-action"
                                                 title={<span>Id <Icon type={this.state.orderby} /></span>}
                                                 dataIndex="id"
                                                 key="id"

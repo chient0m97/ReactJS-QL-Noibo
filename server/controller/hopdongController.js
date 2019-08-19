@@ -52,7 +52,6 @@ var HopdongController = {
 
     insertHopdong: async function insertHopdong(hopdong, callback) {
         var listfile = hopdong.hd_files.file
-        console.log(listfile, 'ddaay la file list')
         const storage = multer.diskStorage({
             destination: '../uploads/',
             filename:  function(req,file, cb){

@@ -45,8 +45,12 @@ module.exports = {
         pool.connect().then(client => {
             for (i = 0; i < listmem.length; i++) {
                 let query = "delete from pq_group_user where group_code = '" + groupName + "' and user_code='" + listmem[i] + "'"
-                console.log('queryyyyyyyyyyyyyy',query)
-                client.query(query).catch(err => {
+                console.log('queryyyyyyyyyyyyyy', query)
+                client.query(query).then(res => {
+                    client.query("delete from pq_role_user_group where group_code = '" + groupName + "' and user_code='" + listmem[i] + "' ").then(res1 => {
+                        console.log('xoa thanh cong')
+                    })
+                }).catch(err => {
                     console.log(err)
                 })
             }

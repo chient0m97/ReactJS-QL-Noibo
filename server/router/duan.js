@@ -24,7 +24,6 @@ router.get('/get/:Id', function (req, res) {
 
 router.delete('/delete', function (req, res) {
   let dm_duan_id = req.body.dm_duan_id
-  console.log('id',dm_duan_id)
   duanController.deleteDuanbyId(dm_duan_id, function (data) {
         res.send(data);
     })

@@ -1,13 +1,12 @@
 var knex = require('./common/DB')
+var formatDate = require('dateformat')
 
 module.exports = {
     getHotro: (limit, offset, index, sortBy, callback) => {
         knex.raw("select  hotro.* , dm_da.dm_duan_ten, khh.kh_hovaten, nhs.ns_hovaten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh.kh_ho || ' ' ||  kh.kh_tenlot  || ' ' || kh.kh_ten as kh_hovaten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select ns.ns_ho || ' ' ||  ns.ns_tenlot  || ' ' || ns.ns_ten as ns_hovaten, ns.ns_id ns_id from nhansu ns) as nhs on nhs.ns_id = hotro.ns_id_nguoitao order by " + index + ' ' + sortBy + ' offset ' + offset + ' limit ' + limit)
-            // knex.select('*').from('hotros').orderBy(index, sortBy).limit(limit).offset(offset)    
             .then((res) => {
                 knex('hotros').count()
                     .then((resCount) => {
-                        console.log("hien thi count ", resCount[0].count)
                         callback({
                             success: true,
                             data: {
@@ -34,7 +33,7 @@ module.exports = {
         knex.select('dm_duan_id', 'dm_duan_ten').from('duans').then((res) => {
             callback({
                 data: {
-                    hotros: res
+                    duans: res
                 }
             })
         })
@@ -61,11 +60,10 @@ module.exports = {
     },
 
     insertHotro: function (hotros, callback) {
-        knex.from('hotros').insert(hotros).then(res => {
+        knex.from('hotros').insert(hotros).then(response => {
             callback({
                 success: true
             })
-            console.log('DaTa =>: ', hotros)
         }).catch(err => {
             console.log(err)
             callback({
@@ -74,12 +72,37 @@ module.exports = {
         })
     },
 
-    updateHotro: function (hotros, callback) {
-        console.log("hien thi ho tro ", hotros)
-        // console.log("hien thi hotros.ht_thoigian_dukien_hoanthanh ",hotros.ht_thoigian_dukien_hoanthanh)
-        knex.from('hotros').where('ht_id', hotros.ht_id).update(hotros).then(res => {
-            callback({
-                success: true,
+    updateHotro: async function (hotros, callback) {
+        var nhatky_hotros = {}
+
+        nhatky_hotros.dm_duan_id = hotros.dm_duan_id
+        nhatky_hotros.nkht_thoigiantiepnhan = hotros.ht_thoigiantiepnhan
+        nhatky_hotros.nkht_thoigian_hoanthanh = hotros.ht_thoigian_hoanthanh
+        nhatky_hotros.ns_id_ass = hotros.ns_id_ass
+        nhatky_hotros.ns_id_nguoitao = hotros.ns_id_nguoitao
+        nhatky_hotros.nkht_noidungyeucau = hotros.ht_noidungyeucau
+        nhatky_hotros.kh_id = hotros.kh_id
+        nhatky_hotros.nkht_trangthai = hotros.ht_trangthai
+        nhatky_hotros.ht_phanloai = hotros.ht_phanloai
+        nhatky_hotros.nkht_uutien = hotros.ht_uutien
+        nhatky_hotros.nkht_ghichu = hotros.ht_ghichu
+        nhatky_hotros.nkht_thoigiancapnhat = hotros.nkht_thoigiancapnhat
+        nhatky_hotros.nkht_id = hotros.ht_id
+        nhatky_hotros.nkht_thoigian_dukien_hoanthanh = hotros.ht_thoigian_dukien_hoanthanh
+        nhatky_hotros.ns_id_capnhat = hotros.ns_id_capnhat
+
+        delete hotros.ns_id_capnhat
+        delete hotros.nkht_thoigiancapnhat
+        await knex.from('nhatky_hotros').insert(nhatky_hotros).then(response => {
+            knex.from('hotros').where('ht_id', hotros.ht_id).update(hotros).then(res => {
+                callback({
+                    success: true,
+                })
+            }).catch(err => {
+                console.log(err)
+                callback({
+                    success: false
+                })
             })
         }).catch(err => {
             console.log(err)
@@ -102,9 +125,9 @@ module.exports = {
         })
     },
 
-    selectHotro: function (hotros, callback) {
-        knex.from('hotros').select('*').where('ht_id', hotros.ht_id).then(res => {
-            callback(res[0])
+    getHotroFollowMonth: function (monthToMonth, callback) {
+        knex.raw("select ht.ns_hovaten, count(ht.ns_hovaten) from ( select  hotro.* , dm_da.dm_duan_ten, khh.kh_hovaten, nhs.ns_hovaten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh.kh_ho || ' ' ||  kh.kh_tenlot  || ' ' || kh.kh_ten as kh_hovaten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select ns.ns_ho || ' ' ||  ns.ns_tenlot  || ' ' || ns.ns_ten as ns_hovaten, ns.ns_id ns_id from nhansu ns) as nhs on nhs.ns_id = hotro.ns_id_nguoitao where hotro.ht_thoigian_hoanthanh between '"+monthToMonth.monthStart+"' and '"+monthToMonth.monthEnd+"' GROUP BY hotro.dm_duan_id , hotro.ht_thoigiantiepnhan , hotro.ht_thoigian_hoanthanh, hotro.ns_id_ass,hotro.ns_id_nguoitao,hotro.ht_noidungyeucau,hotro.kh_id,hotro.ht_trangthai, hotro.ht_phanloai,hotro.ht_uutien,hotro.ht_ghichu,hotro.ht_id,dm_da.dm_duan_ten,khh.kh_hovaten,nhs.ns_hovaten) ht group by ht.ns_hovaten ").then(res => {
+            callback(res)
         }).catch(err => {
             console.log(err)
             callback({ success: false })

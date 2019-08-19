@@ -123,7 +123,7 @@ module.exports = {
                 query = "select pq_roles.name as role,pq_actions.name as action from pq_role_user_group left join pq_groups on pq_groups.name = pq_role_user_group.group_code left join pq_role_action on pq_role_action.id = pq_role_user_group.role_action_code left join pq_roles on pq_roles.id = pq_role_action.role_code left join pq_actions on pq_actions.id = pq_role_action.action_code where pq_groups.name ='" + username + "'"
                 return client.query(query)
                     .then(res => {
-                        console.log('response',res.rows)
+                        console.log('response', res.rows)
                         client.release()
                         let data = res.rows
                         callback({
@@ -148,18 +148,28 @@ module.exports = {
         console.log('user name', per.user)
         callback({ message: 'dcm' })
         pool.connect().then(client => {
-            client.query("delete from pq_role_user_group where group_code ='"+per.user+"'").then(res1 => {
+            client.query("delete from pq_role_user_group where group_code ='" + per.user + "'").then(res1 => {
                 per.a.map(function (value) {
                     let role = value.split('.')[0]
                     let action = value.split('.')[1]
                     if (role && action) {
                         client.query("select * from pq_role_action where role_code = (select id from pq_roles where name ='" + role + "' ) and action_code = (select id from pq_actions where name = '" + action + "')").then(res => {
-                            console.log('-------------------------id----------------------',res.rows[0].id)
-                            let idra = res.rows[0].id
-                            let idgr = uuidv1();
-                            client.query("insert into pq_role_user_group(role_action_code,id,group_code) values('"+idra+"','"+idgr+"','"+per.user+"')").then(res2=>{
-                                console.log('them moi thagnh cong')
+                            console.log('-------------------------id----------------------', res.rows[0].id)
+                           
+                            client.query("select user_code from pq_group_user where group_code ='" + per.user+"'").then(res2 => {
+                                console.log('234567890-=098765467890-0987654567890',res2.rows.length)
+                                let memb = res2.rows;
+                                for(j=0;j<memb.length;j++){
+                                    let idra = res.rows[0].id
+                                    let idgr = uuidv1();
+                                    let querygr = "insert into pq_role_user_group(role_action_code,id,group_code,group_user_code) values('" + idra + "','" + idgr + "','" + per.user + "','" + memb[j].user_code + "')"
+                                    client.query(querygr).then(res3 => {
+                                        console.log('them moi thagnh cong')
+                                    })
+                                }
+                                
                             })
+
                         })
                     }
 
@@ -167,12 +177,12 @@ module.exports = {
             })
 
 
-        }).catch(err=>{
+        }).catch(err => {
             client.release()
             console.log(err)
         })
     },
 
-  
+
 
 };
