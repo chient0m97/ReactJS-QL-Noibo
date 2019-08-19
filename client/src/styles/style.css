@@ -225,6 +225,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-.action-show{
-  display: ''
+thead[class*="ant-table-thead"] th{
+  background-color: cornflowerblue !important;
+  color: #fff
+}
+
+.hidden-action {
+  display: none;
 }
