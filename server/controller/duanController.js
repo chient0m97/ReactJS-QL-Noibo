@@ -1,7 +1,7 @@
 var Validator = require('../validate/common')
 const duanData = require('../data/Duan.data')
 const constant = require('./constant')
-const uuidv4 = require('uuid/v4');
+const uuidv1 = require('uuid/v1');
 var DuanController = {
     /**
      * Get user paging.
@@ -27,7 +27,6 @@ var DuanController = {
      */
     GetById: function GetById(Id, callback) {
         duanData.GetById(Id, (data) => {
-            console.log('DATA', data)
             if (data == undefined) {
                 callback({});
             }
@@ -48,15 +47,12 @@ var DuanController = {
     },
 
     insertDuan: async function insertDuan(duan, callback) {
-        if (Validator.isNumAlpha(duan.dm_duan_key, 'Key không đúng định dạng')
-            & Validator.isAlpha(duan.dm_duan_ten, 'Tên dự án không đúng định dạng')
-            //& Validator.num(duan.dm_duan_id, 'Id dự án không đúng định dạng')
-        ) {
+        if (Validator.isNumAlpha(duan.dm_duan_key, 'Key không đúng định dạng')) {
 
-            if (await Validator.db.unique('duans', 'ns_id_qtda', duan.ns_id_qtda, 'Ns_id_qtda đã tồn tại !')){
+            if (1){
                 let firstInsert;
                 firstInsert = duan;
-                firstInsert.dm_duan_id = uuidv4();
+                firstInsert.dm_duan_id = uuidv1();
                 duanData.insertDuan(firstInsert, (response) => {
                     var message = constant.successInsert;
                     var status = 200;
@@ -71,7 +67,7 @@ var DuanController = {
                     }, status);
                 })
             } else {
-                callback({
+                callback({  
                     message: Validator.getError(),
                     success: false
                 }, 400);
@@ -86,10 +82,8 @@ var DuanController = {
     },
     updateDuan: async function updateDuan(duan, callback) {
         if (Validator.isNumAlpha(duan.dm_duan_key, 'Key không đúng định dạng')
-          & Validator.isAlpha(duan.dm_duan_ten, 'Tên dự án không đúng định dạng')
         ) {
             if (1) {
-                console.log("Day la update data", duan)
                 duanData.updateDuan(duan, (res) => {
                     callback({
                         success: res.success,
@@ -100,8 +94,8 @@ var DuanController = {
         }
     }
     ,
-    getcha:function getcha(callback){
-        duanData.getcha((data)=>{
+    getQTDA:function getQTDA(callback){
+        duanData.getQTDA((data)=>{
             callback(data)
         })
     },

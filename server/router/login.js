@@ -26,20 +26,14 @@ router.post('/', (req, res) => {
                     message: 'authentication done ',
                     token: token
                 });
-
-
             } else {
                 res.json({ message: "sai mật khẩu rồi nhóc" })
-
             }
         });
-
     })
-
-
 });
 
-router.get('/Logins', function user(req,res) {
-   res.send("haha")
+router.get('/Logins', function user(req, res) {
+    res.send("haha")
 })
 module.exports = router;

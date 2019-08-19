@@ -76,10 +76,6 @@ var UserController = {
     },
     updateUser: function updateUser(user, callback) {
         console.log('controller')
-        if (Validator.isMail(user.email, 'Email không đúng định dạng')
-            & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
-            & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
-        ) {
             console.log('go to db')
             bcrypt.hash(user.password, 10, function (err, hash) {
                 user.password = hash;
@@ -90,9 +86,6 @@ var UserController = {
                     })
                 })
             });
-
-
-        }
     },
     Login: function getUserLogin(userName, callback) {
         userData.getUserLogin(userName, (data) => {

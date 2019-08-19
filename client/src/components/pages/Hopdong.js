@@ -7,6 +7,7 @@ import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 import '@styles/style.css';
 import { fetchLoading } from '@actions/common.action';
+import { async } from 'q';
 
 
 
@@ -477,19 +478,16 @@ class Hopdong extends React.Component {
     Request('hopdong/get', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
-      index: this.state.index,
-      sortBy: this.state.sortBy
+      // index: this.state.index,
+      // sortBy: this.state.sortBy
     })
-      .then((response) => {
-        let data = response.data;
-        //console.log('data trả về:', data)
-        if (data.data)
+      .then(async(response) => {
           this.setState({
-            hopdongs: data.data.hopdongs.rows,
-            count: Number(data.data.count) // ép kiểu về    
+            hopdongs: response.data.data.hopdongs.rows,
+            count: Number(response.data.count) // ép kiểu về    
           })
         //console.log('------------------------', this.state.hopdongs)
-        this.props.fetchLoading({
+       await this.props.fetchLoading({
           loading: false
 
         })
@@ -547,7 +545,7 @@ class Hopdong extends React.Component {
   componentDidMount() {
     this.getHopdongs(this.state.pageNumber, this.state.index, this.state.sortBy);
   }
-  
+
   onchangpage = (page) => {
     this.setState({
       page: page
@@ -969,11 +967,11 @@ class Hopdong extends React.Component {
               {/* <Column title="Loại hợp đồng" dataIndex="ten_hd_loai" key="ten_hd_loai" onHeaderCell={this.onHeaderCell} /> */}
               <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
               {/* <Column title="Tên đối tượng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell} width={150} /> */}
-              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150}/>
+              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} />
               <Column title="Thời gian thực hiện(ngày)" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} width={150} />
               <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
                 render={
-                  text => { 
+                  text => {
                     if (text === null)
                       return ' '
                     else

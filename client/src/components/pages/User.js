@@ -58,6 +58,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     rules: [{ required: true, message: this.state.messageRequired, }],
                   })(<Input type="text" />)}
                 </Form.Item>
+                </Col>
+                <Col span={12}>
+                <Form.Item label="Mã Định Danh(CMT / Thẻ căn cước):">
+                  {getFieldDecorator('madinhdanh', {
+                    rules: [{ required: true, message: this.state.messageRequired, }],
+                  })(<Input type="text" />)}
+                </Form.Item>
               </Col>
             </Row>
             <Row gutter={24}>
@@ -134,7 +141,7 @@ class User extends React.Component {
       modalRoleVisible: false,
       actionColumn: 'action-hide',
       users: [],
-      selectedRowKeys:[]
+      selectedRowKeys: []
     }
   }
   //--------------DELETE-----------------------
@@ -588,7 +595,7 @@ class User extends React.Component {
                             console.log('aaaaaaaaaaaaaaaaaa', event)
                             console.log('reacassadasdad', record.name)
                             this.setState({
-                              selectedRowKeys:[rowIndex]
+                              selectedRowKeys: [rowIndex]
                             })
                             console.log('reacassadasdad', rowIndex)
 

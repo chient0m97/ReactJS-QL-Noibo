@@ -40,16 +40,9 @@ router.delete('/delete', function (req, res) {
     })
 })
 
-router.post('/search', function(req, res) {
-    console.log('First sever search')
-    let pageSize = req.body.pageSize;
-    let pageNumber = req.body.pageNumber;
-    let textSearch = req.body.textSearch;
-    let columnSearch = req.body.columnSearch;
-    let index = req.body.p1;
-    let sortBy = req.body.p2;
-    nhansuController.getDataSearch(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, function(data){
-        res.send(data);
+router.post('/getdinhdanh', function(req, res){
+    nhansuController.getUser(function(data){
+        res.send(data)
     })
 })
 

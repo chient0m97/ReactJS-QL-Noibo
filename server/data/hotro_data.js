@@ -3,7 +3,7 @@ var formatDate = require('dateformat')
 
 module.exports = {
     getHotro: (limit, offset, index, sortBy, callback) => {
-        knex.raw("select  hotro.* , dm_da.dm_duan_ten, khh.kh_hovaten, nhs.ns_hovaten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh.kh_ho || ' ' ||  kh.kh_tenlot  || ' ' || kh.kh_ten as kh_hovaten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select ns.ns_ho || ' ' ||  ns.ns_tenlot  || ' ' || ns.ns_ten as ns_hovaten, ns.ns_id ns_id from nhansu ns) as nhs on nhs.ns_id = hotro.ns_id_nguoitao order by " + index + ' ' + sortBy + ' offset ' + offset + ' limit ' + limit)
+        knex.raw("select  hotro.* , nhansu.ns_hovaten, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass order by " + index + ' ' + sortBy + ' offset ' + offset + ' limit ' + limit)
             .then((res) => {
                 knex('hotros').count()
                     .then((resCount) => {
@@ -11,7 +11,6 @@ module.exports = {
                             success: true,
                             data: {
                                 hotros: res.rows,
-                                // hotros: res,
                                 count: resCount[0].count
                             }
                         })
@@ -50,7 +49,7 @@ module.exports = {
     },
 
     getKhachHang(callback) {
-        knex.select('kh_id', knex.raw("kh_ho || ' ' || coalesce(kh_tenlot, '') || ' ' || kh_ten as kh_hovaten")).from('khachhangs').then((res) => {
+        knex.select('kh_id', 'kh_ten').from('khachhangs').then((res) => {
             callback({
                 data: {
                     khachhangs: res
@@ -126,7 +125,7 @@ module.exports = {
     },
 
     getHotroFollowMonth: function (monthToMonth, callback) {
-        knex.raw("select ht.ns_hovaten, count(ht.ns_hovaten) from ( select  hotro.* , dm_da.dm_duan_ten, khh.kh_hovaten, nhs.ns_hovaten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh.kh_ho || ' ' ||  kh.kh_tenlot  || ' ' || kh.kh_ten as kh_hovaten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select ns.ns_ho || ' ' ||  ns.ns_tenlot  || ' ' || ns.ns_ten as ns_hovaten, ns.ns_id ns_id from nhansu ns) as nhs on nhs.ns_id = hotro.ns_id_nguoitao where hotro.ht_thoigian_hoanthanh between '"+monthToMonth.monthStart+"' and '"+monthToMonth.monthEnd+"' GROUP BY hotro.dm_duan_id , hotro.ht_thoigiantiepnhan , hotro.ht_thoigian_hoanthanh, hotro.ns_id_ass,hotro.ns_id_nguoitao,hotro.ht_noidungyeucau,hotro.kh_id,hotro.ht_trangthai, hotro.ht_phanloai,hotro.ht_uutien,hotro.ht_ghichu,hotro.ht_id,dm_da.dm_duan_ten,khh.kh_hovaten,nhs.ns_hovaten) ht group by ht.ns_hovaten ").then(res => {
+        knex.raw("select ht.ns_hovaten, count(ht.ns_hovaten) from ( select  hotro.* , dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hovaten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh.ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select ns.ns_ho || ' ' ||  ns.ns_tenlot  || ' ' || ns.ns_ten as ns_hovaten, ns.ns_id ns_id from nhansu ns) as nhs on nhs.ns_id = hotro.ns_id_nguoitao where hotro.ht_thoigian_hoanthanh between '"+monthToMonth.monthStart+"' and '"+monthToMonth.monthEnd+"' GROUP BY hotro.dm_duan_id , hotro.ht_thoigiantiepnhan , hotro.ht_thoigian_hoanthanh, hotro.ns_id_ass,hotro.ns_id_nguoitao,hotro.ht_noidungyeucau,hotro.kh_id,hotro.ht_trangthai, hotro.ht_phanloai,hotro.ht_uutien,hotro.ht_ghichu,hotro.ht_id,dm_da.dm_duan_ten,khh.kh_ten,nhs.ns_hovaten) ht group by ht.ns_hovaten ").then(res => {
             callback(res)
         }).catch(err => {
             console.log(err)

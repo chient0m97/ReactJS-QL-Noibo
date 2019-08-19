@@ -37,13 +37,12 @@ router.post('/insert',function (req, res) {
 })
 
 router.post('/update',function (req, res) {
-  console.log('data res',req)
   duanController.updateDuan(req.body, function (data) {
       res.send(data);
   })
 })
-router.post('/getcha',function(req,res){
-  duanController.getcha(function(data){
+router.post('/getqtda',function(req,res){
+  duanController.getQTDA(function(data){
     res.send(data);
   })
 })
