@@ -55,7 +55,7 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
-                                </Col>
+                                </Col>  
                                 <Col span={8}>
                                     <Form.Item label='Số điện thoại'>
                                         {getFieldDecorator('kh_sodienthoai', {
