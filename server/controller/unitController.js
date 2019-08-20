@@ -13,6 +13,7 @@ var UnitController = {
      * @para
      */
     getUnit: function getUnit(pageNumber, pageSize, index, sortBy, callback) {
+        console.log('---------controller---------------')
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         var res_unit = []

@@ -159,7 +159,7 @@ class RoleAction extends React.Component {
     }
 
     getRoles = (pageNumber) => {
-
+        console.log('getttt')
         if (pageNumber <= 0)
             return;
 
@@ -217,7 +217,7 @@ class RoleAction extends React.Component {
         this.getRoles(this.state.pageNumber)
     }
     componentDidMount() {
-        this.getRoles(this.state.pageNumber, this.state.index, this.state.sortBy);
+        this.getRoles(this.state.pageNumber);
     }
     onchangpage = async (page) => {
         await this.setState({

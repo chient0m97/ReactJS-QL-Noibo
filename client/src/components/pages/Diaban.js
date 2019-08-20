@@ -155,7 +155,7 @@ class Diaban extends React.Component {
     this.props.fetchLoading({
       loading: true
     })
-    Request('get', 'POST', {
+    Request('diaban/get', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
       index: this.state.index,
@@ -181,7 +181,7 @@ class Diaban extends React.Component {
       if (err) {
         return
       }
-      var url = this.state.action === 'insert' ? 'insert' : 'update'
+      var url = this.state.action === 'diaban/insert' ? 'insert' : 'diaban/update'
       Request(url, 'POST', values)
         .then((response) => {
           this.setState({
@@ -302,7 +302,7 @@ class Diaban extends React.Component {
       form.setFieldsValue({ dm_db_id_cha: '' })
     }
     else {
-      await Request('getcha', 'POST', { dm_db_cap: value }).then(res => {
+      await Request('diaban/getcha', 'POST', { dm_db_cap: value }).then(res => {
         let a = res.data[0].dm_db_ten
         this.setState({
           // comboBoxDatasource: res.data,

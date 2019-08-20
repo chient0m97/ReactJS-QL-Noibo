@@ -47,7 +47,6 @@ class AppSider extends Component {
 
         let payload = jwt.decode(token);
         let claims = payload.claims;
-        console.log('-=================',claims)
         if(claims !== undefined){
             for (let i = 0; i < claims.length; i++) {
                 if (claims[i] === Permission.Role.Read) {

@@ -99,6 +99,7 @@ class Unit extends React.Component {
     }
 
     getUnits = (pageNumber) => {
+        console.log('sfhsdfsdfsdfdsf')
         if (pageNumber <= 0)
             return;
         this.props.fetchLoading({

@@ -2,7 +2,7 @@ var knex = require('./common/DB')
 
 module.exports = {
     getUnit: (limit, offset, index, sortBy, callback) => {
-        knex.raw("select *, dvcha.ten tendonvicha, kh.ho || ' ' || kh.tenlot || ' ' || kh.ten  as tennguoidaidien,dibtinh.id as dm_db_id_tinh ,dibtinh.ten as tentinh , dibhuyen.id as dm_db_id_huyen ,dibhuyen.ten as tenhuyen , dibxa.id as dm_db_id_xa ,dibxa.ten as tenxa from donvis dv left join ( select dvs.dm_dv_id id ,dvs.dm_dv_ten ten from donvis dvs ) dvcha on dvcha.id = dv.dm_dv_id_cha left join (select khs.kh_id id ,khs.kh_ho ho ,khs.kh_tenlot tenlot ,khs.kh_ten ten from khachhangs khs) as kh on kh.id = dv.kh_id_nguoidaidien left join(select dbs.dm_db_id id, dbs.dm_db_ten as ten from diabans dbs) as dibtinh on dibtinh.id = dv.dm_db_id_tinh left join(select dbs.dm_db_id id, dbs.dm_db_ten as ten from diabans dbs) as dibhuyen on dibhuyen.id = dv.dm_db_id_huyen left join(select dbs.dm_db_id id, dbs.dm_db_ten as ten from diabans dbs) as dibxa on dibxa.id = dv.dm_db_id_xa order by " + index + ' ' + sortBy + ' limit ' + limit + ' offset ' + offset)
+        knex.raw("select *, dvcha.ten tendonvicha, kh.ten  as tennguoidaidien,dibtinh.id as dm_db_id_tinh ,dibtinh.ten as tentinh , dibhuyen.id as dm_db_id_huyen ,dibhuyen.ten as tenhuyen , dibxa.id as dm_db_id_xa ,dibxa.ten as tenxa from donvis dv left join ( select dvs.dm_dv_id id ,dvs.dm_dv_ten ten from donvis dvs ) dvcha on dvcha.id = dv.dm_dv_id_cha left join (select khs.kh_id id , khs.kh_ten ten from khachhangs khs) as kh on kh.id = dv.kh_id_nguoidaidien left join(select dbs.dm_db_id id, dbs.dm_db_ten as ten from diabans dbs) as dibtinh on dibtinh.id = dv.dm_db_id_tinh left join(select dbs.dm_db_id id, dbs.dm_db_ten as ten from diabans dbs) as dibhuyen on dibhuyen.id = dv.dm_db_id_huyen left join(select dbs.dm_db_id id, dbs.dm_db_ten as ten from diabans dbs) as dibxa on dibxa.id = dv.dm_db_id_xa order by " + index + ' ' + sortBy + ' limit ' + limit + ' offset ' + offset)
             .then((res) => {
                 var units = res
                 knex('donvis').count()
@@ -124,7 +124,7 @@ module.exports = {
     },
 
     getKhachhang: function (callback) {
-        knex.raw("select  kh.kh_id,COALESCE (kh.kh_ho ,'') || ' ' || COALESCE (kh.kh_tenlot ,'') || ' ' || COALESCE (kh.kh_ten ,'') as tennguoidaidien from khachhangs kh")
+        knex.raw("select  kh.kh_id,kh_ten as tennguoidaidien from khachhangs kh")
             // knex.from('khachhangs').select('*')
             .then((res) => {
                 callback(res.rows);

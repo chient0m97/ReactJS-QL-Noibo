@@ -4,6 +4,7 @@ var router = express.Router()
 var role_actionController = require('../controller/phanquyen/role_actionController');
 
 router.post('/get', function (req, res) {
+    console.log('ddadasdsdasds')
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;

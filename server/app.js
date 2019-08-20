@@ -6,7 +6,7 @@ config = require('./configurations/config');
 app = express();
 const login = require('./router/login')
 const checked = require('./router/checkrole')
-const setpermiss = require('./router/setpermission')
+const setpermiss = require('./router/setpermission')          
 const role_action = require('./router/role_action')
 const port = 5000;
 
