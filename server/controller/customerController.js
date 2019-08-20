@@ -183,9 +183,9 @@ var CustomerController = {
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
-        customer.dm_dv_id_tinh = customer.dm_dv_id_tinh_customer
-        customer.dm_dv_id_huyen = customer.dm_dv_id_huyen_customer
-        customer.dm_dv_id_xa = customer.dm_dv_id_xa_customer
+        customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
+        customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
+        customer.dm_db_id_xa = customer.dm_db_id_xa_customer
         delete customer.dm_db_id_huyen_customer
         delete customer.dm_db_id_tinh_customer
         delete customer.dm_db_id_xa_customer

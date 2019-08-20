@@ -25,7 +25,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
             combobox.push(<Option key={'HD'}>Hoạt động</Option>);
             combobox.push(<Option key={'DHD'}>Dừng hoạt động</Option>);
             combobox.push(<Option key={'GT'}>Giải thể</Option>);
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh, stateoption} = this.props;
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh, stateoption } = this.props;
             const { getFieldDecorator } = form;
             var datacha = this.props.datacha
             return (
@@ -45,7 +45,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                     <div style={{ display: dm_dv_id_visible === true ? 'block' : 'none' }}>
                                         <Form.Item>
                                             {getFieldDecorator('dm_dv_id', {
-                                                
+
                                             })(<Input type="text" disabled hidden />)}
                                         </Form.Item>
                                     </div>
@@ -59,16 +59,31 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
-                                    <Form.Item label='Địa chỉ'>
-                                        {getFieldDecorator('dm_dv_diachi', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+                                <Col span={4}>
+                                    <Form.Item label='Số điện thoại'>
+                                        {getFieldDecorator('dm_dv_sodienthoai', {
+                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
+                                <Col span={8}>
+                                    <Form.Item label='Người đại diện'>
+                                        {getFieldDecorator('kh_id_nguoidaidien', {
 
+                                        })(<Select onSelect={onSelectKh} placeholder="---Không có người đại diện có thể bỏ qua trường này---"
+                                        >
+                                            <Option value="add_nguoidaidien" disabled={stateoption}>Thêm người đại diện</Option>
+                                            {
+                                                select_tenkh.map((value, index) => {
+                                                    return (
+                                                        <Option value={value.kh_id}>{value.tennguoidaidien}</Option>
+                                                    )
+                                                })}
+                                        </Select>)}
+                                    </Form.Item>
+                                </Col>
                             </Row>
-                            <Row gutter={24} >
+                            <Row gutter={24}>
                                 <Col span={8}>
                                     <Form.Item label='Tỉnh/Thành phố'>
                                         {getFieldDecorator('dm_db_id_tinh', {
@@ -119,20 +134,15 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                 </Col>
                             </Row>
                             <Row gutter={24}>
-                                <Col span={8}>
-                                    <Form.Item label='Mã số thuế'>
-                                        {getFieldDecorator('dm_dv_masothue', {
-                                            rules: [ {required: true, message: 'Vui lòng nhập vào ô này !!'}],
+                                <Col span={24}>
+                                    <Form.Item label='Địa chỉ'>
+                                        {getFieldDecorator('dm_dv_diachi', {
+                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Số điện thoại'>
-                                        {getFieldDecorator('dm_dv_sodienthoai', {
-                                            rules: [ {required: true, message: 'Vui lòng nhập vào ô này !!'}],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
+                            </Row>
+                            <Row gutter={24}>
                                 <Col span={8}>
                                     <Form.Item label='Trạng thái'>
                                         {getFieldDecorator('dm_dv_trangthai', {
@@ -146,25 +156,14 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                         </Select>)}
                                     </Form.Item>
                                 </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={12}>
-                                    <Form.Item label='Người đại diện'>
-                                        {getFieldDecorator('kh_id_nguoidaidien', {
-                
-                                        })(<Select onSelect={onSelectKh} placeholder="---Không có người đại diện có thể bỏ qua trường này---"
-                                        >
-                                            <Option value="add_nguoidaidien"  disabled={stateoption}>Thêm người đại diện</Option>
-                                            {
-                                                select_tenkh.map((value, index) => {
-                                                    return (
-                                                        <Option value={value.kh_id}>{value.tennguoidaidien}</Option>
-                                                    )
-                                                })}
-                                        </Select>)}
+                                <Col span={8}>
+                                    <Form.Item label='Mã số thuế'>
+                                        {getFieldDecorator('dm_dv_masothue', {
+                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
+                                        })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
+                                <Col span={8}>
                                     <Form.Item label="Đơn vị cấp trên:">
                                         {getFieldDecorator('dm_dv_id_cha', {
                                             // rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!',}],

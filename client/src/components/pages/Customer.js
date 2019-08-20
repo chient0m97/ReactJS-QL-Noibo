@@ -112,15 +112,6 @@ class Customer extends React.Component {
                         customers: data.data.customers,
                         count: Number(data.data.count)
                     })
-                var i = 0;
-                for (i = 0; i < this.state.customers.length; i++) {
-                    if (this.state.customers[i].kh_tenlot.length === 0) {
-                        this.state.customers[i].kh_hovaten = this.state.customers[i].kh_ho + " " + this.state.customers[i].kh_ten
-                    }
-                    else {
-                        this.state.customers[i].kh_hovaten = this.state.customers[i].kh_ho + " " + this.state.customers[i].kh_tenlot + " " + this.state.customers[i].kh_ten
-                    }
-                }
                 this.props.fetchLoading({
                     loading: false
                 })
@@ -199,11 +190,14 @@ class Customer extends React.Component {
                 action: 'update'
             })
             await this.set_select_tendv();
-            await form.setFieldsValue({ dm_dv_id: this.state.select_tendv[0].dm_dv_id })
+            if (this.state.select_tendv.length === 0) {
+                await form.setFieldsValue({ dm_dv_id: '' })
+            }
+            await form.setFieldsValue({ dm_dv_id: customer.tendonvi })
             await this.set_select_tinh();
             if (this.state.select_tinh.length > 0) {
                 await form.setFieldsValue({ dm_db_id_tinh_customer: customer.tentinh })
-                await this.set_select_huyen(1);
+                await this.set_select_huyen(this.state.select_tinh[0].dm_db_id);
             } else {
                 await form.setFieldsValue({ dm_db_id_tinh_customer: '' })
             }
@@ -219,9 +213,8 @@ class Customer extends React.Component {
             else {
                 await form.setFieldsValue({ dm_db_id_xa_customer: customer.tenxa })
             }
-            customer.kh_ngaysinh = formDateModal(customer.kh_ngaysinh, 'yyyy-mm-dd')
             form.setFieldsValue(customer);
-        }   
+        }
     };
 
     showModalInsert = async (customer) => {
@@ -239,26 +232,20 @@ class Customer extends React.Component {
             })
             await this.set_select_tendv();
             await this.set_select_tinh();
-            if (this.state.select_tinh.length > 0) {
-                await form.setFieldsValue({ dm_db_id_tinh_customer: 1 })
-                await this.set_select_huyen(1);
-            } else {
-                await form.setFieldsValue({ dm_db_id_tinh_customer: '' })
+            if (this.state.select_tinh.length === 0) {
+                form.setFieldsValue({ dm_db_id_tinh_customer: '' })
             }
-            if (this.state.select_huyen.length > 0) {
-                await form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
-                await this.set_select_xa(this.state.select_huyen[0].dm_db_id);
-            } else {
-                await form.setFieldsValue({ dm_db_id_huyen_customer: '' })
+            form.setFieldsValue({ dm_db_id_tinh_customer: this.state.select_tinh[0].dm_db_id })
+            await this.set_select_huyen(this.state.select_tinh[0].dm_db_id);
+            if (this.state.select_huyen.length === 0) {
+                form.setFieldsValue({ dm_db_id_huyen_customer: '' })
             }
+            form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
+            await this.set_select_xa(this.state.select_huyen[0].dm_db_id)
             if (this.state.select_xa.length === 0) {
-                await form.setFieldsValue({ dm_db_id_xa_customer: '' })
+                form.setFieldsValue({ dm_db_id_xa_customer: '' })
             }
-            else {
-                await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
-            }
-            customer.kh_ngaysinh = formDateModal(customer.kh_ngaysinh, 'dd-mm-yyyy')
-            form.setFieldsValue(customer);
+            form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
         }
     };
 
@@ -331,24 +318,20 @@ class Customer extends React.Component {
                 try {
                     this.set_select_donvicha()
                     await this.set_select_diabantinh();
-                    if (this.state.select_diabantinh.length > 0) {
-                        await form.setFieldsValue({ dm_db_id_tinh: 1 })
-                        await this.set_select_diabanhuyen(1);
-                    } else {
-                        await form.setFieldsValue({ dm_db_id_tinh: '' })
+                    if (this.state.select_diabantinh.length === 0) {
+                        form.setFieldsValue({ dm_db_id_tinh: '' })
                     }
-                    if (this.state.select_diabanhuyen.length > 0) {
-                        await form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
-                        await this.set_select_diabanxa(this.state.select_diabanhuyen[0].dm_db_id);
-                    } else {
-                        await form.setFieldsValue({ dm_db_id_huyen: '' })
+                    form.setFieldsValue({ dm_db_id_tinh: this.state.select_diabantinh[0].dm_db_id })
+                    await this.set_select_diabanhuyen(this.state.select_diabantinh[0].dm_db_id);
+                    if (this.state.select_diabanhuyen.length === 0) {
+                        form.setFieldsValue({ dm_db_id_huyen: '' })
                     }
+                    form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
+                    await this.set_select_diabanxa(this.state.select_diabanhuyen[0].dm_db_id)
                     if (this.state.select_diabanxa.length === 0) {
-                        await form.setFieldsValue({ dm_db_id_xa: '' })
+                        form.setFieldsValue({ dm_db_id_xa: '' })
                     }
-                    else {
-                        await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
-                    }
+                    form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
                     await this.set_select_tenkh();
                     // await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
                 }
@@ -682,7 +665,6 @@ class Customer extends React.Component {
         }
     }
     render() {
-        //hjjhghjgjgjghghjg
         const { selectedRowKeys } = this.state
         const rowSelection = {
             hideDefaultSelections: true,
@@ -773,26 +755,20 @@ class Customer extends React.Component {
                             stateoption={this.state.stateoption}
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
-                            <Column title="Họ" dataIndex="kh_ho" key="kh_ho" className='hide' disabaled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Tên lót" dataIndex="kh_tenlot" key="kh_tenlot" className='hide' disabaled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Tên" dataIndex="kh_ten" key="kh_ten" className='hide' disabaled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Tên khách hàng" dataIndex="kh_hovaten" key="kh_hovaten" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Ngày sinh" dataIndex="kh_ngaysinh" key="kh_ngaysinh" render={text => formatDate(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Giới tính" dataIndex="kh_gioitinh" key="kh_gioitinh" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Định danh cá nhân" dataIndex="kh_dinhdanhcanhan" key="kh_dinhdanhcanhan" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" onHeaderCell={this.onHeaderCell} />
                             <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" onHeaderCell={this.onHeaderCell} />
                             <Column title="Email" dataIndex="kh_email" key="kh_email" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hide" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" onHeaderCell={this.onHeaderCell} />
                             <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hide' disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hidden-action' disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" onHeaderCell={this.onHeaderCell} />
                             <Column title="Vị trí công tác" dataIndex="kh_vitricongtac" key="kh_vitricongtac" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Liên lạc" dataIndex="kh_lienlac" key="kh_lienlac" className='hide' disabaled onHeaderCell={this.onHeaderCell} />
+                            <Column title="Liên lạc" dataIndex="kh_lienlac" key="kh_lienlac" className='hidden-action' disabaled onHeaderCell={this.onHeaderCell} />
                             <Column title="Liên lạc" dataIndex="kh_lienlac_txt" key="kh_lienlac_txt" onHeaderCell={this.onHeaderCell} />
                             <Column />
                         </Table>
