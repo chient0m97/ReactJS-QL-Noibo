@@ -45,11 +45,20 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
             var first_kh_id = null;
+            var first_da_id = null;
+            var first_ns_id = null;
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton } = this.props;
             const { getFieldDecorator } = form;
             if (khachhang.length !== 0) {
                 first_kh_id = khachhang[0].kh_id
             }
+            if (id_duan.length !== 0) {
+                first_da_id = id_duan[0].dm_duan_id
+            }
+            if (nhansu.length !== 0) {
+                first_ns_id = nhansu[0].ns_id
+            }
+            var user_cookie = cookie.load('user');
             return (
                 <Modal
                     centered
@@ -69,7 +78,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 </div>
                                 <Form.Item label="Gán cho">
                                     {getFieldDecorator('ns_id_ass', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "9298eb00-a6d9-11e9-bd04-0986e022adbf"
+                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: first_ns_id
                                     })(<Select
                                         size={"small"}
                                         onChange={changeButton}
@@ -77,7 +86,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value="9298eb00-a6d9-11e9-bd04-0986e022adbf" > <Icon type="user" /> &nbsp;&nbsp;&nbsp; Assignd to Me</Option>
                                         {
                                             nhansu.map((value, index) => {
                                                 return (<Option value={value.ns_id}>{value.ns_hovaten}</Option>)
@@ -89,7 +97,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={8} >
                                 <Form.Item label="Dự án">
                                     {getFieldDecorator('dm_duan_id', {
-                                        rules: [{ required: true, message: 'Trường không được để trống', }], initialValue: "eb7d059c-b36f-481a-9ad3-0a7c593bbedc"
+                                        rules: [{ required: true, message: 'Trường không được để trống', }], initialValue: first_da_id
                                     })(<Select
 
                                         size={"small"}
@@ -148,7 +156,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     >
                                         {
                                             khachhang.map((value, index) => {
-                                                return (<Option value={value.kh_id}>{value.kh_hovaten}</Option>)
+                                                return (<Option value={value.kh_id}>{value.kh_ten}</Option>)
                                             })
                                         }
                                     </Select>)}
@@ -196,8 +204,8 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={6}>
                                 <Form.Item label="Người tạo">
                                     {getFieldDecorator('ns_id_nguoitao', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "9298eb00-a6d9-11e9-bd04-0986e022adbf"
-                                    })(<Tag>&ensp;<Icon type="user" /> &emsp;&emsp; Tạ Văn Toàn &emsp;&emsp;&emsp;&ensp;</Tag>)}
+                                        rules: [{ required: true, message: 'Trường không được để trống' }]
+                                    })(<Tag>&ensp;<Icon type="user" /> &emsp;&emsp; {user_cookie} &emsp;&emsp;&emsp;&ensp;</Tag>)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -258,10 +266,8 @@ class Hotro extends React.Component {
             nhansu: [],
             khachhang: [],
             pageNumber: 1,
-            current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
             count: 1,
             show: false,
             visible: false,
@@ -277,9 +283,7 @@ class Hotro extends React.Component {
             index: 'ht_id',
             orderby: 'arrow-up',
             date: null,
-            trangthaiinput: false,
             trangthaibutton: false,
-            colorcolumn: 'yellow',
             selectedId: [],
             statebuttonedit: true,
             statebuttondelete: true,
@@ -329,6 +333,7 @@ class Hotro extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
+                console.log("Read res ", res)
                 this.setState({
                     hotro: res.data.data.hotros,
                     count: res.data.data.count
@@ -337,15 +342,16 @@ class Hotro extends React.Component {
                     loading: false
                 })
                 var array_duan = []
-                array_ht_trangthai = [],
-                    res.data.data.hotros.map((data, index) => {
-                        array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
-                        array_ht_trangthai.push(data.ht_trangthai)
-                    })
+                array_ht_trangthai = []
+                res.data.data.hotros.map((data, index) => {
+                    array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
+                    array_ht_trangthai.push(data.ht_trangthai)
+                })
                 this.setState({
                     id_duanfilltable: array_duan
                 })
             })
+        let user_cookie = cookie.load('user');
     }
 
     getkhachhang = () => {
@@ -370,27 +376,14 @@ class Hotro extends React.Component {
             })
             if (url === 'hotro/update') {
                 let user_cookie = cookie.load('user');
-                console.log("Hien thi user ", user_cookie)
                 values.ns_id_capnhat = user_cookie
                 values.nkht_thoigiancapnhat = new Date()
             }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
-                console.log("hien thi ht_thoigiandukienhoanthanh ", values.ht_thoigian_dukien_hoanthanh)
                 values.ht_thoigian_dukien_hoanthanh = null
             }
-            // else
-            // {
-            //     if (url === 'hotro/update') {
-            //         object = values
-            //         object.ht_thoigian_dukien_hoanthanh = object.ht_thoigian_dukien_hoanthanh + "T17:00:00.000Z"
-            //         this.setState({
-            //             rowthotroselected: object
-            //         })
-            //     }
-            // }
             Request(url, 'POST', values)
                 .then(async (response) => {
-                    console.log("Hien thi values ", values)
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -421,7 +414,6 @@ class Hotro extends React.Component {
     }
 
     deleteHotro = (ht_id) => {
-        console.log("Hien thi ht_id ", ht_id)
         Request(`hotro/delete`, 'DELETE', { ht_id: ht_id })
             .then((res) => {
                 ht_id.map((values, index) => {
@@ -438,7 +430,6 @@ class Hotro extends React.Component {
                     statebuttonedit: true,
                     selectedRowKeys: []
                 })
-                console.log("Hien thi state.selectedrow ", this.state.selectedrow)
                 this.render()
             })
     }
@@ -513,10 +504,12 @@ class Hotro extends React.Component {
         this.setState({
             visible: true
         });
+
         await form.resetFields();
+        let user_cookie = cookie.load('user');
+        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
         form.setFieldsValue({ ht_thoigiantiepnhan: formatDateModal(new Date(), "yyyy-mm-dd") });
         if (hotro.ht_id !== undefined) {
-            console.log("day la update")
             this.setState({
                 id_visible: true,
                 action: 'update'
@@ -554,7 +547,6 @@ class Hotro extends React.Component {
         let state = this.state;
         state[e.target.name] = e.target.value;
         this.setState(state);
-        console.log('Change ')
     }
 
     handleCount = () => {
@@ -569,7 +561,6 @@ class Hotro extends React.Component {
     }
 
     cancel = (e) => {
-        console.log(e);
         this.setState({
             stateconfirmdelete: false
         })
@@ -594,7 +585,6 @@ class Hotro extends React.Component {
 
     onTodoChange = async (value) => {
         const { form } = this.formRef.props
-        console.log(value, 'value change')
         if (value === "daxong") {
             await this.setState({
                 date: formatDateModal(new Date(), "dd / mm / yyyy -- HH : MM : ss"),
@@ -610,12 +600,11 @@ class Hotro extends React.Component {
             })
             form.setFieldsValue({ ht_thoigian_hoanthanh: null })
         }
-        await console.log('Hien thi thoi gian hoan thanh ', this.state.date)
     }
 
     Assignme = () => {
         const { form } = this.formRef.props
-        form.setFieldsValue({ ns_id_ass: '9298eb00-a6d9-11e9-bd04-0986e022adbf' })
+        form.setFieldsValue({ ns_id_ass: user_cookie })
         this.setState({
             trangthaibutton: true
         })
@@ -660,8 +649,6 @@ class Hotro extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys, selectedRows) => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
-        console.log("hien thi selectedrows ", selectedRows)
         this.setState({
             selectedRowKeys,
             selectedId: selectedRowKeys
@@ -694,17 +681,7 @@ class Hotro extends React.Component {
         else {
             this.onSelectChange([row.ht_id], [row])
         }
-        // if (stateRowSelected === false) {
-
-        //     this.onSelectChange([row.ht_id], [row])
-        //     stateRowSelected = !stateRowSelected
-        // }
-        // else {
-        //     this.onSelectChange([], [])
-        //     stateRowSelected = !stateRowSelected
-        // }
     }
-
 
     render() {
         var i = 0
@@ -712,36 +689,10 @@ class Hotro extends React.Component {
         var formatDate = require('dateformat')
         const { selectedRowKeys } = this.state
         const rowSelection = {
-            // columnTitle: 'Select',
             hideDefaultSelections: true,
             selectedRowKeys,
             onChange: this.onSelectChange,
             onHeaderCell: this.click
-            // onChange: async (selectedRowKeys, selectedRows) => {
-            //     console.log("Hien thi selectedrows ", selectedRows)
-            //     array = []
-            //     await console.log("hien thi this.state.selectedrow ", this.state.selectedrow)
-            //     await console.log("hien thi selectedrowkeys ", selectedRowKeys)
-            //     await selectedRowKeys.forEach(async element => {
-            //         if (this.state.selectedrow.length === 0) {
-            //             await console.log("hien thi trong foreach-if")
-            //             array = selectedRowKeys
-            //         }
-            //         else {
-            //             var j = false
-            //             await this.state.selectedrow.forEach(async element2 => {
-            //                 if (element2 === element) {
-            //                     j = true
-            //                 }
-            //             })
-            //             if (j === false) {
-            //                 await array.push(element)
-            //             }
-            //         }
-            //     });
-            //     await console.log("array ", array)
-
-            // },
         };
 
         return (
@@ -828,7 +779,12 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="kh_hovaten" width={100}
+                            <Column title="Khách hàng" dataIndex="kh_ten" width={100}
+                                render={text => {
+                                    return this.checkDate(i, text, j)
+                                }}
+                                width={150} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Người tạo" dataIndex="ns_hoten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}

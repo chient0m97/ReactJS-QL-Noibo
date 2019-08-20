@@ -56,6 +56,11 @@ module.exports = {
     updateCustomer: function (customer, callback) {
         knex.from('khachhangs').where('kh_id', customer.kh_id)
             .update(customer).then(res => {
+                var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
+                if(customer.kh_lienlac === 'DD')
+                knex.raw(sql).then(res => {
+                    console.log('dã update')
+                })
                 callback({ success: true })
             }).catch(err => {
                 console.log(err)
@@ -63,10 +68,9 @@ module.exports = {
             })
     },
 
-    selectUnit: function (customer, callback) {
+    selectCustomer: function (customer, callback) {
         knex.from('khachhangs').select('*').where('kh_id', customer.kh_id).then(res => {
             callback(res[0]);
-
         }).catch(err => {
             console.log('đây là select', err)
             callback({ success: false })
@@ -132,6 +136,7 @@ module.exports = {
                 callback(res.rows);
             })
     },
+
     // getDonvicha : function (callback){
     //     knex.raw('select dm_dv_id, dm_dv_ten as tendonvicha from donvis where dm_dv_id_cha = ' +data)
     //     .then((res) => {

@@ -19,14 +19,12 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
     class extends React.Component {
 
         clear = e => {
-            console.log(e);
         }
 
         onChange = (field, value) => {
             this.setState({
                 [field]: value,
             });
-            console.log('date is: ', value)
         };
 
         onDateChange = value => {
@@ -42,7 +40,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
         handleChange = async (value) => {
         }
         render() {
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, dinhdanh } = this.props;
             const { getFieldDecorator } = form;
             const selectBefore = (
                 <Select placeholder="(+84)" defaultValue="0" style={{ width: 80 }}>
@@ -76,21 +74,21 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     {getFieldDecorator('ns_ho', {
                                         rules: [{ required: true, message: 'Trường không được để trống!' }]
                                     })(
-                                        <Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                        <Input size={"small"} type="text" />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Tên lót">
                                     {getFieldDecorator('ns_tenlot', {
                                         rules: [{}]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Tên">
                                     {getFieldDecorator('ns_ten', {
                                         rules: [{ required: true, message: 'Trường không được để trống!', }],
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -152,7 +150,18 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="Định danh cá nhân(Cmt/ Thẻ căn cước)">
                                     {getFieldDecorator('ns_dinhdanhcanhan', {
                                         rules: [{ required: true, message: 'Trường không được để trống!', }],
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Select
+                                        size={"small"}
+                                        filterOption={(input, option) =>
+                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                    >
+                                        {
+                                            dinhdanh.map((value, index) => {
+                                                return (<Option value={value.madinhdanh}>{value.name}</Option>)
+                                            })
+                                        }
+                                    </Select>)}
                                 </Form.Item>
                             </Col>
                             <Col span={9}>
@@ -303,6 +312,7 @@ class Nhansu extends React.Component {
             selectedRowKeys: [],
             selectedId: [],
             selectedrow: [],
+            dinhdanh: []
         }
     }
 
@@ -399,6 +409,16 @@ class Nhansu extends React.Component {
         })
     }
 
+    set_Select_DinhDanh() {
+        Request('nhansu/getdinhdanh', 'POST', {}).then((res) => {
+            this.setState({
+                dinhdanh: res.data.data.users
+            })
+            console.log("hien thi res " ,res)
+        })
+        
+    }
+
     refresh = async (pageNumber) => {
         message.success('Refresh success', 1);
         await this.getNhansu(this.state.pageNumber)
@@ -423,7 +443,6 @@ class Nhansu extends React.Component {
     }
 
     search = async (xxxx) => {
-        console.log('First Search');
         Request('nhansu/search', 'POST', {
             pageSize: this.state.pageSize,
             pageNumber: this.state.pageNumber,
@@ -492,6 +511,7 @@ class Nhansu extends React.Component {
             nhansu.ns_ngaydongbaohiem = formatDateModal(nhansu.ns_ngaydongbaohiem, 'yyyy-mm-dd')
             form.setFieldsValue(nhansu);
         }
+        this.set_Select_DinhDanh();
     }
     handleOk = e => {
         this.setState({
@@ -543,7 +563,6 @@ class Nhansu extends React.Component {
     }
 
     onSearch = (val) => {
-        console.log('search:', val);
     }
 
     saveFormRef = formRef => {
@@ -551,7 +570,6 @@ class Nhansu extends React.Component {
     }
 
     onChange = async (value) => {
-        console.log('column search', value)
         await this.setState({
             columnSearch: value,
         })
@@ -606,7 +624,7 @@ class Nhansu extends React.Component {
     }
 
     render() {
-        const columnFilter = [{column: 'ns_ho', type: 'text', name: 'Họ'},{column: 'ns_ten', type: 'text', name:'Tên'}, {column: 'ns_ngaysinh', type: 'date', name: 'Ngày sinh'} ]
+        const columnFilter = [{ column: 'ns_ho', type: 'text', name: 'Họ' }, { column: 'ns_ten', type: 'text', name: 'Tên' }, { column: 'ns_ngaysinh', type: 'date', name: 'Ngày sinh' }]
         const { selectedRowKeys } = this.state
         const rowSelection = {
             hideDefaultSelections: true,
@@ -617,8 +635,8 @@ class Nhansu extends React.Component {
         var formatDate = require('dateformat')
         return (
             <div>
-                <MultiFilter 
-                    columnFilter = {columnFilter}
+                <MultiFilter
+                    columnFilter={columnFilter}
                 />
                 <Card>
                     <Row>
@@ -670,6 +688,7 @@ class Nhansu extends React.Component {
                         title={this.state.title}
                         formtype={this.state.formtype}
                         id_visible={this.state.id_visible}
+                        dinhdanh={this.state.dinhdanh}
                     />
                     <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
                         <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" onHeaderCell={this.onHeaderCell} />

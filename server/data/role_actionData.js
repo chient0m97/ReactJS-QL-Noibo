@@ -130,6 +130,7 @@ module.exports = {
         let id = uuidv1();
         pool.connect().then(client => {
             client.query("insert into pq_roles values('" + name + "','" + des + "','" + id + "')").then(res => {
+                console.log("Hien thi")
                 client.release()
                 callback({ success: true, message: 'insert thanh cong' })
             })

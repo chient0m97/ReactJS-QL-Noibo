@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import '@styles/style.css';
 import { fetchLoading } from '@actions/common.action';
+import { async } from 'q';
 
 
 
@@ -482,19 +483,16 @@ class Hopdong extends React.Component {
     Request('hopdong/get', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
-      index: this.state.index,
-      sortBy: this.state.sortBy
+      // index: this.state.index,
+      // sortBy: this.state.sortBy
     })
-      .then((response) => {
-        let data = response.data;
-        //console.log('data trả về:', data)
-        if (data.data)
+      .then(async(response) => {
           this.setState({
-            hopdongs: data.data.hopdongs.rows,
-            count: Number(data.data.count) // ép kiểu về    
+            hopdongs: response.data.data.hopdongs.rows,
+            count: Number(response.data.count) // ép kiểu về    
           })
         //console.log('------------------------', this.state.hopdongs)
-        this.props.fetchLoading({
+       await this.props.fetchLoading({
           loading: false
 
         })

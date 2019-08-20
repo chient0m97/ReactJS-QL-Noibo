@@ -43,7 +43,6 @@ module.exports = {
             callback({
                 success:true                
             })
-            console.log('DaTa =>: ',nhansu)
         }).catch(err => {
             console.log(err)
             callback({
@@ -53,7 +52,6 @@ module.exports = {
     },
 
     updateNhansu: function(nhansu, callback) {
-        console.log("hien thi ",nhansu)
         nhansu.ns_ngaysinh=dateFormat(nhansu.ns_ngaysinh, "yyyy/mm/dd")
         nhansu.ns_ngayhocviec=dateFormat(nhansu.ns_ngayhocviec, "yyyy/mm/dd")
         nhansu.ns_ngaythuviec=dateFormat(nhansu.ns_ngaythuviec, "yyyy/mm/dd")
@@ -72,7 +70,6 @@ module.exports = {
     },
 
     deleteNhansu: function(ns_id, callback){
-        console.log("console ",ns_id)
         knex.from('nhansu').whereIn('ns_id',ns_id).del().then(res =>{
             callback({
                 success:true
@@ -99,33 +96,13 @@ module.exports = {
         })
     },
 
-    getDataSearch: function(limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        console.log('textsearch', textSearch, 'and column search:', columnSearch);
-
-        textSearch='%'+textSearch+'%';
-        console.log('textsearch', textSearch, 'and column search:', columnSearch);
-        knex('nhansu').where(columnSearch,'like',textSearch).orderBy(index,sortBy).limit(limit).offset(offset)
-            .then(response => {
-                var nhansu = response
-                console.log('=>', response)
-                knex.from('nhansu').where(columnSearch,'like', textSearch).count('*')
-                    .then(resCount =>{
-                        var count = resCount[0].count;
-                        let dataCallback = {
-                            success: true,
-                            message: 'Get data success',
-                            data: {
-                                nhansu: nhansu,
-                                count: count,
-                            }
-                        }
-                        console.log('res',nhansu)
-                        callback(dataCallback)
-                    }).catch(err => {
-                        console.log(' Error connect ', err)
-                    })
-            }).catch(err => {
-                console.log('Error connect', err)
+    getUser(callback) {
+        knex.select('name','madinhdanh' ).from('users').then((res) => {
+            callback({
+                data: {
+                    users: res
+                }
             })
+        })
     }
 }

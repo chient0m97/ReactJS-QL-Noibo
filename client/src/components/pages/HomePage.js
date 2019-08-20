@@ -17,7 +17,7 @@ var data = {
         'Giới Tính'
     ],
     datasets: [{
-        data: [],
+        data: [2, 5, 5],
         backgroundColor: [
             '#FF6384',
             '#36A2EB',
@@ -37,9 +37,6 @@ export default class HomePage extends Component {
         this.state = {
             pageNumber: 1,
             nhansu: [],
-            hopdongs: [],
-            nhansuget: [],
-            current: 1,
             page: 1,
             pageSize: 10,
             countNhanSu: 1,
@@ -51,7 +48,9 @@ export default class HomePage extends Component {
             khachhangs: [],
             dataChartjs: [],
             dataGetFollowMonth: {},
-            value: [],
+            dataGetFollowMonthBar: {},
+            valueMonth: [],
+            valueYear: [],
             stateOpenRangePicker: false
         }
     }
@@ -68,19 +67,22 @@ export default class HomePage extends Component {
             .then(async (res) => {
                 var countGioiTinhNam = 0
                 var countGioiTinhNu = 0
-                await res.data.data.resGioitinh.forEach(element => {
-                    if (element.ns_gioitinh === "Nam") {
-                        countGioiTinhNam++
-                    }
-                    if (element.ns_gioitinh === "Nữ")
-                        countGioiTinhNu++
-                });
-                await this.setState({
-                    nhansu: res.data.data.nhansu,
-                    countNhanSu: res.data.data.count,
-                    dataChartjs: [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
-                })
-                data.datasets[0].data = await [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
+                if (res.data.data.resGioitinh) {
+                    await res.data.data.resGioitinh.forEach(element => {
+                        if (element.ns_gioitinh === "Nam") {
+                            countGioiTinhNam++
+                        }
+                        if (element.ns_gioitinh === "Nữ")
+                            countGioiTinhNu++
+                    });
+                    await this.setState({
+                        nhansu: res.data.data.nhansu,
+                        countNhanSu: res.data.data.count,
+                        dataChartjs: [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
+                    })
+                    data.datasets[0].data = await [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
+
+                }
             })
 
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
@@ -90,9 +92,12 @@ export default class HomePage extends Component {
         })
 
         Request('hotro/getidduan', 'POST', {}).then(async (res) => {
-            await this.setState({
-                countDuAn: res.data.data.duans.length
-            })
+            if(res.data.data.duans){
+                await this.setState({
+                    countDuAn: res.data.data.duans.length
+                })
+            }
+          
         })
 
         Request('hopdong/get', 'POST', {
@@ -117,15 +122,21 @@ export default class HomePage extends Component {
         console.log("Hien thi click")
     }
 
-    setValue = (value) => {
-        this.setState({ value })
+    setValueMonth = (valueMonth) => {
+        this.setState({ valueMonth })
+    }
+
+    setValueYear = (valueYear) => {
+        this.setState({ valueYear })
     }
 
     getHotroFollowMonth = (monthStart, monthEnd) => {
         Request('hotro/getfollowmonth', 'POST', { monthStart, monthEnd }).then(async (res) => {
+            console.log("hien thi res ", res.data.rows)
             var arrayName = []
             var arrayCount = []
             var arrayBackGround = []
+            if (res.data.rows === undefined) { return }
             res.data.rows.map((value, index) => {
                 arrayName.push(value.ns_hovaten)
                 arrayCount.push(value.count)
@@ -135,6 +146,7 @@ export default class HomePage extends Component {
                 labels: [],
                 datasets: [{ data: [], backgroundColor: [], hoverBackgroundColor: [] }]
             }
+
             dataFollowMonth.labels = arrayName
             dataFollowMonth.datasets[0].data = arrayCount
             dataFollowMonth.datasets[0].backgroundColor = arrayBackGround
@@ -142,8 +154,7 @@ export default class HomePage extends Component {
             await this.setState({
                 dataGetFollowMonth: dataFollowMonth
             })
-
-            // document.getElementsByTagName('body')[0].click()
+            console.log("Hien thi datastate ", this.state.dataGetFollowMonth)
         })
     }
 
@@ -189,15 +200,6 @@ export default class HomePage extends Component {
                         </Row>
                         <Row style={{ marginTop: '15px' }}>
                             <Card bordered={false}>
-                                {/* <Col span={9}>
-                                    <Pie data={data} />
-                                </Col>
-                                <Col span={3} style={{ fontSize: '24px', width: '10%', marginRight: 20 }}>
-                                    <div style={{ color: 'red', }} >Giới Tính</div>
-                                    <div style={{ fontSize: '18px', borderTop: '1px solid #e8e8e8' }}>Nam : {this.state.dataChartjs[0]}</div>
-                                    <div style={{ fontSize: '18px' }}>Nữ:  {this.state.dataChartjs[1]}</div>
-                                    <div style={{ fontSize: '18px' }}>Khác: {this.state.dataChartjs[2]}</div>
-                                </Col> */}
                                 <Col span={9}>
                                     <Tabs>
                                         <TabPane
@@ -206,17 +208,16 @@ export default class HomePage extends Component {
                                             }
                                             key="1"
                                         >
-                                            <p style={{ fontSize: '14px' }}>Thống kê biểu đồ từng người đã hỗ trợ bao nhiêu trong tháng</p>
+                                            <p style={{ fontSize: '14px' }}>Thống kê biểu đồ từng người đã hỗ trợ bao nhiêu trong Tháng</p>
                                             <RangePicker
-                                                placeholder={['Start month', 'End month']}
+                                                placeholder={['Tháng bắt đầu', 'Tháng kết thúc']}
                                                 format="YYYY-MM"
                                                 mode={['month', 'month']}
                                                 onPanelChange={(value, datestring) => {
-                                                    this.setValue(value)
+                                                    this.setValueMonth(value)
                                                     this.getHotroFollowMonth(formatDate(value[0]._d, 'yyyy-mm-01'), formatDate(value[1]._d, 'yyyy-mm-01'))
                                                 }}
-                                                value={this.state.value}
-                                                // open={this.state.stateOpenRangePicker}
+                                                value={this.state.valueMonth}
                                                 separator="-->"
                                             />
                                         </TabPane>
@@ -226,13 +227,52 @@ export default class HomePage extends Component {
                                             }
                                             key="2"
                                         >
-                                            Content Năm
+                                            <p style={{ fontSize: '14px' }}>Thống kê biểu đồ từng người đã hỗ trợ bao nhiêu trong Năm</p>
+                                            <RangePicker
+                                                placeholder={['Năm bắt đầu', 'Năm kết thúc']}
+                                                format="YYYY"
+                                                mode={['year', 'year']}
+                                                separator="-->"
+                                                onPanelChange={(value, datestring) => {
+                                                    this.setValueYear(value)
+                                                }}
+                                                value={this.state.valueYear}
+                                            />
                                         </TabPane>
                                     </Tabs>
 
                                 </Col>
                                 <Col span={15}>
                                     <Tabs style={{ marginLeft: '200px' }}>
+                                        <TabPane
+                                            tab={
+                                                <span>Biểu Đồ Dạng Cột</span>
+                                            }
+                                            key="4"
+                                        >
+                                            <div style={{ marginLeft: '20px' }}>
+                                                <Bar
+                                                    data={this.state.dataGetFollowMonth}
+                                                    options={{
+                                                        legend: { display: false },
+                                                        scales: {
+                                                            yAxes: [{
+                                                                display: false,
+                                                                ticks: {
+                                                                    beginAtZero: true,
+                                                                    // max: 5
+                                                                }
+                                                            }],
+
+                                                        },
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Thống kê'
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                        </TabPane>
                                         <TabPane
                                             tab={
                                                 <span>Biểu Đồ Dạng Tròn</span>
@@ -243,24 +283,7 @@ export default class HomePage extends Component {
                                                 <Pie data={this.state.dataGetFollowMonth} />
                                             </div>
                                         </TabPane>
-                                        <TabPane
-                                            tab={
-                                                <span>Biểu Đồ Dạng Cột</span>
-                                            }
-                                            key="4"
-                                        >
-                                            <div style={{ marginLeft: '20px' }}>
-                                                <Bar 
-                                                data={this.state.dataGetFollowMonth} 
-                                                options={{scales: {
-                                                    xAxes:[{
-                                                        maxBarThickness: 8,
-                                                        minBarLength: 0
-                                                    }]
-                                                }}}
-                                                />
-                                            </div>
-                                        </TabPane>
+
                                     </Tabs>
 
                                 </Col>

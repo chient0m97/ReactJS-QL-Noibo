@@ -79,10 +79,8 @@ var nhansuController = {
         })
     },
 
-    getDataSearch: function getDataSearch(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
-        let limit = pageSize;
-        let offset = pageSize * (pageNumber - 1);
-        nhansuData.getDataSearch(limit,offset,textSearch,columnSearch,index,sortBy, data => {
+    getUser(callback){
+        nhansuData.getUser(function(data){
             callback(data);
         })
     },

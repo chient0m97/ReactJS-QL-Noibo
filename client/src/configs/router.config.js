@@ -23,6 +23,11 @@ const routers = [
         name: 'member'
     },
     {
+        path: '/',
+        component: HomePage,
+        name: 'homepage'
+    },
+    {
         path: '/role',
         component: RoleAction,
         name: 'quản lý quyền'

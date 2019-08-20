@@ -4,7 +4,7 @@ const token = cookie.load('token');
 export default function Request(endpoint, method, body) {
     return axios({
         method: method,
-        url: `http://localhost:5000/${endpoint}`,
+        url: `http://fscvn.ddns.net:5000/${endpoint}`,
         data: body,
         headers: {
             "access-token": token

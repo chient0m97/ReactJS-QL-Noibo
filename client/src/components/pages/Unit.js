@@ -147,10 +147,10 @@ class Unit extends React.Component {
                     }
                     var description = response.data.message
                     var notifi_type = 'success'
-                    var message = 'Thành công !!'
+                    var message = 'Thành công (^.^)'
 
                     if (!!!response.data.success) {
-                        message = 'Có lỗi xảy ra !!'
+                        message = 'Có lỗi xảy ra (>.<)'
                         notifi_type = 'error'
                         description = response.data.message.map((values, index) => {
                             return <Alert type='error' message={values}></Alert>
@@ -208,7 +208,7 @@ class Unit extends React.Component {
                 action: 'update'
             })
             this.set_select_tenkh();
-            form.setFieldsValue({ kh_id_nguoidaidien: 0 })
+            form.setFieldsValue({ kh_id_nguoidaidien: unit.tennguoidaidien })
             this.set_select_diabantinh();
             if (this.state.select_diabantinh.length === 0) {
                 form.setFieldsValue({ dm_db_id_tinh: '' })
@@ -247,25 +247,20 @@ class Unit extends React.Component {
             await this.set_select_tenkh();
             // await form.setFieldsValue({ kh_id_nguoidaidien: this.state.select_tenkh[0].kh_id })
             await this.set_select_diabantinh();
-            if (this.state.select_diabantinh.length > 0) {
-                await form.setFieldsValue({ dm_db_id_tinh: 1 })
-                await this.set_select_diabanhuyen(1);
-            } else {
-                await form.setFieldsValue({ dm_db_id_tinh: '' })
+            if (this.state.select_diabantinh.length === 0) {
+                form.setFieldsValue({ dm_db_id_tinh: '' })
             }
-            if (this.state.select_diabanhuyen.length > 0) {
-                await form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
-                await this.set_select_diabanxa(this.state.select_diabanhuyen[0].dm_db_id);
-            } else {
-                await form.setFieldsValue({ dm_db_id_huyen: '' })
+            form.setFieldsValue({ dm_db_id_tinh: this.state.select_diabantinh[0].dm_db_id })
+            await this.set_select_diabanhuyen(this.state.select_diabantinh[0].dm_db_id);
+            if (this.state.select_diabanhuyen.length === 0) {
+                form.setFieldsValue({ dm_db_id_huyen: '' })
             }
+            form.setFieldsValue({ dm_db_id_huyen: this.state.select_diabanhuyen[0].dm_db_id })
+            await this.set_select_diabanxa(this.state.select_diabanhuyen[0].dm_db_id)
             if (this.state.select_diabanxa.length === 0) {
-                await form.setFieldsValue({ dm_db_id_xa: '' })
+                form.setFieldsValue({ dm_db_id_xa: '' })
             }
-            else {
-                await form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
-            }
-            form.setFieldsValue(unit);
+            form.setFieldsValue({ dm_db_id_xa: this.state.select_diabanxa[0].dm_db_id })
         }
     }
 
@@ -289,6 +284,7 @@ class Unit extends React.Component {
     }
 
     handleChange(value) {
+        console.log(`selecet ${value}`);
     }
 
     handleCount = () => {
@@ -299,10 +295,15 @@ class Unit extends React.Component {
     }
 
     confirm = (e) => { //xác nhận
+        console.log(e);
         message.success('Bấm yes để xác nhận');
     }
 
     cancel = (e) => {
+        console.log(e);
+        this.setState({
+            stateconfirmdelete: false
+        })
     }
 
     checkStateConfirm = () => {
@@ -320,7 +321,9 @@ class Unit extends React.Component {
             pageSize: size
         });
         if (this.state.isSearch === 1) {
+            console.log('xxxx')
             this.handleSearch(this.state.page, this.state.textSearch, this.confirm, this.state.nameSearch, this.state.codeSearch);
+            console.log(this.state.page)
         }
         else {
             this.getUnits(this.state.page, this.state.index, this.state.sortBy)
@@ -328,6 +331,8 @@ class Unit extends React.Component {
     }
 
     search = async (xxxx) => {
+        console.log("đây là tìm kiếm", xxxx)
+        console.log('cai dkm', this.state.columnSearch)
         Request('unit/search', 'POST', {
             pageSize: this.state.pageSize,
             pageNumber: this.state.page,
@@ -338,6 +343,7 @@ class Unit extends React.Component {
         })
             .then((response) => {
                 let data = response.data;
+                console.log('aaaaaaaaaaaaaaaaaa', data)
                 if (data.data)
                     this.setState({
                         units: data.data.units,
@@ -345,24 +351,30 @@ class Unit extends React.Component {
                         textSearch: xxxx,
                         isSearch: 1
                     })
+                console.log('data---------------------------', data);
             })
     }
 
     onChangeSearchType = async (value) => {
+        console.log('hihi', this.state.textSearch)
+        console.log(value)
         await this.setState({
             columnSearch: value,
         })
         if (this.state.textSearch) {
             this.search(this.state.textSearch);
         }
+        console.log(`selected ${value}`);
     }
 
     onSearch = (val) => {
+        console.log('search:', val);
     }
 
     onHeaderCell = (column) => {
         return {
             onClick: async () => {
+                console.log('ccmnr', column.dataIndex)
                 if (this.state.isSort) {
                     await this.setState({
                         sortBy: 'DESC',
@@ -379,6 +391,7 @@ class Unit extends React.Component {
                     isSort: !this.state.isSort,
                     index: column.dataIndex
                 })
+                console.log('xx', this.state.isSort)
                 if (this.state.isSearch == 1) {
                     this.search(this.state.textSearch)
                 }
@@ -398,6 +411,7 @@ class Unit extends React.Component {
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
+            console.log('data khach hang', res.data)
             await this.setState({
                 select_tenkh: res.data
             })
@@ -407,6 +421,7 @@ class Unit extends React.Component {
     set_select_tendv = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
+            console.log('data donvi', res.data)
             await this.setState({
                 select_tendv: res.data
             })
@@ -423,6 +438,7 @@ class Unit extends React.Component {
     }
 
     set_select_diabanhuyen = async (id_db_tinh) => {
+        console.log('select diab an tinh', id_db_tinh)
         await Request('unit/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
@@ -445,6 +461,7 @@ class Unit extends React.Component {
     set_select_tinh = async () => {
         await Request('unit/gettinh', 'POST', {
         }).then(async (res) => {
+            console.log(res.data, 'data tinh')
             await this.setState({
                 select_tinh: res.data
             })
@@ -452,9 +469,11 @@ class Unit extends React.Component {
     }
 
     set_select_huyen = async (id_db_tinh) => {
+        console.log('select diab an tinh', id_db_tinh)
         await Request('unit/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
+            console.log(res.data, 'data res huyen')
             await this.setState({
                 select_huyen: res.data
             })
@@ -480,28 +499,24 @@ class Unit extends React.Component {
             var form = null
             if (this.state.visible_kh) {
                 form = this.formRef.props.form
-                form.setFieldsValue({ kh_lienlac: 'DD' })
+                form.setFieldsValue({ kh_lienlac: 'TXLL' })
                 form.setFieldsValue({ kh_gioitinh: 'Nam' })
                 try {
                     await this.set_select_tinh();
-                    if (this.state.select_tinh.length > 0) {
-                        await form.setFieldsValue({ dm_db_id_tinh_customer: 1 })
-                        await this.set_select_huyen(1);
-                    } else {
-                        await form.setFieldsValue({ dm_db_id_tinh_customer: '' })
+                    if (this.state.select_tinh.length === 0) {
+                        form.setFieldsValue({ dm_db_id_tinh_customer: '' })
                     }
-                    if (this.state.select_huyen.length > 0) {
-                        await form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
-                        await this.set_select_xa(this.state.select_huyen[0].dm_db_id);
-                    } else {
-                        await form.setFieldsValue({ dm_db_id_huyen_customer: '' })
+                    form.setFieldsValue({ dm_db_id_tinh_customer: this.state.select_tinh[0].dm_db_id })
+                    await this.set_select_huyen(this.state.select_tinh[0].dm_db_id);
+                    if (this.state.select_huyen.length === 0) {
+                        form.setFieldsValue({ dm_db_id_huyen_customer: '' })
                     }
+                    form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
+                    await this.set_select_xa(this.state.select_huyen[0].dm_db_id)
                     if (this.state.select_xa.length === 0) {
-                        await form.setFieldsValue({ dm_db_id_xa_customer: '' })
+                        form.setFieldsValue({ dm_db_id_xa_customer: '' })
                     }
-                    else {
-                        await form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
-                    }
+                    form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
                     await this.set_select_tendv();
                 }
                 catch (err) {
@@ -509,8 +524,6 @@ class Unit extends React.Component {
                 }
             }
         }
-
-
         await this.set_select_tenkh(value);
         if (this.state.select_tenkh.length === 0) {
             await form.setFieldsValue({ kh_id_nguoidaidien: '' })
@@ -549,6 +562,7 @@ class Unit extends React.Component {
 
 
     onSelectTinh = async (value) => {
+        console.log('dia ban tinh')
         const { form } = this.formRef.props
         await this.set_select_huyen(value);
         if (this.state.select_huyen.length === 0) {
@@ -579,6 +593,7 @@ class Unit extends React.Component {
     }
 
     onCancel_kh = () => {
+        console.log('cancel')
         this.setState({
             visible_kh: false
         })
@@ -624,7 +639,7 @@ class Unit extends React.Component {
                         message: message,
                         description: description
                     });
-                    this.set_select_tenkh();               
+                    this.set_select_tenkh();
                 })
         });
     }

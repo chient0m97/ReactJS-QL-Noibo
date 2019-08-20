@@ -47,6 +47,7 @@ class AppSider extends Component {
 
         let payload = jwt.decode(token);
         let claims = payload.claims;
+        console.log('-=================',claims)
         if(claims !== undefined){
             for (let i = 0; i < claims.length; i++) {
                 if (claims[i] === Permission.Role.Read) {
@@ -91,7 +92,7 @@ class AppSider extends Component {
                 >
                     <Menu.Item key="1">
                         <Icon type="home" />
-                        <span><NavLink to="" className="">Home</NavLink ></span>
+                        <span><NavLink to="/" className="">Home</NavLink ></span>
                     </Menu.Item>
                     <SubMenu
                         key="sub1"
@@ -102,7 +103,7 @@ class AppSider extends Component {
                             </span>
                         }
                     >
-                        <Menu.Item key="3"><NavLink to="/group" className="">Quản lý group</NavLink ></Menu.Item>
+                        {/* <Menu.Item key="3"><NavLink to="/group" className="">Quản lý group</NavLink ></Menu.Item> */}
                         
                         {claims.map((item, i) => {
                             if (item.url) {

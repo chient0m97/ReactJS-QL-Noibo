@@ -14,22 +14,16 @@ class Menu extends React.Component {
         this.state = {
             menu: [],
             pageNumber: 1,
-            current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
             count: 1,
-            show: false,
             visible: false,
             formtype: 'horizontal',
             title: 'Nhập thông tin Menu',
             id_visible: false,
             action: 'insert',
-            isSearch: 0,
-            isSort: true,
             sortBy: '',
             index: 'dm_menu_id',
-            orderby: 'arrow-up',
             stateconfirmdelete: false,
             checkStateConfirm: true,
             statebuttondelete: true,
@@ -208,7 +202,7 @@ class Menu extends React.Component {
     }
 
     clearChecked = () => {
-        this.onSelectChange([],[])
+        this.onSelectChange([], [])
     };
 
     onRowClick = (row) => {

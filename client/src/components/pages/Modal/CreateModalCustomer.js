@@ -19,21 +19,13 @@ var formDateModal = require('dateformat');
 
 const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
     class extends React.Component {
-
         render() {
             const { Option } = Select;
             const combobox = [];
             const comboboxx = [];
-
             combobox.push(<Option key={'DD'}>Đại diện</Option>);
             combobox.push(<Option key={'DM'}>Đầu mối liên lạc</Option>);
             combobox.push(<Option key={'TXLL'}>Thường xuyên liên lạc</Option>);
-
-            comboboxx.push(<Option key={'Nam'}>Nam</Option>);
-            comboboxx.push(<Option key={'Nữ'}>Nữ</Option>);
-            comboboxx.push(<Option key={'Khác'}>Khác</Option>);
-
-            const dateFormat = "YYYY-MM-DD";
             const { visible, onCancel, onOk_kh, Data, form, title, confirmLoading, formtype, kh_id_visible, handleChange, select_tinh, select_huyen, select_xa, onSelectTinh, onSelectHuyen, onSelectXa, select_tendv, onSelectDv, stateoption } = this.props;
             const { getFieldDecorator } = form;
             // var datacha = this.props.datacha
@@ -54,7 +46,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                     <div style={{ display: kh_id_visible === true ? 'block' : 'none' }}>
                                         <Form.Item>
                                             {getFieldDecorator('kh_id', {
-                                            
                                             })(<Input type="text" disabaled hidden />)}
                                         </Form.Item>
                                     </div>
@@ -62,68 +53,23 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                             </Row>
                             <Row gutter={24}>
                                 <Col span={8}>
-                                    <Form.Item label='Họ'>
-                                        {getFieldDecorator('kh_ho', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Tên lót'>
-                                        {getFieldDecorator('kh_tenlot', {
-                                           rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Tên'>
+                                    <Form.Item label='Tên khách hàng'>
                                         {getFieldDecorator('kh_ten', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
-                            </Row>
-                            <Row gutter={24}>
-                                <Col span={5}>
-                                    <Form.Item label='Ngày sinh'>
-                                        {getFieldDecorator('kh_ngaysinh', {
-                                            // rules: [{}],
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(
-                                            <Input type="date" size="default" format={dateFormat}/>
-                                        )}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={5}>
-                                    <Form.Item label='Giới tính'>
-                                        {getFieldDecorator('kh_gioitinh', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select
-                                            style={{ width: '100%' }}
-                                            placeholder='Please select'
-                                            onChange={handleChange}
-                                        >
-                                            {comboboxx}
-                                        </Select>)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={5}>
-                                    <Form.Item label='Định danh cá nhân'>
-                                        {getFieldDecorator('kh_dinhdanhcanhan', {
-                                           
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={5}>
-                                    <Form.Item label='Email'>
-                                        {getFieldDecorator('kh_email', {
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={4}>
+                                <Col span={8}>
                                     <Form.Item label='Số điện thoại'>
                                         {getFieldDecorator('kh_sodienthoai', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+                                        })(<Input type="text" />)}
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item label='Email'>
+                                        {getFieldDecorator('kh_email', {
+                                            
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
@@ -140,7 +86,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                                         <Option value={value.dm_db_id}>{value.dm_db_ten}</Option>
                                                     )
                                                 })
-
                                             }
                                         </Select>)}
                                     </Form.Item>
@@ -148,7 +93,7 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={8}>
                                     <Form.Item label='Huyện/Quận'>
                                         {getFieldDecorator('dm_db_id_huyen_customer', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+                                           rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Select onSelect={onSelectHuyen}>
                                             {
                                                 select_huyen.map((value, index) => {
@@ -156,7 +101,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                                         <Option value={value.dm_db_id}>{value.dm_db_ten}</Option>
                                                     )
                                                 })
-
                                             }
                                         </Select>)}
                                     </Form.Item>
@@ -164,7 +108,7 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={8}>
                                     <Form.Item label='Xã/Phường'>
                                         {getFieldDecorator('dm_db_id_xa_customer', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+                                           rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Select onSelect={onSelectXa}>
                                             {
                                                 select_xa.map((value, index) => {
@@ -172,7 +116,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                                         <Option value={value.dm_db_id}>{value.dm_db_ten}</Option>
                                                     )
                                                 })
-
                                             }
                                         </Select>)}
                                     </Form.Item>
@@ -188,10 +131,29 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 </Col>
                             </Row>
                             <Row gutter={24}>
-                                <Col span={10}>
-                                    <Form.Item label='Đơn vị'>
-                                        {getFieldDecorator('dm_dv_id', {
+                                <Col span={6}>
+                                    <Form.Item label='Vị trí công tác'>
+                                        {getFieldDecorator('kh_vitricongtac', {
                                             
+                                        })(<Input type="text" />)}
+                                    </Form.Item>
+                                </Col>
+                                <Col span={6}>
+                                    <Form.Item label='Liên lạc'>
+                                        {getFieldDecorator('kh_lienlac', {
+                                           
+                                        })(<Select
+                                            style={{ width: '100%' }}
+                                            placeholder='Please select'
+                                            onChange={handleChange}
+                                        >
+                                            {combobox}
+                                        </Select>)}
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item label='Đơn vị'>
+                                        {getFieldDecorator('dm_dv_id', {       
                                         })(<Select onSelect={onSelectDv} placeholder="---Không có đơn vị có thể bỏ qua trường này---"
                                             >
                                                 <Option value="add_donvi" disabled={stateoption}>Thêm đơn vị</Option>
@@ -202,26 +164,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                                         )
                                                     })}
                                             </Select>)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={7}>
-                                    <Form.Item label='Vị trí công tác'>
-                                        {getFieldDecorator('kh_vitricongtac', {
-                                            
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={7}>
-                                    <Form.Item label='Liên lạc'>
-                                        {getFieldDecorator('kh_lienlac', {
-                                            rules: [{required: true, message: 'Vui lòng nhập vào ô này !!',}],
-                                        })(<Select
-                                            style={{ width: '100%' }}
-                                            placeholder='Please select'
-                                            onChange={handleChange}
-                                        >
-                                            {combobox}
-                                        </Select>)}
                                     </Form.Item>
                                 </Col>
                             </Row>
