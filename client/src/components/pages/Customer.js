@@ -122,6 +122,11 @@ class Customer extends React.Component {
                 this.props.fetchLoading({
                     loading: false
                 })
+            }).catch((err)=>{
+                console.log(err)
+                this.props.fetchLoading({
+                    loading: false
+                })
             })
     }
 

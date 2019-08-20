@@ -83,12 +83,16 @@ export default class HomePage extends Component {
                     data.datasets[0].data = await [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
 
                 }
+            }).catch((err)=>{
+                console.log(err)
             })
 
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
             this.setState({
                 countKhachHang: res.data.data.khachhangs.length
             })
+        }).catch((err)=>{
+            console.log(err)
         })
 
         Request('hotro/getidduan', 'POST', {}).then(async (res) => {
@@ -97,7 +101,8 @@ export default class HomePage extends Component {
                     countDuAn: res.data.data.duans.length
                 })
             }
-          
+        }).catch((err)=>{
+            console.log(err)
         })
 
         Request('hopdong/get', 'POST', {
@@ -110,6 +115,8 @@ export default class HomePage extends Component {
                 await this.setState({
                     countHopDong: Number(response.data.data.count)
                 })
+            }).catch((err)=>{
+                console.log(err)
             })
     }
 
@@ -155,6 +162,8 @@ export default class HomePage extends Component {
                 dataGetFollowMonth: dataFollowMonth
             })
             console.log("Hien thi datastate ", this.state.dataGetFollowMonth)
+        }).catch((err)=>{
+            console.log(err)
         })
     }
 

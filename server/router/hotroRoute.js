@@ -9,6 +9,7 @@ router.get('/get',function(req,res){
     res.send('dcmmhihi')
 })
 router.post('/get', function(req, res) {
+    console.log("Router")
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;

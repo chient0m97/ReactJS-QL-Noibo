@@ -300,6 +300,8 @@ class Hotro extends React.Component {
         Request('hotro/getidduan', 'POST', {}).then((res) => {
             this.setState({
                 id_duanfillmodal: res.data.data.duans
+            }).catch((err) => {
+                console.log(err)
             })
         })
     }
@@ -308,6 +310,8 @@ class Hotro extends React.Component {
         Request('hotro/getnhansu', 'POST', {}).then((res) => {
             this.setState({
                 nhansu: res.data.data.nhansu
+            }).catch((err) => {
+                console.log(err)
             })
         })
     }
@@ -316,6 +320,8 @@ class Hotro extends React.Component {
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
             this.setState({
                 khachhang: res.data.data.khachhangs
+            }).catch((err) => {
+                console.log(err)
             })
         })
     }
@@ -333,25 +339,31 @@ class Hotro extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                console.log("Read res ", res)
-                this.setState({
-                    hotro: res.data.data.hotros,
-                    count: res.data.data.count
-                })
-                this.props.fetchLoading({
-                    loading: false
-                })
-                var array_duan = []
-                array_ht_trangthai = []
-                res.data.data.hotros.map((data, index) => {
-                    array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
-                    array_ht_trangthai.push(data.ht_trangthai)
-                })
-                this.setState({
-                    id_duanfilltable: array_duan
-                })
+                if (res.data.data.hotros !== undefined) {
+                    this.setState({
+                        hotro: res.data.data.hotros,
+                        count: res.data.data.count
+                    })
+                    this.props.fetchLoading({
+                        loading: false
+                    })
+                    var array_duan = []
+                    array_ht_trangthai = []
+                    res.data.data.hotros.map((data, index) => {
+                        array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
+                        array_ht_trangthai.push(data.ht_trangthai)
+                    })
+                    this.setState({
+                        id_duanfilltable: array_duan
+                    })
+                }
+                else{
+                    this.props.fetchLoading({
+                        loading: false
+                    })
+                }
+
             })
-        let user_cookie = cookie.load('user');
     }
 
     getkhachhang = () => {
@@ -359,6 +371,8 @@ class Hotro extends React.Component {
             this.setState({
                 khachhangs: res.data.data.khachhangs
             })
+        }).catch((err) => {
+            console.log(err)
         })
     }
 
@@ -409,6 +423,8 @@ class Hotro extends React.Component {
                     });
                     this.getHotro(this.state.page)
                     this.render()
+                }).catch((err) => {
+                    console.log(err)
                 })
         })
     }
@@ -416,9 +432,6 @@ class Hotro extends React.Component {
     deleteHotro = (ht_id) => {
         Request(`hotro/delete`, 'DELETE', { ht_id: ht_id })
             .then((res) => {
-                ht_id.map((values, index) => {
-                    arraydelete.push(values)
-                })
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
                     description: res.data.message
@@ -431,6 +444,8 @@ class Hotro extends React.Component {
                     selectedRowKeys: []
                 })
                 this.render()
+            }).catch((err) => {
+                console.log(err)
             })
     }
 
@@ -442,8 +457,8 @@ class Hotro extends React.Component {
     async componentDidMount() {
         await this.getHotro(this.state.pageNumber, this.state.index, this.state.sortBy);
         document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
-        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width='85px'
-        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display='block'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
     }
 
     onchangpage = (page) => {
@@ -603,7 +618,7 @@ class Hotro extends React.Component {
     }
 
     getNguoiTao = () => {
-        
+
     }
 
     Assignme = () => {
@@ -746,10 +761,10 @@ class Hotro extends React.Component {
                     </Card>
                     <Row style={{ marginTop: 5 }}>
                         <Table rowSelection={rowSelection}
-                         onRowClick={this.onRowClick}
-                          pagination={false} 
-                          dataSource={this.state.hotro}
-                           rowKey="ht_id" bordered scroll={{ x: 1000 }}
+                            onRowClick={this.onRowClick}
+                            pagination={false}
+                            dataSource={this.state.hotro}
+                            rowKey="ht_id" bordered scroll={{ x: 1000 }}
                             expandedRowRender={(record, selectedRowKeys) => {
                                 return (
                                     <div style={{ textAlign: 'left' }}>
