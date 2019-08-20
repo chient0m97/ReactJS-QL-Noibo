@@ -602,9 +602,14 @@ class Hotro extends React.Component {
         }
     }
 
+    getNguoiTao = () => {
+        
+    }
+
     Assignme = () => {
+        let user_cookie = cookie.load('user');
         const { form } = this.formRef.props
-        form.setFieldsValue({ ns_id_ass: user_cookie })
+        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
         this.setState({
             trangthaibutton: true
         })
