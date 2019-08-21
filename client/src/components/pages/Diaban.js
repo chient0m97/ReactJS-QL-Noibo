@@ -5,7 +5,7 @@ import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-import { fetchDiaban } from '@actions/diaban.action';
+// import { fetchDiaban } from '@actions/diaban.action';
 import { fetchLoading } from '@actions/common.action';
 import { async } from 'q';
 const token = cookie.load('token');
