@@ -34,14 +34,22 @@ module.exports = {
         pool.connect().then(client => {
             client.query("delete from pq_role_user_group where group_user_code ='" + Id + "'").then(res => {
                 client.query("delete from pq_group_user where user_code = '" + Id + "'").then(res1 => {
-                    client.query("delete from users where name ='" + Id + "' ")
-                }
-                )
-                client.release()
-                callback({ success: true });
+                    client.query("delete from users where name ='" + Id + "' ").then(res2 => {
+                        client.release()
+                        callback({ success: true });
+                    }).catch(err => {
+                        client.release()
+                        callback({ success: false });
+                    })
+
+                }).catch(err => {
+                    client.release()
+                    callback({ success: false });
+                })
+
             }).catch(err => {
                 client.release()
-                console.log(err)
+                callback({ success: false });
             })
 
         })
@@ -79,8 +87,10 @@ module.exports = {
             let query = "update users set password='" + user.password + "' where name='" + user.username + "'"
             console.log('quẻyyyyyyyyyyyyyyyyyyyyyyyy', query)
             client.query(query).then(res => {
+                client.release()
                 callback({ success: true })
             }).catch(err => {
+                client.release()
                 console.log(err)
                 callback({ success: false })
             })
@@ -142,8 +152,8 @@ module.exports = {
                 return client.query(query)
                     .then(res => {
 
-                        client.release()
                         let data = res.rows
+                        client.release()
                         callback({
                             success: true,
                             data: data,
