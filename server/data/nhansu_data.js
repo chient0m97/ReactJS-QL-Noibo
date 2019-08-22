@@ -4,7 +4,7 @@ var dateFormat = require('dateformat');
 module.exports = {
     getNhansu: (limit, offset, index, sortBy, callback) => {
         //knex.select('ns_id', 'ns_dinhdanhcanhan', knex.raw("ns_ho || ' ' || ns_tenlot || ' ' || ns_ten as ns_hovaten"), 'ns_ngaysinh', 'ns_gioitinh', 'ns_sodienthoai', 'ns_email', 'ns_diachihiennay', 'ns_nguyenquan', 'ns_nguoilienhe', 'ns_bangcap')
-        knex.select('ns_id',	'ns_ho',	'ns_tenlot',	'ns_ten',	'ns_ngaysinh',	'ns_gioitinh',	'ns_dinhdanhcanhan',	'ns_sodienthoai',	'ns_email',	'ns_diachihiennay',	'ns_nguyenquan',	'ns_nguoilienhe',	'ns_bangcap',	'ns_ngayhocviec',	'ns_ngaythuviec',	'ns_ngaylamchinhthuc',	'ns_ngaydongbaohiem',	'ns_cacgiaytodanop',	'ns_taikhoannganhang',	'ns_trangthai',knex.raw("ns_ho || ' ' || ns_tenlot || ' ' || ns_ten as ns_hovaten"))
+        knex.select('ns_id',	'ns_ho',	'ns_tenlot',	'ns_ten',	'ns_ngaysinh',	'ns_gioitinh',	'ns_dinhdanhcanhan',	'ns_sodienthoai',	'ns_email',	'ns_diachihiennay',	'ns_nguyenquan',	'ns_nguoilienhe',	'ns_bangcap',	'ns_ngayhocviec',	'ns_ngaythuviec',	'ns_ngaylamchinhthuc',	'ns_ngaydongbaohiem',	'ns_cacgiaytodanop',	'ns_taikhoannganhang',	'ns_trangthai',knex.raw("coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten"))
         .from('nhansu').orderBy(index, sortBy).limit(limit).offset(offset)
             .then((res) =>{
                 knex('nhansu').count()

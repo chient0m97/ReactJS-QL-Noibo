@@ -59,7 +59,14 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
+                                <Col span={4}>
+                                    <Form.Item label='Số điện thoại'>
+                                        {getFieldDecorator('dm_dv_sodienthoai', {
+                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
+                                        })(<Input type="text" />)}
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
                                     <Form.Item label='Người đại diện'>
                                         {getFieldDecorator('kh_id_nguoidaidien', {
 
@@ -77,35 +84,6 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                 </Col>
                             </Row>
                             <Row gutter={24}>
-                                <Col span={8}>
-                                    <Form.Item label='Số điện thoại'>
-                                        {getFieldDecorator('dm_dv_sodienthoai', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Mã số thuế'>
-                                        {getFieldDecorator('dm_dv_masothue', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
-                                        })(<Input type="text" />)}
-                                    </Form.Item>
-                                </Col>
-                                <Col span={8}>
-                                    <Form.Item label='Trạng thái'>
-                                        {getFieldDecorator('dm_dv_trangthai', {
-                                            rules: [{ required: true }],
-                                        })(<Select
-                                            style={{ width: '100%' }}
-                                            placeholder="Please select"
-                                            onChange={handleChange}
-                                        >
-                                            {combobox}
-                                        </Select>)}
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row gutter={24} >
                                 <Col span={8}>
                                     <Form.Item label='Tỉnh/Thành phố'>
                                         {getFieldDecorator('dm_db_id_tinh', {
@@ -156,10 +134,32 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                 </Col>
                             </Row>
                             <Row gutter={24}>
-                                <Col span={16}>
+                                <Col span={24}>
                                     <Form.Item label='Địa chỉ'>
                                         {getFieldDecorator('dm_dv_diachi', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+                                        })(<Input type="text" />)}
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row gutter={24}>
+                                <Col span={8}>
+                                    <Form.Item label='Trạng thái'>
+                                        {getFieldDecorator('dm_dv_trangthai', {
+                                            rules: [{ required: true }],
+                                        })(<Select
+                                            style={{ width: '100%' }}
+                                            placeholder="Please select"
+                                            onChange={handleChange}
+                                        >
+                                            {combobox}
+                                        </Select>)}
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item label='Mã số thuế'>
+                                        {getFieldDecorator('dm_dv_masothue', {
+                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>

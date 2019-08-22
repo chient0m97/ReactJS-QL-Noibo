@@ -114,9 +114,6 @@ class Duan extends React.Component {
   deleteDuAn = (dm_duan_id) => {
     Request(`duan/delete`, 'DELETE', { dm_duan_id: dm_duan_id })
       .then((res) => {
-        dm_duan_id.map((values, index) => {
-          arraydelete.push(values)
-        })
         notification[res.data.success === true ? 'success' : 'error']({
           message: 'Thong Bao',
           description: res.data.message
@@ -377,7 +374,7 @@ class Duan extends React.Component {
                 <Tooltip title="Xóa Dự Án">
                   <Popconfirm
                     title="Bạn chắc chắn muốn xóa?"
-                    // onConfirm={this.deleteHotro.bind(this, this.state.selectedId)}
+                    onConfirm={this.deleteDuAn.bind(this, this.state.selectedId)}
                     onCancel={this.cancel}
                     okText="Yes"
                     cancelText="No"

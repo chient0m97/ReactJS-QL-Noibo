@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import Request from '@apis/Request'
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import { Card, Form, Col, Row, Icon, Tooltip, DatePicker, Tabs } from 'antd';
-import { FiUsers } from 'react-icons/fi';
-import { GoFile, GoOrganization, GoCreditCard } from 'react-icons/go';
+// import { FiUsers } from 'react-icons/fi';
+// import { GoFile, GoOrganization, GoCreditCard } from 'react-icons/go';
 import { Value } from 'devextreme-react/range-selector';
 import { async } from 'q';
 var formatDate = require('dateformat')
@@ -83,12 +83,16 @@ export default class HomePage extends Component {
                     data.datasets[0].data = await [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
 
                 }
+            }).catch((err)=>{
+                console.log(err)
             })
 
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
             this.setState({
                 countKhachHang: res.data.data.khachhangs.length
             })
+        }).catch((err)=>{
+            console.log(err)
         })
 
         Request('hotro/getidduan', 'POST', {}).then(async (res) => {
@@ -97,7 +101,8 @@ export default class HomePage extends Component {
                     countDuAn: res.data.data.duans.length
                 })
             }
-          
+        }).catch((err)=>{
+            console.log(err)
         })
 
         Request('hopdong/get', 'POST', {
@@ -110,6 +115,8 @@ export default class HomePage extends Component {
                 await this.setState({
                     countHopDong: Number(response.data.data.count)
                 })
+            }).catch((err)=>{
+                console.log(err)
             })
     }
 
@@ -155,6 +162,8 @@ export default class HomePage extends Component {
                 dataGetFollowMonth: dataFollowMonth
             })
             console.log("Hien thi datastate ", this.state.dataGetFollowMonth)
+        }).catch((err)=>{
+            console.log(err)
         })
     }
 
@@ -176,25 +185,25 @@ export default class HomePage extends Component {
                             <Col span={6} >
                                 <Card bordered={false} style={{ float: 'left', background: 'red' }}>
                                     <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Nhân Sự </span><Tooltip title="Số Lượng Nhân Sự"><Icon style={{ marginLeft: '70px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <FiUsers />  {this.state.countNhanSu}</span>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countNhanSu}</span>
                                 </Card>
                             </Col>
                             <Col span={6} >
                                 <Card bordered={false} style={{ float: 'left', background: 'orange' }}>
                                     <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Khách Hàng </span><Tooltip title="Số Lượng Khách Hàng"><Icon style={{ marginLeft: '33px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <GoOrganization /> {this.state.countKhachHang}</span>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countKhachHang}</span>
                                 </Card>
                             </Col>
                             <Col span={6} >
                                 <Card bordered={false} style={{ float: 'right', background: 'lime' }}>
                                     <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Dự Án </span><Tooltip title="Số Lượng Dự Án"><Icon style={{ marginLeft: '93px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <GoCreditCard /> {this.state.countDuAn}</span>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countDuAn}</span>
                                 </Card>
                             </Col>
                             <Col span={6} >
                                 <Card bordered={false} style={{ float: 'right', background: 'blue' }}>
                                     <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Hợp Đồng </span><Tooltip title="Số Lượng Hợp Đồng"><Icon style={{ marginLeft: '50px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> <GoFile /> {this.state.countHopDong}</span>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countHopDong}</span>
                                 </Card>
                             </Col>
                         </Row>

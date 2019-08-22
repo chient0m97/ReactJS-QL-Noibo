@@ -16,7 +16,6 @@ const { Column } = Table;
 const token = cookie.load('token');
    
 const payload = jwt.decode(token);
-const claims = payload.claims;
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     constructor(props) {
