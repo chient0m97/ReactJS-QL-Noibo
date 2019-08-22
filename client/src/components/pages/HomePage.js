@@ -185,7 +185,7 @@ export default class HomePage extends Component {
                             <Col span={6} >
                                 <Card bordered={false} style={{ float: 'left', background: 'red' }}>
                                     <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Nhân Sự </span><Tooltip title="Số Lượng Nhân Sự"><Icon style={{ marginLeft: '70px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}> >  {this.state.countNhanSu}</span>
+                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countNhanSu}</span>
                                 </Card>
                             </Col>
                             <Col span={6} >

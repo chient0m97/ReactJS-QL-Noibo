@@ -210,6 +210,12 @@ class Customer extends React.Component {
                 await form.setFieldsValue({ dm_db_id_xa_customer: customer.tenxa })
             }
             form.setFieldsValue(customer);
+            if(customer.dm_dv_id){
+                console.log('hihi haha')
+            }
+            else{
+                form.setFieldsValue({dm_dv_id:''})
+            }
         }
     };
 

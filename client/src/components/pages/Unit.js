@@ -226,6 +226,12 @@ class Unit extends React.Component {
                 form.setFieldsValue({ dm_db_id_xa: '' })
             }
             form.setFieldsValue(unit);
+            if(unit.kh_id_nguoidaidien){
+                console.log('hihi haha')
+            }
+            else{
+                form.setFieldsValue({kh_id_nguoidaidien:''})
+            }
         }
     };
 

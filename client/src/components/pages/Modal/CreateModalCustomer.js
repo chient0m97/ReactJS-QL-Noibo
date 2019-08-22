@@ -66,7 +66,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={8}>
                                     <Form.Item label='Email'>
                                         {getFieldDecorator('kh_email', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
