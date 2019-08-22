@@ -20,7 +20,6 @@ const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
 
-
 const FormModal = Form.create({ name: 'form_in_modal' })(
     class extends React.Component {
         constructor(props) {
@@ -34,6 +33,12 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
         render() {
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
             const { getFieldDecorator } = form;
+            console.log('actionnnnnnnnnnnnnnnnnnnnnnnnn', this.props.dataAction)
+            let actionData = this.props.dataAction
+            let ac = actionData.map(function (valuee) {
+                return ac = { label: valuee.name, value: valuee.name }
+            })
+            console.log('=========================',ac)
             return (
                 <Modal
                     visible={visible}
@@ -77,8 +82,11 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
+
                                 <Form.Item label="Action Code">
+                                {/* <Checkbox.Group options={ac}  /> */}
                                     {getFieldDecorator('action', {
+
                                         rules: [{ required: true, message: this.state.messageRequired, }],
                                     })(
                                         <Select
@@ -112,7 +120,6 @@ class RoleAction extends React.Component {
             current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
             count: 1,
             show: false,
             visible: false,
@@ -127,16 +134,13 @@ class RoleAction extends React.Component {
             sortBy: 'ASC',
             index: 'id',
             orderby: 'arrow-up',
-            roleVisible: 'none',
-            modalRoleVisible: false,
-            actionColumn: 'hidden-action',
             dataRole: [],
             dataAction: [],
             roleModaVisible: false,
             actionModalVisible: false,
             selectedId: '',
             selectedRowKeys: [],
-            roles:[]
+            roles: []
 
         }
     }
@@ -170,14 +174,14 @@ class RoleAction extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((response) => {
-                console.log('------------------------====-=-=-=-=-=-',response.data)
+                console.log('------------------------====-=-=-=-=-=-', response.data)
                 if (response) {
                     let data = response.data;
-                   let  objRoles = Object.keys(data.roles[0])
+                    let objRoles = Object.keys(data.roles[0])
                     if (data)
                         this.setState({
                             roles: data.roles,
-                            objRoles:objRoles,
+                            objRoles: objRoles,
                             count: Number(data.count)//eps kieeru veef
                         })
                     this.props.fetchLoading({
@@ -484,7 +488,7 @@ class RoleAction extends React.Component {
             }
         })
     }
-    
+
     render() {
         let token = cookie.load('token');
         if (!token || !jwt.decode(token)) {

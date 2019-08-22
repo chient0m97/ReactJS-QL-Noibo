@@ -97,7 +97,7 @@ var groupController = {
         })
 
     },
-    getClaimsByUser: (userName, callback) => {
+    getClaimsByGroup: (userName, callback) => {
         groupData.getClaims(userName, (data) => {
             if (data.data.length > 0) {
                 var data = data.data.map(function (value) {
@@ -143,6 +143,7 @@ var groupController = {
     setGroupPermission: function (permiss, callback) {
         groupData.updateRole(permiss, (data) => {
             console.log(data)
+            callback(data)
         })
         console.log('perrrrrrrrrrrrrrrrrrrrrrrrr', permiss)
         //    let per =  permiss.map(function (value) {

@@ -1,48 +1,26 @@
 import React, { Component } from 'react';
-import { Pagination, Checkbox, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Icon, Table, Input, Modal, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
 import Request from '@apis/Request'
 import { NavLink } from 'react-router-dom'
 import '@styles/style.css';
-import { thisExpression } from '@babel/types';
-import { async } from 'q';
 const { Column } = Table;
 class Member extends Component {
     constructor(props) {
         super(props);
         this.state = {
             pageNumber: 1,
-            current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
             count: 1,
             show: false,
             visible: false,
-            formtype: 'horizontal',
-            title: 'Nhập thông tin',
-            id_visible: false,
             action: 'insert',
-            isSearch: 0,
-            searchText: '',
-            columnSearch: 'name',
-            isSort: true,
-            sortBy: 'ASC',
-            index: 'name',
             orderby: 'arrow-up',
-            nameSearch: '',
-            emailSearch: '',
-            phoneSearch: '',
-            passwordSearch: '',
-            fullnameSearch: '',
-            codeSearch: '',
-            roleVisible: 'none',
-            modalRoleVisible: false,
-            actionColumn: 'hidden-action',
             users: [],
             selectedRowKeys: [],
             showModal: false,
             listMemAdd: [],
-            listMemDelete:[]
+            listMemDelete: []
         }
     }
     //--------------DELETE-----------------------
@@ -135,7 +113,7 @@ class Member extends Component {
         console.log('deletettttttt')
         let a = this.props.location.pathname.split('/')[2]
         let listmem = this.state.listMemDelete
-        Request('member/delete','POST',{a,listmem}).then(res=>{
+        Request('member/delete', 'POST', { a, listmem }).then(res => {
             console.log(res)
             this.getUsers(this.state.pageNumber)
         })
@@ -166,27 +144,32 @@ class Member extends Component {
     }
     onOk = async () => {
         let mem = this.state.listMemAdd
-        let a = this.props.location.pathname.split('/')[2]
-        await Request('member/add', 'POST', { mem, a }).then(res => {
-            console.log(res)
-            if (res.data) {
-                message.success('thêm mới thành công')
-                this.setState({
-                    showModal: false,
-                    listMemAdd: []
-                })
-                this.getUsers(this.state.pageNumber)
-            }
+        let sl = this.props.location.pathname.split('/')[2]
+        await Request('group/checkrolegroup', 'POST', { sl }).then(response => {
+            console.log('asjhklassajfkfefefferferf',response.data)
+            let gr = response.data;
+            Request('member/add', 'POST', { mem, sl, gr }).then(res => {
+                console.log(res)
+                if (res.data) {
+                    message.success('thêm mới thành công')
+                    this.setState({
+                        showModal: false,
+                        listMemAdd: []
+                    })
+                    this.getUsers(this.state.pageNumber)
+                }
+            })
         })
+
     }
 
     render() {
         const rowSelection = {
             hideDefaultSelections: true,
             onChange: async (selectedRowKeys, selectedRows) => {
-              this.setState({
-                  listMemDelete:selectedRowKeys
-              })
+                this.setState({
+                    listMemDelete: selectedRowKeys
+                })
             },
         }
         const rowMemberSelection = {
@@ -226,10 +209,10 @@ class Member extends Component {
                 <Row>
                     <Table
                         rowSelection={rowSelection}
-                        dataSource={this.state.users} rowKey="name" 
+                        dataSource={this.state.users} rowKey="name"
                         Pagination={false}
 
-                        >
+                    >
                         <Column className="hidden-action"
                             title={<span>Id <Icon type={this.state.orderby} /></span>}
                             dataIndex="id"
@@ -247,7 +230,7 @@ class Member extends Component {
                     </Table>
                 </Row>
                 <Row>
-                    <Pagination showSizeChanger  showQuickJumper />
+                    <Pagination showSizeChanger showQuickJumper />
                 </Row>
             </div>
         );

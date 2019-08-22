@@ -51,8 +51,8 @@ var UserController = {
         })
     },
 
-    addUser: function addUser(user,groupName, callback) {
-       memberData.addUser(user,groupName,(data)=>{
+    addUser: function addUser(user,groupName,gr, callback) {
+       memberData.addUser(user,groupName,gr,(data)=>{
            callback(data)
        })
     },

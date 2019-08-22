@@ -31,16 +31,21 @@ module.exports = {
             })
     },
     deleteUserbyId: function (Id, callback) {
-        console.log('id ne', Id)
-        knex.from('users').where('name', Id).del().then(res => {
-            callback({ success: true });
-
-            console.log('aaaaaaaa')
-        }).catch(err => {
-
-            console.log(err)
+        pool.connect().then(client => {
+            client.query("delete from pq_role_user_group where group_user_code ='" + Id + "'").then(res => {
+                client.query("delete from pq_group_user where user_code = '" + Id + "'").then(res1 => {
+                    client.query("delete from users where name ='" + Id + "' ")
+                }
+                )
+                client.release()
+                callback({ success: true });
+            }).catch(err => {
+                client.release()
+                console.log(err)
+            })
 
         })
+
     },
     insertUser: function (user, callback) {
         console.log('insert lan thu 1 ty')

@@ -20,7 +20,7 @@ router.post('/get', function (req, res) {
 
 
 router.delete('/delete', function (req, res) {
-    console.log('----------delete-----------------', req.body.id)
+    console.log('----------delete-----------------user', req.body)
     userController.DeleteUserbyId(req.body.id, function (data) {
         res.send(data);
     })

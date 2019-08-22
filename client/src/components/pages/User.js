@@ -12,8 +12,11 @@ import jwt from 'jsonwebtoken';
 import Permission from '../Authen/Permission'
 import TreeRole from '../common/Tree'
 import SearchModal from '../common/searchModal'
-const token = cookie.load('token');
 const { Column } = Table;
+const token = cookie.load('token');
+   
+const payload = jwt.decode(token);
+const claims = payload.claims;
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     constructor(props) {
@@ -145,8 +148,8 @@ class User extends React.Component {
   }
   //--------------DELETE-----------------------
   deleteUser = (id) => {
-    console.log('delte id: ', id)
-    Request(`user/delete`, 'DELETE', { id: id })
+    console.log('delte id: ', payload.userName)
+    Request(`user/delete`, 'DELETE', { id: id})
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
           message: 'Thông báo',

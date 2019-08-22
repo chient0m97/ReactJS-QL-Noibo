@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken';
 import Permission from '../Authen/Permission'
 import TreeRole from '../common/Tree'
 import SearchModal from '../common/searchModal'
-import { Redirect, NavLink } from 'react-router-dom'
+import {  NavLink } from 'react-router-dom'
 //do something...
 const token = cookie.load('token');
 const { Column } = Table;
@@ -84,7 +84,6 @@ class Group extends React.Component {
             current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
             count: 1,
             show: false,
             visible: false,
@@ -99,12 +98,6 @@ class Group extends React.Component {
             sortBy: 'ASC',
             index: 'name',
             orderby: 'arrow-up',
-            nameSearch: '',
-            emailSearch: '',
-            phoneSearch: '',
-            passwordSearch: '',
-            fullnameSearch: '',
-            codeSearch: '',
             roleVisible: 'none',
             modalRoleVisible: false,
             actionColumn: 'hidden-action',
@@ -365,7 +358,7 @@ class Group extends React.Component {
         if (name) {
             this.setState({
                 modalRoleVisible: true,
-
+                
             })
         }
         else {
