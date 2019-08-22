@@ -46,5 +46,9 @@ router.post('/getqtda',function(req,res){
     res.send(data);
   })
 })
-
+router.post('/getcha',function(req,res){
+  duanController.getcha(function(data){
+    res.send(data);
+  })
+})
 module.exports = router

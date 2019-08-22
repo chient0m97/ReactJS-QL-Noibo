@@ -333,7 +333,7 @@ class Hotro extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                console.log("Read res ", res)
+                console.log("Read res ", res.data)
                 this.setState({
                     hotro: res.data.data.hotros,
                     count: res.data.data.count
