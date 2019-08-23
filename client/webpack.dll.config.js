@@ -26,8 +26,8 @@ module.exports = {
         library: '[name]_[hash]'
     },
     performance: {
-        maxEntrypointSize: 2000000,
-        maxAssetSize: 2000000
+        maxEntrypointSize: 4000000,
+        maxAssetSize: 4000000
     },
     plugins: [
         new webpack.DefinePlugin({

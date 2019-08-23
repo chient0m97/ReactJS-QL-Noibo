@@ -26,7 +26,6 @@ var DiabanController = {
      */
     GetById: function GetById(Id, callback) {
         diabanData.GetById(Id, (data) => {
-            console.log('DATA', data)
             if (data == undefined) {
                 callback({});
             }
@@ -35,14 +34,13 @@ var DiabanController = {
     },
 
     DeleteDiabanbyId: async function deleteDiabanbyId(dm_db_id, callback) {
-        diabanData.deleteDiabanbyId(dm_db_id, (data) => {
+        diabanData.deleteDiabanbyId(dm_db_id, data => {
             if (data.success === true) {
                 callback({
                     success: data.success,
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callback(data, 400);
         })
     },
 
@@ -77,21 +75,17 @@ var DiabanController = {
     updateDiaban: async function updateDiaban(diaban, callback) {
         if (Validator.isAlpha(diaban.dm_db_ten, 'Tên địa bàn không đúng định dạng')
         ) {
-            if (1) {
-                console.log("Day la update data", diaban)
                 diabanData.updateDiaban(diaban, (res) => {
                     callback({
                         success: res.success,
                         message: res.success === true ? constant.successUpdate : constant.errorUpdate
                     })
                 })
-          }
         }
     }
     ,
     getcha:function getcha(data, callback){
-        console.log("day la controller diaban cha")
-        diabanData.getcha(data.cap,(data)=>{
+        diabanData.getcha(data.dm_db_cap,(data)=>{
             callback(data)
         })
     },
@@ -105,9 +99,6 @@ var DiabanController = {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         diabanData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
-            console.log(limit)
-            console.log(offset)
-            console.log('aaaaaaaaa',data)
             callback(data);
         })
     },

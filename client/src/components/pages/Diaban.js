@@ -1,11 +1,9 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip } from 'antd';
-// import ChildComp from './component/ChildComp'; 
+import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip, Card } from 'antd';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-// import { fetchDiaban } from '@actions/diaban.action';
 import { fetchLoading } from '@actions/common.action';
 import { async } from 'q';
 const token = cookie.load('token');
@@ -25,10 +23,8 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       comboBoxDatasource.map((value, index) => {
         combobox.push(<Option value={value.dm_db_id}>{value.dm_db_ten}</Option>)
       })
-      console.log(id_visible)
       const { getFieldDecorator } = form;
       var datacha = this.props.datacha
-      console.log(comboboxlevel, 'prop dia ban cha')
       return (
         <Modal
           visible={visible}
@@ -101,7 +97,6 @@ class Diaban extends React.Component {
       current: 1,
       page: 1,
       pageSize: 10,
-      showPopup: false,
       count: 1,
       show: false,
       visible: false,
@@ -129,8 +124,7 @@ class Diaban extends React.Component {
   }
   //--------------DELETE-----------------------
   deleteDiaban = (dm_db_id) => {
-    console.log('id delte', dm_db_id)
-    Request(`delete`, 'DELETE', { dm_db_id: dm_db_id })
+    Request(`diaban/delete`, 'DELETE', { dm_db_id: dm_db_id })
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
           message: 'Thông báo',
@@ -218,9 +212,12 @@ class Diaban extends React.Component {
   refresh = (pageNumber) => {
     this.getDiabans(this.state.pageNumber)
   }
+
   componentDidMount() {
     this.getDiabans(this.state.pageNumber, this.state.index, this.state.sortBy);
+    document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
   }
+
   onchangpage = (page) => {
     this.setState({
       page: page
@@ -240,7 +237,6 @@ class Diaban extends React.Component {
 
   showModalUpdate = (diaban) => {
     const { form } = this.formRef.props
-    console.log(diaban, 'diaban')
     this.setState({
       visible: true
     });
@@ -263,19 +259,12 @@ class Diaban extends React.Component {
   };
 
   showModalInsert = async (diaban) => {
-    // Request('/getcha', 'POST', { cap: 1 }).then(res => {
-    //   console.log(res.data, 'data res combobox')
-    //   this.setState({
-    //     comboBoxDatasource: res.data
-    //   })
-    // })
     const { form } = this.formRef.props
     this.setState({
       visible: true
     });
     form.resetFields();
     await this.setState({
-      // comboBoxDatasource: res.data,
       dataSource_Select_Parent: []
     })
     form.setFieldsValue({ dm_db_cap: 1 })
@@ -283,9 +272,6 @@ class Diaban extends React.Component {
     this.state.diabans.map((values, index) => {
       arrayfilloption.push({ dm_db_id: values.dm_db_id, dm_db_ten: values.dm_db_ten })
     })
-    //  this.setState({
-    //     dataSource_Select_Parent: arrayfilloption
-    //   })
     if (diaban.dm_db_id === undefined) {
       this.setState({
         action: 'insert'
@@ -295,7 +281,7 @@ class Diaban extends React.Component {
 
   onSelectCapDiaBan = async (value) => {
     const { form } = this.formRef.props;
-    if (value == 1) {
+    if (value === 1) {
       this.setState({
         dataSource_Select_Parent: [],
       })
@@ -303,22 +289,18 @@ class Diaban extends React.Component {
     }
     else {
       await Request('diaban/getcha', 'POST', { dm_db_cap: value }).then(res => {
-        let a = res.data[0].dm_db_ten
-        this.setState({
-          // comboBoxDatasource: res.data,
-          dataSource_Select_Parent: res.data,
-          dm_ten: a
-        })
+        var a = res.data[0].dm_db_ten
+        if (res.data) {
+          this.setState({
+            dataSource_Select_Parent: res.data,
+            dm_ten: a
+          })
+          form.setFieldsValue({ dm_db_id_cha: this.state.dm_ten })
+        }
       })
-      form.setFieldsValue({ dm_db_id_cha: this.state.dm_ten })
+
     }
   }
-
-  handleOk = e => {
-    this.setState({
-      visible: false,
-    });
-  };
 
   handleCancel = e => {
     this.setState({
@@ -328,14 +310,7 @@ class Diaban extends React.Component {
     });
   };
 
-  handleChangeInput = (e) => {
-    let state = this.state;
-    state[e.target.name] = e.target.value;
-    this.setState(state);
-  }
-
   handleChange(value) {
-    console.log(`selecet ${value}`);
   }
 
   handleCount = () => {
@@ -345,12 +320,10 @@ class Diaban extends React.Component {
     })
   }
   confirm = (e) => {
-    console.log(e);
     message.success('Bấm yes để xác nhận');
   }
 
   cancel = (e) => {
-    console.log(e);
     this.setState({
       stateconfirmdelete: false
     })
@@ -366,15 +339,11 @@ class Diaban extends React.Component {
     return `Total ${total} items`;
   }
   onShowSizeChange = async (current, size) => {
-    console.log('size', size);
-    console.log('curent', current);
     await this.setState({
       pageSize: size
     });
     if (this.state.isSearch === 1) {
-      console.log('xxxx')
       this.handleSearch(this.state.page, this.state.textSearch, this.confirm, this.state.nameSearch, this.state.codeSearch);
-      console.log(this.state.page)
     }
     else {
       this.getDiabans(this.state.page, this.state.index, this.state.sortBy)
@@ -392,7 +361,6 @@ class Diaban extends React.Component {
     })
       .then((response) => {
         let data = response.data;
-        console.log(data)
         if (data.data)
           this.setState({
             diabans: data.data.diabans,
@@ -400,13 +368,10 @@ class Diaban extends React.Component {
             textSearch: xxxx,
             isSearch: 1
           })
-
-        console.log('data-----------------------------------', data)
       })
 
   }
   onSearch = (val) => {
-    console.log('search:', val);
   }
   removeSearch = () => {
     this.setState({
@@ -414,24 +379,20 @@ class Diaban extends React.Component {
     })
   }
   onChangeSearchType = async (value) => {
-    console.log('hihi', this.state.textSearch)
     await this.setState({
       columnSearch: value,
     })
     if (this.state.textSearch) {
       this.search(this.state.textSearch);
     }
-    console.log(`selected ${value}`);
   }
 
   onSearch = (val) => {
-    console.log('search:', val);
   }
 
   onHeaderCell = (column) => {
     return {
       onClick: async () => {
-        console.log('ccmnr', column.dataIndex)
         if (this.state.isSort) {
           await this.setState({
             sortBy: 'DESC',
@@ -450,7 +411,6 @@ class Diaban extends React.Component {
           isSort: !this.state.isSort,
           index: column.dataIndex
         })
-        console.log('xx', this.state.isSort)
         if (this.state.isSearch == 1) {
           this.search(this.state.textSearch)
         }
@@ -464,16 +424,6 @@ class Diaban extends React.Component {
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
-
-  // set_select_diabancha = () => {
-  //   Request('getcha', 'POST', {
-  //   }).then(res => {
-  //     console.log(res.data, 'data res combobox')
-  //     this.setState({
-  //       select_diabancha: res.data
-  //     })
-  //   })
-  // }
 
   onSelectChange = (selectedRowKeys, selectedRows) => {
     this.setState({
@@ -518,18 +468,18 @@ class Diaban extends React.Component {
     if (token)
       return (
         <div>
-          <Row className='table-margin-bt'>
-            <Col span={2}>
-              <Tooltip title="Thêm địa bàn">
-                <Button shape="circle" type="primary" size="large" onClick={this.showModalInsert.bind(null)}>
-                  <Icon type="plus" />
-                </Button>
-              </Tooltip>
-            </Col>
-            <span>
+          <Card>
+            <Row>
+              <Col span={2}>
+                <Tooltip title="Thêm địa bàn">
+                  <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
+                    <Icon type="user-add" />
+                  </Button>
+                </Tooltip>
+              </Col>
               <Col span={2}>
                 <Tooltip title="Sửa địa bàn">
-                  <Button shape='circle' type="primary" size="large" onClick={this.showModalUpdate.bind(this, this.state.rowdiabanselected)} disabled={this.state.statebuttonedit} >
+                  <Button shape='round' type="primary" size="default" onClick={this.showModalUpdate.bind(this, this.state.rowdiabanselected)} disabled={this.state.statebuttonedit} >
                     <Icon type="edit" /></Button>
                 </Tooltip>
               </Col>
@@ -543,23 +493,21 @@ class Diaban extends React.Component {
                     cancelText="Không"
                     visible={this.state.stateconfirmdelete}
                   >
-                    <Button shape='circle' type="danger" size="large" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                    <Button shape='round' type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
                       <Icon type="delete" /></Button>
                   </Popconfirm>
                 </Tooltip>
               </Col>
               <Col span={2}>
                 <Tooltip title="Tải Lại">
-                  <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
+                  <Button shape="round" type="primary" style={{ marginLeft: '18px' }} size="default" onClick={this.refresh.bind(null)}>
                     <Icon type="reload" />
                   </Button>
                 </Tooltip>
               </Col>
-            </span>
-          </Row>
-          <br />
-
-          <Row className="table-margin-bt">
+            </Row>
+          </Card>
+          <Row style={{ marginTop: 5 }}>
             <FormModal
               wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
@@ -573,25 +521,21 @@ class Diaban extends React.Component {
               select_diabancha={this.state.select_diabancha}
               datacha={this.state.dataSource_Select_Parent}
               handleChange={this.handleChange}
-
             />
-
-
             <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.diabans} bordered='1' scroll={{ x: 1000 }} rowKey="dm_db_id" >
               <Column
                 title={<span>Id địa bàn <Icon type={this.state.orderby} /></span>}
                 dataIndex="dm_db_id"
                 key="dm_db_id"
-                className="hide"
+                className="hidden-action"
                 onHeaderCell={this.onHeaderCell}
-
               />
               <Column title="Tên địa bàn" dataIndex="dm_db_ten" key="dm_db_ten" onHeaderCell={this.onHeaderCell}
               />
-              <Column className="hide" title="Cấp địa bàn" dataIndex="dm_db_cap" key="dm_db_cap" onHeaderCell={this.onHeaderCell} />
+              <Column className="hidden-action" title="Cấp địa bàn" dataIndex="dm_db_cap" key="dm_db_cap" onHeaderCell={this.onHeaderCell} />
               <Column title="Cấp địa bàn" dataIndex="ten_dm_db_cap" key="ten_dm_db_cap" onHeaderCell={this.onHeaderCell} />
               <Column title="Địa bàn cha" dataIndex="tencha" key="tencha" onHeaderCell={this.onHeaderCell} />
-              <Column className="hide" title="Địa bàn cha" dataIndex="dm_db_id_cha" key="dm_db_id_cha" onHeaderCell={this.onHeaderCell} />
+              <Column className="hidden-action" title="Địa bàn cha" dataIndex="dm_db_id_cha" key="dm_db_id_cha" onHeaderCell={this.onHeaderCell} />
             </Table>
           </Row>
           <Row>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Card, Tooltip } from 'antd';
-// import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
@@ -31,7 +30,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="">
                   {getFieldDecorator('dm_duan_id', {
-
                   })(<Input type="hidden" placeholder="Id dự án" hidden="true" />)}
                 </Form.Item>
               </Col>
@@ -85,7 +83,6 @@ class Duan extends React.Component {
       current: 1,
       page: 1,
       pageSize: 10,
-      showPopup: false,
       count: 1,
       show: false,
       visible: false,
@@ -95,7 +92,6 @@ class Duan extends React.Component {
       action: 'insert',
       isSearch: 0,
       searchText: '',
-      columnSearch: '',
       isSort: true,
       sortBy: '',
       index: 'id',
@@ -141,7 +137,6 @@ class Duan extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        console.log("Hien thi response ", response)
         let data = response.data;
         if (data.data)
           this.setState({
@@ -202,6 +197,7 @@ class Duan extends React.Component {
 
   componentDidMount() {
     this.getDuans(this.state.pageNumber, this.state.index, this.state.sortBy);
+    document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
   }
 
   onchangpage = (page) => {
@@ -219,14 +215,16 @@ class Duan extends React.Component {
 
   set_Select_QTDA() {
     Request('duan/getqtda', 'POST', {}).then((res) => {
-      this.setState({
-        comboBoxDatasource: res.data
-      })
+      if (res.data) {
+        this.setState({
+          comboBoxDatasource: res.data
+        })
+      }
+
     })
   }
 
   showModal = async (duan) => {
-    console.log("Hien thi duan ",duan)
     const { form } = this.formRef.props
     this.setState({
       visible: true
@@ -237,9 +235,8 @@ class Duan extends React.Component {
         id_visible: false,
         action: 'update'
       })
-      // form.setFieldsValue({ ns_id_qtda: duan.ns_id })
       form.setFieldsValue(duan);
-      
+
     }
     this.set_Select_QTDA()
   };
@@ -285,7 +282,6 @@ class Duan extends React.Component {
             orderby: 'arrow-down'
 
           })
-
         }
         else {
           await this.setState({
@@ -395,7 +391,7 @@ class Duan extends React.Component {
               </Col>
             </Row>
           </Card>
-          <Row>
+          <Row style={{ marginTop: 5 }}>
             <FormModal
               wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
@@ -406,7 +402,7 @@ class Duan extends React.Component {
               id_visible={this.state.id_visible}
               qtda={this.state.comboBoxDatasource}
             />
-            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} rowKey="dm_duan_id" >
+            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id" >
               <Column title="Tên dự án" dataIndex="dm_duan_ten" onHeaderCell={this.onHeaderCell} />
               <Column title="Tiền tố" dataIndex="dm_duan_key" onHeaderCell={this.onHeaderCell} />
               <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} />

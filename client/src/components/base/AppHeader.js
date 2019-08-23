@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu, Col } from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip } from 'antd'
 import cookie from 'react-cookies'
 
 const { Header } = Layout
@@ -34,7 +34,7 @@ class AppHeader extends Component {
 
   logOut = (e) => {
     cookie.remove('token', { path: '/' })
-    cookie.remove('user',this.state.username)
+    cookie.remove('user', this.state.username)
     window.location.reload();
   }
 
@@ -45,17 +45,23 @@ class AppHeader extends Component {
   }
 
   render() {
+    var user_cookie = cookie.load('user');
     return (
-      <Header style={{ background: '#fff', padding: 0 }}>
-        <Button type="dashed" onClick={this.toggleCollapsed} style={{ marginLeft: 12 }}>
-          <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
-        </Button>
-        <Dropdown overlay={this.state.menu} trigger={['click']}>
-          <a style={{ marginLeft: '90%' }} className="ant-dropdown-link" href="/">
-            <Icon type="user" style={{ fontSize: '20px' }} />
-          </a>
-        </Dropdown>
-              </Header>
+      <div>
+        <Header style={{ background: '#fff', padding: 0 }}>
+          <Button type="dashed" onClick={this.toggleCollapsed} style={{ marginLeft: 12 }}>
+            <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
+          </Button>
+          <Dropdown overlay={this.state.menu} trigger={['click']}>
+            <a style={{ marginLeft: '83%' }} className="ant-dropdown-link" href="/">
+              <Icon type="user" style={{ fontSize: '20px' }} />
+              <Tooltip title="Tên tài khoản">
+              <span style={{ fontSize: '18px' }}> {user_cookie} </span>
+              </Tooltip>
+            </a>
+          </Dropdown>
+        </Header>
+      </div>
     )
   }
 }

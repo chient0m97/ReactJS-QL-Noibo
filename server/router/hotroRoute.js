@@ -38,6 +38,12 @@ router.post('/getkhachhang', function(req, res){
     })
 })
 
+router.post('/getmyself', function(req, res){
+    hotroController.getDataMyself(req.body,function(data){
+        res.send(data)
+    })
+})
+
 router.post('/insert', function(req,res) {
     hotroController.insertHotro(req.body, function(data){
         res.send(data);

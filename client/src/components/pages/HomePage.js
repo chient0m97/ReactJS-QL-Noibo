@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Request from '@apis/Request'
 import { Pie, Bar, Line } from 'react-chartjs-2';
-import { Card, Form, Col, Row, Icon, Tooltip, DatePicker, Tabs } from 'antd';
+import { Card, Form, Col, Row, Icon, Tooltip, DatePicker, Tabs, Table } from 'antd';
+import cookie from 'react-cookies'
 // import { FiUsers } from 'react-icons/fi';
 // import { GoFile, GoOrganization, GoCreditCard } from 'react-icons/go';
 import { Value } from 'devextreme-react/range-selector';
@@ -9,7 +10,9 @@ import { async } from 'q';
 var formatDate = require('dateformat')
 const { RangePicker } = DatePicker;
 const { TabPane } = Tabs;
+const { Column } = Table;
 
+var format = require('dateformat')
 var data = {
     labels: [
         'Nam',
@@ -51,7 +54,8 @@ export default class HomePage extends Component {
             dataGetFollowMonthBar: {},
             valueMonth: [],
             valueYear: [],
-            stateOpenRangePicker: false
+            stateOpenRangePicker: false,
+            myself: []
         }
     }
 
@@ -83,26 +87,34 @@ export default class HomePage extends Component {
                     data.datasets[0].data = await [countGioiTinhNam, countGioiTinhNu, (res.data.data.count - countGioiTinhNam - countGioiTinhNu)]
 
                 }
-            }).catch((err)=>{
-                console.log(err)
             })
 
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
-            this.setState({
-                countKhachHang: res.data.data.khachhangs.length
-            })
-        }).catch((err)=>{
-            console.log(err)
+            if (res.data.data.khachhangs) {
+                this.setState({
+                    countKhachHang: res.data.data.khachhangs.length
+                })
+            }
+
         })
 
         Request('hotro/getidduan', 'POST', {}).then(async (res) => {
-            if(res.data.data.duans){
+            if (res.data.data.duans) {
                 await this.setState({
                     countDuAn: res.data.data.duans.length
                 })
             }
-        }).catch((err)=>{
-            console.log(err)
+        })
+
+        var user_cookie = cookie.load('user');
+
+        Request('hotro/getmyself', 'POST', { user_cookie }).then(async (res) => {
+            if (res.data.data.myself) {
+                await this.setState({
+                    myself: res.data.data.myself
+                })
+                console.log("Hien thi myself ", res.data.data.myself)
+            }
         })
 
         Request('hopdong/get', 'POST', {
@@ -112,11 +124,12 @@ export default class HomePage extends Component {
             sortBy: this.state.sortBy
         })
             .then(async (response) => {
-                await this.setState({
-                    countHopDong: Number(response.data.data.count)
-                })
-            }).catch((err)=>{
-                console.log(err)
+                if (response.data.data) {
+                    await this.setState({
+                        countHopDong: Number(response.data.data.count)
+                    })
+                }
+
             })
     }
 
@@ -126,7 +139,6 @@ export default class HomePage extends Component {
     }
 
     onClick = () => {
-        console.log("Hien thi click")
     }
 
     setValueMonth = (valueMonth) => {
@@ -139,7 +151,6 @@ export default class HomePage extends Component {
 
     getHotroFollowMonth = (monthStart, monthEnd) => {
         Request('hotro/getfollowmonth', 'POST', { monthStart, monthEnd }).then(async (res) => {
-            console.log("hien thi res ", res.data.rows)
             var arrayName = []
             var arrayCount = []
             var arrayBackGround = []
@@ -161,8 +172,7 @@ export default class HomePage extends Component {
             await this.setState({
                 dataGetFollowMonth: dataFollowMonth
             })
-            console.log("Hien thi datastate ", this.state.dataGetFollowMonth)
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err)
         })
     }
@@ -181,31 +191,62 @@ export default class HomePage extends Component {
             <div>
                 <Form>
                     <div style={{ background: '#ECECEC', padding: '20px' }}>
-                        <Row>
-                            <Col span={6} >
-                                <Card bordered={false} style={{ float: 'left', background: 'red' }}>
-                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Nhân Sự </span><Tooltip title="Số Lượng Nhân Sự"><Icon style={{ marginLeft: '70px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countNhanSu}</span>
-                                </Card>
-                            </Col>
-                            <Col span={6} >
-                                <Card bordered={false} style={{ float: 'left', background: 'orange' }}>
-                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Khách Hàng </span><Tooltip title="Số Lượng Khách Hàng"><Icon style={{ marginLeft: '33px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countKhachHang}</span>
-                                </Card>
-                            </Col>
-                            <Col span={6} >
-                                <Card bordered={false} style={{ float: 'right', background: 'lime' }}>
-                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Dự Án </span><Tooltip title="Số Lượng Dự Án"><Icon style={{ marginLeft: '93px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countDuAn}</span>
-                                </Card>
-                            </Col>
-                            <Col span={6} >
-                                <Card bordered={false} style={{ float: 'right', background: 'blue' }}>
-                                    <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Hợp Đồng </span><Tooltip title="Số Lượng Hợp Đồng"><Icon style={{ marginLeft: '50px' }} type="info-circle" /></Tooltip>
-                                    <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countHopDong}</span>
-                                </Card>
-                            </Col>
+                        <div id="dasboard-widget-top">
+                            <Row>
+                                <Col span={6} >
+                                    <Card bordered={false} style={{ float: 'left', background: 'red' }}>
+                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Nhân Sự </span><Tooltip title="Số Lượng Nhân Sự"><Icon style={{ marginLeft: '70px' }} type="info-circle" /></Tooltip>
+                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countNhanSu}</span>
+                                    </Card>
+                                </Col>
+                                <Col span={6} >
+                                    <Card bordered={false} style={{ float: 'left', background: 'orange' }}>
+                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Khách Hàng </span><Tooltip title="Số Lượng Khách Hàng"><Icon style={{ marginLeft: '33px' }} type="info-circle" /></Tooltip>
+                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countKhachHang}</span>
+                                    </Card>
+                                </Col>
+                                <Col span={6} >
+                                    <Card bordered={false} style={{ float: 'right', background: 'brown' }}>
+                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Dự Án </span><Tooltip title="Số Lượng Dự Án"><Icon style={{ marginLeft: '93px' }} type="info-circle" /></Tooltip>
+                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countDuAn}</span>
+                                    </Card>
+                                </Col>
+                                <Col span={6} >
+                                    <Card bordered={false} style={{ float: 'right', background: 'blue' }}>
+                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Hợp Đồng </span><Tooltip title="Số Lượng Hợp Đồng"><Icon style={{ marginLeft: '50px' }} type="info-circle" /></Tooltip>
+                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countHopDong}</span>
+                                    </Card>
+                                </Col>
+                            </Row>
+                        </div>
+                        <Row style={{ marginTop: '15px' }}>
+                            <Card >
+                                <h1 style={{ textAlign: 'center' }}> Bảng công việc cá nhân</h1>
+                                <Table bordered dataSource={this.state.myself} rowKey="ht_id" scroll={{ x: 1000 }}>
+                                    <Column title="Dự án" dataIndex="dm_duan_ten" width={150} />
+                                    <Column title="Khách hàng" dataIndex="kh_ten" width={100} />
+                                    <Column title="Người tạo" dataIndex="ns_hoten" width={150} />
+                                    <Column title="Người được giao" dataIndex="ns_hovaten" width={150} />
+                                    <Column title="Trạng thái" dataIndex="ht_trangthai" width={150} />
+                                    <Column title="Phân loại" dataIndex="ht_phanloai" width={150} />
+                                    <Column title="Ưu tiên" dataIndex="ht_uutien" />
+                                    <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
+                                        render={text => {
+                                            return format(text, "dd/mm/yyyy")
+                                        }}
+                                    />
+                                    <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
+                                        render={text => {
+                                            return format(text, "dd/mm/yyyy")
+                                        }}
+                                    />
+                                    <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh" width={150}
+                                        render={text => {
+                                            return format(text, "dd/mm/yyyy")
+                                        }}
+                                    />
+                                </Table>
+                            </Card>
                         </Row>
                         <Row style={{ marginTop: '15px' }}>
                             <Card bordered={false}>

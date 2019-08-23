@@ -50,6 +50,12 @@ var hotroController = {
         })
     },
 
+    getDataMyself: function getDataMyself(myself, callback){
+        hotroData.getDataMyself(myself,(data)=>{
+            callback(data);
+        })
+    },
+
     getIdDuan(callback){
         hotroData.getIdDuan(function(data){
             callback(data);

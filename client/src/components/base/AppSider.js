@@ -76,8 +76,6 @@ class AppSider extends Component {
                 else if (claims[i] === Permission.Hopdong.Read) {
                     claims[i] = { url: '/hopdong', des: 'Hợp đồng',menu:3}
                 }
-    
-    
             }
         }
     

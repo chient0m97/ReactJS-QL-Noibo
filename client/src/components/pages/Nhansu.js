@@ -10,7 +10,6 @@ const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
 
-
 let id = 0;
 var formatDateModal = require('dateformat')
 
@@ -26,16 +25,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                 [field]: value,
             });
         };
-
-        onDateChange = value => {
-            this.onChange('dateValue', value);
-        }
-
-        handleOpenChange = open => {
-            if (!open) {
-                this.setState({ dateOpen: true })
-            }
-        }
 
         handleChange = async (value) => {
         }
@@ -338,10 +327,12 @@ class Nhansu extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                this.setState({
-                    nhansu: res.data.data.nhansu,
-                    count: res.data.data.count
-                })
+                if(res.data.data.nhansu){
+                    this.setState({
+                        nhansu: res.data.data.nhansu,
+                        count: res.data.data.count
+                    })
+                }
                 this.props.fetchLoading({
                     loading: false
                 })
@@ -358,6 +349,7 @@ class Nhansu extends React.Component {
             var url = this.state.action === 'insert' ? 'nhansu/insert' : 'nhansu/update'
             Request(url, 'POST', values)
                 .then((response) => {
+
                     this.setState({
                         rowthotroselected: values
                     })
@@ -411,12 +403,14 @@ class Nhansu extends React.Component {
 
     set_Select_DinhDanh() {
         Request('nhansu/getdinhdanh', 'POST', {}).then((res) => {
-            this.setState({
-                dinhdanh: res.data.data.users
-            })
-            console.log("hien thi res " ,res)
+            if(res.data.data.users){
+                this.setState({
+                    dinhdanh: res.data.data.users
+                })
+            }
+            
         })
-        
+
     }
 
     refresh = async (pageNumber) => {
@@ -426,7 +420,7 @@ class Nhansu extends React.Component {
 
     componentDidMount() {
         this.getNhansu(this.state.pageNumber, this.state.index, this.state.sortBy);
-
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
     onchangpage = (page) => {
@@ -544,7 +538,6 @@ class Nhansu extends React.Component {
     }
 
     cancel = (e) => {
-        console.log(e);
     }
 
     showTotal = (total) => {
@@ -615,10 +608,10 @@ class Nhansu extends React.Component {
     };
 
     onRowClick = (row) => {
-        if(this.state.selectedRowKeys[0]===row.ns_id){
+        if (this.state.selectedRowKeys[0] === row.ns_id) {
             this.onSelectChange([], [])
         }
-        else{
+        else {
             this.onSelectChange([row.ns_id], [row])
         }
     }
@@ -672,7 +665,7 @@ class Nhansu extends React.Component {
                         </Col>
                         <Col span={2}>
                             <Tooltip title="Tải Lại">
-                                <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
+                                <Button shape="round" type="primary" style={{ marginLeft: '18px' }} size="default" onClick={this.refresh.bind(null)}>
                                     <Icon type="reload" />
                                 </Button>
                             </Tooltip>
