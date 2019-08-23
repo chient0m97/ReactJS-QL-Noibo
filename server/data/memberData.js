@@ -44,10 +44,13 @@ module.exports = {
     deleteUser: function (listmem, groupName, callback) {
         pool.connect().then(client => {
             for (i = 0; i < listmem.length; i++) {
-                let query = "delete from pq_group_user where group_code = '" + groupName + "' and user_code='" + listmem[i] + "'"
+                let memb = listmem[i]
+                let query = "delete from pq_group_user where group_code = '" + groupName + "' and user_code='" + memb + "'"
                 console.log('queryyyyyyyyyyyyyy', query)
                 client.query(query).then(res => {
-                    client.query("delete from pq_role_user_group where group_code = '" + groupName + "' and user_code='" + listmem[i] + "' ").then(res1 => {
+                    let querya = "delete from pq_role_user_group where group_code = '" + groupName + "' and group_user_code='" + memb + "' "
+                    console.log("***********************",querya)
+                    client.query(querya).then(res1 => {
                         console.log('xoa thanh cong')
                     })
                 }).catch(err => {
@@ -62,14 +65,26 @@ module.exports = {
             callback({ success: false })
         })
     },
-    addUser: function (user, groupName, callback) {
+    addUser: function (user, groupName,gr, callback) {
         pool.connect().then(client => {
             for (i = 0; i < user.length; i++) {
                 let id = uuidv1();
+                let userN = user[i]
 
                 let query = "insert into pq_group_user values('" + groupName + "','" + user[i] + "','" + id + "')"
                 client.query(query).then(res => {
-
+                    for(j=0;j<gr.length;j++){
+                        let role = gr[j].split('.')[0]
+                        let action = gr[j].split('.')[1]
+                        client.query("select * from pq_role_action where role_code = (select id from pq_roles where name ='" + role + "' ) and action_code = (select id from pq_actions where name = '" + action + "')").then(res1=>{
+                            let idra = res1.rows[0].id
+                            let idgr = uuidv1();
+                            let query1 = "insert into pq_role_user_group(role_action_code,id,group_code,group_user_code) values('" + idra + "','" + idgr + "','" + groupName + "','" +userN+ "')"
+                            console.log('quẻyrerereyyyyyyyyyyyyyyyyyyyyyyyyyyy',query1)
+                            client.query(query1)
+                        })
+                    }
+                   
                 }).catch(err => {
                     console.log(err)
                 })

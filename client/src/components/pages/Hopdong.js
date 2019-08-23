@@ -6,10 +6,6 @@ import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import '@styles/style.css';
 import { fetchLoading } from '@actions/common.action';
-import { async } from 'q';
-
-
-
 const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select;
@@ -18,7 +14,7 @@ const formatdate = require('dateformat')
 const FormModalDuan = Form.create({ name: 'form_create_duan' })(
   class extends React.Component {
     render() {
-      const { visible_duan, onCancel, onSave, form, title, confirmLoading, formtype, CreateDuan, comboBoxDatasourceDuan } = this.props;
+      const { visible_duan, onCancel, form, title, confirmLoading, formtype, CreateDuan, comboBoxDatasourceDuan } = this.props;
       var comboboxduan = []
       comboBoxDatasourceDuan.map((value, index) => {
         comboboxduan.push(<Option value={value.ns_id}>{value.ns_ten}</Option>)
@@ -86,29 +82,18 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       var combobox = []
       var combobox1 = []
       var comboboxLoaiHopDong = []
-
-      // eslint-disable-next-line array-callback-return
       comboBoxDatasource.map((value) => {
         combobox.push(<Option value={value.id}>{value.ten}</Option>)
       })
-      // eslint-disable-next-line array-callback-return
-
-      // eslint-disable-next-line array-callback-return
       comboBoxDuanSource.map((value) => {
         combobox1.push(<Option value={value.dm_duan_id}>{value.dm_duan_ten}</Option>)
       })
-
-      // eslint-disable-next-line array-callback-return
-      //console.log(propDatasourceSelectLoaiHopDong, 'datasource loaihopdong')
-      // eslint-disable-next-line array-callback-return
       propDatasourceSelectLoaiHopDong.dataSource.map((value) => {
         comboboxLoaiHopDong.push(<Option value={value.id}>{value.ten}</Option>)
       })
       const { getFieldDecorator } = form;
       return (
-
         <Modal
-
           visible={visible}
           title={title}
           okText="Lưu"
@@ -151,7 +136,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     )}
                 </Form.Item>
               </Col>
-
               <Col span={4}>
                 <Form.Item label="Loại hợp đồng:">
                   {getFieldDecorator('hd_loai', {
@@ -246,8 +230,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   )}
                 </Form.Item>
               </Col>
-            </Row>
-            <Row gutter={25}>
               <Col span={8}>
                 <Form.Item label="Ngày xuất hóa đơn:">
                   {getFieldDecorator('hd_ngayxuathoadon', {
@@ -256,7 +238,8 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   )}
                 </Form.Item>
               </Col>
-
+            </Row>
+            <Row gutter={25}>
               <Col span={8}>
                 <Form.Item label="Ngày thanh toán:">
                   {getFieldDecorator('hd_ngaythanhtoan', {
@@ -300,15 +283,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
     }
   },
 )
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: record => ({
-    disabled: record.name === 'Disabled User',
-    name: record.name,
-  }),
-}
 class Hopdong extends React.Component {
   constructor(props) {
     super(props);
@@ -337,8 +311,8 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false,
       selectedRowKeys: [],
       selectedId: [],
-      selected_file: null,
-      selectedFile: null,
+      //selected_file: null,
+      //selectedFile: null,
       comboBoxDatasource: [],
       comboBoxDatasourceDuan: [],
       comboBoxDuanSource: [],
@@ -349,8 +323,6 @@ class Hopdong extends React.Component {
       }
     }
   }
-  //--------------DELETE-----------------------
-  //tu day den render
   deleteHopdong = (hd_id) => {
     Request('hopdong/delete', 'DELETE', { hd_id: hd_id })
       .then((res) => {
@@ -370,7 +342,6 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false
     })
   }
-
   getHopdongs = (pageNumber) => {
     if (pageNumber <= 0)
       return;
@@ -386,8 +357,8 @@ class Hopdong extends React.Component {
         console.log("check ", response)
         if (response) {
           this.setState({
-            hopdongs: response.data.data.hopdongs.rows,
-            count: Number(response.data.count) // ép kiểu về    
+            hopdongs: data.data.hopdongs.rows,
+            count: Number(data.data.count)
           })
         }
         await this.props.fetchLoading({
@@ -395,8 +366,6 @@ class Hopdong extends React.Component {
         })
       })
   }
-  // <Input size={"small"} type="date" onChange={this.clear} />
-  //---Insert---
   InsertOrUpdateHopdong = () => {
     const { form } = this.formRef.props;
     //var file = form.getFieldsValue().hd_files.file
@@ -407,7 +376,6 @@ class Hopdong extends React.Component {
       if (err) {
         return
       }
-      //console.log(values, "day la values");
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
       //values.formdata = formdata
       const data = new FormData()
@@ -429,7 +397,6 @@ class Hopdong extends React.Component {
           var description = response.data.message
           var notifi_type = 'success'
           var message = 'Thành công'
-
           if (!!!response.data.success) {
             message = 'Có lỗi xảy ra!'
             notifi_type = 'error'
@@ -437,7 +404,6 @@ class Hopdong extends React.Component {
               return <Alert type='error' message={values}></Alert>
             })
           }
-          //thông báo lỗi vào thành công
           notification[notifi_type]({
             message: message,
             description: description
@@ -446,7 +412,6 @@ class Hopdong extends React.Component {
         })
     });
   }
-
   refresh = () => {
     this.getHopdongs(this.state.pageNumber)
   }
@@ -460,7 +425,6 @@ class Hopdong extends React.Component {
     this.setState({
       page: page
     })
-
     this.getHopdongs(page); if (this.state.isSearch === 1) {
       this.search(this.state.searchText)
     }
@@ -480,7 +444,6 @@ class Hopdong extends React.Component {
     const { form } = this.formRef.props
     form.setFieldsValue({
       dm_duan_id: value
-
     })
 
     if (value === 'add_duan') {
@@ -494,7 +457,6 @@ class Hopdong extends React.Component {
     const { form } = this.formRef.props
     form.setFieldsValue({
       hd_doituong: value
-
     })
   }
 
@@ -546,7 +508,6 @@ class Hopdong extends React.Component {
       var label = hopdong.hd_loai === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
       var api = hopdong.hd_loai === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
       const { form } = this.formRef.props
-
       Request(api, 'post', null).then((res) => {
         if (res.data) {
           this.setState({
@@ -572,27 +533,22 @@ class Hopdong extends React.Component {
       form.setFieldsValue(hopdong);
     }
   };
-
   handleCancel = e => {
     this.setState({
       visible: false,
       id_visible: false
     });
   };
-
   confirm = (e) => {
     console.log(e);
     message.success('Bấm yes để xác nhận');
   }
-
   cancel = (e) => {
     console.log(e);
   }
-
   showTotal = (total) => {
     return `Total ${total} items `;
   }
-
   onShowSizeChange = async (current, size) => {
     await this.setState({
       pageSize: size
@@ -605,10 +561,8 @@ class Hopdong extends React.Component {
       this.getHopdongs(this.state.page, this.state.index, this.state.sortBy)
     }
   }
-
   onSearch = (val) => {
   }
-
   onHeaderCell = (column) => {
     return {
       onClick: async () => {
@@ -637,12 +591,10 @@ class Hopdong extends React.Component {
       },
     };
   }
-
   onChangeClick_loaihopdong = (e) => {
     var label = e === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
     var api = e === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
     const { form } = this.formRef.props
-
     Request(api, 'post', null).then((res) => {
       if (res.data) {
         this.setState({
@@ -659,14 +611,10 @@ class Hopdong extends React.Component {
       }
 
     })
-    //var value = e === 'DV' ? 'combobox' : 'combobox2'
     this.setState({
       labelCombobox: label
-      //optionChange: value
     })
-
   }
-
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
@@ -695,58 +643,34 @@ class Hopdong extends React.Component {
         statebuttonedit: true
       })
   }
-
   onSelectDuan = async (value) => {
     if (value === 'add_duan') {
-      //console.log('dcm vao roif')
       return this.setState({
         visible_duan: true
       })
     }
-    // const { form } = this.formRef.props
-    // await this.set_select_tenkh(value);
-    // if (this.state.select_tenkh.length === 0) {
-    //     await form.setFieldsValue({ kh_id: '' })
-    // } else {
-    //     await form.setFieldsValue({ kh_id: 0})
-    // }
-    // console.log('===========================selected====================', value)
   }
-
   checkStateConfirm = () => {
     this.setState({
       stateconfirmdelete: true
     })
   }
-
   clearChecked = () => {
     this.onSelectChange([], [])
   };
-
   onRowClick = (row) => {
     this.onSelectChange([row.hd_id], [row])
   }
-
   onCancel_duan = () => {
-    // console.log('cancel')
     this.setState({
       visible_duan: false
     })
   }
   onOk_duan = () => {
-
-    //console.log('ddaay  kaf  form nhe', this.saveFormRefCreate)
-
-    // console.log('ok')
-    // this.setState({
-    //     visiblekh: true
-    // })
   }
-
   saveFormRefCreate = formRef => {
     this.saveFormRefCreate = formRef
   }
-
   CreateDuan = e => {
     // console.log('Đây là thêm dự án')
     e.preventDefault();
@@ -789,7 +713,7 @@ class Hopdong extends React.Component {
       selectedRowKeys,
       onChange: this.onSelectChange,
       getCheckboxProps: record => ({
-        disabled: Column.title === 'Id', // Column configuration not to be checked
+        disabled: Column.title === 'Id',
         name: record.name,
       }),
     };
@@ -852,14 +776,11 @@ class Hopdong extends React.Component {
               onChangeSelect={this.onChangeSelect}
               comboBoxDatasource={this.state.comboBoxDatasource}
               comboBoxDuanSource={this.state.comboBoxDuanSource}
-              //comboBoxDatasource1 = {this.state.comboBoxDatasource1}
               onChangeClick_loaihopdong={this.onChangeClick_loaihopdong}
               propDatasourceSelectLoaiHopDong={this.state.propDatasourceSelectLoaiHopDong}
               onchangpagefile={this.onchangpagefile}
-              //onhiddenbutton =  {this.onhiddenbutton}
-              onClickHandler={this.onClickHandler}
+            //onClickHandler={this.onClickHandler}
             />
-
             <FormModalDuan
               wrappedComponentRef={this.saveFormRefCreate}
               visible_duan={this.state.visible_duan}
@@ -870,7 +791,6 @@ class Hopdong extends React.Component {
               CreateDuan={this.CreateDuan}
               comboBoxDatasourceDuan={this.state.comboBoxDatasourceDuan}
             />
-
             <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1300 }}>
               <Column
                 title={<span>id hợp đồng<Icon type={this.state.orderby} /></span>}
@@ -882,10 +802,10 @@ class Hopdong extends React.Component {
               />
               <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} />
               <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
-              {/* <Column title="Loại hợp đồng" dataIndex="ten_hd_loai" key="ten_hd_loai" onHeaderCell={this.onHeaderCell} /> */}
               <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
-              {/* <Column title="Tên đối tượng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell} width={150} /> */}
               <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} />
+              <Column title="Công ty" dataIndex="hd_congty" key="hd_congty"
+                onHeaderCell={this.onHeaderCell} width={150} />
               <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} width={150}
                 render={
                   text => {

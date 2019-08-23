@@ -155,11 +155,11 @@ module.exports = {
                     if (role && action) {
                         client.query("select * from pq_role_action where role_code = (select id from pq_roles where name ='" + role + "' ) and action_code = (select id from pq_actions where name = '" + action + "')").then(res => {
                             console.log('-------------------------id----------------------', res.rows[0].id)
-                           
-                            client.query("select user_code from pq_group_user where group_code ='" + per.user+"'").then(res2 => {
-                                console.log('234567890-=098765467890-0987654567890',res2.rows.length)
+
+                            client.query("select user_code from pq_group_user where group_code ='" + per.user + "'").then(res2 => {
+                                console.log('=-==-=-=-', res2.rows)
                                 let memb = res2.rows;
-                                for(j=0;j<memb.length;j++){
+                                for (j = 0; j < memb.length; j++) {
                                     let idra = res.rows[0].id
                                     let idgr = uuidv1();
                                     let querygr = "insert into pq_role_user_group(role_action_code,id,group_code,group_user_code) values('" + idra + "','" + idgr + "','" + per.user + "','" + memb[j].user_code + "')"
@@ -167,19 +167,18 @@ module.exports = {
                                         console.log('them moi thagnh cong')
                                     })
                                 }
-                                
+
                             })
 
                         })
                     }
 
                 })
-            })
 
-
-        }).catch(err => {
-            client.release()
-            console.log(err)
+            }).catch(err => {
+                client.release()
+                console.log(err)
+                })
         })
     },
 

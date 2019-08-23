@@ -50,7 +50,7 @@ router.post('/search', function (req, res) {
 })
 router.post('/checkrolegroup', function (req, res) {
     console.log('body;,',req.body)
-    groupController.getClaimsByUser(req.body.sl, (data) => {
+    groupController.getClaimsByGroup(req.body.sl, (data) => {
         res.send(data);
     })
 })
