@@ -2,70 +2,145 @@ var knex = require('./common/DB')
 var pool = require('./connect')
 module.exports = {
     getHopdong: (limit, offset, callback) => {
-        pool.connect()
-            .then(client => {
-                let sql_SelectHopDongs = "select hd.hd_id, \
-            case (hd.hd_loai) \
-                when 'DV' then 'Đơn Vị'\
-                when 'CN' then 'Cá Nhân'\
-            end ten_hd_loai,\
-            hd.hd_loai,\
-            hd.hd_doituong,\
-            case (hd.hd_loai)\
-                when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
-                when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
-            end ten_hd_doituong,\
-            hd.hd_doituong,\
-            hd.dm_duan_id,\
-            da.dm_duan_ten,\
-            hd.hd_so,\
-            hd.hd_thoigianthuchien,\
-            hd.hd_ngayketthuc,\
-            hd.hd_diachi,\
-            hd.hd_ngayky,\
-            hd.hd_ngaythanhly,\
-            hd.hd_ngayxuathoadon,\
-            hd.hd_ngaythanhtoan,\
-            hd.hd_congty,\
-            hd.hd_trangthai,\
-            case (hd.hd_trangthai)\
-                 when 'DTH' then 'Đang thực hiện'\
-                 when 'TL'  then 'Thanh lý'\
-                 when 'XHD' then 'Xuất hóa đơn'\
-                 when 'DTT' then 'Đã thanh toán'\
-                 when 'DONG' then 'Đóng'\
-            end ten_hd_trangthai,\
-            hd.hd_trangthai,\
-            hd.hd_files,\
-            hd.hd_ghichu\
-            from hopdongs hd,\
-            duans da \
-            where hd.dm_duan_id = da.dm_duan_id"
-                return client.query(sql_SelectHopDongs)
-                    .then(res => {
-                        var hopdongs = res
-                        knex('hopdongs').count()
-                            .then((resCount) => {
-                                callback({
-                                    success: true,
-                                    data: {
-                                        hopdongs: hopdongs,
-                                        count: resCount[0].count
-                                    }
-                                })
-                            }).catch((err) => {
-                                callback({
-                                    success: false
-                                })
-                            })
+        // pool.connect()
+        //     .then(client => {
+        //         let sql_SelectHopDongs = "select hd.hd_id, \
+        //     case (hd.hd_loai) \
+        //         when 'DV' then 'Đơn Vị'\
+        //         when 'CN' then 'Cá Nhân'\
+        //     end ten_hd_loai,\
+        //     hd.hd_loai,\
+        //     hd.hd_doituong,\
+        //     case (hd.hd_loai)\
+        //         when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
+        //         when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
+        //     end ten_hd_doituong,\
+        //     hd.hd_doituong,\
+        //     hd.dm_duan_id,\
+        //     da.dm_duan_ten,\
+        //     hd.hd_so,\
+        //     hd.hd_thoigianthuchien,\
+        //     hd.hd_ngayketthuc,\
+        //     hd.hd_diachi,\
+        //     hd.hd_ngayky,\
+        //     hd.hd_ngaythanhly,\
+        //     hd.hd_ngayxuathoadon,\
+        //     hd.hd_ngaythanhtoan,\
+        //     hd.hd_congty,\
+        //     hd.hd_trangthai,\
+        //     case (hd.hd_trangthai)\
+        //          when 'DTH' then 'Đang thực hiện'\
+        //          when 'TL'  then 'Thanh lý'\
+        //          when 'XHD' then 'Xuất hóa đơn'\
+        //          when 'DTT' then 'Đã thanh toán'\
+        //          when 'DONG' then 'Đóng'\
+        //     end ten_hd_trangthai,\
+        //     hd.hd_trangthai,\
+        //     hd.hd_files,\
+        //     hd.hd_ghichu\
+        //     from hopdongs hd,\
+        //     duans da \
+        //     where hd.dm_duan_id = da.dm_duan_id"
+        //         return client.query(sql_SelectHopDongs)
+        // let sql_SelectHopDongs = "select hd.hd_id, \
+        //     case (hd.hd_loai) \
+        //         when 'DV' then 'Đơn Vị'\
+        //         when 'CN' then 'Cá Nhân'\
+        //     end ten_hd_loai,\
+        //     hd.hd_loai,\
+        //     hd.hd_doituong,\
+        //     case (hd.hd_loai)\
+        //         when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
+        //         when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
+        //     end ten_hd_doituong,\
+        //     hd.hd_doituong,\
+        //     hd.dm_duan_id,\
+        //     da.dm_duan_ten,\
+        //     hd.hd_so,\
+        //     hd.hd_thoigianthuchien,\
+        //     hd.hd_ngayketthuc,\
+        //     hd.hd_diachi,\
+        //     hd.hd_ngayky,\
+        //     hd.hd_ngaythanhly,\
+        //     hd.hd_ngayxuathoadon,\
+        //     hd.hd_ngaythanhtoan,\
+        //     hd.hd_congty,\
+        //     hd.hd_trangthai,\
+        //     case (hd.hd_trangthai)\
+        //          when 'DTH' then 'Đang thực hiện'\
+        //          when 'TL'  then 'Thanh lý'\
+        //          when 'XHD' then 'Xuất hóa đơn'\
+        //          when 'DTT' then 'Đã thanh toán'\
+        //          when 'DONG' then 'Đóng'\
+        //     end ten_hd_trangthai,\
+        //     hd.hd_trangthai,\
+        //     hd.hd_files,\
+        //     hd.hd_ghichu\
+        //     from hopdongs hd,\
+        //     duans da \
+        //     where hd.dm_duan_id = da.dm_duan_id"
+        knex.raw("select hd.hd_id, \
+        case (hd.hd_loai) \
+            when 'DV' then 'Đơn Vị'\
+            when 'CN' then 'Cá Nhân'\
+        end ten_hd_loai,\
+        hd.hd_loai,\
+        hd.hd_doituong,\
+        case (hd.hd_loai)\
+            when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
+            when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
+        end ten_hd_doituong,\
+        hd.hd_doituong,\
+        hd.dm_duan_id,\
+        da.dm_duan_ten,\
+        hd.hd_so,\
+        hd.hd_thoigianthuchien,\
+        hd.hd_ngayketthuc,\
+        hd.hd_diachi,\
+        hd.hd_ngayky,\
+        hd.hd_ngaythanhly,\
+        hd.hd_ngayxuathoadon,\
+        hd.hd_ngaythanhtoan,\
+        hd.hd_congty,\
+        hd.hd_trangthai,\
+        case (hd.hd_trangthai)\
+             when 'DTH' then 'Đang thực hiện'\
+             when 'TL'  then 'Thanh lý'\
+             when 'XHD' then 'Xuất hóa đơn'\
+             when 'DTT' then 'Đã thanh toán'\
+             when 'DONG' then 'Đóng'\
+        end ten_hd_trangthai,\
+        hd.hd_trangthai,\
+        hd.hd_files,\
+        hd.hd_ghichu\
+        from hopdongs hd,\
+        duans da \
+        where hd.dm_duan_id = da.dm_duan_id limit " + limit + " offset " + offset)
+        .then(res => {
+            var hopdongs = res.rows
+            knex('hopdongs').count()
+                .then((resCount) => {
+                    callback({
+                        success: true,
+                        data: {
+                            hopdongs: hopdongs,
+                            count: resCount[0].count
+                        }
                     })
-                    .catch((err) => {
+                }).catch((err) => {
+                    console.log(err),
                         callback({
                             success: false
                         })
-                    })
-            })
-    },
+                })
+        })
+        .catch((err) => {
+            console.log(err),
+                callback({
+                    success: false
+                })
+        })
+},
     deleteHopdongbyId: function (Id, callback) {
         knex.from('hopdongs').whereIn('hd_id', Id).del().then(res => {
             callback({ success: true });
@@ -74,9 +149,12 @@ module.exports = {
         })
     },
     insertHopdong: function (hopdong, callback) {
+        //console.log(hopdong.hd_files, 'day la hdfile');
         knex.from('hopdongs').insert(hopdong).then(res => {
             callback({ success: true });
         }).catch(err => {
+            console.log(err, 'loi insert');
+            
             callback({ success: false })
         })
     },
