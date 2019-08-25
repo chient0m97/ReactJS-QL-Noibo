@@ -409,6 +409,26 @@ class Hopdong extends React.Component {
   componentDidMount() {
     this.getHopdongs(this.state.pageNumber, this.state.index, this.state.sortBy);
   }
+  onClickDownloadFile = (text) => {
+    if(text===null)
+    {
+      alert("Hợp đồng này không có file");
+    }
+    else
+    {
+    var ketqua = [];
+    this.state.hopdongs.forEach((value) => {
+      console.log(value.dm_duan_ten, 'ten ket qua');
+      if(value.hd_files===text)
+      {
+        console.log(value.dm_duan_ten, 'ten day');
+        ketqua.push(value.dm_duan_ten);
+      }
+    })
+    require("downloadjs")(text, ketqua+".rar", " ");
+    //download(file, fileName, fileType);
+  }
+  }
   onchangpage = (page) => {
     this.setState({
       page: page
@@ -595,6 +615,9 @@ class Hopdong extends React.Component {
       reader.onerror = error => reject(error);
     });
     var file = e.target.files[0];
+    console.log(file, 'file');
+    console.log(file.name, 'file name');
+    console.log(file.type, 'file type');
     var fileUploadHopdong = await toBase64(file);
     var fileName = file.name;
     this.setState({
@@ -763,6 +786,7 @@ class Hopdong extends React.Component {
               propDatasourceSelectLoaiHopDong={this.state.propDatasourceSelectLoaiHopDong}
               onChangeFile={this.onChangeFile}
               onchangpagefile={this.onchangpagefile}
+              onClickDownloadFile={this.onClickDownloadFile}
             />
             <FormModalDuan
               wrappedComponentRef={this.saveFormRefCreate}
@@ -774,7 +798,7 @@ class Hopdong extends React.Component {
               CreateDuan={this.CreateDuan}
               comboBoxDatasourceDuan={this.state.comboBoxDatasourceDuan}
             />
-            <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1300 }}>
+            <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}>
               <Column
                 title={<span>id hợp đồng<Icon type={this.state.orderby} /></span>}
                 dataIndex="hd_id"
@@ -838,19 +862,12 @@ class Hopdong extends React.Component {
                 onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" onHeaderCell={this.onHeaderCell} />
-              {/* <Column title="Files" dataIndex="hd_files" key="hd_files" render={
-                  text => {
-                    if (text === null)
-                      return ' '
-                    else
-                      return this.state.valuename
-                  }} onHeaderCell={this.onHeaderCell} /> */}
-              <Column title="Files" key="download"
-                render={() => (
+              <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" onHeaderCell={this.onHeaderCell}/>
+              <Column title="Files" dataIndex="hd_files" key="hd_files"
+                render={(text) => (
                   <span>
                     <Tooltip title="Tải xuống">
-                      <Button shape="round" style={{ marginRight: 20 }} type="primary">
+                      <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
                         <Icon type="download" />
                       </Button>
                     </Tooltip>

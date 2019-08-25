@@ -42,8 +42,8 @@ var HopdongController = {
             callback(data);
         });
     },
-    DeleteHopdongbyId: async function deleteHopdongbyId(Id, callback) {
-        hopdongData.deleteHopdongbyId(Id, (data) => {
+    DeleteHopdongbyId: async function deleteHopdongbyId(hd_id, callback) {
+        hopdongData.deleteHopdongbyId(hd_id, (data) => {
             if (data.success === true) {
                 callback({
                     success: data.success,

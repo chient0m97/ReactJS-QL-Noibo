@@ -141,8 +141,8 @@ module.exports = {
                 })
         })
 },
-    deleteHopdongbyId: function (Id, callback) {
-        knex.from('hopdongs').whereIn('hd_id', Id).del().then(res => {
+    deleteHopdongbyId: function (hd_id, callback) {
+        knex.from('hopdongs').whereIn('hd_id', hd_id).del().then(res => {
             callback({ success: true });
         }).catch(err => {
             callback({ success: false })
