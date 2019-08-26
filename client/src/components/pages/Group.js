@@ -107,7 +107,7 @@ class Group extends React.Component {
     }
     //--------------DELETE-----------------------
     deleteGroup = (id) => {
-        Request(`user/delete`, 'DELETE', { id: id })
+        Request(`group/delete`, 'DELETE', { id: id })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thông báo',
@@ -395,7 +395,7 @@ class Group extends React.Component {
     }
     redirectDetailMember = () => {
         console.log('redirect')
-        window.location.href = '/member';
+        window.location.href = '/group';
     }
     render() {
         let token = cookie.load('token');
@@ -411,10 +411,11 @@ class Group extends React.Component {
         let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
         let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
         let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-
+        const {selectedRowKeys} = this.state
         const rowSelection = {
             type: 'radio',
             hideDefaultSelections: true,
+            selectedRowKeys,
             onChange: async (selectedRowKeys, selectedRows) => {
                 console.log('select', selectedRowKeys[0])
                 let sl = selectedRowKeys[0]
@@ -508,7 +509,7 @@ class Group extends React.Component {
                                 }
                                 <div>
                                     <Button style={{ margin: '20px' }}>
-                                        <NavLink to={`/member/${this.state.selectedId}`} className=""> <Icon type="edit" /> </NavLink >
+                                        <NavLink to={`/group/${this.state.selectedId}`} className=""> <Icon type="edit" /> </NavLink >
                                     </Button>Thông tin Member
 
                                 </div>
@@ -539,7 +540,9 @@ class Group extends React.Component {
                                                         console.log('aaaaaaaaaaaaaaaaaa', event)
                                                         console.log('reacassadasdad', record.name)
                                                         this.setState({
-                                                            selectedRowKeys: [rowIndex]
+                                                            selectedRowKeys: [record.name],
+                                                            selectedId:record.name
+
                                                         })
                                                         console.log('reacassadasdad', rowIndex)
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, Checkbox, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Tooltip, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import Permission from '../Authen/Permission'
 import TreeRole from '../common/Tree'
 import SearchModal from '../common/searchModal'
+import { async } from 'q';
 const { Column } = Table;
 const token = cookie.load('token');
 
@@ -300,7 +301,7 @@ class User extends React.Component {
   showTotal = (total) => {
     return `Total ${total} items`;
   }
-  onShowSizeChange = async (current, size) => {
+  onShowSizeChange = async (current, size) => {         
     await this.setState({
       pageSize: size
     });
@@ -450,10 +451,11 @@ class User extends React.Component {
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
     let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-
+    const { selectedRowKeys } = this.state
     const rowSelection = {
       type: 'radio',
       hideDefaultSelections: true,
+      selectedRowKeys,
       onChange: async (selectedRowKeys, selectedRows) => {
         let sl = selectedRowKeys[0]
         Request('checkrole', 'POST', { sl }).then((res) => {
@@ -502,48 +504,60 @@ class User extends React.Component {
             {
               canPermiss ?
                 <div>
-                  <Button style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
-                    <Icon type="user" />
-                  </Button> Phân Quyền
-                    </div>
+                  <Tooltip title="Phân quyền">
+                    <Button shape="round"  style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
+                      <Icon type="user" />
+                    </Button>
+                  </Tooltip>
+                </div>
                 : null
             }
             {
               canUpdate ?
                 <div>
-                  <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
-                    <Icon type="edit" />
-                  </Button> Sửa
-                    </div>
+                  <Tooltip title="Sửa User">
+                    <Button shape="round" style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
+                      <Icon type="edit" />
+                    </Button>
+                  </Tooltip>
+
+                </div>
                 : null
             }
 
             {
               canCreate ?
                 <div>
-                  <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
-                    <Icon type="plus" />
-                  </Button> Thêm
+                  <Tooltip title="Thêm User">
+                    <Button shape="round" style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
+                      <Icon type="user-add" />
+                    </Button>
+                  </Tooltip>
+
                 </div>
                 : null
             }
             {
               canDelete ?
-                <Popconfirm
-                  title="Bạn chắc chắn muốn xóa?"
-                  onConfirm={this.deleteUser.bind(this, this.state.selectedId)}
-                  onCancel={this.cancel}
-                  okText="Yes"
-                  cancelText="No">
-                  <Button type="danger" style={{ margin: '20px' }} >
-                    <Icon type="delete" />
-                  </Button> Xóa
+                <Tooltip title="Xóa User">
+                  <Popconfirm
+                    title="Bạn chắc chắn muốn xóa?"
+                    onConfirm={this.deleteUser.bind(this, this.state.selectedId)}
+                    onCancel={this.cancel}
+                    okText="Có"
+                    cancelText="Không">
+                    <Button shape="round" type="danger" style={{ margin: '20px' }} >
+                      <Icon type="delete" />
+                    </Button>
                     </Popconfirm>
+                </Tooltip>
+
                 :
                 null
             }
 
           </div>
+
           <div>
 
             <div>
@@ -564,12 +578,14 @@ class User extends React.Component {
 
                   onRow={(record, rowIndex) => {
                     return {
-                      onClick: event => {
+                      onClick: async event => {
                         this.handleClickRow.bind(this, rowIndex)
-                        console.log('aaaaaaaaaaaaaaaaaa', event)
-                        console.log('reacassadasdad', record.name)
-                        this.setState({
-                          selectedRowKeys: [rowIndex]
+                        console.log('aaaaaaaaaaaaaaaaaa', rowIndex)
+                        console.log('reacassadasdad1111111111111111', record.name)
+                        await this.setState({
+                          selectedRowKeys: [record.name],
+                          selectedId: record.name,
+                          user: record
                         })
                         console.log('reacassadasdad', rowIndex)
 
@@ -586,11 +602,11 @@ class User extends React.Component {
                     key="id"
                     onHeaderCell={this.onHeaderCell}
                   />
-                  <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
+                  <Column title={<span>Tên đăng nhập<Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
                   />
                   <Column className="hidden-action" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
-                  <Column className="hidden-action" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
-                  <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
+                  <Column title="Số điện thoại" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
+                  <Column title="Tên đầy đủ" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
                   <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
 
 

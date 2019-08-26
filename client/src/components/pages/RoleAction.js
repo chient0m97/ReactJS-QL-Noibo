@@ -38,7 +38,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             let ac = actionData.map(function (valuee) {
                 return ac = { label: valuee.name, value: valuee.name }
             })
-            console.log('=========================',ac)
+            console.log('=========================', ac)
             return (
                 <Modal
                     visible={visible}
@@ -84,7 +84,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                             <Col span={12}>
 
                                 <Form.Item label="Action Code">
-                                {/* <Checkbox.Group options={ac}  /> */}
+                                    {/* <Checkbox.Group options={ac}  /> */}
                                     {getFieldDecorator('action', {
 
                                         rules: [{ required: true, message: this.state.messageRequired, }],
@@ -503,9 +503,10 @@ class RoleAction extends React.Component {
         let canDelete = claims.indexOf(Permission.Role.Delete) >= 0;
         let canCreate = claims.indexOf(Permission.Role.Insert) >= 0;
         let canRead = claims.indexOf(Permission.Role.Read) >= 0;
-
+        const { selectedRowKeys } = this.state
         const rowSelection = {
             hideDefaultSelections: true,
+            selectedRowKeys,
             onChange: async (selectedRowKeys, selectedRows) => {
                 console.log('selected rowkeys', selectedRowKeys)
                 if (selectedRows[0]) {
@@ -600,9 +601,26 @@ class RoleAction extends React.Component {
 
                                     onRow={(record, rowIndex) => {
                                         return {
-                                            onClick: event => {
-                                                this.handleClickRow.bind(this, rowIndex)
+                                            onClick: async event => {
+                                               await this.handleClickRow.bind(this, rowIndex)
+                                                if (this.state.selectedRowKeys.indexOf(record.id) >= 0) {
+                                                    console.log('111111111111111111111111111111111111111111')
 
+                                                    for (var i =0;i< this.state.selectedRowKeys.length; i++) {
+                            
+                                                        if (this.state.selectedRowKeys[i] === record.id)
+                                                            this.state.selectedRowKeys.splice(i, 1);
+                                                    }
+                                                }
+                                                else {
+                                                    this.state.selectedRowKeys.push(record.id)
+
+                                                }
+                                                console.log('loggggggggggggggggggggggggggg', this.state.selectedRowKeys)
+                                                await this.setState({
+                                                    selectedId: record.id,
+                                                    user: record
+                                                })
                                             }, // click row
                                         };
                                     }}

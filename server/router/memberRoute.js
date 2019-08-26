@@ -42,7 +42,7 @@ router.post('/delete', function (req, res) {
 })
 
 router.post('/add', function (req, res) {
-    console.log('----------------insert-------------', req.body.mem[0])
+    console.log('----------------insert-------------', req.body)
     memberController.addUser(req.body.mem,req.body.sl,req.body.gr, function (data) {
         res.send(data);
         console.log('result', data)

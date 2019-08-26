@@ -32,15 +32,20 @@ module.exports = {
     },
     deleteGroup: function (Id, callback) {
         console.log('id ne', Id)
-        knex.from('users').where('name', Id).del().then(res => {
-            callback({ success: true });
+        knex('pq_group_user').where('group_code', Id).then(res => {
+            knex('pq_role_user_group').where('group_code', Id).then(res1 => {
+                knex.from('pq_groups').where('name', Id).del().then(res => {
+                    callback({ success: true });
 
-            console.log('aaaaaaaa')
-        }).catch(err => {
-
-            console.log(err)
-
+                    console.log('aaaaaaaa')
+                })
+            })
         })
+            .catch(err => {
+
+                console.log(err)
+
+            })
     },
     insertGroup: function (user, callback) {
         console.log('insert lan thu 1 ty')
@@ -178,7 +183,7 @@ module.exports = {
             }).catch(err => {
                 client.release()
                 console.log(err)
-                })
+            })
         })
     },
 
