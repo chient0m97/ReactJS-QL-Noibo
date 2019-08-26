@@ -66,6 +66,7 @@ module.exports = {
         })
     },
     addUser: function (user, groupName,gr, callback) {
+        console.log('-===========================',groupName)
         pool.connect().then(client => {
             for (i = 0; i < user.length; i++) {
                 let id = uuidv1();
