@@ -111,6 +111,7 @@ class Customer extends React.Component {
             if (err) {
                 return
             }
+            console.log("hien thi value ",values)
             var url = this.state.action === 'insert' ? 'customer/insert' : 'customer/update'
             Request(url, 'POST', values)
                 .then((response) => {

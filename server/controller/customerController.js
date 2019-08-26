@@ -26,7 +26,7 @@ var CustomerController = {
                         value.kh_lienlac_txt = 'Đầu mối liên lạc'
                         break;
                     case 'TXLL':
-                        value.kh_lienlac_txt = 'Thường xuyên lien lạc'
+                        value.kh_lienlac_txt = 'Thường xuyên liên lạc'
                         break;
                 }
                 res_customer.push(value)
@@ -135,7 +135,7 @@ var CustomerController = {
                     id_customer: customer.kh_id
                 }, status);
             })
-        }   
+        }
         else {
             var eror = Validator.getError()
             console.log('lỗi trả về', eror)
@@ -163,12 +163,12 @@ var CustomerController = {
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
-        customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
-        customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
-        customer.dm_db_id_xa = customer.dm_db_id_xa_customer
         delete customer.dm_db_id_huyen_customer
         delete customer.dm_db_id_tinh_customer
         delete customer.dm_db_id_xa_customer
+        customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
+        customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
+        customer.dm_db_id_xa = customer.dm_db_id_xa_customer
         customerData.updateCustomer(customer, (res) => {
             callback({
                 success: res.success,

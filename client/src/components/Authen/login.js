@@ -72,7 +72,7 @@ class NormalLoginForm extends Component {
                 <img src={logo} className="background-login" alt="" style={{marginTop:'0px'}}/>
                 <Form onSubmit={this.Login} className="login-form">
                     <h3 style={{
-                        fontSize: '24px', fontStyle: 'italic', fontWeight: 'bold', fontFamily: 'Time New Roman', textAlign: 'center',color:'#1890ff'
+                        fontSize: '20px',fontStyle: 'italic',fontWeight: 'bold', textAlign: 'center',fontFamily: 'Georgia, Times New Roman, Times, serif',color:'#40a9ff'
                     }}>Đăng nhập hệ thống</h3>
                     <Form.Item>
                         {getFieldDecorator('username', {
@@ -100,7 +100,7 @@ class NormalLoginForm extends Component {
                     </Form.Item>
                     <Form.Item>
 
-                        <Button className="login-form-forgot" href="/">Forgot password</Button>
+                        <Button className="login-form-forgot" href="/" style={{backgroundColor:'white',color:'black'}}>Forgot password</Button>
                         <Button type="primary" htmlType="submit" className="login-form-button" loading={this.state.loadding}>Log in</Button>
                     </Form.Item>
                 </Form>

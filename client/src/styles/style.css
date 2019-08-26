@@ -345,3 +345,11 @@ thead[class*="ant-table-thead"] th{
 #dasboard-widget-top .ant-card-body {
   padding: 10px !important
 }
+
+#caption{
+  font-size: 40px;
+  font-style: italic;
+  font-weight: bold;
+  text-align: center;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}

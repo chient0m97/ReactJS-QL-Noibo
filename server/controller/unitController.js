@@ -125,7 +125,6 @@ var UnitController = {
                 if (!response.success) {
                     Validator.error.push(constant.errorSys)
                     message = Validator.getError()
-
                 }
                 callback({
                     message: message,

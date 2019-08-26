@@ -62,7 +62,7 @@ module.exports = {
         })
     },
     getQTDA: function (callback) {
-        knex('nhansu').select('ns_id', knex.raw("ns_ho ||' '||ns_tenlot ||' '||ns_ten as ns_ten")).then(res => {
+        knex('nhansu').select('ns_id', knex.raw("coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '')  || ' ' || coalesce (ns_ten, '') as ns_ten")).then(res => {
             callback(res);
         }).catch((err) => {
             console.log(err)

@@ -378,36 +378,35 @@ class Unit extends React.Component {
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_tenkh: res.data
                 })
             }
-            
         })
     }
 
     set_select_tendv = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_tendv: res.data
                 })
             }
-            
+
         })
     }
 
     set_select_diabantinh = async () => {
         await Request('unit/gettinh', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_diabantinh: res.data
                 })
             }
-            
+
         })
     }
 
@@ -415,12 +414,12 @@ class Unit extends React.Component {
         await Request('unit/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_diabanhuyen: res.data
                 })
             }
-            
+
         })
     }
 
@@ -428,24 +427,24 @@ class Unit extends React.Component {
         await Request('unit/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_diabanxa: res.data
                 })
             }
-            
+
         })
     }
 
     set_select_tinh = async () => {
         await Request('unit/gettinh', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_tinh: res.data
                 })
             }
-            
+
         })
     }
 
@@ -453,12 +452,12 @@ class Unit extends React.Component {
         await Request('unit/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_huyen: res.data
                 })
             }
-            
+
         })
     }
 
@@ -466,7 +465,7 @@ class Unit extends React.Component {
         await Request('unit/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_xa: res.data
                 })
@@ -497,11 +496,11 @@ class Unit extends React.Component {
                     }
                     form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
                     await this.set_select_xa(this.state.select_huyen[0].dm_db_id)
-                    if (this.state.select_diabanxa.length === 0) {
+                    if (this.state.select_xa.length === 0) {
                         form.setFieldsValue({ dm_db_id_xa_customer: '' })
                     }
                     form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
-                    await this.set_select_tendv();
+                    this.set_select_tendv();
                 }
                 catch (err) {
                     console.log(err)
@@ -634,6 +633,19 @@ class Unit extends React.Component {
         this.formRef = formRef;
     }
 
+    clearChecked = () => {
+        this.onSelectChange([], [])
+    };
+
+    onRowClick = (row) => {
+        if (this.state.select_diabanhuyen[0] === row.dm_dv_id){
+            this.onSelectChange([], [])
+        }
+        else{
+            this.onSelectChange([row.dm_dv_id],[row])
+        }
+    }
+
     onSelectChange = (selectedRowKeys, selectedRows) => {
         this.setState({
             selectedRowKeys,
@@ -676,6 +688,9 @@ class Unit extends React.Component {
         if (token)
             return (
                 <div>
+                    <Row id="caption">
+                        Bảng Thống kê Đơn vị
+                        </Row>
                     <Card>
                         <Row>
                             <Col span={2}>
@@ -757,11 +772,11 @@ class Unit extends React.Component {
                             onSelectDv={this.onSelectDv}
                             stateoption={this.state.stateoption}
                         />
-                        <Table className="table-contents" rowSelection={rowSelection} pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: 1000 }} rowKey="dm_dv_id">
-                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} width={150}/>
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} className="table-contents" pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: 1000 }} rowKey="dm_dv_id">
+                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} width={150}/>
+                            <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />

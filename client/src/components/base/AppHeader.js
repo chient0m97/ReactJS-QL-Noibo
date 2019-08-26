@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip } from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row} from 'antd'
 import cookie from 'react-cookies'
 
 const { Header } = Layout
@@ -56,7 +56,7 @@ class AppHeader extends Component {
             <a style={{ marginLeft: '83%' }} className="ant-dropdown-link" href="/">
               <Icon type="user" style={{ fontSize: '20px' }} />
               <Tooltip title="Tên tài khoản">
-              <span style={{ fontSize: '18px' }}> {user_cookie} </span>
+                <span style={{ fontSize: '18px' }}> {user_cookie} </span>
               </Tooltip>
             </a>
           </Dropdown>

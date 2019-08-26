@@ -73,6 +73,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                         })(<Select onSelect={onSelectKh} placeholder="---Không có người đại diện có thể bỏ qua trường này---"
                                         >
                                             <Option value="add_nguoidaidien" disabled={stateoption}>Thêm người đại diện</Option>
+                                            <Option value={null}>Bỏ chọn</Option>
                                             {
                                                 select_tenkh.map((value, index) => {
                                                     return (

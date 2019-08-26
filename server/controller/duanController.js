@@ -47,33 +47,30 @@ var DuanController = {
     },
 
     insertDuan: async function insertDuan(duan, callback) {
-        if (Validator.isNumAlpha(duan.dm_duan_key, 'Key không đúng định dạng')
-            & Validator.isAlpha(duan.dm_duan_ten, 'Tên dự án không đúng định dạng')
-            //& Validator.num(duan.dm_duan_id, 'Id dự án không đúng định dạng')
+        if (1
         ) {
-
             if (await Validator.db.unique('duans', 'ns_id_qtda', duan.ns_id_qtda, 'Ns_id_qtda đã tồn tại !')){
                 let firstInsert;
                 firstInsert = duan;
                 firstInsert.dm_duan_id = uuidv4();
-                duanData.insertDuan(firstInsert, (response) => {
+                duanData.insertDuan(duan, (response) => {
                     var message = constant.successInsert;
                     var status = 200;
                     if (!response.success) {
                         Validator.error.push(constant.errorSys)
                         message = Validator.getError()
-                        status = 400
                     }
                     callback({
                         message: message,
                         success: response.success
                     }, status);
                 })
-            } else {
+            } 
+            else {
                 callback({
                     message: Validator.getError(),
                     success: false
-                }, 400);
+                }, status);
             }
 
         } else {
@@ -97,30 +94,14 @@ var DuanController = {
                 })
           }
         }
-    }
-    ,
+    },
+
     getcha:function getcha(callback){
         duanData.getcha((data)=>{
             callback(data)
         })
     },
-    Login: function getUserLogin(userName, callback) {
-        userData.getUserLogin(userName, (data) => {
-
-            callback(data);
-        })
-    },
-    search: function search( pageSize,pageNumber,textSearch, columnSearch,index,sortBy,callback){
-        let limit = pageSize;
-        let offset = pageSize * (pageNumber - 1);
-        duanData.search(limit,offset,textSearch,columnSearch, index, sortBy ,(data)=>{
-            console.log(limit)
-            console.log(offset)
-            console.log('aaaaaaaaa',data)
-            callback(data);
-        })
-    },
-
+   
     validateCreate: (req, res, next) => {
         next()
     },
