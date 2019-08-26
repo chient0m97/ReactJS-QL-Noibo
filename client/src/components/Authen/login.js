@@ -71,7 +71,9 @@ class NormalLoginForm extends Component {
             <div className="login-page">
                 <img src={logo} className="background-login" alt="" />
                 <Form onSubmit={this.Login} className="login-form">
-                    <h3>Đăng nhập hệ thống</h3>
+                    <h3 style={{
+                        fontSize: '20px',fontStyle: 'italic',fontWeight: 'bold', textAlign: 'center',fontFamily: 'Georgia, Times New Roman, Times, serif',color:'#40a9ff'
+                    }}>Đăng nhập hệ thống</h3>
                     <Form.Item>
                         {getFieldDecorator('username', {
                             rules: [ { required: true, message: 'Tên đăng nhập không  được để trống!' } ],
@@ -98,7 +100,7 @@ class NormalLoginForm extends Component {
                     </Form.Item>
                     <Form.Item>
 
-                        <a className="login-form-forgot" href="/">Forgot password</a>
+                        <Button className="login-form-forgot" href="/" style={{backgroundColor:'white',color:'black'}}>Forgot password</Button>
                         <Button type="primary" htmlType="submit" className="login-form-button" loading={this.state.loadding}>Log in</Button>
                     </Form.Item>
                 </Form>

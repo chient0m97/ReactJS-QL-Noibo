@@ -13,8 +13,12 @@ const { Option } = Select
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     render() {
-      const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, qtda } = this.props;
+      const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, select_qtda } = this.props;
       const { getFieldDecorator } = form;
+      var first_qtda = null;
+      if (select_qtda.length !== 0) {
+        first_qtda = select_qtda[0].ns_id
+      }
       return (
         <Modal
           visible={visible}
@@ -43,7 +47,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label="Tiền tố">
+                <Form.Item label="Kí hiệu dự án">
                   {getFieldDecorator('dm_duan_key', {
                     rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Input type="text" />)}
@@ -52,15 +56,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Quản trị dự án">
                   {getFieldDecorator('ns_id_qtda', {
-                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }], initialValue: first_qtda
                   })(<Select
-                    size={"small"}
                     filterOption={(input, option) =>
                       option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
                   >
                     {
-                      qtda.map((value, index) => {
+                      select_qtda.map((value, index) => {
                         return (<Option value={value.ns_id}>{value.ns_ten}</Option>)
                       })
                     }
@@ -96,7 +99,7 @@ class Duan extends React.Component {
       sortBy: '',
       index: 'id',
       orderby: 'arrow-up',
-      comboBoxDatasource: [],
+      select_qtda: [],
       selectedId: [],
       statebuttonedit: true,
       statebuttondelete: true,
@@ -213,14 +216,14 @@ class Duan extends React.Component {
     }
   }
 
-  set_Select_QTDA() {
-    Request('duan/getqtda', 'POST', {}).then((res) => {
+  set_select_qtda = () => {
+    Request('duan/getcha', 'POST', {
+    }).then((res) => {
       if (res.data) {
         this.setState({
-          comboBoxDatasource: res.data
+          select_qtda: res.data
         })
       }
-
     })
   }
 
@@ -236,9 +239,8 @@ class Duan extends React.Component {
         action: 'update'
       })
       form.setFieldsValue(duan);
-
     }
-    this.set_Select_QTDA()
+    this.set_select_qtda()
   };
 
   handleCancel = e => {
@@ -400,7 +402,7 @@ class Duan extends React.Component {
               title={this.state.title}
               formtype={this.state.formtype}
               id_visible={this.state.id_visible}
-              qtda={this.state.comboBoxDatasource}
+              select_qtda={this.state.select_qtda}
             />
             <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id" >
               <Column title="Tên dự án" dataIndex="dm_duan_ten" onHeaderCell={this.onHeaderCell} />

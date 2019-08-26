@@ -154,6 +154,7 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                         })(<Select onSelect={onSelectDv} placeholder="---Không có đơn vị có thể bỏ qua trường này---"
                                         >
                                             <Option value="add_donvi" disabled={stateoption}>Thêm đơn vị</Option>
+                                            <Option value={null}>Bỏ chọn</Option>
                                             {
                                                 select_tendv.map((value, index) => {
                                                     return (
