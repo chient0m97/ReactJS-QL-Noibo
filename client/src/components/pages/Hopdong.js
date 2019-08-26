@@ -1,6 +1,5 @@
 import React from 'react';
-import axios from 'axios';
-import { Pagination, Card, Tooltip, Icon, Table, Input, Modal, Popconfirm, message, Button, Upload, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Card, Tooltip, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
@@ -78,7 +77,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       }
     }
     render() {
-      const { onchangpagefile, visible, onCancel, onSave, form, title, confirmLoading, formtype, comboBoxDuanSource, comboBoxDatasource, onChangeClick_loaihopdong, propDatasourceSelectLoaiHopDong } = this.props;
+      const { onChangeFile, visible, onCancel, onSave, form, title, confirmLoading, formtype, comboBoxDuanSource, comboBoxDatasource, onChangeClick_loaihopdong, propDatasourceSelectLoaiHopDong } = this.props;
       var combobox = []
       var combobox1 = []
       var comboboxLoaiHopDong = []
@@ -263,7 +262,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   })(
                     <div>
                       <label>Upload your file</label>
-                      <input type="file" name="file" />
+                      <input type="file" name="file" onChange={onChangeFile} />
                     </div>
                   )}
                 </Form.Item>
@@ -311,8 +310,6 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false,
       selectedRowKeys: [],
       selectedId: [],
-      //selected_file: null,
-      //selectedFile: null,
       comboBoxDatasource: [],
       comboBoxDatasourceDuan: [],
       comboBoxDuanSource: [],
@@ -342,6 +339,7 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false
     })
   }
+
   getHopdongs = (pageNumber) => {
     if (pageNumber <= 0)
       return;
@@ -353,17 +351,16 @@ class Hopdong extends React.Component {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
     })
-      .then(async (response) => {
-        if (response) {
+      .then((response) => {
+        if (response)
           this.setState({
-            hopdongs: response.data.data.hopdongs.rows,
+            hopdongs: response.data.data.hopdongs,
             count: Number(response.data.data.count)
           })
-        }
-        await this.props.fetchLoading({
-          loading: false
-        })
       })
+    this.props.fetchLoading({
+      loading: false
+    })
   }
   InsertOrUpdateHopdong = () => {
     const { form } = this.formRef.props;
@@ -375,12 +372,8 @@ class Hopdong extends React.Component {
       if (err) {
         return
       }
+      values.hd_files = this.state.valuefile
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
-      //values.formdata = formdata
-      const data = new FormData()
-      if (this.state.selected_file !== null) {
-        await data.append('file', this.state.selected_file)
-      }
       Request(url, 'POST', values)
         .then((response) => {
           this.setState({
@@ -419,7 +412,23 @@ class Hopdong extends React.Component {
     this.getHopdongs(this.state.pageNumber, this.state.index, this.state.sortBy);
     document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
   }
-
+  onClickDownloadFile = (text) => {
+    if (text === null) {
+      alert("Hợp đồng này không có file");
+    }
+    else {
+      var ketqua = [];
+      this.state.hopdongs.forEach((value) => {
+        console.log(value.dm_duan_ten, 'ten ket qua');
+        if (value.hd_files === text) {
+          console.log(value.dm_duan_ten, 'ten day');
+          ketqua.push(value.dm_duan_ten);
+        }
+      })
+      require("downloadjs")(text, ketqua + ".rar", " ");
+      //download(file, fileName, fileType);
+    }
+  }
   onchangpage = (page) => {
     this.setState({
       page: page
@@ -590,7 +599,24 @@ class Hopdong extends React.Component {
       },
     };
   }
-
+  onChangeFile = async (e) => {
+    const toBase64 = file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+    var file = e.target.files[0];
+    console.log(file, 'file');
+    console.log(file.name, 'file name');
+    console.log(file.type, 'file type');
+    var fileUploadHopdong = await toBase64(file);
+    var fileName = file.name;
+    this.setState({
+      valuefile: fileUploadHopdong,
+      valuename: fileName
+    })
+  }
   onChangeClick_loaihopdong = (e) => {
     var label = e === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
     var api = e === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
@@ -689,36 +715,6 @@ class Hopdong extends React.Component {
         }
       })
   }
-
-  onchangpagefile = e => {
-    //var ob = 
-    //const file = new FileReader();
-
-    this.setState({
-      selected_file: e.target.files[0],
-      loaded: 0,
-    })
-  }
-
-  onChangeHandler = event => {
-
-    this.setState({
-      selectedFile: event.target.files[0],
-      loaded: 0,
-    })
-
-  }
-
-  onClickHandler = () => {
-    const data = new FormData()
-    data.append('file', this.state.selected_file)
-    axios.post("http://localhost:5000/upload", data, {
-      // receive two    parameter endpoint url ,form data
-    })
-      .then(res => { // then print response status
-      })
-  }
-
   render() {
     const { selectedRowKeys } = this.state
     const rowSelection = {
@@ -791,8 +787,9 @@ class Hopdong extends React.Component {
               comboBoxDuanSource={this.state.comboBoxDuanSource}
               onChangeClick_loaihopdong={this.onChangeClick_loaihopdong}
               propDatasourceSelectLoaiHopDong={this.state.propDatasourceSelectLoaiHopDong}
+              onChangeFile={this.onChangeFile}
               onchangpagefile={this.onchangpagefile}
-            //onClickHandler={this.onClickHandler}
+              onClickDownloadFile={this.onClickDownloadFile}
             />
             <FormModalDuan
               wrappedComponentRef={this.saveFormRefCreate}
@@ -804,7 +801,7 @@ class Hopdong extends React.Component {
               CreateDuan={this.CreateDuan}
               comboBoxDatasourceDuan={this.state.comboBoxDatasourceDuan}
             />
-            <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1300 }}>
+            <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}>
               <Column
                 title={<span>id hợp đồng<Icon type={this.state.orderby} /></span>}
                 dataIndex="hd_id"
@@ -828,15 +825,6 @@ class Hopdong extends React.Component {
                       return text + ' ngày'
                   }}
               />
-              <Column title="Ngày kết thúc" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
-                render={
-                  text => {
-                    if (text === null)
-                      return ' '
-                    else
-                      return dateFormat(text, "dd/mm/yyyy")
-                  }}
-                onHeaderCell={this.onHeaderCell} />
               <Column title="Địa chỉ" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} width={150} />
               <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" render={
                 text => {
@@ -869,13 +857,30 @@ class Hopdong extends React.Component {
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }}
-                onHeaderCell={this.onHeaderCell}
-              />
+                }} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày nghiệm thu" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
+                render={
+                  text => {
+                    if (text === null)
+                      return ' '
+                    else
+                      return dateFormat(text, "dd/mm/yyyy")
+                  }}
+                onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Files" dataIndex="hd_files" key="hd_files" className="hidden-action" onHeaderCell={this.onHeaderCell} />
               <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" onHeaderCell={this.onHeaderCell} />
+              <Column title="Files" dataIndex="hd_files" key="hd_files"
+                render={(text) => (
+                  <span>
+                    <Tooltip title="Tải xuống">
+                      <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
+                        <Icon type="download" />
+                      </Button>
+                    </Tooltip>
+                  </span>
+                )}
+              />
             </Table>
           </Row>
           <Row>
@@ -888,7 +893,6 @@ class Hopdong extends React.Component {
 const mapStateToProps = state => ({
   ...state
 })
-
 export default connect(mapStateToProps,
   {
     fetchLoading

@@ -48,7 +48,7 @@ class Quanly_hoadon extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                if (res !== undefined) {
+                if (res) {
                     this.setState({
                         qlhd: res.data.data.quanly_hoadons,
                         count: res.data.data.count
@@ -62,7 +62,7 @@ class Quanly_hoadon extends React.Component {
 
     getkhachhang = () => {
         Request('qlhd/getkhachhang', 'POST', {}).then((res) => {
-            if (res !== undefined) {
+            if (res) {
                 this.setState({
                     khachhangs: res.data.data.khachhangs
                 })

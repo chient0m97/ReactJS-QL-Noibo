@@ -1,5 +1,5 @@
 const express = require('express');
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
 const cors = require("cors");
 jwt = require('jsonwebtoken');
 config = require('./configurations/config');
@@ -26,12 +26,11 @@ var duanRoute = require('./router/duan')
 var memberRoute = require('./router/memberRoute')
 var ChangePass = require('./router/changepass')
 var authorize = require('./middleware/authorize')
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-app.set('Secret', config.secret);
+var bodyParser = require('body-parser');
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+app.set('Secret', config.secret);
 
 var whitelist = ['http://localhost:3000', 'http://localhost:5000']
 var corsOptions = {

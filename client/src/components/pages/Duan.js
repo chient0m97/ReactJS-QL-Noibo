@@ -56,7 +56,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Quản trị dự án">
                   {getFieldDecorator('ns_id_qtda', {
-                    rules: [{ required: true, message: 'Trường này không được để trống!', }], initialValue: frist_qtda
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }], initialValue: first_qtda
                   })(<Select
                     filterOption={(input, option) =>
                       option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0

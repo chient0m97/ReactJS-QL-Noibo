@@ -42,8 +42,8 @@ var HopdongController = {
             callback(data);
         });
     },
-    DeleteHopdongbyId: async function deleteHopdongbyId(Id, callback) {
-        hopdongData.deleteHopdongbyId(Id, (data) => {
+    DeleteHopdongbyId: async function deleteHopdongbyId(hd_id, callback) {
+        hopdongData.deleteHopdongbyId(hd_id, (data) => {
             if (data.success === true) {
                 callback({
                     success: data.success,
@@ -54,38 +54,6 @@ var HopdongController = {
         })
     },
     insertHopdong: async function insertHopdong(hopdong, callback) {
-        // var storage = multer.diskStorage({
-        //     destination: function (req, file, cb) {
-        //         cb(null, 'public/upload/')
-        //     },
-        //     filename: function (req, file, cb) {
-        //         cb(null, Date.now() + '-' + file.originalname)
-        //     }
-        // })
-        // var upload = multer({ storage: storage }).single('file')
-        // upload(hopdong, callback, (err) => {
-        //     console.log(err, 'loi upload')
-        // })
-        // console.log(listfile, 'file list')
-        // listfile.map((value, index)=> {
-        //    var z = window.atob(value)
-        //    console.log(z, 'abcd')
-        // })
-        // var storage = multer.diskStorage({
-        //     destination: function(req, file, cb){
-        //       cb(null, './upload')
-        //     },
-        //     filename: function(req, file, cb){
-        //       cb(null, file.originalname)
-        //     }
-        //   })
-        //   var upload = multer({storage:storage})
-        // if (Validator.isDate(hopdong.hd_ngayketthuc, 'Ngày kết thúc không đúng định dạng')
-        //     & Validator.isDate(hopdong.hd_ngayky, 'Ngày ký không đúng định dạng')
-        //     & Validator.isDate(hopdong.hd_ngaythanhly, 'Ngày thanh lý không đúng định dạng')
-        //     & Validator.isDate(hopdong.hd_ngayxuathoadon, 'Ngày xuất hóa đơn không đúng định dạng')
-        //     & Validator.isDate(hopdong.hd_ngaythanhtoan, 'Ngày thanh toán không đúng định dạng')
-        //     & 
         if (1) {
             if (1) {
                 let firtInsert;
