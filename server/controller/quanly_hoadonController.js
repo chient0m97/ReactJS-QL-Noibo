@@ -1,19 +1,19 @@
 var Validator = require('../validate/common')
-const menuData = require('../data/menu_data')
+const quanly_hoadonsData = require('../data/quanly_hoadons')
 const constant = require('./constant')
 
-var menuController = {
+var quanly_hoadonsController = {
 
-    getMenu: function getMenu(pageNumber, pageSize, index, sortBy, callback) {
+    getQuanly_hoadons: function getQuanly_hoadons(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        menuData.getMenu(limit, offset, index, sortBy, function (data) {
+        quanly_hoadonsData.getQuanly_hoadons(limit, offset, index, sortBy, function (data) {
             callback(data);
         })
     },
 
-    insertMenu: function insertMenu(menus, callback) {
-        menuData.insertMenu(menus, (response) => {
+    insertQuanly_hoadons: function insertQuanly_hoadons(quanly_hoadons, callback) {
+        quanly_hoadonsData.insertQuanly_hoadons(quanly_hoadons, (response) => {
             var message = constant.successInsert;
             var status = 200;
             if (!response.success) {
@@ -28,8 +28,8 @@ var menuController = {
         });
     },
 
-    updateMenu: function updateMenu(menus, callback) {
-        menuData.updateMenu(menus, (res) => {
+    updateQuanly_hoadons: function updateQuanly_hoadons(quanly_hoadons, callback) {
+        quanly_hoadonsData.updateQuanly_hoadons(quanly_hoadons, (res) => {
             callback({
                 success: res.success,
                 message: res.success === true ? constant.successUpdate : constant.errorUpdate
@@ -37,8 +37,8 @@ var menuController = {
         })
     },
 
-    deleteMenuById: async function deleteMenuById(dm_menu_id, callback) {
-        menuData.deleteMenu(dm_menu_id, data => {
+    deleteQuanly_hoadonsById: async function deleteQuanly_hoadonsById(qlhd_sohoadon, callback) {
+        quanly_hoadonsData.deleteQuanly_hoadons(qlhd_sohoadon, data => {
             if (data.success === true) {
                 callback({
                     success: data.success,
@@ -47,6 +47,12 @@ var menuController = {
             }
         })
     },
+
+    getKhachHang(callback){
+        quanly_hoadonsData.getKhachHang(function(data){
+            callback(data);
+        })
+    },
 }
 
-module.exports = menuController;
+module.exports = quanly_hoadonsController;

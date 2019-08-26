@@ -23,13 +23,13 @@ class NormalLoginForm extends Component {
                     password: this.state.password,
                 };
                 console.log('data post: ', user);
-                Request('Login','POST',user)
+                Request('Login', 'POST', user)
                     .then((response) => {
                         if (response.data.success === true) {
                             let data = response.data;
                             cookie.save('token', data.token, { path: '/' })
-                            cookie.save('role',data.role,{})
-                            cookie.save('user',this.state.username)
+                            cookie.save('role', data.role, {})
+                            cookie.save('user', this.state.username)
                             window.location.reload()
                         }
                         else {
@@ -43,13 +43,13 @@ class NormalLoginForm extends Component {
             }
         });
     }
-    getState = ()=>{
+    getState = () => {
         console.log('heeeeeeeeeeeeeeeeee')
     }
     handleChangeInput = (e) => {
 
-        
-        var user = this.props.form.getFieldsValue([ 'username', 'password' ]);
+
+        var user = this.props.form.getFieldsValue(['username', 'password']);
         console.log("hien thi change input", user)
         this.setState(user);
     }
@@ -69,12 +69,14 @@ class NormalLoginForm extends Component {
         const { getFieldDecorator } = this.props.form;
         return (
             <div className="login-page">
-                <img src={logo} className="background-login" alt="" />
+                <img src={logo} className="background-login" alt="" style={{marginTop:'0px'}}/>
                 <Form onSubmit={this.Login} className="login-form">
-                    <h3>Đăng nhập hệ thống</h3>
+                    <h3 style={{
+                        fontSize: '24px', fontStyle: 'italic', fontWeight: 'bold', fontFamily: 'Time New Roman', textAlign: 'center',color:'#1890ff'
+                    }}>Đăng nhập hệ thống</h3>
                     <Form.Item>
                         {getFieldDecorator('username', {
-                            rules: [ { required: true, message: 'Tên đăng nhập không  được để trống!' } ],
+                            rules: [{ required: true, message: 'Tên đăng nhập không  được để trống!' }],
                         })(
                             <Input
                                 prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -86,9 +88,9 @@ class NormalLoginForm extends Component {
                     </Form.Item>
                     <Form.Item>
                         {getFieldDecorator('password', {
-                            rules: [ { required: true, message: 'Mật khẩu không được để trống!' } ],
+                            rules: [{ required: true, message: 'Mật khẩu không được để trống!' }],
                         })(
-                            <Input
+                            <Input.Password
                                 prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                                 type="password"
                                 placeholder="Password"
@@ -98,7 +100,7 @@ class NormalLoginForm extends Component {
                     </Form.Item>
                     <Form.Item>
 
-                        <a className="login-form-forgot" href="/">Forgot password</a>
+                        <Button className="login-form-forgot" href="/">Forgot password</Button>
                         <Button type="primary" htmlType="submit" className="login-form-button" loading={this.state.loadding}>Log in</Button>
                     </Form.Item>
                 </Form>

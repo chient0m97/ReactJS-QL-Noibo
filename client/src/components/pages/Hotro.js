@@ -385,8 +385,7 @@ class Hotro extends React.Component {
                 this.setState({
                     khachhangs: res.data.data.khachhangs
                 })
-            }
-            
+            }  
         }).catch((err) => {
             console.log(err)
         })

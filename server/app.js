@@ -12,12 +12,13 @@ const port = 5000;
 
 var groupRoute = require('./router/group')
 var setGroupPermission = require('./router/setGroupPermission')
-var nhansuRoute = require('./router/nhansuRoute');
-var hotroRoute = require('./router/hotroRoute');
+var nhansuRoute = require('./router/nhansuRoute')
+var hotroRoute = require('./router/hotroRoute')
 var menuRoute = require('./router/menu_Route')
+var quanly_hoadonRoute = require('./router/quanly_hoadonRoute')
 var khachhangRoute = require('./router/khachhangRoute')
 var router = require('./router/unitRoute');
-var cusrouter = require('./router/customerRoute');
+var cusrouter = require('./router/customerRoute')
 var hopdong = require('./router/hopdong')
 var userRouter = require('./router/index');
 var diabanRoute = require('./router/diaban')
@@ -54,6 +55,9 @@ app.use('/hotro', hotroRoute)
 app.use('/hopdong', hopdong)
 
 app.use('/menu', menuRoute)
+
+app.use('/qlhd', quanly_hoadonRoute)
+
 app.use('/group', groupRoute)
 
 app.use('/diaban', diabanRoute)
@@ -63,7 +67,9 @@ app.use('/duan', duanRoute)
 app.use('/khachhangRoute', khachhangRoute)
 
 app.use('/customer', cusrouter);
+
 app.use('/Login',login);
+
 app.use('/setGroupPermission',setGroupPermission);
 
 app.use('/Login', login);

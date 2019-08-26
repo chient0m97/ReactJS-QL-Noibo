@@ -15,6 +15,10 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
     render() {
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, qtda } = this.props;
       const { getFieldDecorator } = form;
+      var frist_qtda = null;
+      if (qtda.length !== 0) {
+        frist_qtda = qtda[0].ns_id
+      }
       return (
         <Modal
           visible={visible}
@@ -52,7 +56,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Quản trị dự án">
                   {getFieldDecorator('ns_id_qtda', {
-                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }], initialValue: frist_qtda
                   })(<Select
                     size={"small"}
                     filterOption={(input, option) =>
@@ -137,11 +141,10 @@ class Duan extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        let data = response.data;
-        if (data.data)
+        if (response.data.data)
           this.setState({
-            duans: data.data.duans,
-            count: Number(data.data.count)//eps kieeru veef
+            duans: response.data.data.duans,
+            count: Number(response.data.data.count)//eps kieeru veef
           })
         this.props.fetchLoading({
           loading: false
@@ -220,7 +223,6 @@ class Duan extends React.Component {
           comboBoxDatasource: res.data
         })
       }
-
     })
   }
 
@@ -258,6 +260,7 @@ class Duan extends React.Component {
   showTotal = (total) => {
     return `Total ${total} items`;
   }
+
   onShowSizeChange = async (current, size) => {
     await this.setState({
       pageSize: size

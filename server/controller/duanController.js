@@ -27,7 +27,6 @@ var DuanController = {
      */
     GetById: function GetById(Id, callback) {
         duanData.GetById(Id, (data) => {
-            console.log('DATA', data)
             if (data == undefined) {
                 callback({});
             }

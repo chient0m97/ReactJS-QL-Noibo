@@ -174,7 +174,7 @@ class RoleAction extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((response) => {
-                console.log('------------------------====-=-=-=-=-=-', response.data)
+                // console.log('------------------------====-=-=-=-=-=-', response.data)
                 if (response) {
                     let data = response.data;
                     let objRoles = Object.keys(data.roles[0])

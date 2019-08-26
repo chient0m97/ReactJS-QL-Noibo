@@ -354,11 +354,10 @@ class Hopdong extends React.Component {
       pageNumber: pageNumber,
     })
       .then(async (response) => {
-        console.log("check ", response)
         if (response) {
           this.setState({
-            hopdongs: data.data.hopdongs.rows,
-            count: Number(data.data.count)
+            hopdongs: response.data.data.hopdongs.rows,
+            count: Number(response.data.data.count)
           })
         }
         await this.props.fetchLoading({
@@ -591,6 +590,7 @@ class Hopdong extends React.Component {
       },
     };
   }
+
   onChangeClick_loaihopdong = (e) => {
     var label = e === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
     var api = e === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
@@ -615,9 +615,11 @@ class Hopdong extends React.Component {
       labelCombobox: label
     })
   }
+
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
+
   onSelectChange = (selectedRowKeys, selectedRows) => {
     this.setState({
       selectedRowKeys,
@@ -643,6 +645,7 @@ class Hopdong extends React.Component {
         statebuttonedit: true
       })
   }
+
   onSelectDuan = async (value) => {
     if (value === 'add_duan') {
       return this.setState({
@@ -650,6 +653,7 @@ class Hopdong extends React.Component {
       })
     }
   }
+
   checkStateConfirm = () => {
     this.setState({
       stateconfirmdelete: true
@@ -658,19 +662,24 @@ class Hopdong extends React.Component {
   clearChecked = () => {
     this.onSelectChange([], [])
   };
+
   onRowClick = (row) => {
     this.onSelectChange([row.hd_id], [row])
   }
+
   onCancel_duan = () => {
     this.setState({
       visible_duan: false
     })
   }
+
   onOk_duan = () => {
   }
+
   saveFormRefCreate = formRef => {
     this.saveFormRefCreate = formRef
   }
+
   CreateDuan = e => {
     // console.log('Đây là thêm dự án')
     e.preventDefault();
@@ -680,6 +689,7 @@ class Hopdong extends React.Component {
         }
       })
   }
+
   onchangpagefile = e => {
     //var ob = 
     //const file = new FileReader();
@@ -689,6 +699,7 @@ class Hopdong extends React.Component {
       loaded: 0,
     })
   }
+
   onChangeHandler = event => {
 
     this.setState({
@@ -697,6 +708,7 @@ class Hopdong extends React.Component {
     })
 
   }
+
   onClickHandler = () => {
     const data = new FormData()
     data.append('file', this.state.selected_file)
@@ -706,6 +718,7 @@ class Hopdong extends React.Component {
       .then(res => { // then print response status
       })
   }
+
   render() {
     const { selectedRowKeys } = this.state
     const rowSelection = {
@@ -839,23 +852,29 @@ class Hopdong extends React.Component {
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" render={
-                text => {
+              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon"
+                onHeaderCell={this.onHeaderCell}
+                render={text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" render={
-                text => {
+                }}
+                width={200}
+              />
+              <Column
+                title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan"
+                render={text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
+                }}
+                onHeaderCell={this.onHeaderCell}
+              />
               <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Files" dataIndex="hd_files" key="hd_files" onHeaderCell={this.onHeaderCell} />
+              <Column title="Files" dataIndex="hd_files" key="hd_files" className="hidden-action" onHeaderCell={this.onHeaderCell} />
               <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" onHeaderCell={this.onHeaderCell} />
             </Table>
           </Row>

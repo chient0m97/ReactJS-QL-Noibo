@@ -1,14 +1,15 @@
 var knex = require('./common/DB')
 module.exports = {
-    getMenu: (limit, offset, index, sortBy, callback) => {
-        knex.select('*').from('dm_menus').orderBy(index, sortBy).limit(limit).offset(offset)
+    getQuanly_hoadons: (limit, offset, index, sortBy, callback) => {
+        knex.select('*').from('quanly_hoadons').orderBy(index, sortBy).limit(limit).offset(offset)
+        // knex.raw("")
             .then((res) => {
-                knex('dm_menus').count()
+                knex('quanly_hoadons').count()
                     .then((resCount) => {
                         callback({
                             success: true,
                             data: {
-                                menus: res,
+                                quanly_hoadons: res,
                                 count: resCount[0].count
                             }
                         })
@@ -26,8 +27,8 @@ module.exports = {
             })
     },
 
-    insertMenu: function (menus, callback) {
-        knex.from('dm_menus').insert(menus).then(res => {
+    insertQuanly_hoadons: function (quanly_hoadons, callback) {
+        knex.from('quanly_hoadons').insert(quanly_hoadons).then(res => {
             callback({
                 success: true
             })
@@ -39,22 +40,8 @@ module.exports = {
         })
     },
 
-    updateMenu: function (menus, callback) {
-        knex.from('dm_menus').where('dm_menu_id', menus.dm_menu_id).update(menus).then(res => {
-            callback({
-                success: true,
-                menus: menus
-            })
-        }).catch(err => {
-            console.log(err)
-            callback({
-                success: false
-            })
-        })
-    },
-
-    deleteMenu: function (dm_menu_id, callback) {
-        knex.from('dm_menus').whereIn('dm_menu_id', dm_menu_id).del().then(res => {
+    updateQuanly_hoadons: function (quanly_hoadons, callback) {
+        knex.from('quanly_hoadons').where('qlhd_sohoadon', quanly_hoadons.qlhd_sohoadon).update(quanly_hoadons).then(res => {
             callback({
                 success: true
             })
@@ -64,5 +51,28 @@ module.exports = {
                 success: false
             })
         })
-    }
+    },
+
+    deleteQuanly_hoadons: function (qlhd_sohoadon, callback) {
+        knex.from('quanly_hoadons').whereIn('qlhd_sohoadon', qlhd_sohoadon).del().then(res => {
+            callback({
+                success: true
+            })
+        }).catch(err => {
+            console.log(err)
+            callback({
+                success: false
+            })
+        })
+    },
+
+    getKhachHang(callback) {
+        knex.select('kh_id', 'kh_ten').from('khachhangs').then((res) => {
+            callback({
+                data: {
+                    khachhangs: res
+                }
+            })
+        })
+    },
 }

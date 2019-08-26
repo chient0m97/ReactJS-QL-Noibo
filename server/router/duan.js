@@ -42,7 +42,7 @@ router.post('/update',function (req, res) {
   })
 })
 router.post('/getqtda',function(req,res){
-  duanController.getQTDA(function(data){
+  duanController.getcha(function(data){
     res.send(data);
   })
 })

@@ -74,6 +74,18 @@ var hotroController = {
         })
     },
 
+    getHopDong(callback){
+        hotroData.getHopDong(function(data){
+            callback(data);
+        })
+    },
+
+    getDataKhachHang: function getDataKhachHang(ht_id, callback){
+        hotroData.getDataKhachhang(ht_id,(data)=>{
+            callback(data);
+        })
+    },
+
     getDataSearch: function getDataSearch(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);

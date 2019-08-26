@@ -4,26 +4,26 @@ import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action'
 import { fetchLoading } from '@actions/common.action'
-import Modal_Menu from '@pages/Modal/Modal_Menu.js'
+import Modal_Hoadon from '@pages/Modal/Modal_Hoadon.js'
 import '@styles/style.css'
 const { Column } = Table;
 
-class Menu extends React.Component {
+class Quanly_hoadon extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            menu: [],
+            qlhd: [],
             pageNumber: 1,
             page: 1,
             pageSize: 10,
             count: 1,
             visible: false,
             formtype: 'horizontal',
-            title: 'Nhập thông tin Menu',
+            title: 'Nhập thông tin Quản lý hóa đơn',
             id_visible: false,
             action: 'insert',
             sortBy: '',
-            index: 'dm_menu_id',
+            index: 'qlhd_sohoadon',
             stateconfirmdelete: false,
             checkStateConfirm: true,
             statebuttondelete: true,
@@ -31,38 +31,45 @@ class Menu extends React.Component {
             rowthotroselected: [],
             selectedId: [],
             selectedRowKeys: [],
-            listmenu: [],
+            khachhangs: []
         }
     }
 
-    getMenu = (pageNumber) => {
-        var array = []
+    getQuanly_hoadon = (pageNumber) => {
         if (pageNumber <= 0)
             return;
         this.props.fetchLoading({
             loading: true
         })
-        Request('menu/get', 'POST', {
+        Request('qlhd/get', 'POST', {
             pageSize: this.state.pageSize,
             pageNumber: pageNumber,
             index: this.state.index,
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                res.data.data.menus.map((values, index) => {
-                    array.push({ id: values.dm_menu_id, name: values.dm_menu_name, icon: values.dm_menu_icon_class })
-                })
-                this.setState({
-                    listmenu: array
-                })
-                this.setState({
-                    menu: res.data.data.menus,
-                    count: res.data.data.count
-                })
+                if (res !== undefined) {
+                    this.setState({
+                        qlhd: res.data.data.quanly_hoadons,
+                        count: res.data.data.count
+                    })
+                }
                 this.props.fetchLoading({
                     loading: false
                 })
             })
+    }
+
+    getkhachhang = () => {
+        Request('qlhd/getkhachhang', 'POST', {}).then((res) => {
+            if (res !== undefined) {
+                this.setState({
+                    khachhangs: res.data.data.khachhangs
+                })
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
     }
 
     insertOrUpdate = () => {
@@ -71,10 +78,7 @@ class Menu extends React.Component {
             if (err) {
                 return
             }
-            if (values.dm_menu_id_parent === 'notmenuparent') {
-                values.dm_menu_id_parent = null
-            }
-            var url = this.state.action === 'insert' ? 'menu/insert' : 'menu/update'
+            var url = this.state.action === 'insert' ? 'qlhd/insert' : 'qlhd/update'
             Request(url, 'POST', values)
                 .then(async (response) => {
                     this.setState({
@@ -103,13 +107,13 @@ class Menu extends React.Component {
                         message: message,
                         description: description
                     });
-                    this.getMenu(this.state.page)
+                    this.getQuanly_hoadon(this.state.page)
                 })
         })
     }
 
-    deleteMenu = (dm_menu_id) => {
-        Request(`menu/delete`, 'DELETE', { dm_menu_id: dm_menu_id })
+    deleteQuanly_hoadon = (qlhd_sohoadon) => {
+        Request(`qlhd/delete`, 'DELETE', { qlhd_sohoadon: qlhd_sohoadon })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
@@ -121,14 +125,14 @@ class Menu extends React.Component {
                     statebuttonedit: true,
                     selectedRowKeys: []
                 })
-                this.getMenu(this.state.page)
+                this.getQuanly_hoadon(this.state.page)
                 this.render()
             })
     }
 
     refresh = async (pageNumber) => {
         message.success('Refresh success', 1);
-        await this.getMenu(this.state.pageNumber)
+        await this.getQuanly_hoadon(this.state.pageNumber)
     }
 
     handleCancel = e => {
@@ -139,23 +143,24 @@ class Menu extends React.Component {
     };
 
     componentDidMount() {
-        this.getMenu(this.state.pageNumber, this.state.index, this.state.sortBy);
+        this.getQuanly_hoadon(this.state.pageNumber, this.state.index, this.state.sortBy);
         document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
-    showModal = (menu) => {
+    showModal = (qlhd) => {
         const { form } = this.formRef.props
         this.setState({
             visible: true
         });
         form.resetFields();
-        if (menu.dm_menu_id !== undefined) {
+        if (qlhd.qlhd_sohoadon !== undefined) {
             this.setState({
                 id_visible: true,
                 action: 'update',
             })
-            form.setFieldsValue(menu);
+            form.setFieldsValue(qlhd);
         }
+        this.getkhachhang();
     }
 
     confirm = (e) => {
@@ -202,16 +207,12 @@ class Menu extends React.Component {
         })
     }
 
-    clearChecked = () => {
-        this.onSelectChange([], [])
-    };
-
     onRowClick = (row) => {
-        if(this.state.selectedRowKeys[0]===row.dm_menu_id){
+        if (this.state.selectedRowKeys[0] === row.qlhd_sohoadon) {
             this.onSelectChange([], [])
         }
-        else{
-            this.onSelectChange([row.dm_menu_id], [row])
+        else {
+            this.onSelectChange([row.qlhd_sohoadon], [row])
         }
     }
 
@@ -228,24 +229,24 @@ class Menu extends React.Component {
                     <Row>
                         <Card>
                             <Col span={2}>
-                                <Tooltip title="Thêm Menu">
+                                <Tooltip title="Thêm Hoá Đơn">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                                         <Icon type="user-add" />
                                     </Button>
                                 </Tooltip>
                             </Col>
                             <Col span={2}>
-                                <Tooltip title="Sửa Menu">
+                                <Tooltip title="Sửa Hoá Đơn">
                                     <Button type="primary" size="default" shape="round" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                                         <Icon type="edit" />
                                     </Button>
                                 </Tooltip>
                             </Col>
                             <Col span={2}>
-                                <Tooltip title="Xóa Menu">
+                                <Tooltip title="Xóa Hoá Đơn">
                                     <Popconfirm
                                         title="Bạn chắc chắn muốn xóa?"
-                                        onConfirm={this.deleteMenu.bind(this, this.state.selectedId)}
+                                        onConfirm={this.deleteQuanly_hoadon.bind(this, this.state.selectedId)}
                                         onCancel={this.cancel}
                                         okText="Yes"
                                         cancelText="No"
@@ -267,32 +268,24 @@ class Menu extends React.Component {
                         </Card>
                     </Row>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.menu} rowKey="dm_menu_id" bordered>
-                            <Column title="Url" dataIndex="dm_menu_url" width={400} />
-                            <Column title="Name" dataIndex="dm_menu_name" width={250} />
-                            <Column title="Menu parent" dataIndex="dm_menu_id_parent" width={250}
-                                render={text => {
-                                    var a = null
-                                    this.state.listmenu.forEach(element => {
-                                        if (element.id === text)
-                                            a = element.name
-                                    });
-                                    if (a === null)
-                                        return ''
-                                    return a
-                                }}
-                            />
-                            <Column title="Icon" dataIndex="dm_menu_icon_class"
-                                render={text => {
-                                    return <Icon type={text} />
-                                }}
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.qlhd} rowKey="qlhd_sohoadon" bordered>
+                            <Column title="Số hóa đơn" dataIndex="qlhd_sohoadon" width={50} />
+                            <Column title="Tên hóa đơn" dataIndex="qlhd_tenhoadon" width={150} />
+                            <Column title="Ngày xuất hóa đơn" dataIndex="qlhd_ngayxuat_hoadon" width={150} />
+                            <Column title="Tình trạng thanh toán" dataIndex="qlhd_tinhtrang_thanhtoan" width={150}
+                            render={text=>{
+                                if(text==='CTT'){
+                                    return 'Chưa thanh toán'
+                                }
+                                return 'Đã thanh toán '
+                            }}
                             />
                         </Table>
                     </Row>
                     <Row>
                         <Pagination onChange={this.onchangpage} total={this.state.count} style={{ marginTop: 10 }} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
                     </Row>
-                    <Modal_Menu
+                    <Modal_Hoadon
                         wrappedComponentRef={this.saveFormRef}
                         title={this.state.title}
                         visible={this.state.visible}
@@ -300,7 +293,7 @@ class Menu extends React.Component {
                         onSave={this.insertOrUpdate}
                         formtype={this.state.formtype}
                         id_visible={this.state.id_visible}
-                        listmenu={this.state.listmenu}
+                        setKhachHang={this.state.khachhangs}
                     />
                 </Form>
             </div>
@@ -317,4 +310,4 @@ export default connect(mapStateToProps,
         fetchUser,
         fetchLoading
     }
-)(Menu);
+)(Quanly_hoadon);

@@ -453,7 +453,6 @@ class Diaban extends React.Component {
     }
   }
 
-
   render() {
     const { selectedRowKeys } = this.state
     const rowSelection = {
