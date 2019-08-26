@@ -5,7 +5,6 @@ module.exports = {
             .then((res) => {
                 knex('dm_menus').count()
                     .then((resCount) => {
-                        console.log("hien thi count ", resCount[0].count)
                         callback({
                             success: true,
                             data: {
@@ -32,7 +31,6 @@ module.exports = {
             callback({
                 success: true
             })
-            console.log('DaTa =>: ', menus)
         }).catch(err => {
             console.log(err)
             callback({
@@ -42,7 +40,6 @@ module.exports = {
     },
 
     updateMenu: function (menus, callback) {
-        console.log("hien thi ho tro ", menus)
         knex.from('dm_menus').where('dm_menu_id', menus.dm_menu_id).update(menus).then(res => {
             callback({
                 success: true,

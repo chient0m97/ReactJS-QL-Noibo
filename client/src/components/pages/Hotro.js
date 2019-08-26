@@ -9,7 +9,6 @@ import cookie from 'react-cookies'
 import '@styles/style.css'
 import moment from 'moment';
 import { Width } from 'devextreme-react/linear-gauge';
-import { icons } from 'react-icons';
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
@@ -228,7 +227,10 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={6}>
                                 <Form.Item label="TG dự kiến hoàn thành">
                                     {getFieldDecorator('ht_thoigian_dukien_hoanthanh', {
-                                    })(<DatePicker showTime size={"small"} onOk={this.onOk} format="DD/ MM/ YYYY--HH: MM: ss" style={{ minWidth: '170px' }} suffixIcon={Icon('')} />)}
+                                    })(
+                                    // <DatePicker showTime size={"small"} onOk={this.onOk} format="DD/ MM/ YYYY--HH: MM: ss" style={{ minWidth: '170px' }} suffixIcon={Icon('')} />
+                                    <Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />
+                                    )}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -312,7 +314,6 @@ class Hotro extends React.Component {
                     id_duanfillmodal: res.data.data.duans
                 })
             }
-
         })
     }
 
@@ -380,9 +381,11 @@ class Hotro extends React.Component {
 
     getkhachhang = () => {
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
-            this.setState({
-                khachhangs: res.data.data.khachhangs
-            })
+            if(res.data.data.khachhangs){
+                this.setState({
+                    khachhangs: res.data.data.khachhangs
+                })
+            }  
         }).catch((err) => {
             console.log(err)
         })
@@ -471,6 +474,7 @@ class Hotro extends React.Component {
         document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
     onchangpage = (page) => {
@@ -569,20 +573,6 @@ class Hotro extends React.Component {
             visible_kh: false
         })
     }
-
-    handleChangeInput = (e) => {
-        let state = this.state;
-        state[e.target.name] = e.target.value;
-        this.setState(state);
-    }
-
-    handleCount = () => {
-        let count = this.state.count;
-        this.setState({
-            count: count + 1
-        })
-    }
-
     confirm = (e) => {
         message.success('Bấm yes để xác nhận');
     }
@@ -618,7 +608,7 @@ class Hotro extends React.Component {
                 trangthai: true
             })
             form.setFieldsValue({ ht_thoigian_hoanthanh: formatDateModal(new Date(), "yyyy-mm-dd") })
-            form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: moment(formatDateModal(new Date(), "yyyy-mm-dd HH:MM:ss")) })
+            form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: formatDateModal(new Date(), "yyyy-mm-dd") })
         }
         else {
             await this.setState({

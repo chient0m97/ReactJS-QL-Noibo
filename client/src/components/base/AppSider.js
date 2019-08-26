@@ -53,7 +53,7 @@ class AppSider extends Component {
                     claims[i] = { url: '/role', des: 'Phân quyền', menu: 1 }
                 }
                 else if (claims[i] === Permission.User.Read) {
-                    claims[i] = { url: '/user', des: 'user', menu: 1 }
+                    claims[i] = { url: '/user', des: 'User', menu: 1 }
                 }
                 else if (claims[i] === Permission.Hotro.Read) {
                     claims[i] = { url: '/hotro', des: 'Hỗ trợ', menu: 2 }
@@ -76,8 +76,9 @@ class AppSider extends Component {
                 else if (claims[i] === Permission.Hopdong.Read) {
                     claims[i] = { url: '/hopdong', des: 'Hợp đồng', menu: 3 }
                 }
-
-
+                else if (claims[i] === Permission.Hoadon.Read) {
+                    claims[i] = { url: '/qlhd', des: 'Hóa Đơn', menu: 3 }
+                }
             }
         }
 
@@ -91,11 +92,8 @@ class AppSider extends Component {
                 >
                     <Menu.Item key="1">
                         <Icon type="home" />
-                        <span><NavLink to="/" className="">Home</NavLink ></span>
+                        <span><NavLink to="/" className="">Trang Chủ</NavLink ></span>
                     </Menu.Item>
-
-
-
 
                     <SubMenu
                         key="sub1"
@@ -107,15 +105,13 @@ class AppSider extends Component {
                         }
                     >
                         <Menu.Item key="3"><NavLink to="/group" className="">Quản lý group</NavLink ></Menu.Item>
-                        <Menu.Item key="4"><NavLink to="/menu" className="">MENU</NavLink ></Menu.Item>
-
+                        <Menu.Item key="4"><NavLink to="/menu" className="">Menu</NavLink ></Menu.Item>
                         {claims.map((item, i) => {
                             if (item.url) {
                                 if (item.menu === 1) {
                                     return <Menu.Item key={item.url}><NavLink to={item.url} className="">{item.des}</NavLink ></Menu.Item>
                                 }
                             }
-
                         })}
                     </SubMenu>
                     <SubMenu
@@ -164,7 +160,7 @@ class AppSider extends Component {
                     </SubMenu>
                     <Menu.Item key="12">
                         <Icon type="file" />
-                        <span>File</span>
+                        <span>Tệp tin</span>
                     </Menu.Item>
                 </Menu>
             </Sider>

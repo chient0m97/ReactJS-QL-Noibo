@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip } from 'antd';
+import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip, Card } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -11,7 +11,6 @@ import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 // import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 import { async } from 'q';
-import { CheckBox } from 'devextreme-react';
 
 const token = cookie.load('token');
 const { Column } = Table;
@@ -99,7 +98,6 @@ class Unit extends React.Component {
     }
 
     getUnits = (pageNumber) => {
-        console.log('sfhsdfsdfsdfdsf')
         if (pageNumber <= 0)
             return;
         this.props.fetchLoading({
@@ -172,6 +170,7 @@ class Unit extends React.Component {
     }
     componentDidMount() {
         this.getUnits(this.state.pageNumber, this.state.index, this.state.sortBy);
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
     onchangpage = async (page) => {
         await this.setState({
@@ -226,11 +225,11 @@ class Unit extends React.Component {
                 form.setFieldsValue({ dm_db_id_xa: '' })
             }
             form.setFieldsValue(unit);
-            if(unit.kh_id_nguoidaidien){
+            if (unit.kh_id_nguoidaidien) {
                 console.log('hihi haha')
             }
-            else{
-                form.setFieldsValue({kh_id_nguoidaidien:''})
+            else {
+                form.setFieldsValue({ kh_id_nguoidaidien: '' })
             }
         }
     };
@@ -294,7 +293,6 @@ class Unit extends React.Component {
     }
 
     handleChange(value) {
-        console.log(`selecet ${value}`);
     }
 
     handleCount = () => {
@@ -305,12 +303,10 @@ class Unit extends React.Component {
     }
 
     confirm = (e) => { //xác nhận
-        console.log(e);
         message.success('Bấm yes để xác nhận');
     }
 
     cancel = (e) => {
-        console.log(e);
         this.setState({
             stateconfirmdelete: false
         })
@@ -331,60 +327,28 @@ class Unit extends React.Component {
             pageSize: size
         });
         if (this.state.isSearch === 1) {
-            console.log('xxxx')
             this.handleSearch(this.state.page, this.state.textSearch, this.confirm, this.state.nameSearch, this.state.codeSearch);
-            console.log(this.state.page)
         }
         else {
             this.getUnits(this.state.page, this.state.index, this.state.sortBy)
         }
     }
 
-    search = async (xxxx) => {
-        console.log("đây là tìm kiếm", xxxx)
-        console.log('cai dkm', this.state.columnSearch)
-        Request('unit/search', 'POST', {
-            pageSize: this.state.pageSize,
-            pageNumber: this.state.page,
-            textSearch: xxxx,
-            columnSearch: this.state.columnSearch,
-            p1: this.state.index,
-            p2: this.state.sortBy
-        })
-            .then((response) => {
-                let data = response.data;
-                console.log('aaaaaaaaaaaaaaaaaa', data)
-                if (data.data)
-                    this.setState({
-                        units: data.data.units,
-                        count: Number(data.data.count), // ép kiểu về
-                        textSearch: xxxx,
-                        isSearch: 1
-                    })
-                console.log('data---------------------------', data);
-            })
-    }
-
     onChangeSearchType = async (value) => {
-        console.log('hihi', this.state.textSearch)
-        console.log(value)
         await this.setState({
             columnSearch: value,
         })
         if (this.state.textSearch) {
             this.search(this.state.textSearch);
         }
-        console.log(`selected ${value}`);
     }
 
     onSearch = (val) => {
-        console.log('search:', val);
     }
 
     onHeaderCell = (column) => {
         return {
             onClick: async () => {
-                console.log('ccmnr', column.dataIndex)
                 if (this.state.isSort) {
                     await this.setState({
                         sortBy: 'DESC',
@@ -401,7 +365,6 @@ class Unit extends React.Component {
                     isSort: !this.state.isSort,
                     index: column.dataIndex
                 })
-                console.log('xx', this.state.isSort)
                 if (this.state.isSearch == 1) {
                     this.search(this.state.textSearch)
                 }
@@ -412,49 +375,51 @@ class Unit extends React.Component {
         };
     }
 
-    removeSearch = () => {
-        this.setState({
-            textSearch: ''
-        })
-    }
-
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
-            console.log('data khach hang', res.data)
-            await this.setState({
-                select_tenkh: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_tenkh: res.data
+                })
+            }
         })
     }
 
     set_select_tendv = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
-            console.log('data donvi', res.data)
-            await this.setState({
-                select_tendv: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_tendv: res.data
+                })
+            }
+
         })
     }
 
     set_select_diabantinh = async () => {
         await Request('unit/gettinh', 'POST', {
         }).then(async (res) => {
-            await this.setState({
-                select_diabantinh: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_diabantinh: res.data
+                })
+            }
+
         })
     }
 
     set_select_diabanhuyen = async (id_db_tinh) => {
-        console.log('select diab an tinh', id_db_tinh)
         await Request('unit/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            await this.setState({
-                select_diabanhuyen: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_diabanhuyen: res.data
+                })
+            }
+
         })
     }
 
@@ -462,31 +427,37 @@ class Unit extends React.Component {
         await Request('unit/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            await this.setState({
-                select_diabanxa: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_diabanxa: res.data
+                })
+            }
+
         })
     }
 
     set_select_tinh = async () => {
         await Request('unit/gettinh', 'POST', {
         }).then(async (res) => {
-            console.log(res.data, 'data tinh')
-            await this.setState({
-                select_tinh: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_tinh: res.data
+                })
+            }
+
         })
     }
 
     set_select_huyen = async (id_db_tinh) => {
-        console.log('select diab an tinh', id_db_tinh)
         await Request('unit/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            console.log(res.data, 'data res huyen')
-            await this.setState({
-                select_huyen: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_huyen: res.data
+                })
+            }
+
         })
     }
 
@@ -494,9 +465,11 @@ class Unit extends React.Component {
         await Request('unit/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            await this.setState({
-                select_xa: res.data
-            })
+            if (res.data) {
+                await this.setState({
+                    select_xa: res.data
+                })
+            }
         })
     }
 
@@ -523,11 +496,11 @@ class Unit extends React.Component {
                     }
                     form.setFieldsValue({ dm_db_id_huyen_customer: this.state.select_huyen[0].dm_db_id })
                     await this.set_select_xa(this.state.select_huyen[0].dm_db_id)
-                    if (this.state.select_diabanxa.length === 0) {
+                    if (this.state.select_xa.length === 0) {
                         form.setFieldsValue({ dm_db_id_xa_customer: '' })
                     }
                     form.setFieldsValue({ dm_db_id_xa_customer: this.state.select_xa[0].dm_db_id })
-                    await this.set_select_tendv();
+                    this.set_select_tendv();
                 }
                 catch (err) {
                     console.log(err)
@@ -572,7 +545,6 @@ class Unit extends React.Component {
 
 
     onSelectTinh = async (value) => {
-        console.log('dia ban tinh')
         const { form } = this.formRef.props
         await this.set_select_huyen(value);
         if (this.state.select_huyen.length === 0) {
@@ -603,7 +575,6 @@ class Unit extends React.Component {
     }
 
     onCancel_kh = () => {
-        console.log('cancel')
         this.setState({
             visible_kh: false
         })
@@ -662,6 +633,19 @@ class Unit extends React.Component {
         this.formRef = formRef;
     }
 
+    clearChecked = () => {
+        this.onSelectChange([], [])
+    };
+
+    onRowClick = (row) => {
+        if (this.state.select_diabanhuyen[0] === row.dm_dv_id){
+            this.onSelectChange([], [])
+        }
+        else{
+            this.onSelectChange([row.dm_dv_id],[row])
+        }
+    }
+
     onSelectChange = (selectedRowKeys, selectedRows) => {
         this.setState({
             selectedRowKeys,
@@ -704,47 +688,51 @@ class Unit extends React.Component {
         if (token)
             return (
                 <div>
-                    <Row className='table-margin-bt'>
-                        <Col span={2}>
-                            <Tooltip title="Thêm đơn vị">
-                                <Button shape="circle" type="primary" size="large" onClick={this.showModalInsert.bind(null)}>
-                                    <Icon type="plus" />
-                                </Button>
-                            </Tooltip>
-                        </Col>
-                        <span>
+                    <Row id="caption">
+                        Bảng Thống kê Đơn vị
+                        </Row>
+                    <Card>
+                        <Row>
                             <Col span={2}>
-                                <Tooltip title="Sửa đơn vị">
-                                    <Button shape='circle' type="primary" size="large" onClick={this.showModalUpdate.bind(this, this.state.rowunitselected)} disabled={this.state.statebuttonedit} >
-                                        <Icon type="edit" /></Button>
-                                </Tooltip>
-                            </Col>
-                            <Col span={2}>
-                                <Tooltip title="Xóa đơn vị">
-                                    <Popconfirm
-                                        title="Bạn có chắc chắn muốn xóa ?"
-                                        onConfirm={this.deleteUnit.bind(this, this.state.selectedId)}
-                                        onCancel={this.cancel}
-                                        okText="Có"
-                                        cancelText="Không"
-                                        visible={this.state.stateconfirmdelete}
-                                    >
-                                        <Button shape='circle' type="danger" size="large" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
-                                            <Icon type="delete" /></Button>
-                                    </Popconfirm>
-                                </Tooltip>
-                            </Col>
-                            <Col span={2}>
-                                <Tooltip title="Tải Lại">
-                                    <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
-                                        <Icon type="reload" />
+                                <Tooltip title="Thêm đơn vị">
+                                    <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
+                                        <Icon type="user-add" />
                                     </Button>
                                 </Tooltip>
                             </Col>
-                        </span>
-                    </Row>
-                    <br />
-                    <Row className="table-margin-bt">
+                            <span>
+                                <Col span={2}>
+                                    <Tooltip title="Sửa đơn vị">
+                                        <Button shape='round' type="primary" size="default" onClick={this.showModalUpdate.bind(this, this.state.rowunitselected)} disabled={this.state.statebuttonedit} >
+                                            <Icon type="edit" /></Button>
+                                    </Tooltip>
+                                </Col>
+                                <Col span={2}>
+                                    <Tooltip title="Xóa đơn vị">
+                                        <Popconfirm
+                                            title="Bạn có chắc chắn muốn xóa ?"
+                                            onConfirm={this.deleteUnit.bind(this, this.state.selectedId)}
+                                            onCancel={this.cancel}
+                                            okText="Có"
+                                            cancelText="Không"
+                                            visible={this.state.stateconfirmdelete}
+                                        >
+                                            <Button shape='round' type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                                <Icon type="delete" /></Button>
+                                        </Popconfirm>
+                                    </Tooltip>
+                                </Col>
+                                <Col span={2}>
+                                    <Tooltip title="Tải Lại">
+                                        <Button shape="round" type="primary" style={{ marginLeft: '18px' }} size="default" onClick={this.refresh.bind(null)}>
+                                            <Icon type="reload" />
+                                        </Button>
+                                    </Tooltip>
+                                </Col>
+                            </span>
+                        </Row>
+                    </Card>
+                    <Row style={{ marginTop: 5 }}>
                         <CreateModalUnit
                             datacha={this.state.dataSource_Select_Parent}
                             wrappedComponentRef={!this.state.visible_kh ? this.saveFormRef : this.saveFormRefCreate}
@@ -784,11 +772,11 @@ class Unit extends React.Component {
                             onSelectDv={this.onSelectDv}
                             stateoption={this.state.stateoption}
                         />
-                        <Table className="table-contents" rowSelection={rowSelection} pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: 1000 }} rowKey="dm_dv_id">
-                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} />
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} className="table-contents" pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: 1000 }} rowKey="dm_dv_id">
+                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
@@ -798,7 +786,7 @@ class Unit extends React.Component {
                             <Column title="Mã số thuế" dataIndex="dm_dv_masothue" key="dm_dv_masothue" onHeaderCell={this.onHeaderCell} />
                             <Column title="Số điện thoại" dataIndex="dm_dv_sodienthoai" key="dm_dv_sodienthoai" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã người đại diện" dataIndex="kh_id_nguoidaidien" key="kh_id_nguoidaidien" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Người đại diện" dataIndex="tennguoidaidien" key="tennguoidaidien" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Người đại diện" dataIndex="tennguoidaidien" key="tennguoidaidien" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Trạng thái đơn vị" dataIndex="dm_dv_trangthai" key="dm_dv_trangthai" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái" dataIndex="dm_dv_trangthai_txt" key="dm_dv_trangthai_txt" onHeaderCell={this.onHeaderCell} />
                             <Column />

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip } from 'antd';
-// import ChildComp from './component/ChildComp';
+import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip, Card } from 'antd';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
@@ -12,8 +11,6 @@ import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import { async } from 'q';
 const token = cookie.load('token');
 const { Column } = Table;
-const { Option } = Select
-const { Search } = Input;
 class Customer extends React.Component {
     constructor(props) {
         super(props);
@@ -22,7 +19,6 @@ class Customer extends React.Component {
             current: 1,
             pageSize: 10,
             page: 1,
-            showPopup: false,
             count: 1,
             show: false,
             visible: false,
@@ -32,12 +28,10 @@ class Customer extends React.Component {
             action: 'insert',
             isSearch: 0,
             textSearch: '',
-            columnSearch: '',
             isSort: true,
             sortBy: 'ASC',
             index: 'kh_ten',
             orderby: 'arrow-up',
-            corlor: '#d9d9d9',
             select_donvicha: [],
             customers: [],
             select_tinh: [],
@@ -58,12 +52,10 @@ class Customer extends React.Component {
             title_dv: 'Thêm mới đơn vị',
             stateoption: true,
             visible_dv: false,
-            // kh_hovaten:[]
         }
     }
 
     deleteCustomer = (kh_id) => {
-        console.log('snubuifbeufiewb', kh_id)
         Request(`customer/delete`, 'DELETE', { kh_id: kh_id })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
@@ -75,20 +67,19 @@ class Customer extends React.Component {
     }
 
     getDonvis = () => {
-        console.log('get dv')
         Request('customer/getdonvi', 'POST', {
         }).then((response) => {
             let data = response.data;
-            console.log('data dv', data)
-            if (data.data)
+            if (data.data){
+                
                 this.setState({
                     customers: data.data.customers,
                 })
+            }
         })
     }
 
     getCustomers = (pageNumber) => {
-        console.log('getdata')
         if (pageNumber <= 0)
             return;
         this.props.fetchLoading({
@@ -102,12 +93,12 @@ class Customer extends React.Component {
         })
             .then(async (response) => {
                 let data = response.data;
-                console.log(data, 'data trả về')
-                if (data.data)
+                if (data.data){
                     await this.setState({
                         customers: data.data.customers,
                         count: Number(data.data.count)
                     })
+                }
                 this.props.fetchLoading({
                     loading: false
                 })
@@ -120,6 +111,7 @@ class Customer extends React.Component {
             if (err) {
                 return
             }
+            console.log("hien thi value ",values)
             var url = this.state.action === 'insert' ? 'customer/insert' : 'customer/update'
             Request(url, 'POST', values)
                 .then((response) => {
@@ -159,6 +151,7 @@ class Customer extends React.Component {
     }
     componentDidMount() {
         this.getCustomers(this.state.pageNumber, this.state.index, this.state.sortBy);
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
     onchangpage = async (page) => {
         await this.setState({
@@ -169,11 +162,7 @@ class Customer extends React.Component {
         }
         this.getCustomers(page)
     }
-    // showDataSourceParent() {
-    //     this.getCustomers(this.state.dataSource_Select_Parent);
-    // }
 
-    //Modal
     showModalUpdate = async (customer) => {
         const { form } = this.formRef.props
         this.setState({
@@ -210,11 +199,11 @@ class Customer extends React.Component {
                 await form.setFieldsValue({ dm_db_id_xa_customer: customer.tenxa })
             }
             form.setFieldsValue(customer);
-            if(customer.dm_dv_id){
-                console.log('hihi haha')
+            if (customer.dm_dv_id) {
+                console.log('xóa là tạch')
             }
-            else{
-                form.setFieldsValue({dm_dv_id:''})
+            else {
+                form.setFieldsValue({ dm_dv_id: '' })
             }
         }
     };
@@ -253,51 +242,61 @@ class Customer extends React.Component {
     set_select_tendv = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
-            console.log('data donvi', res.data)
-            await this.setState({
-                select_tendv: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_tendv: res.data
+                })
+            }
+            
         })
     }
 
     set_select_donvicha = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
-            console.log("hien thi res ", res)
-            await this.setState({
-                select_donvicha: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_donvicha: res.data
+                })
+            }
+            
         })
     }
 
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
-            await this.setState({
-                select_tenkh: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_tenkh: res.data
+                })
+            }
+            
         })
     }
 
     set_select_tinh = async () => {
         await Request('customer/gettinh', 'POST', {
         }).then(async (res) => {
-            console.log(res.data, 'data tinh')
-            await this.setState({
-                select_tinh: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_tinh: res.data
+                })
+            }
+            
         })
     }
 
     set_select_huyen = async (id_db_tinh) => {
-        console.log('select diab an tinh', id_db_tinh)
         await Request('customer/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            console.log(res.data, 'data res huyen')
-            await this.setState({
-                select_huyen: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_huyen: res.data
+                })
+            }
+            
         })
     }
 
@@ -305,9 +304,12 @@ class Customer extends React.Component {
         await Request('customer/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            await this.setState({
-                select_xa: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_xa: res.data
+                })
+            }
+            
         })
     }
 
@@ -357,17 +359,17 @@ class Customer extends React.Component {
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
-            console.log('data khach hang', res.data)
-            await this.setState({
-                select_tenkh: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_tenkh: res.data
+                })
+            }
+            
         })
     }
 
     onSelectTinh = async (value) => {
-        console.log('dia ban tinh')
         const { form } = this.formRef.props
-        console.log(form, 'dday laf value')
         await this.set_select_huyen(value);
         if (this.state.select_huyen.length === 0) {
             await form.setFieldsValue({ dm_db_id_huyen_customer: '' })
@@ -399,20 +401,25 @@ class Customer extends React.Component {
     set_select_diabantinh = async () => {
         await Request('customer/gettinh', 'POST', {
         }).then(async (res) => {
-            await this.setState({
-                select_diabantinh: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_diabantinh: res.data
+                })
+            }
+            
         })
     }
 
     set_select_diabanhuyen = async (id_db_tinh) => {
-        console.log('select diab an tinh', id_db_tinh)
         await Request('customer/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            await this.setState({
-                select_diabanhuyen: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_diabanhuyen: res.data
+                })
+            }
+            
         })
     }
 
@@ -420,9 +427,12 @@ class Customer extends React.Component {
         await Request('customer/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            await this.setState({
-                select_diabanxa: res.data
-            })
+            if(res.data){
+                await this.setState({
+                    select_diabanxa: res.data
+                })
+            }
+            
         })
     }
 
@@ -456,32 +466,12 @@ class Customer extends React.Component {
         }
     }
 
-    // showDataSourceParent() {
-    //     this.getUnits(this.state.dataSource_Select_Parent);
-    // }
-
-    handleOk = e => {
-        this.setState({
-            visible: false,
-        })
-    }
-
     handleCancel = e => {
         this.setState({
             visible: false,
             kh_id_visible: false
         });
     };
-
-    handleChangeInput = (e) => {
-        let state = this.state;
-        state[e.target.name] = e.target.value;
-        this.setState(state);
-    }
-
-    handleChange(value) {
-        console.log(`selecet ${value}`);
-    }
 
     handleCount = () => {
         let count = this.state;
@@ -491,12 +481,10 @@ class Customer extends React.Component {
     }
 
     confirm = (e) => {
-        console.log(e);
         message.success('Bấm yes để xác nhận')
     }
 
     cancel = (e) => {
-        console.log(e);
         this.setState({
             stateconfirmdelete: false
         })
@@ -513,66 +501,20 @@ class Customer extends React.Component {
     }
 
     onShowSizeChange = async (current, size) => {
-        console.log('size', size);
-        console.log('curent', current);
         await this.setState({
             pageSize: size
         });
         if (this.state.isSearch === 1) {
-            console.log('xxxx')
             this.handleSearch(this.state.page, this.state.textSearch, this.confirm, this.state.nameSearch, this.state.codeSearch);
-            console.log(this.state.page)
         }
         else {
             this.getCustomers(this.state.page, this.state.index, this.state.sortBy)
         }
     }
 
-    search = async (xxxx) => {
-        console.log('Đây là tìm kiếm', xxxx)
-        console.log('cái dkm', this.state.columnSearch)
-        Request('customer/search', 'POST', {
-            pageSize: this.state.pageSize,
-            pageNumber: this.state.page,
-            textSearch: xxxx,
-            columnSearch: this.state.columnSearch,
-            p1: this.state.index,
-            p2: this.state.sortBy
-        })
-            .then((response) => {
-                let data = response.data;
-                console.log('aaaaaaaaaaaaaaaaa', data)
-                if (data.data)
-                    this.setState({
-                        customers: data.data.customers,
-                        count: Number(data.data.count),
-                        textSearch: xxxx,
-                        isSearch: 1
-                    })
-                console.log('data------', data);
-            })
-    }
-
-    onChangeSearchType = async (value) => {
-        console.log('qfqif', this.state.textSearch)
-        console.log(value)
-        await this.setState({
-            columnSearch: value,
-        })
-        if (this.state.textSearch) {
-            this.search(this.state.textSearch);
-        }
-        console.log(`selected ${value}`);
-    }
-
-    onSearch = (val) => {
-        console.log('search:', val);
-    }
-
     onHeaderCell = (column) => {
         return {
             onClick: async () => {
-                console.log('ccmnr', column.dataIndex)
                 if (this.state.isSort) {
                     await this.setState({
                         sortBy: 'DESC',
@@ -589,7 +531,6 @@ class Customer extends React.Component {
                     isSort: !this.state.isSort,
                     index: column.dataIndex
                 })
-                console.log('xx', this.state.isSort)
                 if (this.state.isSearch == 1) {
                     this.search(this.state.textSearch)
                 }
@@ -659,12 +600,6 @@ class Customer extends React.Component {
         })
     }
 
-    removeSearch = () => {
-        this.setState({
-            textSearch: ''
-        })
-    }
-
     onSelectChange = (selectedRowKeys, selectedRows) => {
         this.setState({
             selectedRowKeys,
@@ -706,18 +641,18 @@ class Customer extends React.Component {
         if (token)
             return (
                 <div>
-                    <Row className='table-margin-bt'>
-                        <Col span={2}>
-                            <Tooltip title="Thêm khách hàng">
-                                <Button shape="circle" type="primary" size="large" onClick={this.showModalInsert.bind(null)}>
-                                    <Icon type="plus" />
-                                </Button>
-                            </Tooltip>
-                        </Col>
-                        <span>
+                    <Card>
+                        <Row>
+                            <Col span={2}>
+                                <Tooltip title="Thêm khách hàng">
+                                    <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
+                                        <Icon type="user-add" />
+                                    </Button>
+                                </Tooltip>
+                            </Col>
                             <Col span={2}>
                                 <Tooltip title="Sửa khách hàng">
-                                    <Button shape='circle' type="primary" size="large" onClick={this.showModalUpdate.bind(this, this.state.rowcustomerselected)} disabled={this.state.statebuttonedit} >
+                                    <Button shape='round' type="primary" size="default" onClick={this.showModalUpdate.bind(this, this.state.rowcustomerselected)} disabled={this.state.statebuttonedit} >
                                         <Icon type="edit" /></Button>
                                 </Tooltip>
                             </Col>
@@ -727,24 +662,23 @@ class Customer extends React.Component {
                                         title="Bạn có chắc chắn muốn xóa ?"
                                         onConfirm={this.deleteCustomer.bind(this, this.state.selectedId)}
                                         onCancel={this.cancel}
-                                        okText="Có"
-                                        cancelText="Không">
-                                        <Button shape='circle' type="danger" size="large" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                                        okText="Yes"
+                                        cancelText="No">
+                                        <Button shape='round' type="danger" size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
                                             <Icon type="delete" /></Button>
                                     </Popconfirm>
                                 </Tooltip>
                             </Col>
                             <Col span={2}>
                                 <Tooltip title="Tải Lại">
-                                    <Button shape="circle" type="primary" size="large" onClick={this.refresh.bind(null)}>
+                                    <Button shape="round" type="primary" style={{ marginLeft: '10px' }} size="default" onClick={this.refresh.bind(null)}>
                                         <Icon type="reload" />
                                     </Button>
                                 </Tooltip>
                             </Col>
-                        </span>
-                    </Row>
-                    <br />
-                    <Row className='table-margin-bt'>
+                        </Row>
+                    </Card>
+                    <Row style={{ marginTop: 5 }}>
                         <CreateModalCustomer
                             wrappedComponentRef={this.state.visible_dv ? this.saveFormRefCreate : this.saveFormRef}
                             visible={this.state.visible}
@@ -781,7 +715,7 @@ class Customer extends React.Component {
                             stateoption={this.state.stateoption}
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
-                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" onHeaderCell={this.onHeaderCell} width={150}/>
                             <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" onHeaderCell={this.onHeaderCell} />
                             <Column title="Email" dataIndex="kh_email" key="kh_email" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
@@ -790,7 +724,7 @@ class Customer extends React.Component {
                             <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hidden-action' disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" onHeaderCell={this.onHeaderCell} />
                             <Column title="Vị trí công tác" dataIndex="kh_vitricongtac" key="kh_vitricongtac" onHeaderCell={this.onHeaderCell} />

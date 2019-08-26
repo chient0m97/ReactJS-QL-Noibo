@@ -23,10 +23,10 @@ var HopdongController = {
     /**
      * @param
      */
-    getHopdong: function getHopdong(pageNumber, pageSize, index, sortBy, callback) {
+    getHopdong: function getHopdong(pageNumber, pageSize, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        hopdongData.getHopdong(limit, offset, index, sortBy, (data) => {
+        hopdongData.getHopdong(limit, offset, (data) => {
             callback(data);
         });
     },

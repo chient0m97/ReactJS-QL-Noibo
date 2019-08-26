@@ -109,7 +109,16 @@ const treeData = [
     ],
   },
 
-
+  {
+    title: 'Hóa đơn',
+    key: 'hoadon',
+    children: [
+      { title: 'xem', key: 'HOADON.READ' },
+      { title: 'thêm', key: 'HOADON.INSERT' },
+      { title: 'sửa', key: 'HOADON.UPDATE' },
+      { title: 'xóa', key: 'HOADON.DELETE' },
+    ],
+  },
 
 ];
 

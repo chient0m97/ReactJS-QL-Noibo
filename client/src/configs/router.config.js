@@ -14,6 +14,7 @@ import Group from '@pages/Group'
 import Member from '../components/pages/Member';
 import ChangePassword from '../components/pages/Modal/ChangePassword';
 import ok from '../components/common/ok';
+import Hoadon from '../components/pages/Quanly_hoadon'
 
 const routers = [
   
@@ -82,6 +83,11 @@ const routers = [
         path: '/donvi',
         component: Donvi,
         name: 'donvi'
+    },
+    {
+        path: '/qlhd',
+        component: Hoadon,
+        name: 'hoadon'
     },
     {
         path: '/group',

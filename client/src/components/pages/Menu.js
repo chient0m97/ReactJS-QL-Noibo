@@ -1,9 +1,9 @@
-import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card } from 'antd';
+import React from 'react'
+import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card } from 'antd'
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
-import { fetchUser } from '@actions/user.action';
-import { fetchLoading } from '@actions/common.action';
+import { fetchUser } from '@actions/user.action'
+import { fetchLoading } from '@actions/common.action'
 import Modal_Menu from '@pages/Modal/Modal_Menu.js'
 import '@styles/style.css'
 const { Column } = Table;
@@ -140,6 +140,7 @@ class Menu extends React.Component {
 
     componentDidMount() {
         this.getMenu(this.state.pageNumber, this.state.index, this.state.sortBy);
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
     showModal = (menu) => {

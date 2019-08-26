@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Card, Tooltip } from 'antd';
-// import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
@@ -14,8 +13,12 @@ const { Option } = Select
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     render() {
-      const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, qtda } = this.props;
+      const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, select_qtda } = this.props;
       const { getFieldDecorator } = form;
+      var first_qtda = null;
+      if (select_qtda.length !== 0) {
+        first_qtda = select_qtda[0].ns_id
+      }
       return (
         <Modal
           visible={visible}
@@ -31,7 +34,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="">
                   {getFieldDecorator('dm_duan_id', {
-
                   })(<Input type="hidden" placeholder="Id dự án" hidden="true" />)}
                 </Form.Item>
               </Col>
@@ -45,7 +47,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label="Tiền tố">
+                <Form.Item label="Kí hiệu dự án">
                   {getFieldDecorator('dm_duan_key', {
                     rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Input type="text" />)}
@@ -54,15 +56,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Quản trị dự án">
                   {getFieldDecorator('ns_id_qtda', {
-                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }], initialValue: frist_qtda
                   })(<Select
-                    size={"small"}
                     filterOption={(input, option) =>
                       option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
                   >
                     {
-                      qtda.map((value, index) => {
+                      select_qtda.map((value, index) => {
                         return (<Option value={value.ns_id}>{value.ns_ten}</Option>)
                       })
                     }
@@ -85,7 +86,6 @@ class Duan extends React.Component {
       current: 1,
       page: 1,
       pageSize: 10,
-      showPopup: false,
       count: 1,
       show: false,
       visible: false,
@@ -95,12 +95,11 @@ class Duan extends React.Component {
       action: 'insert',
       isSearch: 0,
       searchText: '',
-      columnSearch: '',
       isSort: true,
       sortBy: '',
       index: 'id',
       orderby: 'arrow-up',
-      comboBoxDatasource: [],
+      select_qtda: [],
       selectedId: [],
       statebuttonedit: true,
       statebuttondelete: true,
@@ -141,12 +140,10 @@ class Duan extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        console.log("Hien thi response ", response)
-        let data = response.data;
-        if (data.data)
+        if (response.data.data)
           this.setState({
-            duans: data.data.duans,
-            count: Number(data.data.count)//eps kieeru veef
+            duans: response.data.data.duans,
+            count: Number(response.data.data.count)//eps kieeru veef
           })
         this.props.fetchLoading({
           loading: false
@@ -202,6 +199,7 @@ class Duan extends React.Component {
 
   componentDidMount() {
     this.getDuans(this.state.pageNumber, this.state.index, this.state.sortBy);
+    document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
   }
 
   onchangpage = (page) => {
@@ -217,16 +215,18 @@ class Duan extends React.Component {
     }
   }
 
-  set_Select_QTDA() {
-    Request('duan/getqtda', 'POST', {}).then((res) => {
-      this.setState({
-        comboBoxDatasource: res.data
-      })
+  set_select_qtda = () => {
+    Request('duan/getcha', 'POST', {
+    }).then((res) => {
+      if (res.data) {
+        this.setState({
+          select_qtda: res.data
+        })
+      }
     })
   }
 
   showModal = async (duan) => {
-    console.log("Hien thi duan ",duan)
     const { form } = this.formRef.props
     this.setState({
       visible: true
@@ -237,11 +237,9 @@ class Duan extends React.Component {
         id_visible: false,
         action: 'update'
       })
-      // form.setFieldsValue({ ns_id_qtda: duan.ns_id })
       form.setFieldsValue(duan);
-      
     }
-    this.set_Select_QTDA()
+    this.set_select_qtda()
   };
 
   handleCancel = e => {
@@ -261,6 +259,7 @@ class Duan extends React.Component {
   showTotal = (total) => {
     return `Total ${total} items`;
   }
+
   onShowSizeChange = async (current, size) => {
     await this.setState({
       pageSize: size
@@ -285,7 +284,6 @@ class Duan extends React.Component {
             orderby: 'arrow-down'
 
           })
-
         }
         else {
           await this.setState({
@@ -395,7 +393,7 @@ class Duan extends React.Component {
               </Col>
             </Row>
           </Card>
-          <Row>
+          <Row style={{ marginTop: 5 }}>
             <FormModal
               wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
@@ -404,9 +402,9 @@ class Duan extends React.Component {
               title={this.state.title}
               formtype={this.state.formtype}
               id_visible={this.state.id_visible}
-              qtda={this.state.comboBoxDatasource}
+              select_qtda={this.state.select_qtda}
             />
-            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} rowKey="dm_duan_id" >
+            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id" >
               <Column title="Tên dự án" dataIndex="dm_duan_ten" onHeaderCell={this.onHeaderCell} />
               <Column title="Tiền tố" dataIndex="dm_duan_key" onHeaderCell={this.onHeaderCell} />
               <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} />

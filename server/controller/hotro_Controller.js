@@ -50,6 +50,12 @@ var hotroController = {
         })
     },
 
+    getDataMyself: function getDataMyself(myself, callback){
+        hotroData.getDataMyself(myself,(data)=>{
+            callback(data);
+        })
+    },
+
     getIdDuan(callback){
         hotroData.getIdDuan(function(data){
             callback(data);
@@ -64,6 +70,18 @@ var hotroController = {
 
     getKhachHang(callback){
         hotroData.getKhachHang(function(data){
+            callback(data);
+        })
+    },
+
+    getHopDong(callback){
+        hotroData.getHopDong(function(data){
+            callback(data);
+        })
+    },
+
+    getDataKhachHang: function getDataKhachHang(ht_id, callback){
+        hotroData.getDataKhachhang(ht_id,(data)=>{
             callback(data);
         })
     },

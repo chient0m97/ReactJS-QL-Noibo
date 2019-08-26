@@ -20,8 +20,8 @@ router.post('/getcha',function(req,res){
 })
 
 router.delete('/delete', function (req, res) {
-  let dm_db_id = req.body.dm_db_id
-  diabanController.deleteDiabanbyId(dm_db_id, function (data) {
+  console.log("log ",req.body)
+  diabanController.DeleteDiabanbyId(req.body.dm_db_id, function (data) {
         res.send(data);
     })
 })
