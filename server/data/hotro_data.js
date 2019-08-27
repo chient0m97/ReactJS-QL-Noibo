@@ -164,6 +164,17 @@ module.exports = {
                     }
                 })
         })
+    },
+
+    getName: function(cookie, callback) {
+        knex.raw("select coalesce (ns.ns_ho, '') || ' ' || coalesce (ns.ns_tenlot, '') || ' ' || coalesce (ns.ns_ten, '') as ns_hovaten from nhansu ns where ns_dinhdanhcanhan=(select madinhdanh from users where name='"+cookie.cookie+"')"  )
+        .then((res) => {
+                callback({
+                    data: {
+                        name: res.rows
+                    }
+                })
+        })
     }
     
 }

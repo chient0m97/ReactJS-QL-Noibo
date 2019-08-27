@@ -56,12 +56,9 @@ module.exports = {
 
     },
     insertUser: function (user, callback) {
-        console.log('insert lan thu 1 ty')
         let abc = user;
         abc.id = uuidv1();
         knex.from('users').insert(abc).then(res => {
-
-            console.log('inserted');
             callback({ success: true });
         }).catch(err => {
 
@@ -70,7 +67,6 @@ module.exports = {
         })
     },
     updateUser: function (user, callback) {
-        console.log('upadteeeeeeeeeeeeee')
         knex.from('users').where('id', user.id)
             .update(user).then(res => {
 
@@ -82,10 +78,8 @@ module.exports = {
             })
     },
     changePass: function (user, callback) {
-        console.log('usserererwerwerwerwer', user)
         pool.connect().then(client => {
             let query = "update users set password='" + user.password + "' where name='" + user.username + "'"
-            console.log('quẻyyyyyyyyyyyyyyyyyyyyyyyy', query)
             client.query(query).then(res => {
                 client.release()
                 callback({ success: true })
@@ -107,7 +101,6 @@ module.exports = {
         })
     },
     getUserLogin: function (username, callback) {
-        console.log('name:', username)
         knex('users').select('password').where('name', username).then(res => {
 
             console.log('result', res)
@@ -205,6 +198,5 @@ module.exports = {
             console.log(err)
         })
     },
-
 
 };

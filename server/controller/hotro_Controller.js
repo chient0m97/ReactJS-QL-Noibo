@@ -86,6 +86,12 @@ var hotroController = {
         })
     },
 
+    getName: function getName(cookie, callback){
+        hotroData.getName(cookie,(data)=>{
+            callback(data);
+        })
+    },
+
     getDataSearch: function getDataSearch(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);

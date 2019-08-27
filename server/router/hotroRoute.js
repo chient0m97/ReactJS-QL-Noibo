@@ -53,6 +53,12 @@ router.post('/getdatakhachhang', function(req, res){
     })
 })
 
+router.post('/getname', function(req, res){
+    hotroController.getName(req.body,function(data){
+        res.send(data)
+    })
+})
+
 router.post('/insert', function(req,res) {
     hotroController.insertHotro(req.body, function(data){
         res.send(data);

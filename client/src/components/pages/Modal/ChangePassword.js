@@ -20,7 +20,7 @@ class ChangePassword extends Component {
             username: this.state.username,
             password: this.state.passcu,
         };
-        Axios.post('http://localhost:5000/Login', user).then(res => {
+        Request('Login', 'POST', user).then(res => {
             console.log('response', res.data.success)
             if (res.data.success) {
 
