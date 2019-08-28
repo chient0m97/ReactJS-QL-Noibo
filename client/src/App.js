@@ -11,6 +11,7 @@ const token = cookie.load('token');
 
 class App extends Component {
   render() {
+    console.log('123')
     if(token){ 
       return (
         <Main/>  

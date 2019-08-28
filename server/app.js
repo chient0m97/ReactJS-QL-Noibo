@@ -79,7 +79,7 @@ app.use('/setpermission', setpermiss)
 
 app.use('/role_action', role_action)
 
-app.use('/user',userRouter);
+app.use('/user',authorize,userRouter);
 
 //app.use('/', authorize, hopdongrouters );
 

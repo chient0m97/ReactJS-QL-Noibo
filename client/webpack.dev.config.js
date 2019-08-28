@@ -21,8 +21,8 @@ const webpackConfigDev = {
     new HtmlWebpackPlugin({
       template: resolve('./index.html'),
       dlls: [
-        './resource/dll/vendor.dll.js', 
-        './resource/dll/redux.dll.js',
+        '/resource/dll/vendor.dll.js', 
+        '/resource/dll/redux.dll.js',
       ],
     }),
     new OpenBrowserPlugin({
@@ -37,7 +37,7 @@ const webpackConfigDev = {
     hot: false,
     host: 'localhost',
     port: PORT,
-  },
+  }
 }
 
 module.exports = merge(webpackConfigBase, webpackConfigDev)

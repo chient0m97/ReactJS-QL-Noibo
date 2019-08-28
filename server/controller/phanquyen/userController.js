@@ -104,11 +104,13 @@ var UserController = {
     },
     Login: function getUserLogin(userName, callback) {
         userData.getUserLogin(userName, (data) => {
-            console.log('data', data)
+            let f = data.fullname
             if (data) {
+                console.log('data===========================', f)
                 console.log('vao get claim')
                 this.getClaimsByUser(userName, (cls) => {
                     data.claims = cls;
+                    data.fullname = f;
                     callback(data);
                 })
             }
@@ -121,7 +123,9 @@ var UserController = {
 
     },
     getClaimsByUser: (userName, callback) => {
+        console.log('dấdaddasdasdsa')
         userData.getClaims(userName, (data) => {
+            console.log('đaataa',data)
             if (data.data.length > 0) {
                 var data = data.data.map(function (value) {
                     return value.role + '.' + value.action

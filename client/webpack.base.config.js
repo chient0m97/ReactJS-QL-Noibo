@@ -18,7 +18,7 @@ const webpackConfigBase = {
         path: resolve('./dist'),
         filename: '[name].[hash:4].js',
         chunkFilename: 'chunks/[name].[hash:4].js',
-        // publicPath: './'
+        publicPath: '/'
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json'],
