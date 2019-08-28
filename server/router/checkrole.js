@@ -9,9 +9,8 @@ app.set('Secret', config.secret);
 router.post('/', (req, res) => {
     console.log('checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkreq',req.body)
     userController.getClaimsByUser(req.body.sl,(data)=>{
-        console.log('checkkkkkkkkkkkkkkkkkkkkkkkkkkkkk',data)
+        console.log('dadaaaaaaaaaaaaaaaaaaaa',data)
         res.send(data);
-        console.log('asdasds')
     })
 });
 module.exports = router;

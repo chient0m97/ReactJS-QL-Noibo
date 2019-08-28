@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar, Badge } from 'antd'
 import cookie from 'react-cookies'
+import jwt from 'jsonwebtoken'
 import Request from '@apis/Request'
 
 const { Header } = Layout
@@ -34,9 +35,12 @@ class AppHeader extends Component {
     return (
       <Menu>
         <Menu.Item key="0">
-          <a href="/changepassword">Đổi mật khẩu</a>
+        <a href="https://www.google.com/">View Profile</a>
         </Menu.Item>
         <Menu.Item key="1">
+          <a href="/changepassword">Đổi mật khẩu</a>
+        </Menu.Item>
+        <Menu.Item key="2">
           <a onClick={this.logOut} href="/">Đăng xuất</a>
         </Menu.Item>
       </Menu>
@@ -65,7 +69,10 @@ class AppHeader extends Component {
   }
 
   render() {
-    var user_cookie = cookie.load('user');
+    let token = cookie.load('token')
+    let payload = jwt.decode(token);
+    let fullname = payload.fullname;
+    console.log(payload,'alo alo')
     return (
       <div>
         <Header style={{ background: '#fff', padding: 0 }}>
@@ -79,7 +86,7 @@ class AppHeader extends Component {
               </Badge>
               <Avatar icon="user" style={{ fontSize: '20px', backgroundColor: 'orange' }} />
               <Tooltip title="Tên tài khoản">
-                <span style={{ fontSize: '18px' }}> {this.state.name} </span>
+                <span style={{ fontSize: '18px' }}> {fullname} </span>
               </Tooltip>
             </a>
           </Dropdown>

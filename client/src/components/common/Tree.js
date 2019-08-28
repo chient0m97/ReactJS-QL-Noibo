@@ -159,7 +159,7 @@ class Demo extends React.Component {
     return this.state.checkedKeys;
   }
   onCheck = async checkedKeys => {
-    console.log(this.props.dataTree)
+    console.log('asdasdasdasdasd',checkedKeys)
     await this.setState({ checkedKeys });
   };
   componentDidMount() {

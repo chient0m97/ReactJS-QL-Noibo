@@ -11,7 +11,8 @@ import Diaban from '@pages/Diaban'
 import Duan from '@pages/Duan'
 import Donvi from '@pages/Unit'
 import File_khachhang from '../components/pages/File'
-import Group from '@pages/Group'
+// import Group from '@pages/Group'
+import Group from '../components/pages/Group'
 import Member from '../components/pages/Member';
 import ChangePassword from '../components/pages/Modal/ChangePassword';
 import ok from '../components/common/ok';
@@ -20,7 +21,7 @@ import Hoadon from '../components/pages/Quanly_hoadon'
 const routers = [
   
     {
-        path: '/member',
+        path: '/group/:mem',
         component: Member,
         name: 'member'
     },

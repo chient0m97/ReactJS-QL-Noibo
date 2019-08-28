@@ -301,7 +301,7 @@ class User extends React.Component {
   showTotal = (total) => {
     return `Total ${total} items`;
   }
-  onShowSizeChange = async (current, size) => {         
+  onShowSizeChange = async (current, size) => {
     await this.setState({
       pageSize: size
     });
@@ -399,20 +399,17 @@ class User extends React.Component {
   }
   showmodalRole = async (name) => {
 
-    if (name) {
       this.setState({
         modalRoleVisible: true,
 
       })
-    }
-    else {
-      message.info('chọn user đã nhóc');
-    }
+  
 
   }
   okRole = async e => {
     let user = this.state.selectedId
     let a = this.child.state.checkedKeys
+    console.log('checkkkkkkkkkkkkkkkkkkkkk',a)
     Request('setpermission', 'POST', { a, user }).then(res => {
 
     })
@@ -444,29 +441,28 @@ class User extends React.Component {
         <Login />
       )
     }
-    let payload = jwt.decode(token);
     let claims = payload.claims;
     let canPermiss = claims.indexOf(Permission.Role.Permiss) >= 0;
     let canRead = claims.indexOf(Permission.User.Read) >= 0;
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
     let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-    const { selectedRowKeys } = this.state
+    // const { selectedRowKeys } = this.state
     const rowSelection = {
       type: 'radio',
       hideDefaultSelections: true,
-      selectedRowKeys,
       onChange: async (selectedRowKeys, selectedRows) => {
         let sl = selectedRowKeys[0]
-        Request('checkrole', 'POST', { sl }).then((res) => {
+        console.log('==================================================', sl)
+        await Request('checkrole', 'POST', { sl }).then((res) => {
           let data = res.data;
+          console.log('---------------------------------',data)
           let a = data.map(function (value) {
             return a = { role: value.split('.')[0], acton: value.split('.')[1] }
           })
           this.setState({
             dataTree: data,
           })
-
         })
         if (selectedRows[0]) {
           await this.setState({
@@ -505,7 +501,7 @@ class User extends React.Component {
               canPermiss ?
                 <div>
                   <Tooltip title="Phân quyền">
-                    <Button shape="round"  style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
+                    <Button shape="round" style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
                       <Icon type="user" />
                     </Button>
                   </Tooltip>
@@ -549,7 +545,7 @@ class User extends React.Component {
                     <Button shape="round" type="danger" style={{ margin: '20px' }} >
                       <Icon type="delete" />
                     </Button>
-                    </Popconfirm>
+                  </Popconfirm>
                 </Tooltip>
 
                 :
@@ -579,14 +575,14 @@ class User extends React.Component {
                   onRow={(record, rowIndex) => {
                     return {
                       onClick: async event => {
-                        this.handleClickRow.bind(this, rowIndex)
-                        console.log('aaaaaaaaaaaaaaaaaa', rowIndex)
-                        console.log('reacassadasdad1111111111111111', record.name)
-                        await this.setState({
-                          selectedRowKeys: [record.name],
-                          selectedId: record.name,
-                          user: record
-                        })
+                        // this.handleClickRow.bind(this, rowIndex)
+                        // console.log('aaaaaaaaaaaaaaaaaa', rowIndex)
+                        // console.log('reacassadasdad1111111111111111', record.name)
+                        // await this.setState({
+                        //   selectedRowKeys: [record.name],
+                        //   selectedId: record.name,
+                        //   user: record
+                        // })
                         console.log('reacassadasdad', rowIndex)
 
                       },
