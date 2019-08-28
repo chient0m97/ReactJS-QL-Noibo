@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu, Col } from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar } from 'antd'
 import cookie from 'react-cookies'
+import Request from '@apis/Request'
 
 const { Header } = Layout
 
@@ -9,14 +10,31 @@ class AppHeader extends Component {
     super(props);
     this.state = {
       menu: null,
-      collapsed: props.collapsed
+      collapsed: props.collapsed,
+      name: null
     }
   }
+
+  getName = (cookie) => {
+    Request('hotro/getname', 'POST', { cookie }).then((res) => {
+      if (res) {
+        if (res.data.data.name[0] === undefined)
+          this.setState({
+            name: 'Chưa có tài khoản'
+          })
+        else
+          this.setState({
+            name: res.data.data.name[0].ns_hovaten
+          })
+      }
+    })
+  }
+
   renderMenuUser = () => {
     return (
       <Menu>
         <Menu.Item key="0">
-          <a href="/">Change Password</a>
+          <a href="/changepassword">Change Password</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a onClick={this.logOut} href="/">Log Out</a>
@@ -34,28 +52,36 @@ class AppHeader extends Component {
 
   logOut = (e) => {
     cookie.remove('token', { path: '/' })
-    cookie.remove('user',this.state.username)
+    cookie.remove('user', this.state.username)
     window.location.reload();
   }
 
   componentDidMount() {
+    var user_cookie = cookie.load('user');
     this.setState({
       menu: this.renderMenuUser,
     })
+    this.getName(user_cookie)
   }
 
   render() {
+    var user_cookie = cookie.load('user');
     return (
-      <Header style={{ background: '#fff', padding: 0 }}>
-        <Button type="dashed" onClick={this.toggleCollapsed} style={{ marginLeft: 12 }}>
-          <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
-        </Button>
-        <Dropdown overlay={this.state.menu} trigger={['click']}>
-          <a style={{ marginLeft: '90%' }} className="ant-dropdown-link" href="/">
-            <Icon type="user" style={{ fontSize: '20px' }} />
-          </a>
-        </Dropdown>
-              </Header>
+      <div>
+        <Header style={{ background: '#fff', padding: 0 }}>
+          <Button type="dashed" onClick={this.toggleCollapsed} style={{ marginLeft: 12 }}>
+            <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
+          </Button>
+          <Dropdown overlay={this.state.menu} trigger={['click']}>
+            <a style={{ marginLeft: '75%' }} className="ant-dropdown-link" href="/">
+              <Avatar icon="user" style={{ fontSize: '20px', backgroundColor: 'orange' }} />
+              <Tooltip title="Tên tài khoản">
+                <span style={{ fontSize: '18px' }}> {this.state.name} </span>
+              </Tooltip>
+            </a>
+          </Dropdown>
+        </Header>
+      </div>
     )
   }
 }

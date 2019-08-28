@@ -1,32 +1,36 @@
-const express = require('express');
+var express = require('express');
+const path = require('path');
 //const bodyParser = require("body-parser");
-const cors = require("cors");
+var cors = require("cors");
 jwt = require('jsonwebtoken');
 config = require('./configurations/config');
-app = express();
+var app = express();
 const login = require('./router/login')
 const checked = require('./router/checkrole')
 const setpermiss = require('./router/setpermission')
 const role_action = require('./router/role_action')
 const port = 5000;
 
-
-var nhansuRoute = require('./router/nhansuRoute');
-var hotroRoute = require('./router/hotroRoute');
+var groupRoute = require('./router/group')
+var setGroupPermission = require('./router/setGroupPermission')
+var nhansuRoute = require('./router/nhansuRoute')
+var hotroRoute = require('./router/hotroRoute')
 var menuRoute = require('./router/menu_Route')
+var quanly_hoadonRoute = require('./router/quanly_hoadonRoute')
 var khachhangRoute = require('./router/khachhangRoute')
 var router = require('./router/unitRoute');
-var cusrouter = require('./router/customerRoute');
+var cusrouter = require('./router/customerRoute')
 var hopdong = require('./router/hopdong')
 var userRouter = require('./router/index');
 var diabanRoute = require('./router/diaban')
 var duanRoute = require('./router/duan')
-
-//var authorize = require('./middleware/authorize')
+var memberRoute = require('./router/memberRoute')
+var ChangePass = require('./router/changepass')
+var authorize = require('./middleware/authorize')
 var bodyParser = require('body-parser');
-
-app.use(bodyParser.json({limit: "50mb"}));
-app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+app.use('/upload', express.static(path.join(__dirname, 'upload', './')))
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 app.set('Secret', config.secret);
 
 var whitelist = ['http://localhost:3000', 'http://localhost:5000']
@@ -39,16 +43,23 @@ var corsOptions = {
     }
   }
 }
+var multer = require('multer')
 app.use(cors());
 
 
 app.use('/nhansu', nhansuRoute);
+app.use('/member', memberRoute);
+app.use('/changepass', ChangePass);
 
 app.use('/hotro', hotroRoute)
 
 app.use('/hopdong', hopdong)
 
 app.use('/menu', menuRoute)
+
+app.use('/qlhd', quanly_hoadonRoute)
+
+app.use('/group', groupRoute)
 
 app.use('/diaban', diabanRoute)
 
@@ -57,6 +68,10 @@ app.use('/duan', duanRoute)
 app.use('/khachhangRoute', khachhangRoute)
 
 app.use('/customer', cusrouter);
+
+app.use('/Login', login);
+
+app.use('/setGroupPermission', setGroupPermission);
 
 app.use('/Login', login);
 
@@ -72,6 +87,27 @@ app.use('/user', userRouter);
 
 app.use('/unit', router);
 
+//upload multer
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'upload')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+var upload = multer({ storage: storage }).single('file')
+app.post('/upload', function (req, res) {
+  console.log('da vao upload');
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json(err)
+    } else if (err) {
+      return res.status(500).json(err)
+    }
+    return res.status(200).send(req.file)
+  })
+});
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 app.post('/verify')

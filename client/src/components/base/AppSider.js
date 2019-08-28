@@ -5,13 +5,13 @@ import { NavLink } from 'react-router-dom'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
 import Permission from '../Authen/Permission'
-import menu from '../Authen/GetMenu'
+// import menu from '../Authen/GetMenu'
 const { SubMenu } = Menu;
 
 const { Sider } = Layout
 
 class AppSider extends Component {
-    rootSubmenuKeys = ['sub1', 'sub2', 'sub3'];
+    rootSubmenuKeys = ['sub1', 'sub2', 'sub3', 'sub4'];
     constructor(props) {
         super(props);
         this.state = {
@@ -39,6 +39,7 @@ class AppSider extends Component {
     };
 
     componentDidMount() {
+
     }
 
     render() {
@@ -46,37 +47,41 @@ class AppSider extends Component {
 
         let payload = jwt.decode(token);
         let claims = payload.claims;
-        for (let i = 0; i < claims.length; i++) {
-            if (claims[i] === Permission.Role.Read) {
-                claims[i] = { url: '/role', des: 'Phân quyền',menu:1 }
+        if (claims !== undefined) {
+            for (let i = 0; i < claims.length; i++) {
+                if (claims[i] === Permission.Role.Read) {
+                    claims[i] = { url: '/role', des: 'Phân quyền', menu: 1 }
+                }
+                else if (claims[i] === Permission.User.Read) {
+                    claims[i] = { url: '/user', des: 'User', menu: 1 }
+                }
+                else if (claims[i] === Permission.Hotro.Read) {
+                    claims[i] = { url: '/hotro', des: 'Hỗ trợ', menu: 2 }
+                }
+                else if (claims[i] === Permission.Nhansu.Read) {
+                    claims[i] = { url: '/nhansu', des: 'Nhân sự', menu: 2 }
+                }
+                else if (claims[i] === Permission.Diaban.Read) {
+                    claims[i] = { url: '/diaban', des: 'Địa bàn', menu: 3 }
+                }
+                else if (claims[i] === Permission.Duan.Read) {
+                    claims[i] = { url: '/duan', des: 'Dự án', menu: 3 }
+                }
+                else if (claims[i] === Permission.Khachhang.Read) {
+                    claims[i] = { url: '/khachhang', des: 'Khách hàng', menu: 2 }
+                }
+                else if (claims[i] === Permission.Donvi.Read) {
+                    claims[i] = { url: '/donvi', des: 'Đơn vị', menu: 2 }
+                }
+                else if (claims[i] === Permission.Hopdong.Read) {
+                    claims[i] = { url: '/hopdong', des: 'Hợp đồng', menu: 3 }
+                }
+                else if (claims[i] === Permission.Hoadon.Read) {
+                    claims[i] = { url: '/qlhd', des: 'Hóa Đơn', menu: 3 }
+                }
             }
-            else if (claims[i] === Permission.User.Read) {
-                claims[i] = { url: '/user', des: 'user',menu:1 }
-            }
-            else if (claims[i] === Permission.Hotro.Read) {
-                claims[i] = { url: '/hotro', des: 'Hỗ trợ',menu:2 }
-            }
-            else if (claims[i] === Permission.Nhansu.Read) {
-                claims[i] = { url: '/nhansu', des: 'Nhân sự',menu:2 }
-            }
-            else if (claims[i] === Permission.Diaban.Read) {
-                claims[i] = { url: '/diaban', des: 'Địa bàn',menu:3 }
-            }
-            else if (claims[i] === Permission.Duan.Read) {
-                claims[i] = { url: '/duan', des: 'Dự án',menu:3 }
-            }
-            else if (claims[i] === Permission.Khachhang.Read) {
-                claims[i] = { url: '/khachhang', des: 'Khách hàng',menu:2 }
-            }
-            else if (claims[i] === Permission.Donvi.Read) {
-                claims[i] = { url: '/donvi', des: 'Đơn vị',menu:2 }
-            }
-            else if (claims[i] === Permission.Hopdong.Read) {
-                claims[i] = { url: '/hopdong', des: 'Hợp đồng',menu:3}
-            }
-
-
         }
+
         return (
 
             <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
@@ -87,8 +92,9 @@ class AppSider extends Component {
                 >
                     <Menu.Item key="1">
                         <Icon type="home" />
-                        <span><NavLink to="/homepage" className="">Home</NavLink ></span>
+                        <span><NavLink to="/" className="">Trang Chủ</NavLink ></span>
                     </Menu.Item>
+
                     <SubMenu
                         key="sub1"
                         title={
@@ -98,18 +104,14 @@ class AppSider extends Component {
                             </span>
                         }
                     >
+
                         {claims.map((item, i) => {
                             if (item.url) {
-                                if(item.menu===1){
+                                if (item.menu === 1) {
                                     return <Menu.Item key={item.url}><NavLink to={item.url} className="">{item.des}</NavLink ></Menu.Item>
                                 }
                             }
-
                         })}
-                        {/* <Menu.Item key="2"><NavLink to="/user" className="">User</NavLink ></Menu.Item>
-                        <Menu.Item key="3"><NavLink to="/quan-ly-quyen" className="">Quản lý quyền</NavLink ></Menu.Item>
-                        <Menu.Item key="4"><NavLink to="/menu">Menu</NavLink></Menu.Item> */}
-
                     </SubMenu>
                     <SubMenu
                         key="sub2"
@@ -120,14 +122,14 @@ class AppSider extends Component {
                             </span>
                         }
                     >
-                    {claims.map((item, i) => {
-                        if (item.url) {
-                            if(item.menu===2){
-                                return <Menu.Item key={item.url}><NavLink to={item.url} className="">{item.des}</NavLink ></Menu.Item>
+                        {claims.map((item, i) => {
+                            if (item.url) {
+                                if (item.menu === 2) {
+                                    return <Menu.Item key={item.url}><NavLink to={item.url} className="">{item.des}</NavLink ></Menu.Item>
+                                }
                             }
-                        }
 
-                    })}
+                        })}
                         {/* <Menu.Item key="5"><NavLink to="/hotro" >Hỗ Trợ khách hàng</NavLink></Menu.Item>
                         <Menu.Item key="6"><NavLink to="/nhansu" >Nhân Sự</NavLink></Menu.Item>
                         <Menu.Item key="7"><NavLink to="/hopdong">Hợp đồng</NavLink></Menu.Item>
@@ -138,27 +140,36 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="team" />
-                                <span>Quản lý ...</span>
+                                <span>Quản lý kế toán</span>
                             </span>
                         }
                     >
-                         {claims.map((item, i) => {
-                        if (item.url) {
-                            if(item.menu===3){
-                                return <Menu.Item key={item.url}><NavLink to={item.url} className="">{item.des}</NavLink ></Menu.Item>
+                        {claims.map((item, i) => {
+                            if (item.url) {
+                                if (item.menu === 3) {
+                                    return <Menu.Item key={item.url}><NavLink to={item.url} className="">{item.des}</NavLink ></Menu.Item>
+                                }
                             }
-                        }
 
-                    })}
+                        })}
                         {/* <Menu.Item key="11"><NavLink to="/duan" className="">Dự án</NavLink ></Menu.Item>
                         <Menu.Item key="10"><NavLink to="/diaban" className="">Địa bàn</NavLink ></Menu.Item>
                         <Menu.Item key="8"><NavLink to="/unit" className="">Đơn vị</NavLink></Menu.Item>
                         <Menu.Item key="/231123das"><NavLink to="" className="">omg</NavLink></Menu.Item> */}
                     </SubMenu>
-                    <Menu.Item key="12">
-                        <Icon type="file" />
-                        <span>File</span>
-                    </Menu.Item>
+                    <SubMenu key="sub4" title={
+                        <span>
+                            <Icon type="form" />
+                            <span>Đăng ký nghỉ</span>
+                        </span>
+                    }>
+                        <Menu.Item key="12">
+                            <NavLink to="/half" className="">Nghỉ nửa ngày</NavLink >
+                        </Menu.Item>
+                        <Menu.Item key="13">
+                            <NavLink to="/request" className="">Nghỉ 1 hoặc nhiều ngày</NavLink >
+                        </Menu.Item>
+                    </SubMenu>
                 </Menu>
             </Sider>
         )

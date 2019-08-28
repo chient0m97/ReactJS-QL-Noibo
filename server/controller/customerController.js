@@ -17,9 +17,7 @@ var CustomerController = {
         let offset = pageSize * (pageNumber - 1);
         var res_customer = []
         customerData.getCustomer(limit, offset, index, sortBy, async (data) => {
-            console.log('dataaaa', data)
             await data.data.customers.map((value, index) => {
-
                 switch (value.kh_lienlac) {
                     case 'DD':
                         value.kh_lienlac_txt = 'Đại diện'
@@ -28,24 +26,11 @@ var CustomerController = {
                         value.kh_lienlac_txt = 'Đầu mối liên lạc'
                         break;
                     case 'TXLL':
-                        value.kh_lienlac_txt = 'Thường xuyên lien lạc'
+                        value.kh_lienlac_txt = 'Thường xuyên liên lạc'
                         break;
                 }
-                // switch (value.kh_gioitinh) {
-                //     case 'Nam':
-                //         value.kh_gioitinh = 'Nam'
-                //         break;
-                //     case 'Nữ':
-                //         value.kh_gioitinh = 'Nữ'
-                //         break;
-                //     case 'Khác':
-                //         value.kh_gioitinh = 'Khác'
-                //         break;
-                // }    
-
                 res_customer.push(value)
             })
-            console.log(res_customer, 'data')
             data.data.customers = res_customer
             callback(data);
         });
@@ -64,7 +49,6 @@ var CustomerController = {
 
     GetById: function GetById(Id, callback) {
         customerData.GetById(Id, (data) => {
-            console.log('DATA', data)
             if (data == undefined) {
                 callback({});
             }
@@ -74,28 +58,24 @@ var CustomerController = {
 
     getTinh: function getTinh(callback) {
         customerData.getTinh((data) => {
-            console.log('data', data)
             callback(data)
         })
     },
 
     getHuyen: function getHuyeb(body, callback) {
         customerData.getHuyen(body.id_db_tinh, (data) => {
-            console.log('data huyennnn', data)
             callback(data)
         })
     },
 
     getXa: function getXa(data, callback) {
         customerData.getXa(data.id_db_huyen, (data) => {
-            console.log('data xaaaaa', data)
             callback(data)
         })
     },
 
     getDonvi: function getDonvi(callback) {
         customerData.getDonvi((data) => {
-            console.log('day la donvi')
             callback(data)
         })
     },
@@ -139,38 +119,30 @@ var CustomerController = {
         delete customer.dm_db_id_huyen_customer
         delete customer.dm_db_id_tinh_customer
         delete customer.dm_db_id_xa_customer
-        console.log(customer, 'customer custom')
-        if (Validator.isInt(customer.kh_sodienthoai, 'Số điện thoại không đúng định dạng !!')
-            // & Validator.isMail(customer.kh_email, 'Email không đúng định dạng !!')
+        if (
+            await Validator.db.unique('khachhangs', 'kh_sodienthoai', customer.kh_sodienthoai, 'Số điện thoại này đã tồn tại !!')
         ) {
-            if (
-                await Validator.db.unique('khachhangs', 'kh_email', customer.kh_email, 'Email khách hàng này đã tồn tại !!')
-                & await Validator.db.unique('khachhangs', 'kh_sodienthoai', customer.kh_sodienthoai, 'Số điện thoại khách hàng này đã tồn tại !!')
-            ) {
-                console.log('đã validate')
-                customerData.insertCustomer(customer, (response) => {
-                    var message = constant.successInseart;
-                    var status = 200;
-                    if (!response.success) {
-                        Validator.error.push(constant.errorSys)
-                        message = Validator.getError()
-                        status = 400
-                    }
-                    callback({
-                        message: message,
-                        success: response.success,
-                        id_customer: customer.kh_id
-                    }, status);
-                })
-            }
-            else {
-                var eror = Validator.getError()
-                console.log('lỗi trả về', eror)
+            customerData.insertCustomer(customer, (response) => {
+                var message = constant.successInseart;
+                var status = 200;
+                if (!response.success) {
+                    Validator.error.push(constant.errorSys)
+                    message = Validator.getError()
+                }
                 callback({
-                    message: eror,
-                    success: false
-                }, 400);
-            }
+                    message: message,
+                    success: response.success,
+                    id_customer: customer.kh_id
+                }, status);
+            })
+        }
+        else {
+            var eror = Validator.getError()
+            console.log('lỗi trả về', eror)
+            callback({
+                message: eror,
+                success: false
+            }, 400);
         }
     },
 
@@ -191,12 +163,12 @@ var CustomerController = {
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
-        customer.dm_dv_id_tinh = customer.dm_dv_id_tinh_customer
-        customer.dm_dv_id_huyen = customer.dm_dv_id_huyen_customer
-        customer.dm_dv_id_xa = customer.dm_dv_id_xa_customer
         delete customer.dm_db_id_huyen_customer
         delete customer.dm_db_id_tinh_customer
         delete customer.dm_db_id_xa_customer
+        customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
+        customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
+        customer.dm_db_id_xa = customer.dm_db_id_xa_customer
         customerData.updateCustomer(customer, (res) => {
             callback({
                 success: res.success,
@@ -210,7 +182,6 @@ var CustomerController = {
         customerData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
             console.log(limit)
             console.log(offset)
-
             console.log('aaaaaaaaa', data)
             callback(data);
         })

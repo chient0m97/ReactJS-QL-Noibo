@@ -31,24 +31,34 @@ module.exports = {
             })
     },
     deleteUserbyId: function (Id, callback) {
-        console.log('id ne', Id)
-        knex.from('users').where('name', Id).del().then(res => {
-            callback({ success: true });
+        pool.connect().then(client => {
+            client.query("delete from pq_role_user_group where group_user_code ='" + Id + "'").then(res => {
+                client.query("delete from pq_group_user where user_code = '" + Id + "'").then(res1 => {
+                    client.query("delete from users where name ='" + Id + "' ").then(res2 => {
+                        client.release()
+                        callback({ success: true });
+                    }).catch(err => {
+                        client.release()
+                        callback({ success: false });
+                    })
 
-            console.log('aaaaaaaa')
-        }).catch(err => {
+                }).catch(err => {
+                    client.release()
+                    callback({ success: false });
+                })
 
-            console.log(err)
+            }).catch(err => {
+                client.release()
+                callback({ success: false });
+            })
 
         })
+
     },
     insertUser: function (user, callback) {
-        console.log('insert lan thu 1 ty')
         let abc = user;
         abc.id = uuidv1();
         knex.from('users').insert(abc).then(res => {
-
-            console.log('inserted');
             callback({ success: true });
         }).catch(err => {
 
@@ -57,7 +67,6 @@ module.exports = {
         })
     },
     updateUser: function (user, callback) {
-        console.log('upadteeeeeeeeeeeeee')
         knex.from('users').where('id', user.id)
             .update(user).then(res => {
 
@@ -67,6 +76,19 @@ module.exports = {
                 console.log(err)
                 callback({ success: false })
             })
+    },
+    changePass: function (user, callback) {
+        pool.connect().then(client => {
+            let query = "update users set password='" + user.password + "' where name='" + user.username + "'"
+            client.query(query).then(res => {
+                client.release()
+                callback({ success: true })
+            }).catch(err => {
+                client.release()
+                console.log(err)
+                callback({ success: false })
+            })
+        })
     },
     selectUser: function (user, callback) {
         knex.from('users').select('*').where('id', user.id).then(res => {
@@ -79,7 +101,6 @@ module.exports = {
         })
     },
     getUserLogin: function (username, callback) {
-        console.log('name:', username)
         knex('users').select('password').where('name', username).then(res => {
 
             console.log('result', res)
@@ -124,8 +145,8 @@ module.exports = {
                 return client.query(query)
                     .then(res => {
 
-                        client.release()
                         let data = res.rows
+                        client.release()
                         callback({
                             success: true,
                             data: data,
@@ -148,31 +169,34 @@ module.exports = {
         console.log('user name', per.user)
         callback({ message: 'dcm' })
         pool.connect().then(client => {
-            client.query("delete from pq_role_user_group where group_user_code ='"+per.user+"'").then(res1 => {
+            client.query("delete from pq_role_user_group where group_user_code ='" + per.user + "'").then(res1 => {
                 per.a.map(function (value) {
                     let role = value.split('.')[0]
                     let action = value.split('.')[1]
                     if (role && action) {
-                        client.query("select * from pq_role_action where role_code = (select id from pq_roles where name ='" + role + "' ) and action_code = (select id from pq_actions where name = '" + action + "')").then(res => {
-                            console.log('-------------------------id----------------------',res.rows[0].id)
-                            let idra = res.rows[0].id
-                            let idgr = uuidv1();
-                            client.query("insert into pq_role_user_group values('"+per.user+"','"+idra+"','"+idgr+"')").then(res2=>{
-                                console.log('them moi thagnh cong')
+                        let id_role_action = uuidv1()
+                        client.query("insert into pq_role_action values((select id from pq_roles where name ='" + role + "' ),(select id from pq_actions where name = '" + action + "'),'" + id_role_action + "')").then(res1 => {
+                            client.query("select * from pq_role_action where role_code = (select id from pq_roles where name ='" + role + "' ) and action_code = (select id from pq_actions where name = '" + action + "')").then(res => {
+                                console.log('-------------------------id----------------------', res.rows)
+                                let idra = res.rows[0].id
+                                let idgr = uuidv1();
+                                client.query("insert into pq_role_user_group values('" + per.user + "','" + idra + "','" + idgr + "')").then(res2 => {
+                                    console.log('them moi thagnh cong')
+                                })
+
                             })
                         })
+
                     }
 
                 })
             })
 
 
-        }).catch(err=>{
+        }).catch(err => {
             client.release()
             console.log(err)
         })
     },
-
-  
 
 };

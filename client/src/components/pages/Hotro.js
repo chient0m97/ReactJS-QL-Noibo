@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card } from 'antd';
+import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card, DatePicker } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
@@ -7,13 +7,15 @@ import { fetchLoading } from '@actions/common.action';
 import Modal_Khachhangs from '@pages/Modal/Modal_Khachhangs.js';
 import cookie from 'react-cookies'
 import '@styles/style.css'
-
+import moment from 'moment';
+import { Width } from 'devextreme-react/linear-gauge';
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
+
+
 var format = require('dateformat')
 
-var g = "9298eb00-a6d9-11e9-bd04-0986e022adbf"
 const FormModal = Form.create({ name: 'from_in_modal' })(
     class extends React.Component {
         clear = e => {
@@ -40,17 +42,31 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                 this.props.trangthaibutton = false
             }
         }
+
+        onOk = (value) => {
+            console.log('onOk: ', value);
+        }
+
         render() {
             var formatDateHMS = require('dateformat')
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
             var first_kh_id = null;
+            var first_da_id = null;
+            var first_ns_id = null;
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton } = this.props;
             const { getFieldDecorator } = form;
             if (khachhang.length !== 0) {
                 first_kh_id = khachhang[0].kh_id
             }
+            if (id_duan.length !== 0) {
+                first_da_id = id_duan[0].dm_duan_id
+            }
+            if (nhansu.length !== 0) {
+                first_ns_id = nhansu[0].ns_id
+            }
+            var user_cookie = cookie.load('user');
             return (
                 <Modal
                     centered
@@ -70,7 +86,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 </div>
                                 <Form.Item label="Gán cho">
                                     {getFieldDecorator('ns_id_ass', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "9298eb00-a6d9-11e9-bd04-0986e022adbf"
+                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: first_ns_id
                                     })(<Select
                                         size={"small"}
                                         onChange={changeButton}
@@ -78,7 +94,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value="9298eb00-a6d9-11e9-bd04-0986e022adbf" > <Icon type="user" /> &nbsp;&nbsp;&nbsp; Assignd to Me</Option>
                                         {
                                             nhansu.map((value, index) => {
                                                 return (<Option value={value.ns_id}>{value.ns_hovaten}</Option>)
@@ -90,7 +105,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={8} >
                                 <Form.Item label="Dự án">
                                     {getFieldDecorator('dm_duan_id', {
-                                        rules: [{ required: true, message: 'Trường không được để trống', }], initialValue: "eb7d059c-b36f-481a-9ad3-0a7c593bbedc"
+                                        rules: [{ required: true, message: 'Trường không được để trống', }], initialValue: first_da_id
                                     })(<Select
 
                                         size={"small"}
@@ -121,7 +136,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                         <Option value="GAP"> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /> &ensp; Gấp </Option>
                                         <Option value="CAO"> <Icon type="up" style={{ color: 'orange' }} /> &ensp; Cao</Option>
                                         <Option value="TB"> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /> &ensp; Trung Bình</Option>
-                                        <Option value="THAP"> <Icon type="down" style={{ color: '#ccff33' }} /> &ensp; Thấp</Option>
+                                        <Option value="THAP"> <Icon type="down" style={{ color: 'lime' }} /> &ensp; Thấp</Option>
                                         <Option value="RT"> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /> &ensp; Rất Thấp </Option>
                                     </Select>)}
                                 </Form.Item>
@@ -140,7 +155,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={8}>
                                 <Form.Item label="Khách hàng">
                                     {getFieldDecorator('kh_id', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], //initialValue: first_kh_id
+                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: first_kh_id
                                     })(<Select
                                         size={"small"}
                                         // onChange={this.handleChange}
@@ -150,7 +165,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     >
                                         {
                                             khachhang.map((value, index) => {
-                                                return (<Option value={value.kh_id}>{value.kh_hovaten}</Option>)
+                                                return (<Option value={value.kh_id}>{value.kh_ten}</Option>)
                                             })
                                         }
                                     </Select>)}
@@ -198,8 +213,8 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={6}>
                                 <Form.Item label="Người tạo">
                                     {getFieldDecorator('ns_id_nguoitao', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "9298eb00-a6d9-11e9-bd04-0986e022adbf"
-                                    })(<Tag>&ensp;<Icon type="user" /> &emsp;&emsp; Tạ Văn Toàn &emsp;&emsp;&emsp;&ensp;</Tag>)}
+                                        rules: [{ required: true, message: 'Trường không được để trống' }]
+                                    })(<Tag>&ensp;<Icon type="user" /> &emsp;&emsp; {user_cookie} &emsp;&emsp;&emsp;&ensp;</Tag>)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -212,8 +227,10 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             <Col span={6}>
                                 <Form.Item label="TG dự kiến hoàn thành">
                                     {getFieldDecorator('ht_thoigian_dukien_hoanthanh', {
-                                        rules: [{}],
-                                    })(<Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />)}
+                                    })(
+                                    // <DatePicker showTime size={"small"} onOk={this.onOk} format="DD/ MM/ YYYY--HH: MM: ss" style={{ minWidth: '170px' }} suffixIcon={Icon('')} />
+                                    <Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />
+                                    )}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -260,10 +277,8 @@ class Hotro extends React.Component {
             nhansu: [],
             khachhang: [],
             pageNumber: 1,
-            current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
             count: 1,
             show: false,
             visible: false,
@@ -279,9 +294,7 @@ class Hotro extends React.Component {
             index: 'ht_id',
             orderby: 'arrow-up',
             date: null,
-            trangthaiinput: false,
             trangthaibutton: false,
-            colorcolumn: 'yellow',
             selectedId: [],
             statebuttonedit: true,
             statebuttondelete: true,
@@ -296,25 +309,33 @@ class Hotro extends React.Component {
 
     set_Select_id_duan() {
         Request('hotro/getidduan', 'POST', {}).then((res) => {
-            this.setState({
-                id_duanfillmodal: res.data.data.duans
-            })
+            if (res.data.data.duans) {
+                this.setState({
+                    id_duanfillmodal: res.data.data.duans
+                })
+            }
         })
     }
 
     set_Select_NhanSu() {
         Request('hotro/getnhansu', 'POST', {}).then((res) => {
-            this.setState({
-                nhansu: res.data.data.nhansu
-            })
+            if (res.data.data.nhansu) {
+                this.setState({
+                    nhansu: res.data.data.nhansu
+                })
+            }
+
         })
     }
 
     set_Select_KhachHang() {
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
-            this.setState({
-                khachhang: res.data.data.khachhangs
-            })
+            if (res.data.data.khachhangs) {
+                this.setState({
+                    khachhang: res.data.data.khachhangs
+                })
+            }
+
         })
     }
 
@@ -331,30 +352,42 @@ class Hotro extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                this.setState({
-                    hotro: res.data.data.hotros,
-                    count: res.data.data.count
-                })
-                this.props.fetchLoading({
-                    loading: false
-                })
-                var array_duan = []
-                array_ht_trangthai = [],
+                if (res.data.data.hotros !== undefined) {
+                    this.setState({
+                        hotro: res.data.data.hotros,
+                        count: res.data.data.count
+                    })
+                    this.props.fetchLoading({
+                        loading: false
+                    })
+                    var array_duan = []
+                    array_ht_trangthai = []
                     res.data.data.hotros.map((data, index) => {
                         array_duan.push({ name: data.dm_duan_ten, id: data.dm_duan_id })
                         array_ht_trangthai.push(data.ht_trangthai)
                     })
-                this.setState({
-                    id_duanfilltable: array_duan
-                })
+                    this.setState({
+                        id_duanfilltable: array_duan
+                    })
+                }
+                else {
+                    this.props.fetchLoading({
+                        loading: false
+                    })
+                }
+
             })
     }
 
     getkhachhang = () => {
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
-            this.setState({
-                khachhangs: res.data.data.khachhangs
-            })
+            if(res.data.data.khachhangs){
+                this.setState({
+                    khachhangs: res.data.data.khachhangs
+                })
+            }  
+        }).catch((err) => {
+            console.log(err)
         })
     }
 
@@ -372,27 +405,14 @@ class Hotro extends React.Component {
             })
             if (url === 'hotro/update') {
                 let user_cookie = cookie.load('user');
-                console.log("Hien thi user ", user_cookie)
                 values.ns_id_capnhat = user_cookie
                 values.nkht_thoigiancapnhat = new Date()
             }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
-                console.log("hien thi ht_thoigiandukienhoanthanh ", values.ht_thoigian_dukien_hoanthanh)
                 values.ht_thoigian_dukien_hoanthanh = null
             }
-            // else
-            // {
-            //     if (url === 'hotro/update') {
-            //         object = values
-            //         object.ht_thoigian_dukien_hoanthanh = object.ht_thoigian_dukien_hoanthanh + "T17:00:00.000Z"
-            //         this.setState({
-            //             rowthotroselected: object
-            //         })
-            //     }
-            // }
             Request(url, 'POST', values)
                 .then(async (response) => {
-                    console.log("Hien thi values ", values)
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -418,17 +438,15 @@ class Hotro extends React.Component {
                     });
                     this.getHotro(this.state.page)
                     this.render()
+                }).catch((err) => {
+                    console.log(err)
                 })
         })
     }
 
     deleteHotro = (ht_id) => {
-        console.log("Hien thi ht_id ", ht_id)
         Request(`hotro/delete`, 'DELETE', { ht_id: ht_id })
             .then((res) => {
-                ht_id.map((values, index) => {
-                    arraydelete.push(values)
-                })
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
                     description: res.data.message
@@ -440,8 +458,9 @@ class Hotro extends React.Component {
                     statebuttonedit: true,
                     selectedRowKeys: []
                 })
-                console.log("Hien thi state.selectedrow ", this.state.selectedrow)
                 this.render()
+            }).catch((err) => {
+                console.log(err)
             })
     }
 
@@ -455,6 +474,7 @@ class Hotro extends React.Component {
         document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
     onchangpage = (page) => {
@@ -515,10 +535,12 @@ class Hotro extends React.Component {
         this.setState({
             visible: true
         });
+
         await form.resetFields();
+        let user_cookie = cookie.load('user');
+        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
         form.setFieldsValue({ ht_thoigiantiepnhan: formatDateModal(new Date(), "yyyy-mm-dd") });
         if (hotro.ht_id !== undefined) {
-            console.log("day la update")
             this.setState({
                 id_visible: true,
                 action: 'update'
@@ -551,27 +573,11 @@ class Hotro extends React.Component {
             visible_kh: false
         })
     }
-
-    handleChangeInput = (e) => {
-        let state = this.state;
-        state[e.target.name] = e.target.value;
-        this.setState(state);
-        console.log('Change ')
-    }
-
-    handleCount = () => {
-        let count = this.state.count;
-        this.setState({
-            count: count + 1
-        })
-    }
-
     confirm = (e) => {
         message.success('Bấm yes để xác nhận');
     }
 
     cancel = (e) => {
-        console.log(e);
         this.setState({
             stateconfirmdelete: false
         })
@@ -596,7 +602,6 @@ class Hotro extends React.Component {
 
     onTodoChange = async (value) => {
         const { form } = this.formRef.props
-        console.log(value, 'value change')
         if (value === "daxong") {
             await this.setState({
                 date: formatDateModal(new Date(), "dd / mm / yyyy -- HH : MM : ss"),
@@ -612,12 +617,16 @@ class Hotro extends React.Component {
             })
             form.setFieldsValue({ ht_thoigian_hoanthanh: null })
         }
-        await console.log('Hien thi thoi gian hoan thanh ', this.state.date)
+    }
+
+    getNguoiTao = () => {
+
     }
 
     Assignme = () => {
+        let user_cookie = cookie.load('user');
         const { form } = this.formRef.props
-        form.setFieldsValue({ ns_id_ass: '9298eb00-a6d9-11e9-bd04-0986e022adbf' })
+        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
         this.setState({
             trangthaibutton: true
         })
@@ -662,8 +671,6 @@ class Hotro extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys, selectedRows) => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
-        console.log("hien thi selectedrows ", selectedRows)
         this.setState({
             selectedRowKeys,
             selectedId: selectedRowKeys
@@ -696,17 +703,20 @@ class Hotro extends React.Component {
         else {
             this.onSelectChange([row.ht_id], [row])
         }
-        // if (stateRowSelected === false) {
-
-        //     this.onSelectChange([row.ht_id], [row])
-        //     stateRowSelected = !stateRowSelected
-        // }
-        // else {
-        //     this.onSelectChange([], [])
-        //     stateRowSelected = !stateRowSelected
-        // }
     }
 
+    disabledDate = (current) => {
+        // Can not select days before today and today
+        return current && current < moment().endOf('day');
+    }
+
+    disabledDateTime = () => {
+        return {
+            disabledHours: () => range(0, 24).splice(4, 20),
+            disabledMinutes: () => range(30, 60),
+            disabledSeconds: () => [55, 56],
+        };
+    }
 
     render() {
         var i = 0
@@ -714,36 +724,10 @@ class Hotro extends React.Component {
         var formatDate = require('dateformat')
         const { selectedRowKeys } = this.state
         const rowSelection = {
-            // columnTitle: 'Select',
             hideDefaultSelections: true,
             selectedRowKeys,
             onChange: this.onSelectChange,
             onHeaderCell: this.click
-            // onChange: async (selectedRowKeys, selectedRows) => {
-            //     console.log("Hien thi selectedrows ", selectedRows)
-            //     array = []
-            //     await console.log("hien thi this.state.selectedrow ", this.state.selectedrow)
-            //     await console.log("hien thi selectedrowkeys ", selectedRowKeys)
-            //     await selectedRowKeys.forEach(async element => {
-            //         if (this.state.selectedrow.length === 0) {
-            //             await console.log("hien thi trong foreach-if")
-            //             array = selectedRowKeys
-            //         }
-            //         else {
-            //             var j = false
-            //             await this.state.selectedrow.forEach(async element2 => {
-            //                 if (element2 === element) {
-            //                     j = true
-            //                 }
-            //             })
-            //             if (j === false) {
-            //                 await array.push(element)
-            //             }
-            //         }
-            //     });
-            //     await console.log("array ", array)
-
-            // },
         };
 
         return (
@@ -791,7 +775,11 @@ class Hotro extends React.Component {
                         </Row>
                     </Card>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hotro} rowKey="ht_id" bordered scroll={{ x: 1000 }}
+                        <Table rowSelection={rowSelection}
+                            onRowClick={this.onRowClick}
+                            pagination={false}
+                            dataSource={this.state.hotro}
+                            rowKey="ht_id" bordered scroll={{ x: 1000 }}
                             expandedRowRender={(record, selectedRowKeys) => {
                                 return (
                                     <div style={{ textAlign: 'left' }}>
@@ -826,7 +814,12 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="kh_hovaten" width={100}
+                            <Column title="Khách hàng" dataIndex="kh_ten" width={100}
+                                render={text => {
+                                    return this.checkDate(i, text, j)
+                                }}
+                                width={150} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Người tạo" dataIndex="ns_hoten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
@@ -868,7 +861,7 @@ class Hotro extends React.Component {
                             />
                             <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
                                 render={text => {
-                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy '-' HH:MM:ss"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}

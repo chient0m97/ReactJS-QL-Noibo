@@ -10,7 +10,6 @@ const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
 
-
 let id = 0;
 var formatDateModal = require('dateformat')
 
@@ -19,30 +18,18 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
     class extends React.Component {
 
         clear = e => {
-            console.log(e);
         }
 
         onChange = (field, value) => {
             this.setState({
                 [field]: value,
             });
-            console.log('date is: ', value)
         };
-
-        onDateChange = value => {
-            this.onChange('dateValue', value);
-        }
-
-        handleOpenChange = open => {
-            if (!open) {
-                this.setState({ dateOpen: true })
-            }
-        }
 
         handleChange = async (value) => {
         }
         render() {
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, dinhdanh } = this.props;
             const { getFieldDecorator } = form;
             const selectBefore = (
                 <Select placeholder="(+84)" defaultValue="0" style={{ width: 80 }}>
@@ -76,21 +63,21 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     {getFieldDecorator('ns_ho', {
                                         rules: [{ required: true, message: 'Trường không được để trống!' }]
                                     })(
-                                        <Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                        <Input size={"small"} type="text" />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Tên lót">
                                     {getFieldDecorator('ns_tenlot', {
                                         rules: [{}]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Tên">
                                     {getFieldDecorator('ns_ten', {
                                         rules: [{ required: true, message: 'Trường không được để trống!', }],
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -149,24 +136,35 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                         </Row>
                         <Row gutter={24}>
                             <Col span={9}>
-                                <Form.Item label="Định danh cá nhân(Cmt/ Thẻ căn cước)">
+                                <Form.Item label="Định danh cá nhân">
                                     {getFieldDecorator('ns_dinhdanhcanhan', {
                                         rules: [{ required: true, message: 'Trường không được để trống!', }],
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Select
+                                        size={"small"}
+                                        filterOption={(input, option) =>
+                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                    >
+                                        {
+                                            dinhdanh.map((value, index) => {
+                                                return (<Option value={value.madinhdanh}>{value.name}</Option>)
+                                            })
+                                        }
+                                    </Select>)}
                                 </Form.Item>
                             </Col>
                             <Col span={9}>
                                 <Form.Item label="Số điện thoại">
                                     {getFieldDecorator('ns_sodienthoai', {
                                         rules: [{}],
-                                    })(<Input addonBefore={selectBefore} size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input addonBefore={selectBefore} size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Email">
                                     {getFieldDecorator('ns_email', {
                                         rules: [{}],
-                                    })(<Input size={"small"} type="email" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="email" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -175,21 +173,21 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="Địa chỉ hiện nay">
                                     {getFieldDecorator('ns_diachihiennay', {
                                         rules: [{ required: true, message: 'Trường không được để trống!' }]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={9}>
                                 <Form.Item label="Nguyên quán">
                                     {getFieldDecorator('ns_nguyenquan', {
                                         rules: [{ required: true, message: 'Trường không được để trống!' }]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Người liên hệ">
                                     {getFieldDecorator('ns_nguoilienhe', {
                                         rules: [{}]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -198,21 +196,21 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="Bằng cấp">
                                     {getFieldDecorator('ns_bangcap', {
                                         rules: [{}]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={9}>
                                 <Form.Item label="Các giấy tờ đã nộp">
                                     {getFieldDecorator('ns_cacgiaytodanop', {
                                         rules: [{}]
-                                    })(<Input type="text" size={"small"} allowClear onChange={this.clear} />)}
+                                    })(<Input type="text" size={"small"} onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Tài khoản ngân hàng">
                                     {getFieldDecorator('ns_taikhoannganhang', {
                                         rules: [{}]
-                                    })(<Input type="text" size={"small"} allowClear onChange={this.clear} />)}
+                                    })(<Input type="text" size={"small"} onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -303,6 +301,7 @@ class Nhansu extends React.Component {
             selectedRowKeys: [],
             selectedId: [],
             selectedrow: [],
+            dinhdanh: []
         }
     }
 
@@ -328,10 +327,12 @@ class Nhansu extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                this.setState({
-                    nhansu: res.data.data.nhansu,
-                    count: res.data.data.count
-                })
+                if(res.data.data.nhansu){
+                    this.setState({
+                        nhansu: res.data.data.nhansu,
+                        count: res.data.data.count
+                    })
+                }
                 this.props.fetchLoading({
                     loading: false
                 })
@@ -348,6 +349,7 @@ class Nhansu extends React.Component {
             var url = this.state.action === 'insert' ? 'nhansu/insert' : 'nhansu/update'
             Request(url, 'POST', values)
                 .then((response) => {
+
                     this.setState({
                         rowthotroselected: values
                     })
@@ -399,6 +401,18 @@ class Nhansu extends React.Component {
         })
     }
 
+    set_Select_DinhDanh() {
+        Request('nhansu/getdinhdanh', 'POST', {}).then((res) => {
+            if(res.data.data.users){
+                this.setState({
+                    dinhdanh: res.data.data.users
+                })
+            }
+            
+        })
+
+    }
+
     refresh = async (pageNumber) => {
         message.success('Refresh success', 1);
         await this.getNhansu(this.state.pageNumber)
@@ -406,7 +420,7 @@ class Nhansu extends React.Component {
 
     componentDidMount() {
         this.getNhansu(this.state.pageNumber, this.state.index, this.state.sortBy);
-
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
     onchangpage = (page) => {
@@ -423,7 +437,6 @@ class Nhansu extends React.Component {
     }
 
     search = async (xxxx) => {
-        console.log('First Search');
         Request('nhansu/search', 'POST', {
             pageSize: this.state.pageSize,
             pageNumber: this.state.pageNumber,
@@ -492,6 +505,7 @@ class Nhansu extends React.Component {
             nhansu.ns_ngaydongbaohiem = formatDateModal(nhansu.ns_ngaydongbaohiem, 'yyyy-mm-dd')
             form.setFieldsValue(nhansu);
         }
+        this.set_Select_DinhDanh();
     }
     handleOk = e => {
         this.setState({
@@ -524,7 +538,6 @@ class Nhansu extends React.Component {
     }
 
     cancel = (e) => {
-        console.log(e);
     }
 
     showTotal = (total) => {
@@ -543,7 +556,6 @@ class Nhansu extends React.Component {
     }
 
     onSearch = (val) => {
-        console.log('search:', val);
     }
 
     saveFormRef = formRef => {
@@ -551,7 +563,6 @@ class Nhansu extends React.Component {
     }
 
     onChange = async (value) => {
-        console.log('column search', value)
         await this.setState({
             columnSearch: value,
         })
@@ -597,11 +608,16 @@ class Nhansu extends React.Component {
     };
 
     onRowClick = (row) => {
-        this.onSelectChange([row.ns_id], [row])
+        if (this.state.selectedRowKeys[0] === row.ns_id) {
+            this.onSelectChange([], [])
+        }
+        else {
+            this.onSelectChange([row.ns_id], [row])
+        }
     }
 
     render() {
-        const columnFilter = [{column: 'ns_ho', type: 'text', name: 'Họ'},{column: 'ns_ten', type: 'text', name:'Tên'}, {column: 'ns_ngaysinh', type: 'date', name: 'Ngày sinh'} ]
+        const columnFilter = [{ column: 'ns_ho', type: 'text', name: 'Họ' }, { column: 'ns_ten', type: 'text', name: 'Tên' }, { column: 'ns_ngaysinh', type: 'date', name: 'Ngày sinh' }]
         const { selectedRowKeys } = this.state
         const rowSelection = {
             hideDefaultSelections: true,
@@ -612,8 +628,8 @@ class Nhansu extends React.Component {
         var formatDate = require('dateformat')
         return (
             <div>
-                <MultiFilter 
-                    columnFilter = {columnFilter}
+                <MultiFilter
+                    columnFilter={columnFilter}
                 />
                 <Card>
                     <Row>
@@ -649,13 +665,10 @@ class Nhansu extends React.Component {
                         </Col>
                         <Col span={2}>
                             <Tooltip title="Tải Lại">
-                                <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
+                                <Button shape="round" type="primary" style={{ marginLeft: '18px' }} size="default" onClick={this.refresh.bind(null)}>
                                     <Icon type="reload" />
                                 </Button>
                             </Tooltip>
-                        </Col>
-                        <Col span={3}>
-                            <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
                         </Col>
                     </Row>
                 </Card>
@@ -668,6 +681,7 @@ class Nhansu extends React.Component {
                         title={this.state.title}
                         formtype={this.state.formtype}
                         id_visible={this.state.id_visible}
+                        dinhdanh={this.state.dinhdanh}
                     />
                     <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
                         <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" onHeaderCell={this.onHeaderCell} />

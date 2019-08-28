@@ -14,16 +14,14 @@ router.post('/get', function (req, res) {
   })
 })
 router.post('/getcha',function(req,res){
-  console.log("day la router diaban cha")
   diabanController.getcha(req.body, function(data){
     res.send(data);
   })
 })
 
 router.delete('/delete', function (req, res) {
-  let dm_db_id = req.body.dm_db_id
-  console.log('id',dm_db_id)
-  diabanController.deleteDiabanbyId(dm_db_id, function (data) {
+  console.log("log ",req.body)
+  diabanController.DeleteDiabanbyId(req.body.dm_db_id, function (data) {
         res.send(data);
     })
 })
@@ -36,7 +34,6 @@ router.post('/insert',function (req, res) {
 })
 
 router.post('/update',function (req, res) {
-  console.log('data res',req)
   diabanController.updateDiaban(req.body, function (data) {
       res.send(data);
   })

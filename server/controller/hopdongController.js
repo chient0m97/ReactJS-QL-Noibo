@@ -2,17 +2,6 @@ var Validator = require('../validate/common');
 const hopdongData = require('../data/hopdong.data');
 const constant = require('./constant');
 const uuidv4 = require('uuid/v4');
-//var multer = require('multer');
-//var path = require('path');
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, 'public/upload/')
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, Date.now() + '-' + file.originalname)
-//     }
-// })
-// var upload = multer({ storage: storage }).single('file')
 var HopdongController = {
     /**
      * Get user paging.
@@ -23,10 +12,10 @@ var HopdongController = {
     /**
      * @param
      */
-    getHopdong: function getHopdong(pageNumber, pageSize, index, sortBy, callback) {
+    getHopdong: function getHopdong(pageNumber, pageSize, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        hopdongData.getHopdong(limit, offset, index, sortBy, (data) => {
+        hopdongData.getHopdong(limit, offset, (data) => {
             callback(data);
         });
     },
@@ -121,11 +110,6 @@ var HopdongController = {
             callback(data)
         })
     },
-    getupload: function getupload(callback) {
-        hopdongData.getupload((data) => {
-            callback(data)
-        })
-    },
     search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
@@ -135,6 +119,43 @@ var HopdongController = {
     },
     validateCreate: (req, res, next) => {
         next()
+    },
+
+    insertDuan: async function insertDuan(duan, callback) {
+        console.log(duan,'duan day');
+        
+        if (1
+        ) {
+            if (1){
+                let firstInsert;
+                firstInsert = duan;
+                firstInsert.dm_duan_id = uuidv4();
+                hopdongData.insertDuan(duan, (response) => {
+                    var message = constant.successInsert;
+                    var status = 200;
+                    if (!response.success) {
+                        Validator.error.push(constant.errorSys)
+                        message = Validator.getError()
+                    }
+                    callback({
+                        message: message,
+                        success: response.success
+                    }, status);
+                })
+            } 
+            else {
+                callback({
+                    message: Validator.getError(),
+                    success: false
+                }, status);
+            }
+
+        } else {
+            callback({
+                message: Validator.getError(),
+                success: false
+            }, 400);
+        }
     },
 }
 module.exports = HopdongController;

@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import { Layout } from 'antd'
 
-const {Footer} = Layout
+const { Footer } = Layout
 
 class AppFooter extends Component {
-    render (){
+    render() {
         return (
-            <Footer style={{ textAlign: 'center' }}>HCM Company</Footer>
+            <Footer style={{ textAlign: 'center', fontSize: '12px', padding: '5px' }}>
+                <div>Vertion 1.0.</div>
+                <div>Copyright @ 2019 HCM Company.</div>
+                <div>All rights reserved.</div>
+            </Footer>
         )
     }
 }

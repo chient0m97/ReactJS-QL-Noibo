@@ -1,12 +1,14 @@
 import { Tree } from 'antd';
 import React from 'react';
+import Request from '@apis/Request'
 const { TreeNode } = Tree;
+
 const menuData = [
   {
     title: 'ql user',
     key: 'user',
-    children:[
-      {title:'a',key:'b',children:[{title:'x',key:'y'}]}
+    children: [
+      { title: 'a', key: 'b', children: [{ title: 'x', key: 'y' }] }
     ]
   }
 ]
@@ -107,16 +109,32 @@ const treeData = [
     ],
   },
 
-
+  {
+    title: 'Hóa đơn',
+    key: 'hoadon',
+    children: [
+      { title: 'xem', key: 'HOADON.READ' },
+      { title: 'thêm', key: 'HOADON.INSERT' },
+      { title: 'sửa', key: 'HOADON.UPDATE' },
+      { title: 'xóa', key: 'HOADON.DELETE' },
+    ],
+  },
 
 ];
 
 class Demo extends React.Component {
+
   state = {
     expandedKeys: ['user', 'role'],
     autoExpandParent: true,
     checkedKeys: this.props.dataTree,
     selectedKeys: [],
+    pageNumber: 1,
+    pageSize: 10,
+    isSort: true,
+    sortBy: 'ASC',
+    index: 'dm_menu_id',
+    datamenu:[]
   };
 
   onExpand = expandedKeys => {
@@ -130,9 +148,27 @@ class Demo extends React.Component {
     return this.state.checkedKeys;
   }
   onCheck = async checkedKeys => {
+    console.log(this.props.dataTree)
     await this.setState({ checkedKeys });
   };
-
+  componentDidMount() {
+    Request('menu/get', 'POST', {
+      pageSize: this.state.pageSize,
+      pageNumber: this.state.pageNumber,
+      index: this.state.index,
+      sortBy: this.state.sortBy
+    }).then(res => {
+      if(res.data.success){
+        let datamenu = res.data.data.menus.map(function(valuee){
+          return datamenu = {title:valuee.dm_menu_name,key:valuee.dm_menu_url}
+        })
+        console.log('resssssssssssssssssssss',datamenu)
+        this.setState({
+          datamenu:datamenu
+        })
+      }
+    })
+  }
   onSelect = (selectedKeys, info) => {
     this.setState({ selectedKeys });
   };
@@ -178,7 +214,7 @@ class Demo extends React.Component {
           <Tree
             checkable
           >
-            {this.renderTreeNodes(menuData)}
+            {this.renderTreeNodes(this.state.datamenu)}
           </Tree>
         </div>
       </div>

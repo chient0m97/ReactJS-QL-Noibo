@@ -10,12 +10,25 @@ import Hopdong from '@pages/Hopdong'
 import Diaban from '@pages/Diaban'
 import Duan from '@pages/Duan'
 import Donvi from '@pages/Unit'
+import Group from '@pages/Group'
+import Member from '../components/pages/Member';
+import ChangePassword from '../components/pages/Modal/ChangePassword';
+import ok from '../components/common/ok';
+import Hoadon from '../components/pages/Quanly_hoadon'
+import Request from '@pages/Request'
+import Half from '@pages/Half'
 
 const routers = [
+  
     {
-        path: '/homepage',
+        path: '/member',
+        component: Member,
+        name: 'member'
+    },
+    {
+        path: '/',
         component: HomePage,
-        name: 'home'
+        name: 'homepage'
     },
     {
         path: '/role',
@@ -52,6 +65,7 @@ const routers = [
         component: Customer,
         name: 'khachhang'
     },
+  
     {
         path: '/hopdong',
         component: Hopdong,
@@ -70,7 +84,37 @@ const routers = [
     {
         path: '/donvi',
         component: Donvi,
-        name: 'Duan'
+        name: 'donvi'
+    },
+    {
+        path: '/qlhd',
+        component: Hoadon,
+        name: 'hoadon'
+    },
+    {
+        path: '/group',
+        component: Group,
+        name: 'Group'
+    },
+    {
+        path: '/changepassword',
+        component: ChangePassword,
+        name: 'changepassword'
+    },
+    {
+        path: '/ok',
+        component: ok,
+        name: 'ok'
+    },
+    {
+        path: '/request',
+        component: Request,
+        name: 'Request'
+    },
+    {
+        path: '/half',
+        component: Half,
+        name: 'Half'
     },
 ]
 

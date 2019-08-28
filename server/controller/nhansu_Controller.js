@@ -8,51 +8,48 @@ var nhansuController = {
     getNhansu: function getNhansu(pageNumber, pageSize, index, sortBy, callback) {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
-        nhansuData.getNhansu(limit, offset, index, sortBy, function(data){
+        nhansuData.getNhansu(limit, offset, index, sortBy, function (data) {
             callback(data);
         })
     },
 
     insertNhansu: async function insertNhansu(nhansu, callback) {
-        nhansu.ns_id=uuidv1();
-        nhansu.ns_sodienthoai+="0";
-        if ( nhansu.ns_email===undefined|| Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng')
+        nhansu.ns_id = uuidv1();
+        nhansu.ns_sodienthoai += "0";
+        if (nhansu.ns_email === undefined || Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng')
         ) {
 
-            if (await Validator.db.unique('nhansu','ns_dinhdanhcanhan',nhansu.ns_dinhdanhcanhan, 'Định danh cá nhân đã tồn tại !')
-                & await Validator.db.unique('nhansu', 'ns_sodienthoai', nhansu.ns_sodienthoai, 'Số điện thoại đã tồn tại !')
-                & await Validator.db.unique('nhansu', 'ns_email', nhansu.ns_email, 'Email đã tồn tại !')) {
-                    nhansuData.insertNhansu(nhansu, (response) => {
-                        var message = constant.successInsert;
-                        var status = 200;
-                        if(!response.success) {
-                            Validator.error.push(constant.errorSys)
-                            message = Validator.getError();
-                            status = 400
-                        }
-                        callback({
-                            message: message,
-                            success: response.success
-                        }, status);
-                    });
-                } else {
+            if (await Validator.db.unique('nhansu', 'ns_dinhdanhcanhan', nhansu.ns_dinhdanhcanhan, 'Định danh cá nhân đã tồn tại !')) {
+                nhansuData.insertNhansu(nhansu, (response) => {
+                    var message = constant.successInsert;
+                    var status = 200;
+                    if (!response.success) {
+                        Validator.error.push(constant.errorSys)
+                        message = Validator.getError();
+                        status = 400
+                    }
                     callback({
-                        message: Validator.getError(),
-                        success: false
-                    }, 400);
-                }
+                        message: message,
+                        success: response.success
+                    }, status);
+                });
+            } else {
+                callback({
+                    message: Validator.getError(),
+                    success: false
+                }, 400);
+            }
         } else {
             callback({
-                message:Validator.getError(),
+                message: Validator.getError(),
                 success: false
-            },400);
+            }, 400);
         }
     },
 
-    updateNhansu: function updateNhansu(nhansu, callback){
-        if (Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng'))
-        {
-            if (1){
+    updateNhansu: function updateNhansu(nhansu, callback) {
+        if ( Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng') || nhansu.ns_email==="null") {
+            if (1) {
                 nhansuData.updateNhansu(nhansu, (res) => {
                     callback({
                         success: res.success,
@@ -72,24 +69,22 @@ var nhansuController = {
                 })
             }
             else
-            callback({
-                success: data.error,
-                message: "foreign key"
-            })
+                callback({
+                    success: data.error,
+                    message: "foreign key"
+                })
         })
     },
 
-    getDataSearch: function getDataSearch(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
-        let limit = pageSize;
-        let offset = pageSize * (pageNumber - 1);
-        nhansuData.getDataSearch(limit,offset,textSearch,columnSearch,index,sortBy, data => {
+    getUser(callback) {
+        nhansuData.getUser(function (data) {
             callback(data);
         })
     },
 
     getById: function getById(ns_id, callback) {
         nhansuData.getById(ns_id, data => {
-            if(data == undefined) {
+            if (data == undefined) {
                 callback({});
             }
             callback(data);

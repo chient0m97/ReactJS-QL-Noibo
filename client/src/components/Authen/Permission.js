@@ -59,4 +59,11 @@ module.exports = {
     Group:{
         Read:"GROUP.READ"
     }
+    ,
+    Hoadon:{
+        Read: "HOADON.READ",
+        Insert: "HOADON.INSERT",
+        Delete: "HOADON.DELETE",
+        Update:"HOADON.UPDATE",
+    }
 }

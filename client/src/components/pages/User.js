@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, Checkbox, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, Tooltip, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -12,8 +12,11 @@ import jwt from 'jsonwebtoken';
 import Permission from '../Authen/Permission'
 import TreeRole from '../common/Tree'
 import SearchModal from '../common/searchModal'
-const token = cookie.load('token');
+import { async } from 'q';
 const { Column } = Table;
+const token = cookie.load('token');
+
+const payload = jwt.decode(token);
 const FormModal = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     constructor(props) {
@@ -26,7 +29,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
     }
     render() {
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
-      console.log(id_visible)
       const { getFieldDecorator } = form;
       return (
         <Modal
@@ -55,6 +57,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={12}>
                 <Form.Item label="Tên đầy đủ:">
                   {getFieldDecorator('fullname', {
+                    rules: [{ required: true, message: this.state.messageRequired, }],
+                  })(<Input type="text" />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Mã Định Danh(CMT / Thẻ căn cước):">
+                  {getFieldDecorator('madinhdanh', {
                     rules: [{ required: true, message: this.state.messageRequired, }],
                   })(<Input type="text" />)}
                 </Form.Item>
@@ -132,28 +141,26 @@ class User extends React.Component {
       codeSearch: '',
       roleVisible: 'none',
       modalRoleVisible: false,
-      actionColumn: 'action-hide',
+      actionColumn: 'hidden-action',
       users: [],
-      selectedRowKeys:[]
+      selectedRowKeys: []
     }
   }
   //--------------DELETE-----------------------
-  deleteUser = (id) => {
-    console.log('delte id: ', id)
-    Request(`user/delete`, 'DELETE', { id: id })
+  deleteUser = async (id) => {
+    console.log('delte id: ', payload.userName)
+    await Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
           message: 'Thông báo',
           description: res.data.message
         });
-        this.getUsers(this.state.page)
       })
+    this.getUsers(this.state.page)
+
   }
 
   getUsers = (pageNumber) => {
-
-    console.log('index', this.state.index)
-    console.log('sortby', this.state.sortBy)
     if (pageNumber <= 0)
       return;
 
@@ -164,10 +171,10 @@ class User extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        console.log('res', response)
         if (response) {
+          console.log('getttttttttttttttttttttttttttttttttttttttt', response.data.data)
+
           let data = response.data;
-          console.log('data', data.data.users[0])
           let objUsers = Object.keys(data.data.users[0])
           if (data.data)
             this.setState({
@@ -230,7 +237,6 @@ class User extends React.Component {
     this.getUsers(this.state.pageNumber);
   }
   onchangpage = async (page) => {
-    console.log('page', page)
     await this.setState({
       page: page
     })
@@ -240,7 +246,6 @@ class User extends React.Component {
     }
     else {
       this.getUsers(page)
-      console.log(this.getUsers(page))
     }
   }
 
@@ -296,11 +301,7 @@ class User extends React.Component {
   showTotal = (total) => {
     return `Total ${total} items`;
   }
-  onShowSizeChange = async (current, size) => {
-    console.log('size', size);
-    console.log('curent', current);
-    console.log('txt', this.state.isSearch);
-    console.log(this.state.isSearch)
+  onShowSizeChange = async (current, size) => {         
     await this.setState({
       pageSize: size
     });
@@ -314,9 +315,6 @@ class User extends React.Component {
   }
 
   search = async (xxxx) => {
-    console.log('xxxxxxxxxxxx', this.state.pageSize)
-    console.log('search text', xxxx)
-    console.log('column search', this.state.columnSearch)
     Request('user/search', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: this.state.page,
@@ -329,7 +327,6 @@ class User extends React.Component {
       .then((response) => {
         let data = response.data;
 
-        console.log('aaaaaaaaaaaaa', data)
         if (data.data)
           this.setState({
             users: data.data.users,
@@ -338,30 +335,25 @@ class User extends React.Component {
             isSearch: 1
           })
 
-        console.log('data-----------------------------------', data)
       })
 
   }
 
   onChangeSearchType = async (value) => {
-    console.log('hihi', this.state.searchText)
     await this.setState({
       columnSearch: value,
     })
     if (this.state.searchText) {
       this.search(this.state.searchText);
     }
-    console.log(`selected ${value}`);
   }
 
   onSearch = (val) => {
-    console.log('search:', val);
   }
 
   onHeaderCell = (column) => {
     return {
       onClick: async () => {
-        console.log('ccmnr', column.dataIndex)
         if (this.state.isSort) {
           await this.setState({
             sortBy: 'DESC',
@@ -380,7 +372,6 @@ class User extends React.Component {
           isSort: !this.state.isSort,
           index: column.dataIndex
         })
-        console.log('xx', this.state.isSort)
         if (this.state.isSearch == 1) {
           this.search(this.state.searchText)
         }
@@ -432,13 +423,11 @@ class User extends React.Component {
   };
 
   cancelRole = e => {
-    console.log('cancel')
     this.setState({
       modalRoleVisible: false,
     });
   };
   changeRows = (selectedRowKeys, selectedRows) => {
-    console.log('checked')
   }
 
   handleClickRow(rowIndex) {
@@ -457,19 +446,17 @@ class User extends React.Component {
     }
     let payload = jwt.decode(token);
     let claims = payload.claims;
-    console.log('quyen ', claims)
     let canPermiss = claims.indexOf(Permission.Role.Permiss) >= 0;
-    console.log('permis', canPermiss)
     let canRead = claims.indexOf(Permission.User.Read) >= 0;
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
     let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-
+    const { selectedRowKeys } = this.state
     const rowSelection = {
       type: 'radio',
       hideDefaultSelections: true,
+      selectedRowKeys,
       onChange: async (selectedRowKeys, selectedRows) => {
-        console.log('click rowwwwwwwwwwwwwwwww')
         let sl = selectedRowKeys[0]
         Request('checkrole', 'POST', { sl }).then((res) => {
           let data = res.data;
@@ -479,12 +466,9 @@ class User extends React.Component {
           this.setState({
             dataTree: data,
           })
-          console.log('ROLEeeee', this.state.dataTree)
 
         })
-        console.log('selected rowkeys', selectedRowKeys)
         if (selectedRows[0]) {
-          console.log('kkkkkkk')
           await this.setState({
             selectedId: selectedRowKeys[0],
             user: selectedRows[0],
@@ -504,127 +488,139 @@ class User extends React.Component {
     return (
 
       <div>
-        {
-          canRead ?
-            <div>
-              <Modal
-                title="Phân quyền "
-                visible={this.state.modalRoleVisible}
-                onOk={this.okRole}
-                onCancel={this.cancelRole}
-              >
-                <TreeRole ref={instance => this.child = instance} dataTree={this.state.dataTree} />
-              </Modal>
 
-              <SearchModal col={this.state.objUsers} changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
-              <div style={{ display: 'flex' }}>
-                {
-                  canPermiss ?
-                    <div>
-                      <Button style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
-                        <Icon type="user" />
-                      </Button> Phân Quyền
-                    </div>
-                    : null
-                }
-                {
-                  canUpdate ?
-                    <div>
-                      <Button style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
-                        <Icon type="edit" />
-                      </Button> Sửa
-                    </div>
-                    : null
-                }
+        <div>
+          <Modal
+            title="Phân quyền "
+            visible={this.state.modalRoleVisible}
+            onOk={this.okRole}
+            onCancel={this.cancelRole}
+          >
+            <TreeRole ref={instance => this.child = instance} dataTree={this.state.dataTree} />
+          </Modal>
 
-                {
-                  canCreate ?
-                    <div>
-                      <Button style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
-                        <Icon type="plus" />
-                      </Button> Thêm
-                </div>
-                    : null
-                }
-                {
-                  canDelete ?
-                    <Popconfirm
-                      title="Bạn chắc chắn muốn xóa?"
-                      onConfirm={this.deleteUser.bind(this, this.state.selectedId)}
-                      onCancel={this.cancel}
-                      okText="Yes"
-                      cancelText="No">
-                      <Button type="danger" style={{ margin: '20px' }} >
-                        <Icon type="delete" />
-                      </Button> Xóa
-                    </Popconfirm>
-                    :
-                    null
-                }
-
-              </div>
-              <div>
-
+          <SearchModal col={this.state.objUsers} changesearch={this.onchangeSearch} remove={this.removeSearch} callback={this.search} onchangeSearch={this.onChangeSearchType} />
+          <div style={{ display: 'flex' }}>
+            {
+              canPermiss ?
                 <div>
-                  <Row className="table-margin-bt">
-                    <FormModal
-                      datacha={this.state.datacha}
-                      wrappedComponentRef={this.saveFormRef}
-                      visible={this.state.visible}
-                      onCancel={this.handleCancel}
-                      onSave={this.InsertOrUpdateUser}
-                      title={this.state.title}
-                      formtype={this.state.formtype}
-                      id_visible={this.state.id_visible}
-                    />
-
-
-                    <Table
-
-                      onRow={(record, rowIndex) => {
-                        return {
-                          onClick: event => {
-                            this.handleClickRow.bind(this, rowIndex)
-                            console.log('aaaaaaaaaaaaaaaaaa', event)
-                            console.log('reacassadasdad', record.name)
-                            this.setState({
-                              selectedRowKeys:[rowIndex]
-                            })
-                            console.log('reacassadasdad', rowIndex)
-
-                          },
-                        };
-                      }}
-                      expandRowByClick="true" onChange={this.changeRows}
-                      pagination={false}
-                      rowSelection={rowSelection}
-                      dataSource={this.state.users} rowKey="name" >
-                      <Column className="action-hide"
-                        title={<span>Id <Icon type={this.state.orderby} /></span>}
-                        dataIndex="id"
-                        key="id"
-                        onHeaderCell={this.onHeaderCell}
-                      />
-                      <Column title={<span>UserName <Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
-                      />
-                      <Column className="action-hide" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
-                      <Column className="action-hide" title="Phone Number" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
-                      <Column title="Full Name" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
-                      <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
-
-
-                    </Table>
-                  </Row>
-                  <Row>
-                    <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
-                  </Row>
+                  <Tooltip title="Phân quyền">
+                    <Button shape="round"  style={{ margin: '20px' }} onClick={this.showmodalRole.bind(this, this.state.selectedId)}>
+                      <Icon type="user" />
+                    </Button>
+                  </Tooltip>
                 </div>
+                : null
+            }
+            {
+              canUpdate ?
+                <div>
+                  <Tooltip title="Sửa User">
+                    <Button shape="round" style={{ margin: '20px' }} onClick={this.showModal.bind(this, this.state.user)}>
+                      <Icon type="edit" />
+                    </Button>
+                  </Tooltip>
+
+                </div>
+                : null
+            }
+
+            {
+              canCreate ?
+                <div>
+                  <Tooltip title="Thêm User">
+                    <Button shape="round" style={{ margin: '20px' }} onClick={this.showModal.bind(null)}>
+                      <Icon type="user-add" />
+                    </Button>
+                  </Tooltip>
+
+                </div>
+                : null
+            }
+            {
+              canDelete ?
+                <Tooltip title="Xóa User">
+                  <Popconfirm
+                    title="Bạn chắc chắn muốn xóa?"
+                    onConfirm={this.deleteUser.bind(this, this.state.selectedId)}
+                    onCancel={this.cancel}
+                    okText="Có"
+                    cancelText="Không">
+                    <Button shape="round" type="danger" style={{ margin: '20px' }} >
+                      <Icon type="delete" />
+                    </Button>
+                    </Popconfirm>
+                </Tooltip>
+
+                :
+                null
+            }
+
+          </div>
+
+          <div>
+
+            <div>
+              <Row className="table-margin-bt">
+                <FormModal
+                  datacha={this.state.datacha}
+                  wrappedComponentRef={this.saveFormRef}
+                  visible={this.state.visible}
+                  onCancel={this.handleCancel}
+                  onSave={this.InsertOrUpdateUser}
+                  title={this.state.title}
+                  formtype={this.state.formtype}
+                  id_visible={this.state.id_visible}
+                />
 
 
-              </div>
+                <Table
+
+                  onRow={(record, rowIndex) => {
+                    return {
+                      onClick: async event => {
+                        this.handleClickRow.bind(this, rowIndex)
+                        console.log('aaaaaaaaaaaaaaaaaa', rowIndex)
+                        console.log('reacassadasdad1111111111111111', record.name)
+                        await this.setState({
+                          selectedRowKeys: [record.name],
+                          selectedId: record.name,
+                          user: record
+                        })
+                        console.log('reacassadasdad', rowIndex)
+
+                      },
+                    };
+                  }}
+                  expandRowByClick="true" onChange={this.changeRows}
+                  pagination={false}
+                  rowSelection={rowSelection}
+                  dataSource={this.state.users} rowKey="name" >
+                  <Column className="hidden-action"
+                    title={<span>Id <Icon type={this.state.orderby} /></span>}
+                    dataIndex="id"
+                    key="id"
+                    onHeaderCell={this.onHeaderCell}
+                  />
+                  <Column title={<span>Tên đăng nhập<Icon type={this.state.orderby} /></span>} dataIndex="name" key="name" onHeaderCell={this.onHeaderCell}
+                  />
+                  <Column className="hidden-action" title="Password" dataIndex="password" key="password" onHeaderCell={this.onHeaderCell} />
+                  <Column title="Số điện thoại" dataIndex="phone" key="phone" onHeaderCell={this.onHeaderCell} />
+                  <Column title="Tên đầy đủ" dataIndex="fullname" key="fullname" onHeaderCell={this.onHeaderCell} />
+                  <Column title="Email" dataIndex="email" key="email" onHeaderCell={this.onHeaderCell} />
+
+
+                </Table>
+              </Row>
+              <Row>
+                <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+              </Row>
             </div>
-            : <h1>Mày đéo có quyền vào đây</h1>
-        }
+
+
+          </div>
+        </div>
+
 
       </div >
 

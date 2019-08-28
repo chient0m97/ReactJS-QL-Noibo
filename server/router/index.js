@@ -20,7 +20,7 @@ router.post('/get', function (req, res) {
 
 
 router.delete('/delete', function (req, res) {
-    console.log('----------delete-----------------', req.body.id)
+    console.log('----------delete-----------------user', req.body)
     userController.DeleteUserbyId(req.body.id, function (data) {
         res.send(data);
     })
@@ -55,11 +55,6 @@ router.post('/search', function (req, res) {
         res.send(data);
     })
 })
-router.delete('hopdong/delete', function (req, res) {
-    hopdongController.DeleteHopdongbyId(req.body.id, function (data) {
-          res.send(data);
-      })
-  })
 router.post('/checkrole', function (req, res) {
     console.log('checkkkkkkkkkkkkkkkkkkkkkkkkkk ', req.body.name)
     userController.Login(req.body.name, (data) => {

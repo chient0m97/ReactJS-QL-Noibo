@@ -5,9 +5,7 @@ router.use(function timeLog(req, res, next){
     console.log('Time: ',Date.now())
     next()
 })
-router.get('/get',function(req,res){
-    res.send('dcmmhihi')
-})
+
 router.post('/get', function(req, res) {
     let body = req.body;
     let pageNumber = body.pageNumber;
@@ -33,6 +31,30 @@ router.post('/getnhansu', function(req, res){
 
 router.post('/getkhachhang', function(req, res){
     hotroController.getKhachHang(function(data){
+        res.send(data)
+    })
+})
+
+router.post('/gethopdong', function(req, res){
+    hotroController.getHopDong(function(data){
+        res.send(data)
+    })
+})
+
+router.post('/getmyself', function(req, res){
+    hotroController.getDataMyself(req.body,function(data){
+        res.send(data)
+    })
+})
+
+router.post('/getdatakhachhang', function(req, res){
+    hotroController.getDataKhachHang(req.body,function(data){
+        res.send(data)
+    })
+})
+
+router.post('/getname', function(req, res){
+    hotroController.getName(req.body,function(data){
         res.send(data)
     })
 })

@@ -12,8 +12,7 @@ var menuController = {
         })
     },
 
-    insertMenu: async function insertMenu(menus, callback) {
-        console.log('console :', menus)
+    insertMenu: function insertMenu(menus, callback) {
         menuData.insertMenu(menus, (response) => {
             var message = constant.successInsert;
             var status = 200;
@@ -30,7 +29,6 @@ var menuController = {
     },
 
     updateMenu: function updateMenu(menus, callback) {
-        console.log(menus, 'day la ho tro')
         menuData.updateMenu(menus, (res) => {
             callback({
                 success: res.success,

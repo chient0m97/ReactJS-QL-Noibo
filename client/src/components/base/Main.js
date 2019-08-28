@@ -70,11 +70,12 @@ class Main extends React.Component {
             {/* leftmenu */}
             <AppSider collapsed={this.state.collapsed} />
             {/* leftmenu */}
+            
             <Layout>
-
               {/* header */}
               <AppHeader OnCollapsed={this.ChangeCollapsed} collapsed={this.state.collapsed} />
               {/* header */}
+              
               <Content
                 style={{
                   margin: '8px',

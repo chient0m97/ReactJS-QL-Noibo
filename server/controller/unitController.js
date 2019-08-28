@@ -13,6 +13,7 @@ var UnitController = {
      * @para
      */
     getUnit: function getUnit(pageNumber, pageSize, index, sortBy, callback) {
+        console.log('---------controller---------------')
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         var res_unit = []
@@ -49,21 +50,18 @@ var UnitController = {
 
     getTinh: function getTinh(callback) {
         unitData.getTinh((data) => {
-            console.log('data', data)
             callback(data)
         })
     },
 
     getHuyen: function getHuyeb(body, callback) {
         unitData.getHuyen(body.id_db_tinh, (data) => {
-            console.log('data huyennnn', data)
             callback(data)
         })
     },
 
     getXa: function getXa(data, callback) {
         unitData.getXa(data.id_db_huyen, (data) => {
-            console.log('data xaaaaa', data)
             callback(data)
         })
     },
@@ -76,7 +74,6 @@ var UnitController = {
 
     GetById: function GetById(Id, callback) {
         unitData.GetById(Id, (data) => {
-            console.log('DATA', data)
             if (data == undefined) {
                 callback({});
             }
@@ -102,7 +99,6 @@ var UnitController = {
 
     insertKhachhang: function insertKhachhang(khachhang, callback) {
         unitData.insertKhachhang(khachhang, (response) => {
-            console.log("hien thi controller ", response)
             var message = constant.successInseart;
             var status = 200;
             if (!response.success) {
@@ -117,23 +113,18 @@ var UnitController = {
     },
 
     insertUnit: async function insertUnit(unit, callback) {
-        console.log('inserted controller', unit);
         unit.dm_dv_id = uuidv1();
         if (
             await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
             & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
             & await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!')
         ) {
-            console.log('ddax validate')
             unitData.insertUnit(unit, (response) => {
                 var message = constant.successInseart;
                 var status = 200;
                 if (!response.success) {
                     Validator.error.push(constant.errorSys)
                     message = Validator.getError()
-                    // status = 400
-                    // console.log('message',message)
-
                 }
                 callback({
                     message: message,
@@ -144,7 +135,6 @@ var UnitController = {
         }
         else {
             var eror = Validator.getError()
-            console.log('looix tra ve', eror)
             callback({
                 message: eror,
                 success: false
@@ -159,7 +149,6 @@ var UnitController = {
         //     unitData.getUnit(this, null);
         // }else{
         unitData.updateUnit(unit, (res) => {
-            console.log('dcm ')
             callback({
                 success: res.success,
                 message: res.success === true ? constant.successUpdate : callback.errorUpdate
@@ -171,10 +160,6 @@ var UnitController = {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         unitData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
-            console.log(limit)
-            console.log(offset)
-
-            console.log('aaaaaaaaa', data)
             callback(data);
         })
     },

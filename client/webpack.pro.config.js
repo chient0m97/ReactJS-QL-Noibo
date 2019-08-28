@@ -17,8 +17,8 @@ const webpackConfigProd = {
         publicPath: './',
     },
     performance: {
-        maxEntrypointSize: 512000,
-        maxAssetSize: 512000
+        maxEntrypointSize: 4000000,
+        maxAssetSize: 4000000
     },
     plugins: [
         new webpack.DefinePlugin({

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card } from 'antd';
+import React from 'react'
+import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card } from 'antd'
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
-import { fetchUser } from '@actions/user.action';
-import { fetchLoading } from '@actions/common.action';
+import { fetchUser } from '@actions/user.action'
+import { fetchLoading } from '@actions/common.action'
 import Modal_Menu from '@pages/Modal/Modal_Menu.js'
 import '@styles/style.css'
 const { Column } = Table;
@@ -14,22 +14,16 @@ class Menu extends React.Component {
         this.state = {
             menu: [],
             pageNumber: 1,
-            current: 1,
             page: 1,
             pageSize: 10,
-            showPopup: false,
             count: 1,
-            show: false,
             visible: false,
             formtype: 'horizontal',
             title: 'Nhập thông tin Menu',
             id_visible: false,
             action: 'insert',
-            isSearch: 0,
-            isSort: true,
             sortBy: '',
             index: 'dm_menu_id',
-            orderby: 'arrow-up',
             stateconfirmdelete: false,
             checkStateConfirm: true,
             statebuttondelete: true,
@@ -146,6 +140,7 @@ class Menu extends React.Component {
 
     componentDidMount() {
         this.getMenu(this.state.pageNumber, this.state.index, this.state.sortBy);
+        document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
     showModal = (menu) => {
@@ -208,11 +203,16 @@ class Menu extends React.Component {
     }
 
     clearChecked = () => {
-        this.onSelectChange([],[])
+        this.onSelectChange([], [])
     };
 
     onRowClick = (row) => {
-        this.onSelectChange([row.dm_menu_id], [row])
+        if(this.state.selectedRowKeys[0]===row.dm_menu_id){
+            this.onSelectChange([], [])
+        }
+        else{
+            this.onSelectChange([row.dm_menu_id], [row])
+        }
     }
 
     render() {
@@ -263,9 +263,6 @@ class Menu extends React.Component {
                                         <Icon type="reload" />
                                     </Button>
                                 </Tooltip>
-                            </Col>
-                            <Col span={3}>
-                                <Button type="primary" shape="round" onClick={this.clearChecked} >Bỏ chọn</Button>
                             </Col>
                         </Card>
                     </Row>
