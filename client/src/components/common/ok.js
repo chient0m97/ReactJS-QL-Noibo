@@ -4,7 +4,7 @@ class ok extends Component {
     render() {
         return (
             <div style={{textAlign:'center'}}>
-                <h1>ĐƯợc em !</h1>
+                <h1>Đổi thành công !</h1>
             </div>
         );
     }

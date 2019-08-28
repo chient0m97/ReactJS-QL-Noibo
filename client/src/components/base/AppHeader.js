@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row} from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar } from 'antd'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
+import Request from '@apis/Request'
+
 const { Header } = Layout
 
 class AppHeader extends Component {
@@ -9,9 +11,26 @@ class AppHeader extends Component {
     super(props);
     this.state = {
       menu: null,
-      collapsed: props.collapsed
+      collapsed: props.collapsed,
+      name: null
     }
   }
+
+  getName = (cookie) => {
+    Request('hotro/getname', 'POST', { cookie }).then((res) => {
+      if (res) {
+        if (res.data.data.name[0] === undefined)
+          this.setState({
+            name: 'Chưa có tài khoản'
+          })
+        else
+          this.setState({
+            name: res.data.data.name[0].ns_hovaten
+          })
+      }
+    })
+  }
+
   renderMenuUser = () => {
     return (
       <Menu>
@@ -42,9 +61,11 @@ class AppHeader extends Component {
   }
 
   componentDidMount() {
+    var user_cookie = cookie.load('user');
     this.setState({
       menu: this.renderMenuUser,
     })
+    this.getName(user_cookie)
   }
 
   render() {
@@ -59,8 +80,8 @@ class AppHeader extends Component {
             <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
           </Button>
           <Dropdown overlay={this.state.menu} trigger={['click']}>
-            <a style={{ marginLeft: '83%' }} className="ant-dropdown-link" href="/">
-              <Icon type="user" style={{ fontSize: '20px' }} />
+            <a style={{ marginLeft: '75%' }} className="ant-dropdown-link" href="/">
+              <Avatar icon="user" style={{ fontSize: '20px', backgroundColor: 'orange' }} />
               <Tooltip title="Tên tài khoản">
                 <span style={{ fontSize: '18px' }}> {fullname} </span>
               </Tooltip>

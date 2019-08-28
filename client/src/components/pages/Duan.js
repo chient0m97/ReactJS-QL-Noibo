@@ -16,6 +16,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, select_qtda } = this.props;
       const { getFieldDecorator } = form;
       var first_qtda = null;
+      console.log("Day la option ",select_qtda)
       if (select_qtda.length !== 0) {
         first_qtda = select_qtda[0].ns_id
       }
@@ -64,7 +65,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   >
                     {
                       select_qtda.map((value, index) => {
-                        return (<Option value={value.ns_id}>{value.ns_ten}</Option>)
+                        return (<Option value={value.ns_id}>{value.ns_hovaten}</Option>)
                       })
                     }
                   </Select>)}
@@ -219,6 +220,7 @@ class Duan extends React.Component {
     Request('duan/getcha', 'POST', {
     }).then((res) => {
       if (res.data) {
+        console.log("Day la res.data ",res.data)
         this.setState({
           select_qtda: res.data
         })

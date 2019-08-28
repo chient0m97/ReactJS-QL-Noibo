@@ -112,7 +112,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={0}>
                 <Form.Item label="Id dự án:" className="an">
                   {getFieldDecorator('dm_duan_id', {
-                  })(<Input type="number" size="small" disabled />)}
+                  })(<Input type="number" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -164,13 +164,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
             </Row>
             <Row gutter={25}>
-              <Col span={8}>
-              </Col>
-              <Col span={8}>
-              </Col>
-            </Row>
-            <Row gutter={25}>
-              <Col span={6}>
+              <Col span={4}>
                 <Form.Item label="Số hợp đồng:">
                   {getFieldDecorator('hd_so', {
                   })(<Input type="text" size="small" />)}
@@ -193,27 +187,26 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={8}>
-                <Form.Item label="Trạng thái:">
-                  {getFieldDecorator('hd_trangthai', {
-                    initialValue: 'DTH',
-                  })(<Select size="small">
-                    <Option value="DTH">Đang thực hiện</Option>
-                    <Option value="TL">Thanh lý</Option>
-                    <Option value="XHD">Xuất hóa đơn</Option>
-                    <Option value="DTT">Đã thanh toán</Option>
-                    <Option value="DONG">Đóng</Option>
-                  </Select>)}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={25}>
-              <Col span={8}>
+              <Col span={6}>
                 <Form.Item label="Địa chỉ:">
                   {getFieldDecorator('hd_diachi', {
                   })(<Input type="text" size="small" />)}
                 </Form.Item>
               </Col>
+              <Col span={4}>
+                <Form.Item label="Công ty:">
+                  {getFieldDecorator('hd_congty', {
+                    initialValue: 'FSC'
+                  })(
+                    <Select size="small">
+                      <Option value="FSC">FSC</Option>
+                      <Option value="HCM">HCM</Option>
+                    </Select>
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={25}>
               <Col span={8}>
                 <Form.Item label="Ngày ký:">
                   {getFieldDecorator('hd_ngayky', {
@@ -225,16 +218,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Ngày thanh lý:">
                   {getFieldDecorator('hd_ngaythanhly', {
-                  })(<Input type="date" size="small" />
-                  )}
+                  })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày xuất hóa đơn:">
                   {getFieldDecorator('hd_ngayxuathoadon', {
-                  })(
-                    <Input type="date" size="small" />
-                  )}
+                  })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -242,15 +232,27 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               <Col span={8}>
                 <Form.Item label="Ngày thanh toán:">
                   {getFieldDecorator('hd_ngaythanhtoan', {
-                  })(<Input type="date" size="small" />
-                  )}
+                  })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày nghiệm thu:">
                   {getFieldDecorator('hd_ngayketthuc', {
+                  })(<Input size={"small"} type="date" />)}
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Trạng thái:">
+                  {getFieldDecorator('hd_trangthai', {
+                    initialValue: 'DTH'
                   })(
-                    <Input size={"small"} type="date" />
+                    <Select size="small">
+                      <Option value="DTH">Đang thực hiện</Option>
+                      <Option value="TL">Thanh lý</Option>
+                      <Option value="XHD">Xuất hóa đơn</Option>
+                      <Option value="DTT">Đã thanh toán</Option>
+                      <Option value="DONG">Đóng</Option>
+                    </Select>
                   )}
                 </Form.Item>
               </Col>
@@ -290,6 +292,7 @@ class Hopdong extends React.Component {
       current: 1,
       page: 1,
       pageSize: 10,
+      showPopup: false,
       count: 1,
       show: false,
       visible: false,
@@ -339,17 +342,17 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false
     })
   }
-
   getHopdongs = (pageNumber) => {
     if (pageNumber <= 0)
       return;
     this.props.fetchLoading({
       loading: true
     })
-
     Request('hopdong/get', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
+      index: this.state.index,
+      sortBy: this.state.sortBy
     })
       .then((response) => {
         if (response)
@@ -357,17 +360,14 @@ class Hopdong extends React.Component {
             hopdongs: response.data.data.hopdongs,
             count: Number(response.data.data.count)
           })
+        
       })
-    this.props.fetchLoading({
-      loading: false
-    })
+      this.props.fetchLoading({
+        loading: false
+      })
   }
   InsertOrUpdateHopdong = () => {
     const { form } = this.formRef.props;
-    //var file = form.getFieldsValue().hd_files.file
-    //var formdata = new FormData()
-    //formdata.append('files',file)
-
     form.validateFields(async (err, values) => {
       if (err) {
         return
@@ -407,7 +407,6 @@ class Hopdong extends React.Component {
   refresh = () => {
     this.getHopdongs(this.state.pageNumber)
   }
-
   componentDidMount() {
     this.getHopdongs(this.state.pageNumber, this.state.index, this.state.sortBy);
     document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
@@ -419,9 +418,7 @@ class Hopdong extends React.Component {
     else {
       var ketqua = [];
       this.state.hopdongs.forEach((value) => {
-        console.log(value.dm_duan_ten, 'ten ket qua');
         if (value.hd_files === text) {
-          console.log(value.dm_duan_ten, 'ten day');
           ketqua.push(value.dm_duan_ten);
         }
       })
@@ -440,14 +437,12 @@ class Hopdong extends React.Component {
       this.getHopdongs(page)
     }
   }
-
   onchangeoption = (value) => {
     const { form } = this.formRef.props
     form.setFieldsValue({
       hd_thoigianthuchien: value
     })
   }
-
   onchangeid = (value) => {
     const { form } = this.formRef.props
     form.setFieldsValue({
@@ -460,47 +455,35 @@ class Hopdong extends React.Component {
       })
     }
   }
-
   onChangeSelect = (value) => {
     const { form } = this.formRef.props
     form.setFieldsValue({
       hd_doituong: value
     })
   }
-
   showModal = async (hopdong) => {
     Request('duan/getcha', 'POST', null).then(res => {
-      if (res.data) {
-        this.setState({
-          comboBoxDatasourceDuan: res.data
-        })
-      }
-
+      this.setState({
+        comboBoxDatasourceDuan: res.data
+      })
     })
-
     Request('hopdong/getdonvi', 'POST', null).then(res => {
-      if (res.data) {
-        this.setState({
-          propDatasourceSelectLoaiHopDong: {
-            label: 'Chọn khách hàng là đơn vị:',
-            dataSource: res.data,
-            type: 'DV'
-          }
-        })
-        const { form } = this.formRef.props
-        form.setFieldsValue({
-          hd_doituong: res.data[0].id
-        })
-      }
+      this.setState({
+        propDatasourceSelectLoaiHopDong: {
+          label: 'Chọn khách hàng là đơn vị:',
+          dataSource: res.data,
+          type: 'DV'
+        }
+      })
+      const { form } = this.formRef.props
+      form.setFieldsValue({
+        hd_doituong: res.data[0].id
+      })
     })
-
     Request('hopdong/getduan', 'POST', null).then(res => {
-      if (res.data) {
-        this.setState({
-          comboBoxDuanSource: res.data
-        })
-      }
-
+      this.setState({
+        comboBoxDuanSource: res.data
+      })
     })
     const { form } = this.formRef.props
     this.setState({
@@ -517,15 +500,12 @@ class Hopdong extends React.Component {
       var api = hopdong.hd_loai === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
       const { form } = this.formRef.props
       Request(api, 'post', null).then((res) => {
-        if (res.data) {
-          this.setState({
-            propDatasourceSelectLoaiHopDong: {
-              label: label,
-              dataSource: res.data,
-            }
-          })
-        }
-
+        this.setState({
+          propDatasourceSelectLoaiHopDong: {
+            label: label,
+            dataSource: res.data,
+          }
+        })
         form.setFieldsValue({
           hd_doituong: hopdong.hd_doituong
         })
@@ -541,12 +521,33 @@ class Hopdong extends React.Component {
       form.setFieldsValue(hopdong);
     }
   };
+
+  handleOK = e => {
+    this.setState({
+      visible: false,
+    });
+  };
+
   handleCancel = e => {
     this.setState({
       visible: false,
       id_visible: false
     });
   };
+
+  handleChangeInput = (e) => {
+    let state = this.state;
+    state[e.target.name] = e.target.value;
+    this.setState(state);
+  }
+
+  handleCount = () => {
+    let count = this.state.count;
+    this.setState({
+      count: count + 1
+    })
+  }
+
   confirm = (e) => {
     console.log(e);
     message.success('Bấm yes để xác nhận');
@@ -569,8 +570,18 @@ class Hopdong extends React.Component {
       this.getHopdongs(this.state.page, this.state.index, this.state.sortBy)
     }
   }
+  onChangeSearchType = async (value) => {
+    await this.setState({
+      columnSearch: value,
+    })
+    if (this.state.searchText) {
+      this.search(this.state.searchText);
+    }
+  }
+
   onSearch = (val) => {
   }
+
   onHeaderCell = (column) => {
     return {
       onClick: async () => {
@@ -599,6 +610,7 @@ class Hopdong extends React.Component {
       },
     };
   }
+
   onChangeFile = async (e) => {
     const toBase64 = file => new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -607,9 +619,6 @@ class Hopdong extends React.Component {
       reader.onerror = error => reject(error);
     });
     var file = e.target.files[0];
-    console.log(file, 'file');
-    console.log(file.name, 'file name');
-    console.log(file.type, 'file type');
     var fileUploadHopdong = await toBase64(file);
     var fileName = file.name;
     this.setState({
@@ -617,25 +626,22 @@ class Hopdong extends React.Component {
       valuename: fileName
     })
   }
+
   onChangeClick_loaihopdong = (e) => {
     var label = e === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
     var api = e === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
     const { form } = this.formRef.props
     Request(api, 'post', null).then((res) => {
-      if (res.data) {
-        this.setState({
-          propDatasourceSelectLoaiHopDong: {
-            label: label,
-            dataSource: res.data,
-            type: e
-          }
-        })
-
-        form.setFieldsValue({
-          hd_doituong: res.data[0].id
-        })
-      }
-
+      this.setState({
+        propDatasourceSelectLoaiHopDong: {
+          label: label,
+          dataSource: res.data,
+          type: e
+        }
+      })
+      form.setFieldsValue({
+        hd_doituong: res.data[0].id
+      })
     })
     this.setState({
       labelCombobox: label
@@ -685,6 +691,7 @@ class Hopdong extends React.Component {
       stateconfirmdelete: true
     })
   }
+
   clearChecked = () => {
     this.onSelectChange([], [])
   };
@@ -707,7 +714,6 @@ class Hopdong extends React.Component {
   }
 
   CreateDuan = e => {
-    // console.log('Đây là thêm dự án')
     e.preventDefault();
     Request(`duan/insert`, 'POST', null)
       .then((response) => {
@@ -715,6 +721,7 @@ class Hopdong extends React.Component {
         }
       })
   }
+
   render() {
     const { selectedRowKeys } = this.state
     const rowSelection = {
@@ -764,7 +771,7 @@ class Hopdong extends React.Component {
               </Col>
               <Col span={2}>
                 <Tooltip title="Tải Lại">
-                  <Button shape="round" type="primary" style={{ marginLeft: '18px' }} size="default" onClick={this.refresh.bind(null)}>
+                  <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
                     <Icon type="reload" />
                   </Button>
                 </Tooltip>
@@ -840,19 +847,15 @@ class Hopdong extends React.Component {
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon"
-                onHeaderCell={this.onHeaderCell}
-                render={text => {
+              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" render={
+                text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }}
-                width={200}
-              />
-              <Column
-                title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan"
-                render={text => {
+                }} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" render={
+                text => {
                   if (text === null)
                     return ' '
                   else

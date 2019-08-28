@@ -3,6 +3,7 @@ let pool = require('./connect')
 const uuidv1 = require('uuid/v1');
 module.exports = {
     getUser: (limit, offset, index, sortBy, callback) => {
+        console.log('12222222222222222222222222222222222')
         knex.from('users').select('*').orderBy(index, sortBy).limit(limit).offset(offset)
             .then((res) => {
 
@@ -56,12 +57,9 @@ module.exports = {
 
     },
     insertUser: function (user, callback) {
-        console.log('insert lan thu 1 ty')
         let abc = user;
         abc.id = uuidv1();
         knex.from('users').insert(abc).then(res => {
-
-            console.log('inserted');
             callback({ success: true });
         }).catch(err => {
 
@@ -70,7 +68,7 @@ module.exports = {
         })
     },
     updateUser: function (user, callback) {
-        console.log('upadteeeeeeeeeeeeee')
+        console.log('ewweeeeeeeeeeeeeeeeeeeeeeeeeeeee')
         knex.from('users').where('id', user.id)
             .update(user).then(res => {
 
@@ -82,10 +80,8 @@ module.exports = {
             })
     },
     changePass: function (user, callback) {
-        console.log('usserererwerwerwerwer', user)
         pool.connect().then(client => {
             let query = "update users set password='" + user.password + "' where name='" + user.username + "'"
-            console.log('quẻyyyyyyyyyyyyyyyyyyyyyyyy', query)
             client.query(query).then(res => {
                 client.release()
                 callback({ success: true })
@@ -222,6 +218,5 @@ module.exports = {
             console.log(err)
         })
     },
-
 
 };

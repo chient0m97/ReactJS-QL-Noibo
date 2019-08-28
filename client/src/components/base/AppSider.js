@@ -104,8 +104,7 @@ class AppSider extends Component {
                             </span>
                         }
                     >
-                        <Menu.Item key="3"><NavLink to="/group" className="">Quản lý group</NavLink ></Menu.Item>
-                        <Menu.Item key="4"><NavLink to="/menu" className="">Menu</NavLink ></Menu.Item>
+                        
                         {claims.map((item, i) => {
                             if (item.url) {
                                 if (item.menu === 1) {

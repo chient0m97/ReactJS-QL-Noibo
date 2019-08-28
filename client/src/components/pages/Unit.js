@@ -688,9 +688,6 @@ class Unit extends React.Component {
         if (token)
             return (
                 <div>
-                    <Row id="caption">
-                        Bảng Thống kê Đơn vị
-                        </Row>
                     <Card>
                         <Row>
                             <Col span={2}>

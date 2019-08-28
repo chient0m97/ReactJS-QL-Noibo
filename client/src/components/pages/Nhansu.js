@@ -136,7 +136,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                         </Row>
                         <Row gutter={24}>
                             <Col span={9}>
-                                <Form.Item label="Định danh cá nhân(Cmt/ Thẻ căn cước)">
+                                <Form.Item label="Định danh cá nhân">
                                     {getFieldDecorator('ns_dinhdanhcanhan', {
                                         rules: [{ required: true, message: 'Trường không được để trống!', }],
                                     })(<Select
@@ -157,14 +157,14 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="Số điện thoại">
                                     {getFieldDecorator('ns_sodienthoai', {
                                         rules: [{}],
-                                    })(<Input addonBefore={selectBefore} size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input addonBefore={selectBefore} size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Email">
                                     {getFieldDecorator('ns_email', {
                                         rules: [{}],
-                                    })(<Input size={"small"} type="email" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="email" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -173,21 +173,21 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="Địa chỉ hiện nay">
                                     {getFieldDecorator('ns_diachihiennay', {
                                         rules: [{ required: true, message: 'Trường không được để trống!' }]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={9}>
                                 <Form.Item label="Nguyên quán">
                                     {getFieldDecorator('ns_nguyenquan', {
                                         rules: [{ required: true, message: 'Trường không được để trống!' }]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Người liên hệ">
                                     {getFieldDecorator('ns_nguoilienhe', {
                                         rules: [{}]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -196,21 +196,21 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="Bằng cấp">
                                     {getFieldDecorator('ns_bangcap', {
                                         rules: [{}]
-                                    })(<Input size={"small"} type="text" allowClear onChange={this.clear} />)}
+                                    })(<Input size={"small"} type="text" onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={9}>
                                 <Form.Item label="Các giấy tờ đã nộp">
                                     {getFieldDecorator('ns_cacgiaytodanop', {
                                         rules: [{}]
-                                    })(<Input type="text" size={"small"} allowClear onChange={this.clear} />)}
+                                    })(<Input type="text" size={"small"} onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="Tài khoản ngân hàng">
                                     {getFieldDecorator('ns_taikhoannganhang', {
                                         rules: [{}]
-                                    })(<Input type="text" size={"small"} allowClear onChange={this.clear} />)}
+                                    })(<Input type="text" size={"small"} onChange={this.clear} />)}
                                 </Form.Item>
                             </Col>
                         </Row>
