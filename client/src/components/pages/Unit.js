@@ -785,7 +785,7 @@ class Unit extends React.Component {
                             <Column title="Mã người đại diện" dataIndex="kh_id_nguoidaidien" key="kh_id_nguoidaidien" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Người đại diện" dataIndex="tennguoidaidien" key="tennguoidaidien" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Trạng thái đơn vị" dataIndex="dm_dv_trangthai" key="dm_dv_trangthai" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Trạng thái" dataIndex="dm_dv_trangthai_txt" key="dm_dv_trangthai_txt" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Trạng thái" dataIndex="dm_dv_trangthai_txt" key="dm_dv_trangthai_txt"  />
                             <Column />
                         </Table>
                     </Row>

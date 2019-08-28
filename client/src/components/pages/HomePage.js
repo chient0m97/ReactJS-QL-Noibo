@@ -149,6 +149,9 @@ export default class HomePage extends Component {
         document.getElementsByClassName('ant-statistic-title')[1].style.fontSize = '18px'
         document.getElementsByClassName('ant-statistic-title')[2].style.fontSize = '18px'
         document.getElementsByClassName('ant-statistic-title')[3].style.fontSize = '18px'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
     }
 
     onClick = () => {
@@ -327,9 +330,9 @@ export default class HomePage extends Component {
                         <Row style={{ marginTop: '15px' }}>
                             <Card>
                                 {/* <h1 style={{ textAlign: 'center' }}> Bảng công việc cá nhân</h1> */}
-                                <Text mark style={{ fontSize: '18px', display: 'block', marginBottom: '10px' }}>Bảng công việc cá nhân</Text>
+                                <Text  mark style={{ fontSize: '18px', display: 'block', marginBottom: '10px', color: '#1890ff' }}>Bảng công việc cá nhân</Text>
                                 <Divider style={{ margin: '5px' }} />
-                                <Row>
+                                {/* <Row>
                                     <span style={{ fontSize: '16px' }}> Loại công việc      </span>
                                     <ButtonGroup style={{ marginBottom: '5px', marginLeft: '15px' }}>
                                         <Button >Tất cả</Button>
@@ -337,31 +340,18 @@ export default class HomePage extends Component {
                                         <Button >Đã xong</Button>
                                         <Button >Đang xử lý</Button>
                                     </ButtonGroup>
-                                </Row>
+                                </Row> */}
                                 <Table bordered dataSource={this.state.myself} rowKey="ht_id" size="small" scroll={{ x: 500 }}
-                                    // expandedRowRender={(record, selectedRowKeys) => {
-                                    //     console.log("ex", record.kh_id)
-                                    //     let kh_id = record.kh_id
-                                    //     var dataKH=[]
-                                    //     Request('hotro/getdatakhachhang', 'POST', { kh_id }).then( (res) => {
-                                    //         dataKH=res.data.data.khachhangs[0]
-                                            
-                                    //     })
-                                    //     console.log("day la datakh ",dataKH)
-                                    //     return <div>
-                                    //         <Descriptions title="Thông tin khách hàng">
-
-                                    //             <Descriptions.Item label="Tên khách hàng"> {dataKH.kh_ten} </Descriptions.Item>
-                                    //             <Descriptions.Item label="Tỉnh/ TP"> Tỉnh </Descriptions.Item>
-                                    //             <Descriptions.Item label="Huyện/ Quận"> Huyện </Descriptions.Item>
-                                    //             <Descriptions.Item label="Xã/ Phường"> Xã </Descriptions.Item>
-                                    //             <Descriptions.Item label="Địa chỉ"> Địa chỉ </Descriptions.Item>
-                                    //             <Descriptions.Item label="Đơn vị"> Đơn vị </Descriptions.Item>
-                                    //             <Descriptions.Item label="Đơn vị công tác"> Đơn vị công tác </Descriptions.Item>
-                                    //             <Descriptions.Item label="Liên lạc"> Liên lạc </Descriptions.Item>
-                                    //         </Descriptions>
-                                    //     </div>
-                                    // }}
+                                    expandedRowRender={(record, selectedRowKeys) => {
+                                        return (
+                                            <div style={{ textAlign: 'left' }}>
+                                                <div style={{ fontSize: '18px' }}> Yêu cầu: </div>
+                                                <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1200' }} >{this.state.myself[selectedRowKeys].ht_noidungyeucau}</Row>
+                                                <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
+                                                <Row style={{ paddingTop: '7px' }}>{this.state.myself[selectedRowKeys].ht_ghichu}</Row>
+                                            </div>
+                                        )
+                                    }}>
                                 >
                                     <Column title="Dự án" dataIndex="dm_duan_ten" width={150} />
                                     <Column title="Khách hàng" dataIndex="kh_ten" width={100} />

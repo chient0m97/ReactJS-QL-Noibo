@@ -16,7 +16,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
       const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, select_qtda } = this.props;
       const { getFieldDecorator } = form;
       var first_qtda = null;
-      console.log("Day la option ",select_qtda)
+      console.log("Day la option ", select_qtda)
       if (select_qtda.length !== 0) {
         first_qtda = select_qtda[0].ns_id
       }
@@ -220,7 +220,7 @@ class Duan extends React.Component {
     Request('duan/getcha', 'POST', {
     }).then((res) => {
       if (res.data) {
-        console.log("Day la res.data ",res.data)
+        console.log("Day la res.data ", res.data)
         this.setState({
           select_qtda: res.data
         })
@@ -407,8 +407,16 @@ class Duan extends React.Component {
               select_qtda={this.state.select_qtda}
             />
             <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id" >
-              <Column title="Tên dự án" dataIndex="dm_duan_ten" onHeaderCell={this.onHeaderCell} />
-              <Column title="Tiền tố" dataIndex="dm_duan_key" onHeaderCell={this.onHeaderCell} />
+              <Column title="Tiền tố" dataIndex="dm_duan_key" onHeaderCell={this.onHeaderCell}
+                render={text => {
+                  return <div style={{ textAlign: 'left' }}>{text}</div>
+                }}
+              />
+              <Column title="Tên dự án" dataIndex="dm_duan_ten" onHeaderCell={this.onHeaderCell}
+                render={text => {
+                  return <div style={{ textAlign: 'left' }}>{text}</div>
+                }} />
+
               <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} />
             </Table>
           </Row>

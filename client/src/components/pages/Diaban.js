@@ -175,7 +175,7 @@ class Diaban extends React.Component {
       if (err) {
         return
       }
-      var url = this.state.action === 'diaban/insert' ? 'insert' : 'diaban/update'
+      var url = this.state.action === 'insert' ? 'diaban/insert' : 'diaban/update'
       Request(url, 'POST', values)
         .then((response) => {
           this.setState({

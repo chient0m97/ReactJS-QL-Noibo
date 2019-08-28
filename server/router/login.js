@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
                     token: token
                 });
             } else {
-                res.json({ message: "sai mật khẩu rồi nhóc" })
+                res.json({ message: "Sai mật khẩu" })
             }
         });
     })

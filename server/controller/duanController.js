@@ -49,7 +49,7 @@ var DuanController = {
     insertDuan: async function insertDuan(duan, callback) {
         if (1
         ) {
-            if (await Validator.db.unique('duans', 'ns_id_qtda', duan.ns_id_qtda, 'Ns_id_qtda đã tồn tại !')){
+            if (1){
                 let firstInsert;
                 firstInsert = duan;
                 firstInsert.dm_duan_id = uuidv4();
@@ -81,9 +81,7 @@ var DuanController = {
         }
     },
     updateDuan: async function updateDuan(duan, callback) {
-        if (Validator.isNumAlpha(duan.dm_duan_key, 'Key không đúng định dạng')
-          & Validator.isAlpha(duan.dm_duan_ten, 'Tên dự án không đúng định dạng')
-        ) {
+        if (1) {
             if (1) {
                 console.log("Day la update data", duan)
                 duanData.updateDuan(duan, (res) => {

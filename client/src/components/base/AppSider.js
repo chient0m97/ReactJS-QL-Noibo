@@ -56,7 +56,7 @@ class AppSider extends Component {
                     claims[i] = { url: '/user', des: 'User', menu: 1 }
                 }
                 else if (claims[i] === Permission.Hotro.Read) {
-                    claims[i] = { url: '/hotro', des: 'Hỗ trợ', menu: 2 }
+                    claims[i] = { url: '/hotro', des: 'Công Việc - Hỗ trợ', menu: 2 }
                 }
                 else if (claims[i] === Permission.Nhansu.Read) {
                     claims[i] = { url: '/nhansu', des: 'Nhân sự', menu: 2 }
@@ -79,6 +79,9 @@ class AppSider extends Component {
                 else if (claims[i] === Permission.Hoadon.Read) {
                     claims[i] = { url: '/qlhd', des: 'Hóa Đơn', menu: 3 }
                 }
+                else if (claims[i] === Permission.File_khachhangs.Read) {
+                    claims[i] = { url: '/file', des: 'File Khách Hàng', menu: 3 }
+                }
             }
         }
 
@@ -100,7 +103,7 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="user" />
-                                <span>Quản lý người dùng</span>
+                                <span>Người Dùng</span>
                             </span>
                         }
                     >
@@ -118,7 +121,7 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="team" />
-                                <span>Quản lý khách hàng</span>
+                                <span>Khách Hàng</span>
                             </span>
                         }
                     >
@@ -159,7 +162,7 @@ class AppSider extends Component {
                     </SubMenu>
                     <Menu.Item key="12">
                         <Icon type="file" />
-                        <span>Tệp tin</span>
+                        <span><NavLink to="/file" className="">Tập tin Khách Hàng</NavLink ></span>
                     </Menu.Item>
                 </Menu>
             </Sider>

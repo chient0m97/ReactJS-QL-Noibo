@@ -81,7 +81,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                     <Form layout={formtype} >
                         <Row gutter={24} align="middle">
                             <Col span={8}>
-                                <div style={{ position: 'absolute', top: '2px', right: '95px', zIndex: '99999' }}>
+                                <div style={{ position: 'absolute', top: '2px', right: '75px', zIndex: '99999' }}>
                                     <Button size="small" onClick={assignme} disabled={trangthaibutton}> <Icon type="user" /> Tôi &emsp;</Button>
                                 </div>
                                 <Form.Item label="Gán cho">
@@ -152,7 +152,14 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             </Col>
                         </Row>
                         <Row gutter={24} align="middle">
-                            <Col span={8}>
+                            <Col span={6}>
+                                <Form.Item label="Đơn vị">
+                                    <Select size="small">
+                                        <Option value="1"></Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
                                 <Form.Item label="Khách hàng">
                                     {getFieldDecorator('kh_id', {
                                         rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: first_kh_id
@@ -171,7 +178,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     </Select>)}
                                 </Form.Item>
                             </Col>
-                            <Col span={8}>
+                            <Col span={6}>
                                 <Form.Item label="Trạng thái">
                                     {getFieldDecorator('ht_trangthai', {
                                         rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "dangxuly"
@@ -190,7 +197,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     </Select>)}
                                 </Form.Item>
                             </Col>
-                            <Col span={8}>
+                            <Col span={6}>
                                 <Form.Item label="Phân loại">
                                     {getFieldDecorator('ht_phanloai', {
                                         rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "new"
@@ -228,8 +235,8 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="TG dự kiến hoàn thành">
                                     {getFieldDecorator('ht_thoigian_dukien_hoanthanh', {
                                     })(
-                                    // <DatePicker showTime size={"small"} onOk={this.onOk} format="DD/ MM/ YYYY--HH: MM: ss" style={{ minWidth: '170px' }} suffixIcon={Icon('')} />
-                                    <Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />
+                                        // <DatePicker showTime size={"small"} onOk={this.onOk} format="DD/ MM/ YYYY--HH: MM: ss" style={{ minWidth: '170px' }} suffixIcon={Icon('')} />
+                                        <Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />
                                     )}
                                 </Form.Item>
                             </Col>
@@ -381,11 +388,11 @@ class Hotro extends React.Component {
 
     getkhachhang = () => {
         Request('hotro/getkhachhang', 'POST', {}).then((res) => {
-            if(res.data.data.khachhangs){
+            if (res.data.data.khachhangs) {
                 this.setState({
                     khachhangs: res.data.data.khachhangs
                 })
-            }  
+            }
         }).catch((err) => {
             console.log(err)
         })
@@ -624,12 +631,27 @@ class Hotro extends React.Component {
     }
 
     Assignme = () => {
-        let user_cookie = cookie.load('user');
-        const { form } = this.formRef.props
-        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
-        this.setState({
-            trangthaibutton: true
+        var user_cookie = cookie.load('user');
+        Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
+            if (res) {
+                if (res.data.data.name[0] === undefined) {
+                    this.setState({
+                        trangthaibutton: true
+                    })
+                }
+                else {
+                    var ns_id = res.data.data.name[0].ns_id
+                    const { form } = this.formRef.props
+                    form.setFieldsValue({ ns_id_ass: ns_id })
+                    this.setState({
+                        trangthaibutton: true
+                    })
+                }
+            }
         })
+
+
+
     }
 
     changeButton = (value) => {
@@ -721,6 +743,7 @@ class Hotro extends React.Component {
     render() {
         var i = 0
         var j = 0
+        var demclickplus = 0
         var formatDate = require('dateformat')
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -784,9 +807,11 @@ class Hotro extends React.Component {
                                 return (
                                     <div style={{ textAlign: 'left' }}>
                                         <div style={{ fontSize: '18px' }}> Yêu cầu: </div>
-                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1200' }} >{this.state.hotro[selectedRowKeys].ht_noidungyeucau}</Row>
+                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }} >{this.state.hotro[selectedRowKeys].ht_noidungyeucau}</Row>
                                         <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
-                                        <Row style={{ paddingTop: '7px' }}>{this.state.hotro[selectedRowKeys].ht_ghichu}</Row>
+                                        <Row style={{ paddingTop: '7px',borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }}>{this.state.hotro[selectedRowKeys].ht_ghichu}</Row>
+                                        <Row style={{ marginTop: '5px', marginBottom: '5px' }}>SĐT : {this.state.hotro[selectedRowKeys].kh_sodienthoai}</Row>
+                                        <Row style={{ marginTop: '5px', marginBottom: '5px' }} >Email : {this.state.hotro[selectedRowKeys].kh_email}</Row>
                                     </div>
                                 )
                             }}>
@@ -794,6 +819,7 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
+                                        demclickplus++
                                         // console.log("Hien thi array trang thai ", array_ht_trangthai[(this.state.page - 1) * 10 + j - 1])
                                         // if (array_ht_trangthai[(this.state.page - 1) * 10 + j - 1] === "daxong") {
                                         if (array_ht_trangthai[j - 1] === "daxong") {
@@ -814,9 +840,15 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="kh_ten" width={100}
+                            <Column title="Khách hàng" dataIndex="kh_ten" width={300}
                                 render={text => {
-                                    return this.checkDate(i, text, j)
+                                    // console.log("day la j ", j)
+                                    return (
+                                        <div>
+                                            <Row>{this.checkDate(i, text, j)}</Row>
+                                            {/* <Row style={{ marginTop: '5px', marginBottom: '5px' }}>SĐT: {this.state.hotro[j - 1].kh_sodienthoai}</Row>
+                                            <Row style={{ marginTop: '5px', marginBottom: '5px' }} >Email: {this.state.hotro[j - 1].kh_email}</Row> */}
+                                        </div>)
                                 }}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Người tạo" dataIndex="ns_hoten"

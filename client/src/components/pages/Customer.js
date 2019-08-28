@@ -719,17 +719,17 @@ class Customer extends React.Component {
                             <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" onHeaderCell={this.onHeaderCell} />
                             <Column title="Email" dataIndex="kh_email" key="kh_email" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh"  />
                             <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen"  />
                             <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa"  />
                             <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hidden-action' disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" onHeaderCell={this.onHeaderCell} />
                             <Column title="Vị trí công tác" dataIndex="kh_vitricongtac" key="kh_vitricongtac" onHeaderCell={this.onHeaderCell} />
                             <Column title="Liên lạc" dataIndex="kh_lienlac" key="kh_lienlac" className='hidden-action' disabaled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Liên lạc" dataIndex="kh_lienlac_txt" key="kh_lienlac_txt" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Liên lạc" dataIndex="kh_lienlac_txt" key="kh_lienlac_txt"  />
                             <Column />
                         </Table>
                     </Row>
