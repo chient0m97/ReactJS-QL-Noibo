@@ -408,6 +408,7 @@ class Hopdong extends React.Component {
   }
   onClickHandler = () => {
     const data = new FormData()
+    if(this.state.selectedFile!==null){
     data.append('file', this.state.selectedFile)
     console.log(this.state.selectedFile, 'file day');
     axios.post("http://localhost:5000/upload", data, {
@@ -417,6 +418,7 @@ class Hopdong extends React.Component {
     console.log(res.statusText)
  })
 }
+}
   InsertOrUpdateHopdong = () => {
     this.onClickHandler();
     const { form } = this.formRef.props;
@@ -424,8 +426,13 @@ class Hopdong extends React.Component {
       if (err) {
         return
       }
+      if(this.state.selectedFile!==null){
       const urlFile= "http://localhost:5000/upload/"+this.state.selectedFile.name;
       values.hd_files = urlFile
+      }
+      else{
+        values.hd_files = " "
+      }
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
       Request(url, 'POST', values)
         .then((response) => {
