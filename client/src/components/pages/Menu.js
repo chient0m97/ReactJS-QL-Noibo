@@ -230,7 +230,7 @@ class Menu extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm Menu">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                                        <Icon type="user-add" />
+                                    <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>

@@ -1,6 +1,6 @@
 import { Layout } from 'antd'
 import React, { Component } from 'react'
-import { Menu, Icon } from 'antd'
+import { Menu, Icon, Drawer, Switch } from 'antd'
 import { NavLink } from 'react-router-dom'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
@@ -18,6 +18,8 @@ class AppSider extends Component {
             collapsed: props.collapsed,
             menu: [],
             openKeys: [],
+            stateDrawer: false,
+            theme: 'dark'
         }
         this.setCollapsed(props.collapsed)
     }
@@ -42,6 +44,31 @@ class AppSider extends Component {
 
     }
 
+    showDrawer = () => {
+        this.setState({
+            stateDrawer: true,
+        });
+    }
+
+    onClose = () => {
+        this.setState({
+            stateDrawer: false,
+        });
+    };
+
+    handleClick = e => {
+        if (e.key === '13') {
+            this.showDrawer()
+        }
+    };
+
+    changeTheme = value => {
+        console.log(value)
+        this.setState({
+            theme: value ? 'dark' : 'light'
+        });
+    }
+
     render() {
         let token = cookie.load('token');
 
@@ -59,7 +86,7 @@ class AppSider extends Component {
                     claims[i] = { url: '/hotro', des: 'Công Việc - Hỗ trợ', menu: 2 }
                 }
                 else if (claims[i] === Permission.Nhansu.Read) {
-                    claims[i] = { url: '/nhansu', des: 'Nhân sự', menu: 2 }
+                    claims[i] = { url: '/nhansu', des: 'Nhân sự', menu: 1 }
                 }
                 else if (claims[i] === Permission.Diaban.Read) {
                     claims[i] = { url: '/diaban', des: 'Địa bàn', menu: 3 }
@@ -85,13 +112,17 @@ class AppSider extends Component {
             }
         }
 
+
+
         return (
 
             <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
                 <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline"
+                <Menu theme={this.state.theme}
+                    defaultSelectedKeys={['1']} mode="inline"
                     openKeys={this.state.openKeys}
                     onOpenChange={this.onOpenChange}
+                    onClick={this.handleClick}
                 >
                     <Menu.Item key="1">
                         <Icon type="home" />
@@ -107,7 +138,7 @@ class AppSider extends Component {
                             </span>
                         }
                     >
-                        
+
                         {claims.map((item, i) => {
                             if (item.url) {
                                 if (item.menu === 1) {
@@ -164,8 +195,25 @@ class AppSider extends Component {
                         <Icon type="file" />
                         <span><NavLink to="/file" className="">Tập tin Khách Hàng</NavLink ></span>
                     </Menu.Item>
+                    <Menu.Item key="13">
+                        <Icon type="setting" onClick={this.showDrawer} />Cài Đặt
+                    </Menu.Item>
                 </Menu>
+                <Drawer
+                    title="Cài Đặt"
+                    closable={false}
+                    onClose={this.onClose}
+                    visible={this.state.stateDrawer}
+                    placement="right"
+                >
+                    <Switch
+                        checkedChildren="Tối"
+                        unCheckedChildren="Sáng"
+                        onChange={this.changeTheme}
+                    />
+                </Drawer>
             </Sider>
+
         )
     }
 }

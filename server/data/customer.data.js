@@ -41,10 +41,10 @@ module.exports = {
         knex.from('khachhangs').insert(customer)
             .then(res => {
                 var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
-                if(customer.kh_lienlac === 'DD')
-                knex.raw(sql).then(res => {
-                    console.log('dã update')
-                })
+                if (customer.kh_lienlac === 'DD')
+                    knex.raw(sql).then(res => {
+                        console.log('dã update')
+                    })
                 callback({ success: true });
             }).catch(err => {
                 console.log(err)
@@ -54,16 +54,21 @@ module.exports = {
 
 
     updateCustomer: function (customer, callback) {
+        // console.log("Day la data khach hang ",customer)
         knex.from('khachhangs').where('kh_id', customer.kh_id)
             .update(customer).then(res => {
-                var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
-                if(customer.kh_lienlac === 'DD')
-                knex.raw(sql).then(res => {
-                    console.log('dã update')
-                })
+                // console.log("tang data khach hang")
+                if (customer.kh_lienlac === 'DD') {
+                    var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
+                    knex.raw(sql).then(ress=> {
+                        console.log('dã update')
+                        callback({ success: true })
+                    })
+                    
+                }
                 callback({ success: true })
             }).catch(err => {
-                console.log(err)
+                // console.log(err)
                 callback({ success: false })
             })
     },
@@ -78,12 +83,12 @@ module.exports = {
     },
 
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        console.log('chip chip')
-        console.log('================', limit)
+        // console.log('chip chip')
+        // console.log('================', limit)
         knex('khachhangs').where(columnSearch, 'like', '%' + textSearch + '%').orderBy(index, sortBy).limit(limit).offset(offset)
             .then(res => {
                 var customers = res
-                console.log('unit', customers)
+                // console.log('unit', customers)
                 knex('khachhangs').where(columnSearch, 'like', '%' + textSearch + '%').count()
                     .then(resCount => {
                         var count = resCount[0].count
@@ -115,12 +120,12 @@ module.exports = {
     getTinh: function (callback) {
         knex.from('diabans').select('*').where('dm_db_cap', 1)
             .then((res) => {
-                console.log('data', res)
+                // console.log('data', res)
                 callback(res);
             })
     },
     getHuyen: function (id_db_tinh, callback) {
-        console.log('day la id tinh', id_db_tinh)
+        // console.log('day la id tinh', id_db_tinh)
         knex.raw('select dm_db_id , dm_db_ten from diabans where dm_db_id_cha = ' + id_db_tinh)
             .then((res) => {
                 console.log('data row', res.rows)
@@ -128,7 +133,7 @@ module.exports = {
             })
     },
     getXa: function (data, callback) {
-        console.log('dcm id  huyen', data)
+        // console.log('dcm id  huyen', data)
         knex.raw('select dm_db_id, dm_db_ten from diabans where dm_db_id_cha = ' + data)
             // console.log('dcm xa',data)
             .then((res) => {
@@ -147,15 +152,14 @@ module.exports = {
     getDonvi: function (callback) {
         knex.raw('select dm_dv_id, dm_dv_ten as tendonvi from donvis khs')
             .then((res) => {
-                console.log('data dv', res)
                 callback(res.rows);
             })
     },
 
     insertDonvi: function (donvi, callback) {
-        console.log("hien thi tang insert ", donvi)
+        // console.log("hien thi tang insert ", donvi)
         knex.from('donvis').insert(donvi).then(res => {
-            console.log('inserted============= ', donvi);
+            // console.log('inserted============= ', donvi);
             callback({ success: true });
         }).catch(err => {
             console.log(err, 'lỗi  insert')

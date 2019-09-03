@@ -399,17 +399,17 @@ class User extends React.Component {
   }
   showmodalRole = async (name) => {
 
-      this.setState({
-        modalRoleVisible: true,
+    this.setState({
+      modalRoleVisible: true,
 
-      })
-  
+    })
+
 
   }
   okRole = async e => {
     let user = this.state.selectedId
     let a = this.child.state.checkedKeys
-    console.log('checkkkkkkkkkkkkkkkkkkkkk',a)
+    console.log('checkkkkkkkkkkkkkkkkkkkkk', a)
     Request('setpermission', 'POST', { a, user }).then(res => {
 
     })
@@ -456,7 +456,7 @@ class User extends React.Component {
         console.log('==================================================', sl)
         await Request('checkrole', 'POST', { sl }).then((res) => {
           let data = res.data;
-          console.log('---------------------------------',data)
+          console.log('---------------------------------', data)
           let a = data.map(function (value) {
             return a = { role: value.split('.')[0], acton: value.split('.')[1] }
           })

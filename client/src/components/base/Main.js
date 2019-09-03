@@ -35,7 +35,7 @@ class Main extends React.Component {
   }
 
   renderRouter = (e) => {
-    console.log('routers: ', this.state.routers)
+    // console.log('routers: ', this.state.routers)
     return this.setState({
       routers: (
         <Switch>
@@ -60,7 +60,7 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    console.log('routers: ', this.state.routers)
+    // console.log('routers: ', this.state.routers)
     this.renderRouter()
   }
   render() {

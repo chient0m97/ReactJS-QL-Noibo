@@ -27,6 +27,7 @@ var khachhangController = {
     },
 
     insertKhachhang: async function insertKhachhang(khachhangs, callback) {
+        console.log("day la data khachhang ",khachhangs)
         khachhangs.kh_id = uuidv1();
 
         khachhangs.dm_db_id_tinh = khachhangs.dm_db_id_tinh_customer

@@ -40,16 +40,17 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             return (
                 <Modal
                     // isOpen={this.props.isOpen}
+                    // onRequestClose={onCancel}
+                    // initWidth={1000} 
+                    // initHeight={500}
                     centered
-                    // visible={visible}
+                    visible={visible}
                     title={title}
                     okText="Lưu lại"
-                    // onRequestClose={onCancel}
+                    onCancel={onCancel}
                     onOk={onSave}
                     confirmLoading={confirmLoading}
                     width={'60%'}
-                    // initWidth={1000} 
-                    // initHeight={500}
                 >
                     <Form layout={formtype} style={{padding: '10px'}}>
                         <h3>{title}</h3>
@@ -104,6 +105,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     })(<Select
                                         size={"small"}
                                         onChange={this.handleChange}
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
@@ -121,18 +123,19 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                             rules: [{ required: true, message: 'Trường không được để trống!' }]
                                         })(<Select
                                             onChange={this.handleChange}
+                                            showSearch
                                             filterOption={(input, option) =>
                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
                                             initialValue="TT"
                                             size={"small"}
                                         >
-                                            <Option value="TT" > Thực Tập </Option>
-                                            <Option value="HC" > Học Việc </Option>
-                                            <Option value="TV" > Thử Việc </Option>
-                                            <Option value="CT" > Chính Thức </Option>
-                                            <Option value="NV" > Nghỉ Việc </Option>
-                                            <Option value="Khac" > Khác </Option>
+                                            <Option value="TT" >Thực Tập</Option>
+                                            <Option value="HC" >Học Việc</Option>
+                                            <Option value="TV" >Thử Việc</Option>
+                                            <Option value="CT" >Chính Thức</Option>
+                                            <Option value="NV" >Nghỉ Việc</Option>
+                                            <Option value="Khac" >Khác</Option>
                                         </Select>)}
                                     </Form.Item>
                                 </Col>
@@ -146,6 +149,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                         rules: [{ required: true, message: 'Trường không được để trống!', }],
                                     })(<Select
                                         size={"small"}
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
@@ -257,9 +261,9 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 </Form.Item>
                             </Col>
                         </Row>
-                        <Row>
+                        {/* <Row>
                             <Button onClick={this.props.onCancel}>Thoát</Button>
-                        </Row>
+                        </Row> */}
                     </Form>
                 </Modal>
             );

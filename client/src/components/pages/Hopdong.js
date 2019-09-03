@@ -56,7 +56,12 @@ const FormModalDuan = Form.create({ name: 'form_create_duan' })(
                 <Form.Item label="Quản trị dự án">
                   {getFieldDecorator('ns_id_qtda', {
                     rules: [{ required: true, message: 'Trường này không được để trống!', }],
-                  })(<Select>
+                  })(<Select
+                    filterOption={(input, option) =>
+                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    showSearch
+                  >
                     {comboboxduan}
                   </Select>)}
                 </Form.Item>
@@ -153,8 +158,10 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   {getFieldDecorator('hd_doituong', {
                   })(
                     <Select
+                      filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
                       showSearch
-                      optionFilterProp="children"
                       size="small" onChange={this.props.onChangeSelect}
                     >
                       {comboboxLoaiHopDong}
@@ -179,7 +186,14 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
               <Col span={5}>
                 <Form.Item label="Chọn nhanh:">
-                  <Select defaultValue="90" size="small" onChange={this.props.onchangeoption}>
+                  <Select defaultValue="90"
+                    size="small"
+                    onChange={this.props.onchangeoption}
+                    filterOption={(input, option) =>
+                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    showSearch
+                  >
                     <Option value="30">1 Tháng</Option>
                     <Option value="90">3 Tháng</Option>
                     <Option value="180">6 Tháng</Option>
@@ -198,7 +212,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   {getFieldDecorator('hd_congty', {
                     initialValue: 'FSC'
                   })(
-                    <Select size="small">
+                    <Select
+                      size="small"
+                      filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                      showSearch
+                    >
                       <Option value="FSC">FSC</Option>
                       <Option value="HCM">HCM</Option>
                     </Select>
@@ -246,7 +266,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   {getFieldDecorator('hd_trangthai', {
                     initialValue: 'DTH'
                   })(
-                    <Select size="small">
+                    <Select
+                      size="small"
+                      filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                      showSearch
+                    >
                       <Option value="DTH">Đang thực hiện</Option>
                       <Option value="TL">Thanh lý</Option>
                       <Option value="XHD">Xuất hóa đơn</Option>
@@ -360,11 +386,11 @@ class Hopdong extends React.Component {
             hopdongs: response.data.data.hopdongs,
             count: Number(response.data.data.count)
           })
-        
+
       })
-      this.props.fetchLoading({
-        loading: false
-      })
+    this.props.fetchLoading({
+      loading: false
+    })
   }
   InsertOrUpdateHopdong = () => {
     const { form } = this.formRef.props;
@@ -742,7 +768,7 @@ class Hopdong extends React.Component {
               <Col span={2}>
                 <Tooltip title="Thêm Hợp Đồng">
                   <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                    <Icon type="user-add" />
+                  <Icon type="plus" />
                   </Button>
                 </Tooltip>
               </Col>

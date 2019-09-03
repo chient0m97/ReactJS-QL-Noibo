@@ -693,7 +693,7 @@ class Unit extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm đơn vị">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
-                                        <Icon type="user-add" />
+                                    <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -769,9 +769,9 @@ class Unit extends React.Component {
                             onSelectDv={this.onSelectDv}
                             stateoption={this.state.stateoption}
                         />
-                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} className="table-contents" pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: 1000 }} rowKey="dm_dv_id">
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} className="table-contents" pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: '130%'}} rowKey="dm_dv_id">
                             <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} width={150} />
-                            <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
+                            <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hidden-action"/>
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
                             <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />

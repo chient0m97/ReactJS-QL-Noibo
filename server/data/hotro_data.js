@@ -1,9 +1,10 @@
 var knex = require('./common/DB')
 var formatDate = require('dateformat')
+var format = require('dateformat')
 
 module.exports = {
     getHotro: (limit, offset, index, sortBy, callback) => {
-        knex.raw("select  hotro.* , nhansu.ns_hovaten, dm_da.dm_duan_ten, khh.kh_ten,khh.kh_sodienthoai, khh.kh_email, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh_sodienthoai, kh_email,kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass order by " + index + ' ' + sortBy + ' offset ' + offset + ' limit ' + limit)
+        knex.raw("select  hotro.* , nhansu.ns_hovaten, dm_da.dm_duan_ten, khh.kh_ten,khh.kh_sodienthoai, khh.kh_email, nhs.ns_hoten, dvs.dm_dv_ten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh_sodienthoai, kh_email,kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass left join (select dv.dm_dv_ten, dv.dm_dv_id from donvis dv) dvs on dvs.dm_dv_id=hotro.dm_dv_id order by " + index + ' ' + sortBy + ' offset ' + offset + ' limit ' + limit)
             .then((res) => {
                 knex('hotros').count()
                     .then((resCount) => {
@@ -58,6 +59,26 @@ module.exports = {
         })
     },
 
+    getKhachHangWhere(dv, callback) {
+        knex.select('kh_id', 'kh_ten').from('khachhangs').where('dm_dv_id', dv.dv).then((res) => {
+            callback({
+                data: {
+                    khachhangs: res
+                }
+            })
+        })
+    },
+
+    getDonVi(callback) {
+        knex.select('dm_dv_id', 'dm_dv_ten').from('donvis').then((res) => {
+            callback({
+                data: {
+                    donvis: res
+                }
+            })
+        })
+    },
+
     getHopDong(callback) {
         knex.select('hd_id').from('hopdongs').then((res) => {
             callback({
@@ -74,6 +95,48 @@ module.exports = {
                 callback({
                     data: {
                         myself: res.rows
+                    }
+                })
+            })
+    },
+
+    getDataMyselfDaxong: function (ht_id_nguoitao, callback) {
+        if (new Date().getDate)
+            knex.raw("select myself.* from (select  hotro.* , nhansu.ns_hovaten, nhs.ns_dinhdanhcanhan, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id,ns_dinhdanhcanhan from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass) as myself where myself.ns_id_ass=(select ns_id from nhansu where ns_dinhdanhcanhan=(select madinhdanh from users where name='" + ht_id_nguoitao.user_cookie + "') and ht_trangthai='daxong')")
+                .then((res) => {
+                    callback({
+                        data: {
+                            myself: res.rows
+                        }
+                    })
+                })
+    },
+
+    getDataMyselfGap: function (ht_id_nguoitao, callback) {
+
+        if (new Date().getDate() === 30) {
+            var date = format(new Date(), 'yyyy-' + (new Date().getMonth() + 1) + '-' + (1))
+        }
+        else {
+            var date = format(new Date(), 'yyyy-mm-' + (new Date().getDate() + 1))
+            console.log("date ",date)
+        }
+        knex.raw("select myself.* from (select  hotro.* , nhansu.ns_hovaten, nhs.ns_dinhdanhcanhan, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id,ns_dinhdanhcanhan from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass) as myself where myself.ns_id_ass=(select ns_id from nhansu where ns_dinhdanhcanhan=(select madinhdanh from users where name='" + ht_id_nguoitao.user_cookie + "') and myself.ht_thoigian_dukien_hoanthanh < '" + date + "' and myself.ht_trangthai not in ('daxong'))")
+            .then((res) => {
+                callback({
+                    data: {
+                        myselfGap: res.rows
+                    }
+                })
+            })
+    },
+
+    getDataNguoiTao: function (ns_id_nguoitao, callback) {
+        knex.raw("select myself.* from (select  hotro.* , nhansu.ns_hovaten, nhs.ns_dinhdanhcanhan, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id,ns_dinhdanhcanhan from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass) as myself where myself.ns_id_nguoitao='"+ ns_id_nguoitao.user_cookie + "'")
+            .then((res) => {
+                callback({
+                    data: {
+                        dataNguoiTao: res.rows
                     }
                 })
             })
@@ -110,9 +173,18 @@ module.exports = {
         nhatky_hotros.nkht_id = hotros.ht_id
         nhatky_hotros.nkht_thoigian_dukien_hoanthanh = hotros.ht_thoigian_dukien_hoanthanh
         nhatky_hotros.ns_id_capnhat = hotros.ns_id_capnhat
+        nhatky_hotros.dm_dv_id = hotros.dm_dv_id
 
         delete hotros.ns_id_capnhat
         delete hotros.nkht_thoigiancapnhat
+        delete hotros.dm_dv_ten
+        if (hotros.ns_hovaten !== undefined) {
+            delete hotros.ns_hovaten
+            delete hotros.dm_duan_ten
+            delete hotros.kh_ten
+            delete hotros.ns_hoten
+            delete hotros.ns_dinhdanhcanhan
+        }
         await knex.from('nhatky_hotros').insert(nhatky_hotros).then(response => {
             knex.from('hotros').where('ht_id', hotros.ht_id).update(hotros).then(res => {
                 callback({

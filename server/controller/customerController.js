@@ -97,7 +97,6 @@ var CustomerController = {
 
     insertDonvi: function insertDonvi(donvi, callback) {
         customerData.insertDonvi(donvi, (response) => {
-            console.log("hien thi controller ", response)
             var message = constant.successInseart;
             var status = 200;
             if (!response.success) {
@@ -148,7 +147,6 @@ var CustomerController = {
 
     insertDonvi: function insertDonvi(donvi, callback) {
         customerData.insertDonvi(donvi, (response) => {
-            console.log("hien thi controller ", response)
             var message = constant.successInseart;
             var status = 200;
             if (!response.success) {
@@ -163,12 +161,23 @@ var CustomerController = {
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
-        customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
-        customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
-        customer.dm_db_id_xa = customer.dm_db_id_xa_customer
+        console.log("data kh ",customer)
+        // customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
+        // customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
+        // customer.dm_db_id_xa = customer.dm_db_id_xa_customer
+        // delete customer.dm_db_id_huyen_customer
+        // delete customer.dm_db_id_tinh_customer
+        // delete customer.dm_db_id_xa_customer
+        
+        customer.dm_db_id_tinh = customer.idtinh
+        customer.dm_db_id_huyen = customer.idhuyen
+        customer.dm_db_id_xa = customer.idxa
         delete customer.dm_db_id_huyen_customer
         delete customer.dm_db_id_tinh_customer
         delete customer.dm_db_id_xa_customer
+        delete customer.idtinh
+        delete customer.idhuyen
+        delete customer.idxa
         customerData.updateCustomer(customer, (res) => {
             callback({
                 success: res.success,

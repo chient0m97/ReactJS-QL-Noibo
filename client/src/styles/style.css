@@ -389,3 +389,6 @@ thead[class*="ant-table-thead"] th{
   top:0;
   cursor:move;
 } */
+
+.clickRowStyl{
+  background-color: #00b4ed !important}

@@ -72,7 +72,7 @@ class AppHeader extends Component {
     let token = cookie.load('token')
     let payload = jwt.decode(token);
     let fullname = payload.fullname;
-    console.log(payload,'alo alo')
+    // console.log(payload,'alo alo')
     return (
       <div>
         <Header style={{ background: '#fff', padding: 0 }}>
@@ -86,7 +86,7 @@ class AppHeader extends Component {
               </Badge>
               <Avatar icon="user" style={{ fontSize: '20px', backgroundColor: 'orange' }} />
               <Tooltip title="Tên tài khoản">
-                <span style={{ fontSize: '18px' }}> {fullname} </span>
+                <span style={{ fontSize: '18px' }}> {this.state.name} </span>
               </Tooltip>
             </a>
           </Dropdown>

@@ -70,8 +70,8 @@ class Customer extends React.Component {
         Request('customer/getdonvi', 'POST', {
         }).then((response) => {
             let data = response.data;
-            if (data.data){
-                
+            if (data.data) {
+
                 this.setState({
                     customers: data.data.customers,
                 })
@@ -93,7 +93,7 @@ class Customer extends React.Component {
         })
             .then(async (response) => {
                 let data = response.data;
-                if (data.data){
+                if (data.data) {
                     await this.setState({
                         customers: data.data.customers,
                         count: Number(data.data.count)
@@ -111,8 +111,19 @@ class Customer extends React.Component {
             if (err) {
                 return
             }
-            console.log("hien thi value ",values)
+            console.log("hien thi value ", values)
+
             var url = this.state.action === 'insert' ? 'customer/insert' : 'customer/update'
+            if (url === 'customer/update') {
+                console.log("update")
+                // values.dm_db_id_tinh_customer = this.state.rowcustomerselected.idtinh
+                // values.dm_db_id_huyen_customer = this.state.rowcustomerselected.idhuyen
+                // values.dm_db_id_xa_customer = this.state.rowcustomerselected.idxa
+
+                values.idtinh=this.state.rowcustomerselected.idtinh
+                values.idhuyen=this.state.rowcustomerselected.idhuyen
+                values.idxa=this.state.rowcustomerselected.idxa
+            }
             Request(url, 'POST', values)
                 .then((response) => {
                     this.setState({
@@ -127,10 +138,10 @@ class Customer extends React.Component {
                     }
                     var description = response.data.message
                     var notifi_type = 'success'
-                    var message = 'Thành công (^.^)'
+                    var message = 'Thanh Cong'
 
                     if (!!!response.data.success) {
-                        message = 'Có lỗi xảy ra (>.<)'
+                        message = 'Co loi xay ra'
                         notifi_type = 'error'
                         description = response.data.message.map((values, index) => {
                             return <Alert type='error' message={values}></Alert>
@@ -242,48 +253,48 @@ class Customer extends React.Component {
     set_select_tendv = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_tendv: res.data
                 })
             }
-            
+
         })
     }
 
     set_select_donvicha = async () => {
         await Request('customer/getdonvi', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_donvicha: res.data
                 })
             }
-            
+
         })
     }
 
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_tenkh: res.data
                 })
             }
-            
+
         })
     }
 
     set_select_tinh = async () => {
         await Request('customer/gettinh', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_tinh: res.data
                 })
             }
-            
+
         })
     }
 
@@ -291,12 +302,12 @@ class Customer extends React.Component {
         await Request('customer/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_huyen: res.data
                 })
             }
-            
+
         })
     }
 
@@ -304,12 +315,12 @@ class Customer extends React.Component {
         await Request('customer/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_xa: res.data
                 })
             }
-            
+
         })
     }
 
@@ -359,12 +370,12 @@ class Customer extends React.Component {
     set_select_tenkh = async () => {
         await Request('unit/getkhachhang', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_tenkh: res.data
                 })
             }
-            
+
         })
     }
 
@@ -401,12 +412,12 @@ class Customer extends React.Component {
     set_select_diabantinh = async () => {
         await Request('customer/gettinh', 'POST', {
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_diabantinh: res.data
                 })
             }
-            
+
         })
     }
 
@@ -414,12 +425,12 @@ class Customer extends React.Component {
         await Request('customer/gethuyen', 'POST', {
             id_db_tinh: id_db_tinh
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_diabanhuyen: res.data
                 })
             }
-            
+
         })
     }
 
@@ -427,12 +438,12 @@ class Customer extends React.Component {
         await Request('customer/getxa', 'POST', {
             id_db_huyen: id_db_huyen
         }).then(async (res) => {
-            if(res.data){
+            if (res.data) {
                 await this.setState({
                     select_diabanxa: res.data
                 })
             }
-            
+
         })
     }
 
@@ -601,6 +612,7 @@ class Customer extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys, selectedRows) => {
+        console.log("day la record ", selectedRows[0])
         this.setState({
             selectedRowKeys,
             selectedId: selectedRowKeys
@@ -646,7 +658,7 @@ class Customer extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm khách hàng">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
-                                        <Icon type="user-add" />
+                                    <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -715,21 +727,21 @@ class Customer extends React.Component {
                             stateoption={this.state.stateoption}
                         />
                         <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
-                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" onHeaderCell={this.onHeaderCell} width={150}/>
+                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" onHeaderCell={this.onHeaderCell} />
                             <Column title="Email" dataIndex="kh_email" key="kh_email" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh"  />
+                            <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" />
                             <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen"  />
+                            <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" />
                             <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa"  />
+                            <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" />
                             <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hidden-action' disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" onHeaderCell={this.onHeaderCell} />
                             <Column title="Vị trí công tác" dataIndex="kh_vitricongtac" key="kh_vitricongtac" onHeaderCell={this.onHeaderCell} />
                             <Column title="Liên lạc" dataIndex="kh_lienlac" key="kh_lienlac" className='hidden-action' disabaled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Liên lạc" dataIndex="kh_lienlac_txt" key="kh_lienlac_txt"  />
+                            <Column title="Liên lạc" dataIndex="kh_lienlac_txt" key="kh_lienlac_txt" />
                             <Column />
                         </Table>
                     </Row>
