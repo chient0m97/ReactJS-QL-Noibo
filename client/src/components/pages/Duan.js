@@ -202,9 +202,10 @@ class Duan extends React.Component {
         tt += str.charAt(i + 1)
       }
     }
+    // tt=tt.toUpperCase()
     const { form } = this.formRef.props
+    
     form.setFieldsValue({ dm_duan_key: tt })
-
   }
 
   refresh = (pageNumber) => {
