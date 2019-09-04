@@ -399,7 +399,7 @@ class Hopdong extends React.Component {
   async componentDidMount() {
     await this.getHopdongs(this.state.pageNumber, this.state.index, this.state.sortBy);
     document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Thông tin liên quan'
-    document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
+    document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '71px'
   }
   onClickDownloadFile = (text) => {
     if (text === " ") {
@@ -766,18 +766,18 @@ class Hopdong extends React.Component {
     if (token)
       return (
         <div>
-          <Card>
+          <Card className="hidden-action">
             <Row>
               <Col span={2}>
                 <Tooltip title="Thêm Hợp Đồng">
-                  <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
+                  <Button className="hidden-action" shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                     <Icon type="user-add" />
                   </Button>
                 </Tooltip>
               </Col>
               <Col span={2}>
                 <Tooltip title="Sửa Hợp Đồng">
-                  <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                  <Button className="hidden-action" shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                     <Icon type="edit" />
                   </Button>
                 </Tooltip>
@@ -792,7 +792,7 @@ class Hopdong extends React.Component {
                     cancelText="No"
                     visible={this.state.stateconfirmdelete}
                   >
-                    <Button shape="round" type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                    <Button className="hidden-action" shape="round" type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
                       <Icon type="delete" />
                     </Button>
                   </Popconfirm>
@@ -800,7 +800,7 @@ class Hopdong extends React.Component {
               </Col>
               <Col span={2}>
                 <Tooltip title="Tải Lại">
-                  <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
+                  <Button className="hidden-action" shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
                     <Icon type="reload" />
                   </Button>
                 </Tooltip>
@@ -838,7 +838,10 @@ class Hopdong extends React.Component {
               comboBoxDatasourceDuan={this.state.comboBoxDatasourceDuan}
               select_qtda={this.state.select_qtda}
             />
-            <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}
+            <Table 
+            //  pagination={false} dataSource={this.state.hopdongs} 
+             bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}
+             dataSource={this.state.hopdongs}
               expandedRowRender={(record, selectedRowKeys) => {
                 return (
                   <div style={{ textAlign: 'left' }}>
@@ -848,17 +851,19 @@ class Hopdong extends React.Component {
                     <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].hd_diachi}</Row>
                     <div style={{ paddingTop: '10px', fontSize: '18px' }}> Khách hàng: </div>
                     <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_doituong}</Row>
+                    <div style={{ paddingTop: '10px', fontSize: '18px' }}> Trạng thái: </div>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_trangthai}</Row>
                   </div>
                 )
               }}
             >
-              <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} />
-              <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
-              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} />
+              <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
+              <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell}/>
+              <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell}/>
+              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
               <Column title="Công ty" dataIndex="hd_congty" key="hd_congty"
-                onHeaderCell={this.onHeaderCell} width={150} />
-              <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} width={150}
+                onHeaderCell={this.onHeaderCell} style={{width: '70px'}} />
+              <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}
                 render={
                   text => {
                     if (text === null)
@@ -867,29 +872,29 @@ class Hopdong extends React.Component {
                       return text + ' ngày'
                   }}
               />
-              <Column title="Địa chỉ" className="hidden-action" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} width={150} />
-              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" render={
+              <Column title="Địa chỉ" className="hidden-action" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell}/>
+              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" render={
+              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" render={
+              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" render={
+              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
@@ -906,14 +911,15 @@ class Hopdong extends React.Component {
                   }}
                 onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" className="hidden-action" onHeaderCell={this.onHeaderCell} />
-              <Column title="Files" dataIndex="hd_files" key="hd_files"
+              <Column title="Trạng thái" className="hidden-action" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
+              <Column title="Thời gian hành động" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
+              <Column title="Hành động" dataIndex="hd_files" key="hd_files" style={{width: '70px'}}
                 render={(text) => 
                   (
                   <span>
+                    <h1>Thêm mới</h1>
                     <Tooltip title="Tải xuống">
-                      <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
+                      <Button className="hidden-action" shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
                         <Icon type="download" />
                       </Button>
                     </Tooltip>

@@ -156,6 +156,7 @@ class AppSider extends Component {
                         <Menu.Item key="10"><NavLink to="/diaban" className="">Địa bàn</NavLink ></Menu.Item>
                         <Menu.Item key="8"><NavLink to="/unit" className="">Đơn vị</NavLink></Menu.Item>
                         <Menu.Item key="/231123das"><NavLink to="" className="">omg</NavLink></Menu.Item> */}
+                        <Menu.Item key="123"><NavLink to="/nkhd" className="">Nhật ký hợp đồng</NavLink></Menu.Item>
                     </SubMenu>
                     <SubMenu key="sub4" title={
                         <span>

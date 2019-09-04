@@ -39,7 +39,6 @@ var HopdongController = {
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callback(data, 400);
         })
     },
     insertHopdong: async function insertHopdong(hopdong, callback) {
@@ -120,10 +119,8 @@ var HopdongController = {
     validateCreate: (req, res, next) => {
         next()
     },
-
     insertDuan: async function insertDuan(duan, callback) {
-        console.log(duan,'duan day');
-        
+        console.log(duan,'duan day'); 
         if (1
         ) {
             if (1){

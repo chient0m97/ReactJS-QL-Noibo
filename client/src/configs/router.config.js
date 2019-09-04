@@ -17,6 +17,7 @@ import ok from '../components/common/ok';
 import Hoadon from '../components/pages/Quanly_hoadon'
 import Request from '@pages/Request'
 import Half from '@pages/Half'
+import NhatkyHopdong from '@pages/NhatkyHopdong'
 
 const routers = [
   
@@ -115,6 +116,11 @@ const routers = [
         path: '/half',
         component: Half,
         name: 'Half'
+    },
+    {
+        path: '/nkhd',
+        component: NhatkyHopdong,
+        name: 'NhatkyHopdong'
     },
 ]
 
