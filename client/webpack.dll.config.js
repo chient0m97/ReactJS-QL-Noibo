@@ -23,7 +23,8 @@ module.exports = {
     output: {
         filename: '[name].dll.js',
         path: path.join(__dirname, './src/resource/dll'),
-        library: '[name]_[hash]'
+        library: '[name]_[hash]',
+        publicPath: '/'
     },
     performance: {
         maxEntrypointSize: 4000000,

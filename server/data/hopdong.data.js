@@ -106,7 +106,7 @@ module.exports = {
         })
     },
     getkhachhang: function (callback) {
-        let strSqlKH = "select kh_id as id, kh_ten || '(' || kh_email || ')' ten from khachhangs";
+        let strSqlKH = "select kh_id as id, kh_ten || ' (' || coalesce(kh_email, 'Không có email') || ')' ten from khachhangs";
         knex.raw(strSqlKH).then(res => {
             callback(res.rows);
         }).catch((err) => {

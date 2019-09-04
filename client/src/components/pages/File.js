@@ -4,26 +4,26 @@ import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action'
 import { fetchLoading } from '@actions/common.action'
-import Modal_Menu from '@pages/Modal/Modal_Menu.js'
+import Modal_Filekhachhangs from '@pages/Modal/Modal_Filekhachhangs.js'
 import '@styles/style.css'
 const { Column } = Table;
 
-class Menu extends React.Component {
+class File extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            menu: [],
+            file_khachhangs: [],
             pageNumber: 1,
             page: 1,
             pageSize: 10,
             count: 1,
             visible: false,
             formtype: 'horizontal',
-            title: 'Nhập thông tin Menu',
+            title: 'Nhập thông tin File',
             id_visible: false,
             action: 'insert',
             sortBy: '',
-            index: 'dm_menu_id',
+            index: 'file_tenfile',
             stateconfirmdelete: false,
             checkStateConfirm: true,
             statebuttondelete: true,
@@ -31,38 +31,33 @@ class Menu extends React.Component {
             rowthotroselected: [],
             selectedId: [],
             selectedRowKeys: [],
-            listmenu: [],
         }
     }
 
-    getMenu = (pageNumber) => {
+    getFile = (pageNumber) => {
         var array = []
         if (pageNumber <= 0)
             return;
         this.props.fetchLoading({
             loading: true
         })
-        Request('menu/get', 'POST', {
+        Request('filekhachhangs/get', 'POST', {
             pageSize: this.state.pageSize,
             pageNumber: pageNumber,
             index: this.state.index,
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                res.data.data.menus.map((values, index) => {
-                    array.push({ id: values.dm_menu_id, name: values.dm_menu_name, icon: values.dm_menu_icon_class })
-                })
-                this.setState({
-                    listmenu: array
-                })
-                this.setState({
-                    menu: res.data.data.menus,
-                    count: res.data.data.count
-                })
-                this.props.fetchLoading({
-                    loading: false
-                })
+                if (res.data.data) {
+                    this.setState({
+                        file_khachhangs: res.data.data.file_khachhangs,
+                        count: res.data.data.count
+                    })
+                }
             })
+        this.props.fetchLoading({
+            loading: false
+        })
     }
 
     insertOrUpdate = () => {
@@ -71,10 +66,8 @@ class Menu extends React.Component {
             if (err) {
                 return
             }
-            if (values.dm_menu_id_parent === 'notmenuparent') {
-                values.dm_menu_id_parent = null
-            }
-            var url = this.state.action === 'insert' ? 'menu/insert' : 'menu/update'
+            values.file_data = this.state.valuefile
+            var url = this.state.action === 'insert' ? 'filekhachhangs/insert' : 'filekhachhangs/update'
             Request(url, 'POST', values)
                 .then(async (response) => {
                     this.setState({
@@ -103,13 +96,13 @@ class Menu extends React.Component {
                         message: message,
                         description: description
                     });
-                    this.getMenu(this.state.page)
+                    this.getFile(this.state.page)
                 })
         })
     }
 
-    deleteMenu = (dm_menu_id) => {
-        Request(`menu/delete`, 'DELETE', { dm_menu_id: dm_menu_id })
+    deleteFilekhachhangs = (file_tenfile) => {
+        Request(`file/delete`, 'DELETE', { file_tenfile: file_tenfile })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
@@ -121,14 +114,14 @@ class Menu extends React.Component {
                     statebuttonedit: true,
                     selectedRowKeys: []
                 })
-                this.getMenu(this.state.page)
+                this.getFile(this.state.page)
                 this.render()
             })
     }
 
     refresh = async (pageNumber) => {
         message.success('Refresh success', 1);
-        await this.getMenu(this.state.pageNumber)
+        await this.getFile(this.state.pageNumber)
     }
 
     handleCancel = e => {
@@ -139,22 +132,22 @@ class Menu extends React.Component {
     };
 
     componentDidMount() {
-        this.getMenu(this.state.pageNumber, this.state.index, this.state.sortBy);
+        this.getFile(this.state.pageNumber, this.state.index, this.state.sortBy);
         document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
-    showModal = (menu) => {
+    showModal = (file_khachhangs) => {
         const { form } = this.formRef.props
         this.setState({
             visible: true
         });
         form.resetFields();
-        if (menu.dm_menu_id !== undefined) {
+        if (file_khachhangs.file_tenfile !== undefined) {
             this.setState({
                 id_visible: true,
                 action: 'update',
             })
-            form.setFieldsValue(menu);
+            form.setFieldsValue(file_khachhangs);
         }
     }
 
@@ -206,12 +199,28 @@ class Menu extends React.Component {
         this.onSelectChange([], [])
     };
 
+    onChangeFile = async (e) => {
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+        var file = e.target.files[0];
+        var fileUploadHopdong = await toBase64(file);
+        var fileName = file.name;
+        this.setState({
+            valuefile: fileUploadHopdong,
+            valuename: fileName
+        })
+    }
+
     onRowClick = (row) => {
-        if(this.state.selectedRowKeys[0]===row.dm_menu_id){
+        if (this.state.selectedRowKeys[0] === row.file_tenfile) {
             this.onSelectChange([], [])
         }
-        else{
-            this.onSelectChange([row.dm_menu_id], [row])
+        else {
+            this.onSelectChange([row.file_tenfile], [row])
         }
     }
 
@@ -228,27 +237,27 @@ class Menu extends React.Component {
                     <Row>
                         <Card>
                             <Col span={2}>
-                                <Tooltip title="Thêm Menu">
+                                <Tooltip title="Thêm File">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                                     <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
                             <Col span={2}>
-                                <Tooltip title="Sửa Menu">
+                                <Tooltip title="Sửa File">
                                     <Button type="primary" size="default" shape="round" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                                         <Icon type="edit" />
                                     </Button>
                                 </Tooltip>
                             </Col>
                             <Col span={2}>
-                                <Tooltip title="Xóa Menu">
+                                <Tooltip title="Xóa File">
                                     <Popconfirm
                                         title="Bạn chắc chắn muốn xóa?"
-                                        onConfirm={this.deleteMenu.bind(this, this.state.selectedId)}
+                                        onConfirm={this.deleteFilekhachhangs.bind(this, this.state.selectedId)}
                                         onCancel={this.cancel}
-                                        okText="Yes"
-                                        cancelText="No"
+                                        okText="Có"
+                                        cancelText="Không"
                                         visible={this.state.stateconfirmdelete}
                                     >
                                         <Button type="danger" style={{ marginLeft: '10px' }} shape="round" size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
@@ -267,41 +276,23 @@ class Menu extends React.Component {
                         </Card>
                     </Row>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.menu} rowKey="dm_menu_id" bordered>
-                            <Column title="Url" dataIndex="dm_menu_url" width={400} />
-                            <Column title="Name" dataIndex="dm_menu_name" width={250} />
-                            <Column title="Menu parent" dataIndex="dm_menu_id_parent" width={250}
-                                render={text => {
-                                    var a = null
-                                    this.state.listmenu.forEach(element => {
-                                        if (element.id === text)
-                                            a = element.name
-                                    });
-                                    if (a === null)
-                                        return ''
-                                    return a
-                                }}
-                            />
-                            <Column title="Icon" dataIndex="dm_menu_icon_class"
-                                render={text => {
-                                    return <Icon type={text} />
-                                }}
-                            />
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.file_khachhangs} rowKey="file_tenfile" bordered>
+                            <Column title="Tên File" dataIndex="file_tenfile" width={200} />
+                            {/* <Column title="Data" dataIndex="file_data" width={250} /> */}
                         </Table>
                     </Row>
                     <Row>
                         <Pagination onChange={this.onchangpage} total={this.state.count} style={{ marginTop: 10 }} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
                     </Row>
-                    <Modal_Menu
+                    {/* <Modal_Filekhachhangs
                         wrappedComponentRef={this.saveFormRef}
                         title={this.state.title}
                         visible={this.state.visible}
                         onCancel={this.handleCancel}
                         onSave={this.insertOrUpdate}
                         formtype={this.state.formtype}
-                        id_visible={this.state.id_visible}
-                        listmenu={this.state.listmenu}
-                    />
+                        onChangeFile={this.onChangeFile}
+                    /> */}
                 </Form>
             </div>
         )
@@ -317,4 +308,4 @@ export default connect(mapStateToProps,
         fetchUser,
         fetchLoading
     }
-)(Menu);
+)(File);

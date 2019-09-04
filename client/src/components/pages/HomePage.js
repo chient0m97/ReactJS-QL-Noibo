@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import Request from '@apis/Request'
 import { Pie, Bar, HorizontalBar } from 'react-chartjs-2';
-import { Card, Form, Col, Row, Icon, Tooltip, DatePicker, Tabs, Table, Typography, Divider, Button, Statistic, Descriptions } from 'antd';
+import { Card, Form, Col, Row, Icon, Tooltip, DatePicker, Tabs, Table, Typography, Divider, Button, Statistic, Descriptions, Select, notification } from 'antd';
 import cookie from 'react-cookies'
 import moment from 'moment';
-// import { FiUsers } from 'react-icons/fi';
-// import { GoFile, GoOrganization, GoCreditCard } from 'react-icons/go';
+import { NavLink } from 'react-router-dom'
 import { Value } from 'devextreme-react/range-selector';
 import { async } from 'q';
-// import { Button } from 'devextreme-react/select-box';
+import Modal_Hotro from '@pages/Modal/Modal_Hotro.js'
+const { Option } = Select
 var formatDate = require('dateformat')
 const { RangePicker } = DatePicker;
 const { TabPane } = Tabs;
@@ -42,6 +42,7 @@ export default class HomePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            visible: false,
             pageNumber: 1,
             nhansu: [],
             page: 1,
@@ -60,8 +61,19 @@ export default class HomePage extends Component {
             valueYear: [moment('2018/01/01', dateFormat), moment('2019/12/30', dateFormat)],
             stateOpenRangePicker: false,
             myself: [],
+            dataNguoiTao: [],
             dataRank: [],
-            dataKhachHang: []
+            dataKhachHang: [],
+            selectedRowKeys: [],
+            stateSelect: true,
+            valueOption: null,
+            rowRecordSelected: [],
+            id_duanfillmodal: [],
+            nhansu: [],
+            khachhang: [],
+            donvis: [],
+            date: <a>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;</a>,
+            trangthaibutton: false,
         }
     }
 
@@ -128,27 +140,64 @@ export default class HomePage extends Component {
                         countHopDong: Number(response.data.data.hopdongs.length)
                     })
                 }
-
             })
     }
 
-    getDataKhachHang = async (kh_id) => {
-        await Request('hotro/getdatakhachhang', 'POST', { kh_id }).then(async (res) => {
-            // if (res.data.data.khachhangs) {
-            //     await this.setState({
-            //         dataKhachHang: res.data.data.khachhangs
-            //     })
-            // }
+    getDataDaxong = () => {
+
+        var user_cookie = cookie.load('user');
+
+        Request('hotro/getmyselfdaxong', 'POST', { user_cookie }).then((res) => {
+            if (res.data.data.myself) {
+                this.setState({
+                    myself: res.data.data.myself
+                })
+            }
+        })
+    }
+
+    getDataGap = () => {
+
+        // console.log("day la data da xong", i++)
+        var user_cookie = cookie.load('user');
+
+        Request('hotro/getmyselfgap', 'POST', { user_cookie }).then((res) => {
+            if (res.data.data.myselfGap) {
+                this.setState({
+                    myself: res.data.data.myselfGap
+                })
+            }
+        })
+    }
+
+    getDataNguoiTao = () => {
+
+        var user_cookie = cookie.load('user');
+
+        Request('hotro/getdatanguoitao', 'POST', { user_cookie }).then((res) => {
+            console.log(res)
+            if (res.data.data.dataNguoiTao) {
+                this.setState({
+                    dataNguoiTao: res.data.data.dataNguoiTao
+                })
+            }
         })
     }
 
     componentDidMount() {
         this.getNhansu(this.state.pageNumber, this.state.index, this.state.sortBy);
+        this.getDataNguoiTao()
         this.getHotroFollowMonth('2019-01-01', '2019-12-30')
         document.getElementsByClassName('ant-statistic-title')[0].style.fontSize = '18px'
         document.getElementsByClassName('ant-statistic-title')[1].style.fontSize = '18px'
         document.getElementsByClassName('ant-statistic-title')[2].style.fontSize = '18px'
         document.getElementsByClassName('ant-statistic-title')[3].style.fontSize = '18px'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
+        // let day = new Date().getDate()
+        // console.log("date ", format(new Date(), 'yyyy-mm-' + (new Date().getDate() + 1)))
+
     }
 
     onClick = () => {
@@ -211,114 +260,354 @@ export default class HomePage extends Component {
             this.getHotroFollowMonth('2018-01-01', '2019-12-30')
     }
 
+    onSelectChange = (selectedRowKeys, selectedRows) => {
+        this.setState({
+            selectedRowKeys,
+            selectedId: selectedRowKeys
+        });
+        if (selectedRowKeys.length > 0) {
+            this.setState({
+                stateSelect: false,
+                valueOption: selectedRows[0].ht_trangthai
+            })
+        }
+        else
+            this.setState({
+                stateSelect: true,
+                valueOption: null
+            })
+        if (selectedRowKeys.length === 1) {
+            this.setState({
+                statebuttonedit: false,
+                rowRecordSelected: selectedRows[0]
+            })
+        }
+        else
+            this.setState({
+                statebuttonedit: true
+            })
+    };
+
+    onRowClick = (row) => {
+        if (this.state.selectedRowKeys[0] === row.ht_id) {
+            this.onSelectChange([], [])
+        }
+        else {
+            this.onSelectChange([row.ht_id], [row])
+        }
+    }
+
+    setRowClassName = (record) => {
+        return record.ht_id === this.state.selectedRowKeys[0] ? 'clickRowStyl' : '';
+    }
+
+    onChangeSelected = (ht_trangthai) => {
+        var values = this.state.rowRecordSelected
+        values.ht_trangthai = ht_trangthai
+        let user_cookie = cookie.load('user');
+        values.ns_id_capnhat = user_cookie
+        values.nkht_thoigiancapnhat = new Date()
+
+        this.setState({
+            rowRecordSelected: values
+        })
+
+        Request('hotro/update', 'POST', values)
+            .then(async (response) => {
+                if (response.status === 200 & response.data.success === true) {
+                    this.setState({
+                        message: response.data.message
+                    })
+                }
+                var description = response.data.message
+                var notifi_type = 'success'
+                var message = 'Thành Công'
+
+                console.log("check response ", response.data.success)
+                if (await !!!response.data.success) {
+                    message = 'Có lỗi xảy ra !'
+                    notifi_type = 'error'
+                    description = response.data.message.map((value, index) => {
+                        return <Alert type='error' message={value}></Alert>
+                    })
+                }
+                await notification[notifi_type]({
+                    message: message,
+                    description: description
+                });
+                this.getNhansu(this.state.page)
+                // this.render()
+            }).catch((err) => {
+                console.log(err)
+            })
+    }
+
+    handleCancel = e => {
+        this.setState({
+            visible: false,
+            id_visible: false
+        });
+    };
+
+    saveFormRef = formRef => {
+        this.formRef = formRef;
+    }
+
+    showModal = async () => {
+        const { form } = this.formRef.props
+        this.setState({
+            visible: true
+        });
+        form.setFieldsValue({ ht_thoigiantiepnhan: format(new Date(), "yyyy-mm-dd") });
+        var user_cookie = cookie.load('user');
+        await form.setFieldsValue({ ns_id_nguoitao: user_cookie })
+        this.set_Select_id_duan();
+        this.set_Select_NhanSu();
+        this.set_Select_KhachHang(null);
+        this.set_Select_DonVi();
+    }
+
+    insertOrUpdate = async () => {
+        const { form } = await this.formRef.props;
+
+        await form.validateFields((err, values) => {
+            if (err) {
+                return
+            }
+            var url = 'hotro/insert'
+            if (url === 'hotro/update') {
+                let user_cookie = cookie.load('user');
+                values.ns_id_capnhat = user_cookie
+                values.nkht_thoigiancapnhat = new Date()
+            }
+            if (values.ht_thoigian_dukien_hoanthanh === null) {
+                values.ht_thoigian_dukien_hoanthanh = format(new Date(), 'yyyy-mm-dd')
+            }
+            Request(url, 'POST', values)
+                .then(async (response) => {
+                    if (response.status === 200 & response.data.success === true) {
+                        form.resetFields();
+                        this.setState({
+                            visible: false,
+                            message: response.data.message
+                        })
+                    }
+                    var description = response.data.message
+                    var notifi_type = 'success'
+                    var message = 'Thanh Cong'
+
+                    console.log("check response ", response.data.success)
+                    if (await !!!response.data.success) {
+                        message = 'Co loi xay ra !'
+                        notifi_type = 'error'
+                        description = response.data.message.map((value, index) => {
+                            return <Alert type='error' message={value}></Alert>
+                        })
+                    }
+                    await notification[notifi_type]({
+                        message: message,
+                        description: description
+                    });
+                    this.getNhansu()
+                    // this.render()
+                }).catch((err) => {
+                    console.log(err)
+                })
+        })
+    }
+
+    set_Select_id_duan() {
+        Request('hotro/getidduan', 'POST', {}).then((res) => {
+            if (res.data.data.duans) {
+                this.setState({
+                    id_duanfillmodal: res.data.data.duans
+                })
+            }
+        })
+    }
+
+    set_Select_NhanSu() {
+        Request('hotro/getnhansu', 'POST', {}).then((res) => {
+            if (res.data.data.nhansu) {
+                this.setState({
+                    nhansu: res.data.data.nhansu
+                })
+            }
+        })
+    }
+
+    set_Select_KhachHang(dv) {
+        if (dv === null) {
+            dv = ""
+        }
+        Request('hotro/getkhachhangwhere', 'POST', { dv }).then((res) => {
+            if (res.data.data.khachhangs) {
+                this.setState({
+                    khachhang: res.data.data.khachhangs
+                })
+            }
+        })
+    }
+
+    set_Select_DonVi() {
+        Request('hotro/getdonvi', 'POST', {}).then((res) => {
+            if (res.data.data.donvis) {
+                this.setState({
+                    donvis: res.data.data.donvis
+                })
+            }
+        })
+    }
+
+    onTodoChange = async (value) => {
+        const { form } = this.formRef.props
+        if (value === "daxong") {
+            await this.setState({
+                date: format(new Date(), "dd / mm / yyyy -- HH : MM : ss"),
+                trangthai: true
+            })
+            form.setFieldsValue({ ht_thoigian_hoanthanh: format(new Date(), "yyyy-mm-dd") })
+            form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: format(new Date(), "yyyy-mm-dd") })
+        }
+        else {
+            await this.setState({
+                date: <a>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;</a>,
+                trangthai: false
+            })
+            form.setFieldsValue({ ht_thoigian_hoanthanh: null })
+        }
+    }
+
+    Assignme = () => {
+        var user_cookie = cookie.load('user');
+        Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
+            if (res) {
+                if (res.data.data.name[0] === undefined) {
+                    this.setState({
+                        trangthaibutton: true
+                    })
+                }
+                else {
+                    var ns_id = res.data.data.name[0].ns_id
+                    const { form } = this.formRef.props
+                    form.setFieldsValue({ ns_id_ass: ns_id })
+                    this.setState({
+                        trangthaibutton: true
+                    })
+                }
+            }
+        })
+    }
+
+    set_Select_KhachHang(dv) {
+        if (dv === null) {
+            dv = ""
+        }
+        Request('hotro/getkhachhangwhere', 'POST', { dv }).then((res) => {
+            if (res.data.data.khachhangs) {
+                this.setState({
+                    khachhang: res.data.data.khachhangs
+                })
+            }
+        })
+    }
+
     render() {
+        const { selectedRowKeys } = this.state
+        const rowSelection = {
+            type: 'radio',
+            hideDefaultSelections: true,
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+        };
         return (
             <div>
                 <Form>
                     <div style={{ background: '#ECECEC', padding: '20px' }}>
                         <div id="dasboard-widget-top">
-                            {/* <Row gutter={16}>
-                                <Col span={6} >
-                                    <Card bordered={false} style={{ float: 'left', background: 'red' }}>
-                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Nhân Sự </span><Tooltip title="Số Lượng Nhân Sự"><Icon style={{ marginLeft: '70px' }} type="info-circle" /></Tooltip>
-                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countNhanSu}</span>
-                                    </Card>
-                                </Col>
-                                <Col span={6} >
-                                    <Card bordered={false} style={{ float: 'left', background: 'orange' }}>
-                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Khách Hàng </span><Tooltip title="Số Lượng Khách Hàng"><Icon style={{ marginLeft: '33px' }} type="info-circle" /></Tooltip>
-                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countKhachHang}</span>
-                                    </Card>
-                                </Col>
-                                <Col span={6} >
-                                    <Card bordered={false} style={{ float: 'right', background: 'brown' }}>
-                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Dự Án </span><Tooltip title="Số Lượng Dự Án"><Icon style={{ marginLeft: '93px' }} type="info-circle" /></Tooltip>
-                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countDuAn}</span>
-                                    </Card>
-                                </Col>
-                                <Col span={6} >
-                                    <Card bordered={false} style={{ float: 'right', background: 'blue' }}>
-                                        <span style={{ fontSize: '24px', margin: '15px', color: 'white' }}> Hợp Đồng </span><Tooltip title="Số Lượng Hợp Đồng"><Icon style={{ marginLeft: '50px' }} type="info-circle" /></Tooltip>
-                                        <span style={{ fontSize: '24px', display: 'block', textAlign: 'center', borderTop: '1px solid #e8e8e8', color: 'white' }}>  {this.state.countHopDong}</span>
-                                    </Card>
-                                </Col>
-                            </Row> */}
-
                             <Row gutter={16}>
                                 <Col span={6} >
                                     <Card hoverable='true'>
-                                        <Statistic
-                                            title={
-                                                <span>
-                                                    Nhân Sự
+                                        <NavLink to="/nhansu" >
+                                            <Statistic
+                                                title={
+                                                    <span>
+                                                        Nhân Sự
                                                     <Tooltip title="Số lượng Nhân Sự">
-                                                        <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
-                                                    </Tooltip>
-                                                </span>
-                                            }
-                                            value={this.state.countNhanSu}
-                                            valueStyle={{ color: '#3f8600' }}
-                                            prefix={<Icon type="user" />}
-                                            style={{ textAlign: 'center', color: '1890ff' }}
-                                            valueStyle={{ fontSize: '30px', color: 'red', borderTop: '1px solid #e8e8e8' }}
-                                        />
+                                                            <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
+                                                        </Tooltip>
+                                                    </span>
+                                                }
+                                                value={this.state.countNhanSu}
+                                                valueStyle={{ color: '#3f8600' }}
+                                                prefix={<Icon type="user" />}
+                                                style={{ textAlign: 'center', color: '1890ff' }}
+                                                valueStyle={{ fontSize: '30px', color: 'red', borderTop: '1px solid #e8e8e8' }}
+                                            />
+                                        </NavLink>
                                     </Card>
                                 </Col>
                                 <Col span={6} >
                                     <Card hoverable='true'>
-                                        <Statistic
-                                            title={
-                                                <span>
-                                                    Khách Hàng
+                                        <NavLink to="/khachhang" >
+                                            <Statistic
+                                                title={
+                                                    <span>
+                                                        Khách Hàng
                                                         <Tooltip title="Số lượng Khách Hàng">
-                                                        <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
-                                                    </Tooltip>
-                                                </span>
-                                            }
-                                            value={this.state.countKhachHang}
-                                            valueStyle={{ color: '#3f8600' }}
-                                            prefix={<Icon type="team" />}
-                                            style={{ textAlign: 'center' }}
-                                            valueStyle={{ fontSize: '30px', color: 'orange', borderTop: '1px solid #e8e8e8' }}
-                                        />
+                                                            <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
+                                                        </Tooltip>
+                                                    </span>
+                                                }
+                                                value={this.state.countKhachHang}
+                                                valueStyle={{ color: '#3f8600' }}
+                                                prefix={<Icon type="team" />}
+                                                style={{ textAlign: 'center' }}
+                                                valueStyle={{ fontSize: '30px', color: 'orange', borderTop: '1px solid #e8e8e8' }}
+                                            />
+                                        </NavLink>
                                     </Card>
                                 </Col>
                                 <Col span={6} >
                                     <Card hoverable='true'>
-                                        <Statistic
-                                            title={
-                                                <span>
-                                                    Dự Án
+                                        <NavLink to="/duan" >
+                                            <Statistic
+                                                title={
+                                                    <span>
+                                                        Dự Án
                                                         <Tooltip title="Số lượng Dự Án">
-                                                        <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
-                                                    </Tooltip>
-                                                </span>
-                                            }
-                                            value={this.state.countDuAn}
-                                            valueStyle={{ color: '#3f8600' }}
-                                            prefix={<Icon type="project" />}
-                                            style={{ textAlign: 'center' }}
-                                            valueStyle={{ fontSize: '30px', color: 'brown', borderTop: '1px solid #e8e8e8' }}
-                                        />
+                                                            <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
+                                                        </Tooltip>
+                                                    </span>
+                                                }
+                                                value={this.state.countDuAn}
+                                                valueStyle={{ color: '#3f8600' }}
+                                                prefix={<Icon type="project" />}
+                                                style={{ textAlign: 'center' }}
+                                                valueStyle={{ fontSize: '30px', color: 'brown', borderTop: '1px solid #e8e8e8' }}
+                                            />
+                                        </NavLink>
                                     </Card>
                                 </Col>
                                 <Col span={6} >
                                     <Card hoverable='true'>
-                                        <Statistic
-                                            title={
-                                                <span>
-                                                    Hợp Đồng
+                                        <NavLink to="/hopdong" >
+                                            <Statistic
+                                                title={
+                                                    <span>
+                                                        Hợp Đồng
                                                         <Tooltip title="Số lượng Hợp Đồng">
-                                                        <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
-                                                    </Tooltip>
-                                                </span>
-                                            }
-                                            value={this.state.countHopDong}
-                                            valueStyle={{ color: '#3f8600' }}
-                                            prefix={<Icon type="file-text" />}
-                                            style={{ textAlign: 'center' }}
-                                            valueStyle={{ fontSize: '30px', color: 'lime', borderTop: '1px solid #e8e8e8' }}
-                                        />
+                                                            <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
+                                                        </Tooltip>
+                                                    </span>
+                                                }
+                                                value={this.state.countHopDong}
+                                                valueStyle={{ color: '#3f8600' }}
+                                                prefix={<Icon type="file-text" />}
+                                                style={{ textAlign: 'center' }}
+                                                valueStyle={{ fontSize: '30px', color: 'lime', borderTop: '1px solid #e8e8e8' }}
+                                            />
+                                        </NavLink>
                                     </Card>
                                 </Col>
                             </Row>
@@ -327,74 +616,155 @@ export default class HomePage extends Component {
                         <Row style={{ marginTop: '15px' }}>
                             <Card>
                                 {/* <h1 style={{ textAlign: 'center' }}> Bảng công việc cá nhân</h1> */}
-                                <Text mark style={{ fontSize: '18px', display: 'block', marginBottom: '10px' }}>Bảng công việc cá nhân</Text>
+                                <Text mark style={{ fontSize: '18px', marginBottom: '10px', color: '#1890ff' }}>Bảng công việc cá nhân</Text>
+                                <Button style={{ marginLeft: '57%' }} onClick={this.showModal.bind(this)}><Icon type="plus" />Tạo nhanh công việc</Button>
                                 <Divider style={{ margin: '5px' }} />
-                                <Row>
-                                    <span style={{ fontSize: '16px' }}> Loại công việc      </span>
-                                    <ButtonGroup style={{ marginBottom: '5px', marginLeft: '15px' }}>
-                                        <Button >Tất cả</Button>
-                                        <Button >Gấp</Button>
-                                        <Button >Đã xong</Button>
-                                        <Button >Đang xử lý</Button>
-                                    </ButtonGroup>
-                                </Row>
-                                <Table bordered dataSource={this.state.myself} rowKey="ht_id" size="small" scroll={{ x: 500 }}
-                                    // expandedRowRender={(record, selectedRowKeys) => {
-                                    //     console.log("ex", record.kh_id)
-                                    //     let kh_id = record.kh_id
-                                    //     var dataKH=[]
-                                    //     Request('hotro/getdatakhachhang', 'POST', { kh_id }).then( (res) => {
-                                    //         dataKH=res.data.data.khachhangs[0]
-                                            
-                                    //     })
-                                    //     console.log("day la datakh ",dataKH)
-                                    //     return <div>
-                                    //         <Descriptions title="Thông tin khách hàng">
+                                <Tabs type="card">
+                                    <TabPane tab="Công việc được giao" key="10">
+                                        <Row>
 
-                                    //             <Descriptions.Item label="Tên khách hàng"> {dataKH.kh_ten} </Descriptions.Item>
-                                    //             <Descriptions.Item label="Tỉnh/ TP"> Tỉnh </Descriptions.Item>
-                                    //             <Descriptions.Item label="Huyện/ Quận"> Huyện </Descriptions.Item>
-                                    //             <Descriptions.Item label="Xã/ Phường"> Xã </Descriptions.Item>
-                                    //             <Descriptions.Item label="Địa chỉ"> Địa chỉ </Descriptions.Item>
-                                    //             <Descriptions.Item label="Đơn vị"> Đơn vị </Descriptions.Item>
-                                    //             <Descriptions.Item label="Đơn vị công tác"> Đơn vị công tác </Descriptions.Item>
-                                    //             <Descriptions.Item label="Liên lạc"> Liên lạc </Descriptions.Item>
-                                    //         </Descriptions>
-                                    //     </div>
-                                    // }}
-                                >
+                                            {/* <Button style={{ marginLeft: '47%' }} onClick={this.showModal.bind(this)}><Icon type="plus" />Tạo nhanh công việc</Button> */}
+                                        </Row>
+                                        <Row>
+                                        <Col span={4} style={{ fontSize: '16px' }}>Trạng thái công việc</Col>
+                                        <Col span={3}>
+                                            <Select
+                                                showSearch
+                                                filterOption={(input, option) =>
+                                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                }
+                                                style={{ zIndex: 999 }}
+                                                // size='small'
+                                                // defaultValue='tiepnhan'
+                                                disabled={this.state.stateSelect}
+                                                value={this.state.valueOption}
+                                                onChange={this.onChangeSelected}
+                                            >
+                                                <Option value='tiepnhan'>Tiếp Nhận</Option>
+                                                <Option value='dangxuly'>Đang xử lý</Option>
+                                                <Option value='dangxem'>Đang xem</Option>
+                                                <Option value='daxong'>Đã xong</Option>
+                                            </Select>
+                                        </Col>
+                                        <Col span={3} offset={8}>
+                                            <span style={{ fontSize: '16px' }}>Loại công việc</span>
+                                        </Col>
+                                        <Col span={6}>
+                                            <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
+                                                <Button onClick={this.getNhansu.bind(this)}>Tất cả</Button>
+                                                <Button onClick={this.getDataGap.bind(this)}>Gấp</Button>
+                                                <Button onClick={this.getDataDaxong.bind(this)}>Đã xong</Button>
+                                                {/* <Button >Đang xử lý</Button> */}
+                                            </ButtonGroup>
+                                        </Col>
+                                        </Row>
+                                        <Table bordered components={this.components} dataSource={this.state.myself} rowKey="ht_id" size="small" scroll={{ x: 500 }}
+                                            rowSelection={rowSelection}
+                                            onRowClick={this.onRowClick.bind(this)}
+                                            expandedRowRender={(record, selectedRowKeys) => {
+                                                return (
+                                                    <div style={{ textAlign: 'left' }}>
+                                                        <div style={{ fontSize: '18px' }}> Yêu cầu: </div>
+                                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1200' }} >{this.state.myself[selectedRowKeys].ht_noidungyeucau}</Row>
+                                                        <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
+                                                        <Row style={{ paddingTop: '7px' }}>{this.state.myself[selectedRowKeys].ht_ghichu}</Row>
+                                                    </div>
+                                                )
+                                            }}
+                                            rowClassName={this.setRowClassName}
+                                        >
+                                            >
                                     <Column title="Dự án" dataIndex="dm_duan_ten" width={150} />
-                                    <Column title="Khách hàng" dataIndex="kh_ten" width={100} />
-                                    <Column title="Người tạo" dataIndex="ns_hoten" width={150} />
-                                    <Column title="Người được giao" dataIndex="ns_hovaten" width={150} />
-                                    <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
-                                        render={
-                                            text => {
-                                                if (text === 'tiepnhan') { return "Tiếp nhận" }
-                                                if (text === 'dangxuly') { return "Đang xử lý" }
-                                                if (text === 'dangxem') { return "Đang xem" }
-                                                return "Đã xong"
-                                            }
-                                        }
-                                    />
-                                    <Column title="Phân loại" dataIndex="ht_phanloai" width={70} />
-                                    <Column title="Ưu tiên" dataIndex="ht_uutien" />
-                                    <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
-                                        render={text => {
-                                            return format(text, "dd/mm/yyyy")
-                                        }}
-                                    />
-                                    <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
-                                        render={text => {
-                                            return format(text, "dd/mm/yyyy")
-                                        }}
-                                    />
-                                    <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh" width={150}
-                                        render={text => {
-                                            return format(text, "dd/mm/yyyy")
-                                        }}
-                                    />
-                                </Table>
+                                            {/* <Column title="Đơn vị" dataIndex="dm_dv_ten" width={150} /> */}
+                                            <Column title="Khách hàng" dataIndex="kh_ten" width={100} />
+                                            <Column title="Người tạo" dataIndex="ns_hoten" width={150} />
+                                            <Column title="Người được giao" dataIndex="ns_hovaten" width={150} />
+                                            <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
+                                                render={
+                                                    text => {
+                                                        if (text === 'tiepnhan') { return 'Tiếp nhận' }
+                                                        if (text === 'dangxuly') { return 'Đang xử lý' }
+                                                        if (text === 'dangxem') { return "Đang xem" }
+                                                        return "Đã xong"
+                                                    }
+                                                }
+                                            />
+                                            <Column title="Phân loại" dataIndex="ht_phanloai" width={70} />
+                                            <Column title="Ưu tiên" dataIndex="ht_uutien" />
+                                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
+                                                render={text => {
+                                                    return format(text, "dd/mm/yyyy")
+                                                }}
+                                            />
+                                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
+                                                render={text => {
+                                                    if (text === null) { return '' }
+                                                    return format(text, "dd/mm/yyyy")
+                                                }}
+                                            />
+                                            <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh" width={150}
+                                                render={text => {
+                                                    if (text === null) { return '' }
+                                                    return format(text, "dd/mm/yyyy")
+                                                }}
+                                            />
+                                        </Table>
+                                    </TabPane>
+                                    <TabPane tab="Công việc đã tạo" key="11">
+                                        <Table bordered components={this.components} dataSource={this.state.dataNguoiTao} rowKey="ht_id" size="small" scroll={{ x: 500 }}
+                                            rowSelection={rowSelection}
+                                            onRowClick={this.onRowClick.bind(this)}
+                                            expandedRowRender={(record, selectedRowKeys) => {
+                                                return (
+                                                    <div style={{ textAlign: 'left' }}>
+                                                        <div style={{ fontSize: '18px' }}> Yêu cầu: </div>
+                                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1200' }} >{this.state.dataNguoiTao[selectedRowKeys].ht_noidungyeucau}</Row>
+                                                        <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
+                                                        <Row style={{ paddingTop: '7px' }}>{this.state.dataNguoiTao[selectedRowKeys].ht_ghichu}</Row>
+                                                    </div>
+                                                )
+                                            }}
+                                            rowClassName={this.setRowClassName}
+                                        >
+                                            >
+                                    <Column title="Dự án" dataIndex="dm_duan_ten" width={150} />
+                                            {/* <Column title="Đơn vị" dataIndex="dm_dv_ten" width={150} /> */}
+                                            <Column title="Khách hàng" dataIndex="kh_ten" width={100} />
+                                            <Column title="Người tạo" dataIndex="ns_hoten" width={150} />
+                                            <Column title="Người được giao" dataIndex="ns_hovaten" width={150} />
+                                            <Column title="Trạng thái" dataIndex="ht_trangthai" width={100}
+                                                render={
+                                                    text => {
+                                                        if (text === 'tiepnhan') { return 'Tiếp nhận' }
+                                                        if (text === 'dangxuly') { return 'Đang xử lý' }
+                                                        if (text === 'dangxem') { return "Đang xem" }
+                                                        return "Đã xong"
+                                                    }
+                                                }
+                                            />
+                                            <Column title="Phân loại" dataIndex="ht_phanloai" width={70} />
+                                            <Column title="Ưu tiên" dataIndex="ht_uutien" />
+                                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
+                                                render={text => {
+                                                    return format(text, "dd/mm/yyyy")
+                                                }}
+                                            />
+                                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
+                                                render={text => {
+                                                    if (text === null) { return '' }
+                                                    return format(text, "dd/mm/yyyy")
+                                                }}
+                                            />
+                                            <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh" width={150}
+                                                render={text => {
+                                                    if (text === null) { return '' }
+                                                    return format(text, "dd/mm/yyyy")
+                                                }}
+                                            />
+                                        </Table>
+                                    </TabPane>
+                                </Tabs>
+
                             </Card>
                         </Row>
                         <Row style={{ marginTop: '15px' }}>
@@ -469,7 +839,6 @@ export default class HomePage extends Component {
                                                                         beginAtZero: true,
                                                                     }
                                                                 }],
-
                                                             },
                                                             title: {
                                                                 display: true,
@@ -522,6 +891,22 @@ export default class HomePage extends Component {
                             </Card>
                         </Row>
                     </div>
+                    <Modal_Hotro
+                        wrappedComponentRef={this.saveFormRef}
+                        visible={this.state.visible}
+                        onCancel={this.handleCancel}
+                        onSave={this.insertOrUpdate}
+                        setidduan={this.state.id_duanfillmodal}
+                        setNhansu={this.state.nhansu}
+                        setKhachHang={this.state.khachhang}
+                        setDonVi={this.state.donvis}
+                        onTodoChange={this.onTodoChange}
+                        date={this.state.date}
+                        // trangthai={this.state.trangthai}
+                        assignme={this.Assignme}
+                        trangthaibutton={this.state.trangthaibutton}
+                        set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
+                    />
                 </Form>
             </div>
         );

@@ -34,7 +34,7 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                                 <Form.Item label='Tên hóa đơn'>
                                     {getFieldDecorator('qlhd_tenhoadon', {
                                         rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                    })(<Input type="text" size="small"/>)}
+                                    })(<Input type="text" size="small" />)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -44,6 +44,7 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                                     {getFieldDecorator('qlhd_kh_id', {
                                         rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                     })(<Select
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
@@ -76,6 +77,7 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                                     })(
                                         <Select
                                             size={"small"}
+                                            showSearch
                                             filterOption={(input, option) =>
                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }

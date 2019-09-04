@@ -56,6 +56,7 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                                     })(
                                         <Select
                                             size={"small"}
+                                            showSearch
                                             filterOption={(input, option) =>
                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
@@ -63,7 +64,7 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                                             <Option value="notmenuparent">Do not have menu Parent</Option>
                                             {
                                                 listmenu.map((data, index) => {
-                                                    return <Option value={data.id} > {data.name}  </Option>
+                                                    return <Option value={data.id} >{data.name}</Option>
                                                 })
                                             }
                                         </Select>
@@ -79,9 +80,6 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                                     })(
                                         <Select
                                             size={"small"}
-                                            filterOption={(input, option) =>
-                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                            }
                                         >
                                             <Option value="not icon">Do not use the icon</Option>
                                             <Option value="step-backward"> <Icon type="step-backward" />&emsp; step-backward </Option>

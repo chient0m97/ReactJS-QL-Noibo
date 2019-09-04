@@ -1,15 +1,18 @@
 var express = require('express');
-const path = require('path');
 //const bodyParser = require("body-parser");
-var cors = require("cors");
+const cors = require("cors");
+const path = require('path')
 jwt = require('jsonwebtoken');
 config = require('./configurations/config');
 var app = express();
+app.use('/upload', express.static(path.join(__dirname, 'upload', './')))
 const login = require('./router/login')
 const checked = require('./router/checkrole')
 const setpermiss = require('./router/setpermission')
 const role_action = require('./router/role_action')
 const port = 5000;
+
+
 
 var groupRoute = require('./router/group')
 var setGroupPermission = require('./router/setGroupPermission')
@@ -25,10 +28,11 @@ var userRouter = require('./router/index');
 var diabanRoute = require('./router/diaban')
 var duanRoute = require('./router/duan')
 var memberRoute = require('./router/memberRoute')
+var fileRoute = require('./router/fileRoute')
 var ChangePass = require('./router/changepass')
 var authorize = require('./middleware/authorize')
 var bodyParser = require('body-parser');
-app.use('/upload', express.static(path.join(__dirname, 'upload', './')))
+
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 app.set('Secret', config.secret);
@@ -45,6 +49,21 @@ var corsOptions = {
 }
 var multer = require('multer')
 app.use(cors());
+
+// var multer = require('multer')
+// var storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './upfille')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname)
+//   }
+// })
+// var upload = multer({ storage: storage })
+// app.post('/upfile', upload.single("file"), function (req, res ){
+//   console.log(req.file)
+//   res.send("Success")
+// })
 
 
 app.use('/nhansu', nhansuRoute);
@@ -67,7 +86,13 @@ app.use('/duan', duanRoute)
 
 app.use('/khachhangRoute', khachhangRoute)
 
-app.use('/customer', cusrouter);
+app.use('/customer', cusrouter)
+
+app.use('/filekhachhangs', fileRoute);
+
+app.use('/Login', login);
+
+app.use('/setGroupPermission', setGroupPermission);
 
 app.use('/Login', login);
 
@@ -81,7 +106,7 @@ app.use('/setpermission', setpermiss)
 
 app.use('/role_action', role_action)
 
-app.use('/user', userRouter);
+app.use('/user',authorize,userRouter);
 
 //app.use('/', authorize, hopdongrouters );
 

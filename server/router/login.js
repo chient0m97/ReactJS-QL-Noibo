@@ -15,7 +15,8 @@ router.post('/', (req, res) => {
             if (match) {
                 const payload = {
                     userName: req.body.username,
-                    claims: data.claims
+                    claims: data.claims,
+                    fullname:data.fullname
                 };
                 var token = jwt.sign(payload, app.get('Secret'), {
                     expiresIn: "24h", // expires in 24 hours
@@ -27,7 +28,7 @@ router.post('/', (req, res) => {
                     token: token
                 });
             } else {
-                res.json({ message: "sai mật khẩu rồi nhóc" })
+                res.json({ message: "Sai mật khẩu" })
             }
         });
     })

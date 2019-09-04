@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import '@styles/style.css';
 import { fetchLoading } from '@actions/common.action';
-import Modal_Duan from '@pages/Modal/Modal_Duan';
 import axios from 'axios';
 const token = cookie.load('token');
 const { Column } = Table;
@@ -78,9 +77,6 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                         optionFilterProp="children"
                         size="small" onChange={this.props.onChangeId}
                       >
-                        {/* <Option value='add_duan' disabled>
-                          <Icon type="plus" />Thêm dự án
-                        </Option> */}
                         {combobox1}
                       </Select>
                     )}
@@ -253,18 +249,14 @@ class Hopdong extends React.Component {
       show: false,
       visible: false,
       formtype: 'horizontal',
-      formtype_duan: 'horizontal',
       title: 'Nhập thông tin cho hợp đồng',
-      title_duan: 'Nhập thông tin cho dự án',
       id_visible: false,
-      visible_duan: false,
       action: 'insert',
       isSearch: 0,
       searchText: '',
       columnSearch: '',
       isSort: true,
       sortBy: '',
-      select_qtda: [],
       index: 'id',
       selectedFile: null,
       orderby: 'arrow-up',
@@ -275,7 +267,6 @@ class Hopdong extends React.Component {
       selectedRowKeys: [],
       selectedId: [],
       comboBoxDatasource: [],
-      comboBoxDatasourceDuan: [],
       comboBoxDuanSource: [],
       propDatasourceSelectLoaiHopDong: {
         dataSource: [],
@@ -302,15 +293,6 @@ class Hopdong extends React.Component {
       }).catch((err) => {
         console.log(err)
       })
-  }
-  getDuan = async () => {
-    await Request('duan/get', 'POST', {
-    }).then(async (response) => {
-      if (response.data)
-        await this.setState({
-          getDuan: response.data,
-        })
-    })
   }
   getHopdongs = (pageNumber) => {
     if (pageNumber <= 0)
@@ -426,46 +408,13 @@ class Hopdong extends React.Component {
       hd_thoigianthuchien: value
     })
   }
-  onchangeid = (value) => {
-    if (value === 'add_duan') {
-      this.setState({
-        visible_duan: true
-      })
-      var form = null
-      if (this.state.visible_duan) {
-        form = this.formRef.props
-        form.setFieldsValue({ dm_duan_ten })
-        form.setFieldsValue({ dm_duan_key })
-        form.setFieldsValue({ ns_id_qtda })
-      }
-    }
-  }
   onChangeSelect = (value) => {
     const { form } = this.formRef.props
     form.setFieldsValue({
       hd_doituong: value
     })
   }
-  set_select_qtda = () => {
-    Request('duan/getcha', 'POST', {
-    }).then((res) => {
-      if (res.data) {
-        console.log("Day la res.data ", res.data)
-        this.setState({
-          select_qtda: res.data
-        })
-      }
-    })
-  }
   showModal = async (hopdong) => {
-    this.set_select_qtda()
-    Request('duan/getcha', 'POST', null).then(res => {
-      console.log(res, 'res day');
-
-      this.setState({
-        comboBoxDatasourceDuan: res.data
-      })
-    })
     Request('hopdong/getdonvi', 'POST', null).then(res => {
       this.setState({
         propDatasourceSelectLoaiHopDong: {
@@ -488,7 +437,6 @@ class Hopdong extends React.Component {
     await form.resetFields();
     this.setState({
       visible: true,
-      visible_duan: false,
       action: 'insert'
     });
     form.resetFields();
@@ -650,9 +598,6 @@ class Hopdong extends React.Component {
       labelCombobox: label
     })
   }
-  saveFormRef = formRef => {
-    this.formRef = formRef;
-  }
   onSelectChange = (selectedRowKeys, selectedRows) => {
     this.setState({
       selectedRowKeys,
@@ -678,13 +623,6 @@ class Hopdong extends React.Component {
         statebuttonedit: true
       })
   }
-  onSelectDuan = async (value) => {
-    if (value === 'add_duan') {
-      return this.setState({
-        visible_duan: true
-      })
-    }
-  }
   checkStateConfirm = () => {
     this.setState({
       stateconfirmdelete: true
@@ -695,58 +633,6 @@ class Hopdong extends React.Component {
   };
   onRowClick = (row) => {
     this.onSelectChange([row.hd_id], [row])
-  }
-  onCancel_duan = () => {
-    this.setState({
-      visible_duan: false
-    })
-  }
-  onOk_duan = async () => {
-    console.log('da vao insert duan');
-    const { form } = this.formRef.props;
-    form.validateFields((err, values) => {
-      if (err) {
-        return
-      }
-      console.log(values, 'values day');
-      var url = this.state.action === 'insert' ? 'duan/insert' : 'duan/update'
-      Request(url, 'POST', values)
-        .then(async (response) => {
-          if (response.status === 200 & response.data.success === true) {
-            form.resetFields();
-            await this.setState({
-              visible_duan: false,
-              message: response.data.message
-            })
-            if (this.state.visible) {
-              var formDuan = this.formRef.props.form
-              try {
-                formDuan.setFieldsValue({ dm_duan_id: response.data.dm_duan_id })
-              } catch (error) {
-                console.log(error)
-              }
-            }
-          }
-          var description = response.data.message
-          var notifi_type = 'success'
-          var message = 'Thành công'
-          if (!!!response.data.success) {
-            message = 'Có lỗi xảy ra!'
-            notifi_type = 'error'
-            description = response.data.message.map((values, index) => {
-              return <Alert type='error' message={values}></Alert>
-            })
-          }
-          notification[notifi_type]({
-            message: message,
-            description: description
-          });
-          this.getDuan();
-        })
-    });
-  }
-  saveFormRefCreate = formRef => {
-    this.saveFormRefCreate = formRef
   }
   saveFormRef = formRef => {
     this.formRef = formRef;
@@ -809,7 +695,7 @@ class Hopdong extends React.Component {
           </Card>
           <Row style={{ marginTop: 5 }}>
             <FormModal
-              wrappedComponentRef={this.state.visible ? this.saveFormRef : this.saveFormRefCreate}
+              wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
               onCancel={this.handleCancel}
               onSave={this.InsertOrUpdateHopdong}
@@ -827,16 +713,6 @@ class Hopdong extends React.Component {
               onChangeHandler={this.onChangeHandler}
               onchangpagefile={this.onchangpagefile}
               onClickDownloadFile={this.onClickDownloadFile}
-            />
-            <Modal_Duan
-              wrappedComponentRef={!this.state.visible ? this.saveFormRef : this.saveFormRefCreate}
-              visible={this.state.visible_duan}
-              onCancel={this.onCancel_duan}
-              onOk_duan={this.onOk_duan}
-              title={this.state.title_duan}
-              formtype={this.state.formtype_duan}
-              comboBoxDatasourceDuan={this.state.comboBoxDatasourceDuan}
-              select_qtda={this.state.select_qtda}
             />
             <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}
               expandedRowRender={(record, selectedRowKeys) => {
@@ -909,16 +785,16 @@ class Hopdong extends React.Component {
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" className="hidden-action" onHeaderCell={this.onHeaderCell} />
               <Column title="Files" dataIndex="hd_files" key="hd_files"
-                render={(text) => 
+                render={(text) =>
                   (
-                  <span>
-                    <Tooltip title="Tải xuống">
-                      <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
-                        <Icon type="download" />
-                      </Button>
-                    </Tooltip>
-                  </span>
-                )}
+                    <span>
+                      <Tooltip title="Tải xuống">
+                        <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
+                          <Icon type="download" />
+                        </Button>
+                      </Tooltip>
+                    </span>
+                  )}
               />
             </Table>
           </Row>

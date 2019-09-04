@@ -69,10 +69,10 @@ class NormalLoginForm extends Component {
         const { getFieldDecorator } = this.props.form;
         return (
             <div className="login-page">
-                <img src={logo} className="background-login" alt="" style={{marginTop:'0px'}}/>
+                <img src={logo} className="background-login" alt="" style={{ marginTop: '0px' }} />
                 <Form onSubmit={this.Login} className="login-form">
                     <h3 style={{
-                        fontSize: '20px',fontStyle: 'italic',fontWeight: 'bold', textAlign: 'center', color:'#40a9ff'
+                        fontSize: '20px', fontStyle: 'italic', fontWeight: 'bold', textAlign: 'center', color: '#40a9ff'
                     }}>Đăng nhập hệ thống</h3>
                     <Form.Item>
                         {getFieldDecorator('username', {
@@ -80,7 +80,7 @@ class NormalLoginForm extends Component {
                         })(
                             <Input
                                 prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                placeholder="username"
+                                placeholder="Tên tài khoản"
                                 onBlur={this.handleChangeInput}
                                 type={"text"}
                             />
@@ -93,15 +93,15 @@ class NormalLoginForm extends Component {
                             <Input.Password
                                 prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                                 type="password"
-                                placeholder="Password"
+                                placeholder="Mật khẩu"
                                 onBlur={this.handleChangeInput}
                             />
                         )}
                     </Form.Item>
                     <Form.Item>
 
-                        <Button className="login-form-forgot" href="/" style={{backgroundColor:'white',color:'black'}}>Forgot password</Button>
-                        <Button type="primary" htmlType="submit" className="login-form-button" loading={this.state.loadding}>Log in</Button>
+                        <Button className="login-form-forgot" href="/" style={{ backgroundColor: 'white', color: 'black' }}>Quên Mật Khẩu</Button>
+                        <Button type="primary" htmlType="submit" className="login-form-button" loading={this.state.loadding} >Đăng Nhập</Button>
                     </Form.Item>
                 </Form>
             </div>

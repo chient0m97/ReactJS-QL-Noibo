@@ -231,7 +231,7 @@ class Quanly_hoadon extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm Hoá Đơn">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                                        <Icon type="user-add" />
+                                    <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>

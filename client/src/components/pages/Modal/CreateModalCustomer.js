@@ -55,11 +55,11 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
-                                </Col>  
+                                </Col>
                                 <Col span={8}>
                                     <Form.Item label='Số điện thoại'>
                                         {getFieldDecorator('kh_sodienthoai', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
@@ -75,7 +75,12 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                     <Form.Item label='Tỉnh/Thành phố'>
                                         {getFieldDecorator('dm_db_id_tinh_customer', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select onSelect={onSelectTinh}>
+                                        })(<Select onSelect={onSelectTinh}
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
+                                        >
                                             {
                                                 select_tinh.map((value, index) => {
                                                     return (
@@ -89,8 +94,13 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={8}>
                                     <Form.Item label='Huyện/Quận'>
                                         {getFieldDecorator('dm_db_id_huyen_customer', {
-                                           rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select onSelect={onSelectHuyen}>
+                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+                                        })(<Select onSelect={onSelectHuyen}
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
+                                        >
                                             {
                                                 select_huyen.map((value, index) => {
                                                     return (
@@ -104,8 +114,13 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={8}>
                                     <Form.Item label='Xã/Phường'>
                                         {getFieldDecorator('dm_db_id_xa_customer', {
-                                           rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select onSelect={onSelectXa}>
+                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
+                                        })(<Select onSelect={onSelectXa}
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
+                                        >
                                             {
                                                 select_xa.map((value, index) => {
                                                     return (
@@ -135,6 +150,10 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                             style={{ width: '100%' }}
                                             placeholder='Please select'
                                             onChange={handleChange}
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
                                         >
                                             {combobox}
                                         </Select>)}
@@ -143,7 +162,6 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={7}>
                                     <Form.Item label='Vị trí công tác'>
                                         {getFieldDecorator('kh_vitricongtac', {
-
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
@@ -152,6 +170,10 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                         {getFieldDecorator('dm_dv_id', {
 
                                         })(<Select onSelect={onSelectDv} placeholder="---Không có đơn vị có thể bỏ qua trường này---"
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
                                         >
                                             <Option value="add_donvi" disabled={stateoption}>Thêm đơn vị</Option>
                                             <Option value={null}>Bỏ chọn</Option>

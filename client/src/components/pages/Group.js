@@ -5,14 +5,12 @@ import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-import { fetchUser } from '@actions/user.action';
-import { fetchLoading } from '@actions/common.action';
 import '@styles/style.css';
 import jwt from 'jsonwebtoken';
 import Permission from '../Authen/Permission'
 import TreeRole from '../common/Tree'
 import SearchModal from '../common/searchModal'
-import {  NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 //do something...
 const token = cookie.load('token');
 const { Column } = Table;
@@ -102,7 +100,8 @@ class Group extends React.Component {
             modalRoleVisible: false,
             actionColumn: 'hidden-action',
             groups: [],
-            selectedRowKeys: []
+            selectedRowKeys: [],
+            selectedId:'KT'
         }
     }
     //--------------DELETE-----------------------
@@ -139,9 +138,6 @@ class Group extends React.Component {
                             groups: data.data.groups,
                             count: Number(data.data.count)//eps kieeru veef
                         })
-                    this.props.fetchLoading({
-                        loading: false
-                    })
                 }
 
             })
@@ -358,7 +354,6 @@ class Group extends React.Component {
         if (name) {
             this.setState({
                 modalRoleVisible: true,
-                
             })
         }
         else {
@@ -411,7 +406,7 @@ class Group extends React.Component {
         let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
         let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
         let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-        const {selectedRowKeys} = this.state
+        const { selectedRowKeys } = this.state
         const rowSelection = {
             type: 'radio',
             hideDefaultSelections: true,
@@ -541,7 +536,7 @@ class Group extends React.Component {
                                                         console.log('reacassadasdad', record.name)
                                                         this.setState({
                                                             selectedRowKeys: [record.name],
-                                                            selectedId:record.name
+                                                            selectedId: record.name
 
                                                         })
                                                         console.log('reacassadasdad', rowIndex)
@@ -586,9 +581,4 @@ const mapStateToProps = state => ({
     ...state
 })
 
-export default connect(mapStateToProps,
-    {
-        fetchUser,
-        fetchLoading
-    }
-)(Group);
+export default Group

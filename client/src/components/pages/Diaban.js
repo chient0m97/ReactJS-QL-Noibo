@@ -59,8 +59,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Cấp địa bàn">
                   {getFieldDecorator('dm_db_cap', {
                     rules: [{ required: true, message: 'Trường này không được để trống!', }],
-                  })(<Select onSelect={onSelectCapDiaBan}
+                  })(<Select
+                    onSelect={onSelectCapDiaBan}
                     onChange={this.handleChange}
+                    filterOption={(input, option) =>
+                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    showSearch
                   >
                     {comboboxlevel}
                   </Select>)}
@@ -70,7 +75,12 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                 <Form.Item label="Địa bàn cha">
                   {getFieldDecorator('dm_db_id_cha', {
                   })(
-                    <Select>
+                    <Select
+                      filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                      showSearch
+                    >
                       {
                         datacha.map((value, index) => {
                           return (
@@ -175,7 +185,7 @@ class Diaban extends React.Component {
       if (err) {
         return
       }
-      var url = this.state.action === 'diaban/insert' ? 'insert' : 'diaban/update'
+      var url = this.state.action === 'insert' ? 'diaban/insert' : 'diaban/update'
       Request(url, 'POST', values)
         .then((response) => {
           this.setState({
@@ -472,7 +482,7 @@ class Diaban extends React.Component {
               <Col span={2}>
                 <Tooltip title="Thêm địa bàn">
                   <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
-                    <Icon type="user-add" />
+                  <Icon type="plus" />
                   </Button>
                 </Tooltip>
               </Col>

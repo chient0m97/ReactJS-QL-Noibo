@@ -120,6 +120,17 @@ const treeData = [
     ],
   },
 
+  {
+    title: 'File Khách Hàng',
+    key: 'file_khachhangs',
+    children: [
+      { title: 'xem', key: 'FILE_KHACHHANGS.READ' },
+      { title: 'thêm', key: 'FILE_KHACHHANGS.INSERT' },
+      { title: 'sửa', key: 'FILE_KHACHHANGS.UPDATE' },
+      { title: 'xóa', key: 'FILE_KHACHHANGS.DELETE' },
+    ],
+  },
+
 ];
 
 class Demo extends React.Component {
@@ -148,7 +159,7 @@ class Demo extends React.Component {
     return this.state.checkedKeys;
   }
   onCheck = async checkedKeys => {
-    console.log(this.props.dataTree)
+    console.log('asdasdasdasdasd',checkedKeys)
     await this.setState({ checkedKeys });
   };
   componentDidMount() {

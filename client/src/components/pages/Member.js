@@ -8,12 +8,13 @@
 // const { Column } = Table;
 // class Member extends Component {
 //     constructor(props) {
+//         console.log('props:', props)
 //         super(props);
 //         this.state = {
 //             pageNumber: 1,
 //             current: 1,
 //             page: 1,
-//             pageSize: 10,
+//             pageSize: 40,
 //             showPopup: false,
 //             count: 1,
 //             show: false,
@@ -58,13 +59,13 @@
 //             })
 //     }
 //     componentDidMount() {
-
+//         console.log('ddddddddddđ', this.props.match.params.memberName)
 //         this.getUsers(this.state.pageNumber);
 
 //     }
 //     getUsers = (pageNumber) => {
 //         let a = this.props.location.pathname.split('/')[2]
-//         console.log('23444444444444444444444',a)
+//         console.log('23444444444444444444444', a)
 //         if (pageNumber <= 0)
 //             return;
 
@@ -180,13 +181,16 @@
 //                     message.success('thêm mới thành công')
 //                     this.setState({
 //                         showModal: false,
-//                         listMemAdd: [],
 //                         selectedRowKeys: []
 //                     })
 //                     this.getUsers(this.state.pageNumber)
 //                 }
 //             })
 //         })
+//         this.setState({
+//             listMemAdd: [],
+//         })
+//         console.log('66666666666666666666666666666666666666666666', this.state.listMemAdd)
 
 //     }
 //     handleClickRow(rowIndex) {
@@ -196,7 +200,30 @@
 //             users: users
 //         })
 //     }
+//     onchangpage = async (page) => {
+//         await this.setState({
+//             page: page
+//         })
 
+//         if (this.state.isSearch === 1) {
+//             this.search(this.state.searchText)
+//         }
+//         else {
+//             this.getGroup(page)
+//         }
+//     }
+//     onShowSizeChange = async (current, size) => {
+//         await this.setState({
+//             pageSize: size
+//         });
+//         if (this.state.searchText) {
+//             this.search(this.state.searchText);
+
+//         }
+//         else {
+//             this.getGroup(this.state.page)
+//         }
+//     }
 //     render() {
 //         const { selectedRowKeys } = this.state
 //         const { selectedRowKeys1 } = this.state
@@ -211,14 +238,13 @@
 //         }
 //         const rowMemberSelection = {
 //             hideDefaultSelections: true,
-//             selectedRowKeys1,
 //             onChange: async (selectedRowKeys1, selectedRows) => {
-//                 console.log('selectttttttttttttttttttttttttttt', this.state.selectedRowKeys1)
 //                 await this.setState({
 //                     listMemAdd: selectedRowKeys1,
 //                     selectedRowKeys1
 
 //                 })
+//                 console.log('selectttttttttttttttttttttttttttt', this.state.listMemAdd)
 //             },
 //         }
 //         return (
@@ -294,7 +320,8 @@
 //                     </Table>
 //                 </Row>
 //                 <Row>
-//                     <Pagination showSizeChanger showQuickJumper />
+//                     <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+
 //                 </Row>
 //             </div>
 //         );

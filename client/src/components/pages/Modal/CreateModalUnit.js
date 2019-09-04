@@ -28,7 +28,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, dm_dv_id_visible, handleChange, select_diabanhuyen, select_diabantinh, select_diabanxa, onSelectDiaBanTinh, onSelectDiaBanHuyen, onSelectDiaBanXa, select_tenkh, onSelectKh, stateoption } = this.props;
             const { getFieldDecorator } = form;
             var datacha = this.props.datacha
-            console.log(datacha, 'prop don vi cha')
+            // console.log(datacha, 'prop don vi cha')
             return (
                 <div>
                     <Modal
@@ -70,7 +70,13 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                     <Form.Item label='Người đại diện'>
                                         {getFieldDecorator('kh_id_nguoidaidien', {
 
-                                        })(<Select onSelect={onSelectKh} placeholder="---Không có người đại diện có thể bỏ qua trường này---"
+                                        })(<Select
+                                            onSelect={onSelectKh}
+                                            placeholder="---Không có người đại diện có thể bỏ qua trường này---"
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
                                         >
                                             <Option value="add_nguoidaidien" disabled={stateoption}>Thêm người đại diện</Option>
                                             <Option value={null}>Bỏ chọn</Option>
@@ -105,7 +111,11 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                     <Form.Item label='Huyện/Quận'>
                                         {getFieldDecorator('dm_db_id_huyen', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select onSelect={onSelectDiaBanHuyen}>
+                                        })(<Select onSelect={onSelectDiaBanHuyen}
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch>
                                             {
                                                 select_diabanhuyen.map((value, index) => {
                                                     return (
@@ -121,7 +131,11 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                     <Form.Item label='Xã/Phường'>
                                         {getFieldDecorator('dm_db_id_xa', {
                                             rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
-                                        })(<Select onSelect={onSelectDiaBanXa}>
+                                        })(<Select onSelect={onSelectDiaBanXa}
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch>
                                             {
                                                 select_diabanxa.map((value, index) => {
                                                     return (
@@ -152,6 +166,10 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                             style={{ width: '100%' }}
                                             placeholder="Please select"
                                             onChange={handleChange}
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
                                         >
                                             {combobox}
                                         </Select>)}
@@ -169,7 +187,12 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                         {getFieldDecorator('dm_dv_id_cha', {
                                             // rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!',}],
                                         })(
-                                            <Select>
+                                            <Select
+                                            filterOption={(input, option) =>
+                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            }
+                                            showSearch
+                                            >
                                                 {datacha.map((item, i) => {
                                                     return (
                                                         <Option value={item.dm_dv_id}>{item.tendonvi}</Option>

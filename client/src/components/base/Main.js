@@ -35,6 +35,7 @@ class Main extends React.Component {
   }
 
   renderRouter = (e) => {
+    // console.log('routers: ', this.state.routers)
     return this.setState({
       routers: (
         <Switch>
@@ -43,7 +44,7 @@ class Main extends React.Component {
               if (v.path === '/') {
                 return <Route path={v.path} component={v.component} exact />
               }
-              return <Route path={v.path} component={v.component} />
+              return <Route path={v.path} component={v.component} exact  />
             })
           }
         </Switch>
@@ -59,6 +60,7 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
+    // console.log('routers: ', this.state.routers)
     this.renderRouter()
   }
   render() {

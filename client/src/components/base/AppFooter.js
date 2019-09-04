@@ -7,7 +7,7 @@ class AppFooter extends Component {
     render() {
         return (
             <Footer style={{ textAlign: 'center', fontSize: '12px', padding: '5px' }}>
-                <div>Vertion 1.0.</div>
+                <div>Version 1.0.</div>
                 <div>Copyright @ 2019 HCM Company.</div>
                 <div>All rights reserved.</div>
             </Footer>

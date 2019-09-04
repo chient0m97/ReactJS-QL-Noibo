@@ -1,6 +1,6 @@
 import { Layout } from 'antd'
 import React, { Component } from 'react'
-import { Menu, Icon } from 'antd'
+import { Menu, Icon, Drawer, Switch } from 'antd'
 import { NavLink } from 'react-router-dom'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
@@ -18,6 +18,8 @@ class AppSider extends Component {
             collapsed: props.collapsed,
             menu: [],
             openKeys: [],
+            stateDrawer: false,
+            theme: 'dark'
         }
         this.setCollapsed(props.collapsed)
     }
@@ -42,6 +44,31 @@ class AppSider extends Component {
 
     }
 
+    showDrawer = () => {
+        this.setState({
+            stateDrawer: true,
+        });
+    }
+
+    onClose = () => {
+        this.setState({
+            stateDrawer: false,
+        });
+    };
+
+    handleClick = e => {
+        if (e.key === '13') {
+            this.showDrawer()
+        }
+    };
+
+    changeTheme = value => {
+        console.log(value)
+        this.setState({
+            theme: value ? 'dark' : 'light'
+        });
+    }
+
     render() {
         let token = cookie.load('token');
 
@@ -56,10 +83,10 @@ class AppSider extends Component {
                     claims[i] = { url: '/user', des: 'User', menu: 1 }
                 }
                 else if (claims[i] === Permission.Hotro.Read) {
-                    claims[i] = { url: '/hotro', des: 'Hỗ trợ', menu: 2 }
+                    claims[i] = { url: '/hotro', des: 'Công Việc - Hỗ trợ', menu: 2 }
                 }
                 else if (claims[i] === Permission.Nhansu.Read) {
-                    claims[i] = { url: '/nhansu', des: 'Nhân sự', menu: 2 }
+                    claims[i] = { url: '/nhansu', des: 'Nhân sự', menu: 1 }
                 }
                 else if (claims[i] === Permission.Diaban.Read) {
                     claims[i] = { url: '/diaban', des: 'Địa bàn', menu: 3 }
@@ -79,16 +106,23 @@ class AppSider extends Component {
                 else if (claims[i] === Permission.Hoadon.Read) {
                     claims[i] = { url: '/qlhd', des: 'Hóa Đơn', menu: 3 }
                 }
+                else if (claims[i] === Permission.File_khachhangs.Read) {
+                    claims[i] = { url: '/file', des: 'File Khách Hàng', menu: 3 }
+                }
             }
         }
+
+
 
         return (
 
             <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
                 <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline"
+                <Menu theme={this.state.theme}
+                    defaultSelectedKeys={['1']} mode="inline"
                     openKeys={this.state.openKeys}
                     onOpenChange={this.onOpenChange}
+                    onClick={this.handleClick}
                 >
                     <Menu.Item key="1">
                         <Icon type="home" />
@@ -100,7 +134,7 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="user" />
-                                <span>Quản lý người dùng</span>
+                                <span>Người Dùng</span>
                             </span>
                         }
                     >
@@ -118,7 +152,7 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="team" />
-                                <span>Quản lý khách hàng</span>
+                                <span>Khách Hàng</span>
                             </span>
                         }
                     >
@@ -140,7 +174,7 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="team" />
-                                <span>Quản lý kế toán</span>
+                                <span>Quản Lý Kế Toán</span>
                             </span>
                         }
                     >
@@ -161,18 +195,39 @@ class AppSider extends Component {
                     <SubMenu key="sub4" title={
                         <span>
                             <Icon type="form" />
-                            <span>Đăng ký nghỉ</span>
+                            <span>Đăng Ký Nghỉ</span>
                         </span>
                     }>
-                        <Menu.Item key="12">
+                        <Menu.Item key="15">
                             <NavLink to="/half" className="">Nghỉ nửa ngày</NavLink >
                         </Menu.Item>
-                        <Menu.Item key="13">
+                        <Menu.Item key="14">
                             <NavLink to="/request" className="">Nghỉ 1 hoặc nhiều ngày</NavLink >
                         </Menu.Item>
                     </SubMenu>
+                    <Menu.Item key="12">
+                        <Icon type="file" />
+                        <span><NavLink to="/file" className="">Tập Tin Khách Hàng</NavLink ></span>
+                    </Menu.Item>
+                    <Menu.Item key="13">
+                        <Icon type="setting" onClick={this.showDrawer} />Cài Đặt
+                    </Menu.Item>
                 </Menu>
+                <Drawer
+                    title="Cài Đặt"
+                    closable={false}
+                    onClose={this.onClose}
+                    visible={this.state.stateDrawer}
+                    placement="right"
+                >
+                    <Switch
+                        checkedChildren="Tối"
+                        unCheckedChildren="Sáng"
+                        onChange={this.changeTheme}
+                    />
+                </Drawer>
             </Sider>
+
         )
     }
 }

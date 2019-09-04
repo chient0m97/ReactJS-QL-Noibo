@@ -66,4 +66,11 @@ module.exports = {
         Delete: "HOADON.DELETE",
         Update:"HOADON.UPDATE",
     }
+    ,
+    File_khachhangs:{
+        Read: "FILE_KHACHHANG.READ",
+        Insert: "FILE_KHACHHANG.INSERT",
+        Delete: "FILE_KHACHHANG.DELETE",
+        Update:"FILE_KHACHHANG.UPDATE",
+    }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card, DatePicker } from 'antd';
+import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card, DatePicker, Divider } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
@@ -36,13 +36,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             }
         }
 
-        handleChange = async (value) => {
-            g = ''
-            if (value === "9298eb00-a6d9-11e9-bd04-0986e022adbf") {
-                this.props.trangthaibutton = false
-            }
-        }
-
         onOk = (value) => {
             console.log('onOk: ', value);
         }
@@ -52,13 +45,18 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
+            var donvi = this.props.setDonVi;
             var first_kh_id = null;
             var first_da_id = null;
             var first_ns_id = null;
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton } = this.props;
+            var first_dv_id = null
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton, set_Select_KhachHang } = this.props;
             const { getFieldDecorator } = form;
             if (khachhang.length !== 0) {
                 first_kh_id = khachhang[0].kh_id
+            }
+            if (donvi.length !== 0) {
+                first_dv_id = donvi[0].dm_dv_id
             }
             if (id_duan.length !== 0) {
                 first_da_id = id_duan[0].dm_duan_id
@@ -66,7 +64,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             if (nhansu.length !== 0) {
                 first_ns_id = nhansu[0].ns_id
             }
-            var user_cookie = cookie.load('user');
             return (
                 <Modal
                     centered
@@ -80,8 +77,18 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                 >
                     <Form layout={formtype} >
                         <Row gutter={24} align="middle">
-                            <Col span={8}>
-                                <div style={{ position: 'absolute', top: '2px', right: '95px', zIndex: '99999' }}>
+                            <Col span={6}>
+                                <Form.Item label="Người tạo">
+                                    {getFieldDecorator('ns_id_nguoitao', {
+                                        rules: [{ required: true, message: 'Trường không được để trống' }]
+                                    })(
+                                        // <Tag>&ensp;<Icon type="user" /> &emsp;&emsp; {user_cookie} &emsp;&emsp;&emsp;&ensp;</Tag>
+                                        <Input type="text" size="small" disabled />
+                                    )}
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <div style={{ position: 'absolute', top: '2px', right: '13px', zIndex: '99999' }}>
                                     <Button size="small" onClick={assignme} disabled={trangthaibutton}> <Icon type="user" /> Tôi &emsp;</Button>
                                 </div>
                                 <Form.Item label="Gán cho">
@@ -93,6 +100,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
+                                        showSearch
                                     >
                                         {
                                             nhansu.map((value, index) => {
@@ -102,42 +110,22 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     </Select>)}
                                 </Form.Item>
                             </Col>
-                            <Col span={8} >
+                            <Col span={12} >
                                 <Form.Item label="Dự án">
                                     {getFieldDecorator('dm_duan_id', {
                                         rules: [{ required: true, message: 'Trường không được để trống', }], initialValue: first_da_id
                                     })(<Select
-
                                         size={"small"}
-                                        onChange={this.handleChange}
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
                                         {
                                             id_duan.map((value, index) => {
-                                                return (<Option value={value.dm_duan_id}> {value.dm_duan_ten} </Option>)
+                                                return (<Option value={value.dm_duan_id}>{value.dm_duan_ten}</Option>)
                                             })
                                         }
-                                    </Select>)}
-                                </Form.Item>
-                            </Col>
-                            <Col span={8}>
-                                <Form.Item label="Ưu tiên">
-                                    {getFieldDecorator('ht_uutien', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "TB"
-                                    })(<Select
-                                        size={"small"}
-                                        onChange={this.handleChange}
-                                        filterOption={(input, option) =>
-                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                        }
-                                    >
-                                        <Option value="GAP"> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /> &ensp; Gấp </Option>
-                                        <Option value="CAO"> <Icon type="up" style={{ color: 'orange' }} /> &ensp; Cao</Option>
-                                        <Option value="TB"> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /> &ensp; Trung Bình</Option>
-                                        <Option value="THAP"> <Icon type="down" style={{ color: 'lime' }} /> &ensp; Thấp</Option>
-                                        <Option value="RT"> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /> &ensp; Rất Thấp </Option>
                                     </Select>)}
                                 </Form.Item>
                             </Col>
@@ -152,22 +140,63 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             </Col>
                         </Row>
                         <Row gutter={24} align="middle">
-                            <Col span={8}>
-                                <Form.Item label="Khách hàng">
-                                    {getFieldDecorator('kh_id', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: first_kh_id
+                            <Col span={12}>
+                                <Form.Item label="Đơn vị">
+                                    {getFieldDecorator('dm_dv_id', {
+                                        initialValue: null
                                     })(<Select
                                         size={"small"}
-                                        // onChange={this.handleChange}
+                                        onChange={set_Select_KhachHang}
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
+                                        <Option value={null}>Không thuộc đơn vị</Option>
+                                        {
+                                            donvi.map((value, index) => {
+                                                return (<Option value={value.dm_dv_id}>{value.dm_dv_ten}</Option>)
+                                            })
+                                        }
+                                    </Select>)}
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label="Khách hàng">
+                                    {getFieldDecorator('kh_id', {
+                                        initialValue: null
+                                    })(<Select
+                                        size={"small"}
+                                        // onChange={this.handleChange}
+                                        showSearch
+                                        filterOption={(input, option) =>
+                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                    >
+                                        <Option value={null}>Bỏ chọn</Option>
                                         {
                                             khachhang.map((value, index) => {
                                                 return (<Option value={value.kh_id}>{value.kh_ten}</Option>)
                                             })
                                         }
+                                    </Select>)}
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={24} align="middle">
+                            <Col span={8}>
+                                <Form.Item label="Ưu tiên">
+                                    {getFieldDecorator('ht_uutien', {
+                                        rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "TB"
+                                    })(<Select
+                                        size={"small"}
+                                        onChange={this.handleChange}
+                                    >
+                                        <Option value="GAP"> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /> &ensp; Gấp </Option>
+                                        <Option value="CAO"> <Icon type="up" style={{ color: 'orange' }} /> &ensp; Cao</Option>
+                                        <Option value="TB"> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /> &ensp; Trung Bình</Option>
+                                        <Option value="THAP"> <Icon type="down" style={{ color: 'lime' }} /> &ensp; Thấp</Option>
+                                        <Option value="RT"> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /> &ensp; Rất Thấp </Option>
                                     </Select>)}
                                 </Form.Item>
                             </Col>
@@ -178,7 +207,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     })(<Select
                                         onChange={onTodoChange}
                                         size={"small"}
-
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
@@ -195,7 +224,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     {getFieldDecorator('ht_phanloai', {
                                         rules: [{ required: true, message: 'Trường không được để trống' }], initialValue: "new"
                                     })(<Select
-
+                                        showSearch
                                         size={"small"}
                                         onChange={this.handleChange}
                                         filterOption={(input, option) =>
@@ -210,34 +239,28 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                             </Col>
                         </Row>
                         <Row gutter={24}>
-                            <Col span={6}>
-                                <Form.Item label="Người tạo">
-                                    {getFieldDecorator('ns_id_nguoitao', {
-                                        rules: [{ required: true, message: 'Trường không được để trống' }]
-                                    })(<Tag>&ensp;<Icon type="user" /> &emsp;&emsp; {user_cookie} &emsp;&emsp;&emsp;&ensp;</Tag>)}
-                                </Form.Item>
-                            </Col>
-                            <Col span={6}>
+
+                            <Col span={8}>
                                 <Form.Item label="Thời gian tiếp nhận">
                                     {getFieldDecorator('ht_thoigiantiepnhan', {
                                         rules: [{}],
-                                    })(<Tag > <Icon type="clock-circle" />&nbsp; {formatDateHMS(new Date(), "dd / mm / yyyy -- HH : MM : ss")} </Tag>)}
+                                    })(<Tag > <Icon type="clock-circle" />&ensp;&ensp;&ensp;&ensp; {formatDateHMS(new Date(), "dd / mm / yyyy -- HH : MM : ss")}&ensp;&ensp;&ensp;&ensp; </Tag>)}
                                 </Form.Item>
                             </Col>
-                            <Col span={6}>
+                            <Col span={8}>
                                 <Form.Item label="TG dự kiến hoàn thành">
                                     {getFieldDecorator('ht_thoigian_dukien_hoanthanh', {
                                     })(
-                                    // <DatePicker showTime size={"small"} onOk={this.onOk} format="DD/ MM/ YYYY--HH: MM: ss" style={{ minWidth: '170px' }} suffixIcon={Icon('')} />
-                                    <Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />
+                                        // <DatePicker showTime size={"small"} onOk={this.onOk} format="DD/ MM/ YYYY--HH: MM: ss" style={{ minWidth: '170px' }} suffixIcon={Icon('')} />
+                                        <Input type="date" size={"small"} min={format(new Date(), "yyyy-mm-dd")} disabled={this.props.trangthai} style={{ paddingLeft: 35, paddingTop: 4 }} />
                                     )}
                                 </Form.Item>
                             </Col>
-                            <Col span={6}>
+                            <Col span={8}>
                                 <Form.Item label="Thời gian hoàn thành" >
                                     {getFieldDecorator('ht_thoigian_hoanthanh', {
                                         rules: [{}],
-                                    })(<Tag > <Icon type="clock-circle" /> {this.props.date} </Tag>)}
+                                    })(<Tag > <Icon type="clock-circle" /> &ensp;&ensp;&ensp;&ensp;{this.props.date}&ensp;&ensp;&ensp;&ensp; </Tag>)}
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -304,6 +327,7 @@ class Hotro extends React.Component {
             khachhangs: [],
             selectedrow: [],
             selectedRowKeys: [],
+            donvis: []
         }
     }
 
@@ -324,18 +348,29 @@ class Hotro extends React.Component {
                     nhansu: res.data.data.nhansu
                 })
             }
-
         })
     }
 
-    set_Select_KhachHang() {
-        Request('hotro/getkhachhang', 'POST', {}).then((res) => {
+    set_Select_KhachHang(dv) {
+        if (dv === null) {
+            dv = ""
+        }
+        Request('hotro/getkhachhangwhere', 'POST', { dv }).then((res) => {
             if (res.data.data.khachhangs) {
                 this.setState({
                     khachhang: res.data.data.khachhangs
                 })
             }
+        })
+    }
 
+    set_Select_DonVi() {
+        Request('hotro/getdonvi', 'POST', {}).then((res) => {
+            if (res.data.data.donvis) {
+                this.setState({
+                    donvis: res.data.data.donvis
+                })
+            }
         })
     }
 
@@ -379,18 +414,6 @@ class Hotro extends React.Component {
             })
     }
 
-    getkhachhang = () => {
-        Request('hotro/getkhachhang', 'POST', {}).then((res) => {
-            if(res.data.data.khachhangs){
-                this.setState({
-                    khachhangs: res.data.data.khachhangs
-                })
-            }  
-        }).catch((err) => {
-            console.log(err)
-        })
-    }
-
     insertOrUpdate = async () => {
         const { form } = await this.formRef.props;
 
@@ -403,13 +426,14 @@ class Hotro extends React.Component {
             this.setState({
                 rowthotroselected: values
             })
+
             if (url === 'hotro/update') {
                 let user_cookie = cookie.load('user');
                 values.ns_id_capnhat = user_cookie
                 values.nkht_thoigiancapnhat = new Date()
             }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
-                values.ht_thoigian_dukien_hoanthanh = null
+                values.ht_thoigian_dukien_hoanthanh = format(new Date(),'yyyy-mm-dd')
             }
             Request(url, 'POST', values)
                 .then(async (response) => {
@@ -512,7 +536,6 @@ class Hotro extends React.Component {
                 array_ht_trangthai = []
                 this.getHotro(this.state.page)
             },
-
         };
     }
 
@@ -550,9 +573,21 @@ class Hotro extends React.Component {
                 form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: formatDateModal(hotro.ht_thoigian_dukien_hoanthanh, "yyyy-mm-dd") })
             }
         }
+        //var user_cookie = cookie.load('user');
+        var nguoitao = ""
+        await Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
+            if (res) {
+                if (res.data.data.name[0] === undefined)
+                    nguoitao = "Chưa có tài khoản"
+                else
+                    nguoitao = res.data.data.name[0].ns_hovaten
+            }
+        })
+        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
         this.set_Select_id_duan();
         this.set_Select_NhanSu();
-        this.set_Select_KhachHang();
+        this.set_Select_KhachHang(null);
+        this.set_Select_DonVi();
     }
 
     handleOk = e => {
@@ -624,11 +659,23 @@ class Hotro extends React.Component {
     }
 
     Assignme = () => {
-        let user_cookie = cookie.load('user');
-        const { form } = this.formRef.props
-        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
-        this.setState({
-            trangthaibutton: true
+        var user_cookie = cookie.load('user');
+        Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
+            if (res) {
+                if (res.data.data.name[0] === undefined) {
+                    this.setState({
+                        trangthaibutton: true
+                    })
+                }
+                else {
+                    var ns_id = res.data.data.name[0].ns_id
+                    const { form } = this.formRef.props
+                    form.setFieldsValue({ ns_id_ass: ns_id })
+                    this.setState({
+                        trangthaibutton: true
+                    })
+                }
+            }
         })
     }
 
@@ -649,13 +696,12 @@ class Hotro extends React.Component {
 
     checkDate = (check, text, j) => {
         j = j - 1
-        // if (array_ht_trangthai[(this.state.page - 1) * 10 + j] === "daxong") {
         if (array_ht_trangthai[j] === "daxong") {
-            return <a style={{ color: 'brown' }}>{text}</a>
+            return <a style={{ color: 'black' }}>{text}</a>
         }
         if (check === 1)
             return <a style={{ color: 'red' }} >{text}</a>
-        return <span >{text}</span>
+        return <a style={{ color: 'lime' }}>{text}</a>
     }
 
     checkDateConvert = (x) => {
@@ -705,22 +751,10 @@ class Hotro extends React.Component {
         }
     }
 
-    disabledDate = (current) => {
-        // Can not select days before today and today
-        return current && current < moment().endOf('day');
-    }
-
-    disabledDateTime = () => {
-        return {
-            disabledHours: () => range(0, 24).splice(4, 20),
-            disabledMinutes: () => range(30, 60),
-            disabledSeconds: () => [55, 56],
-        };
-    }
-
     render() {
         var i = 0
         var j = 0
+        // var demclickplus = 0
         var formatDate = require('dateformat')
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -738,7 +772,7 @@ class Hotro extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm Hỗ Trợ">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                                        <Icon type="user-add" />
+                                    <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -784,9 +818,11 @@ class Hotro extends React.Component {
                                 return (
                                     <div style={{ textAlign: 'left' }}>
                                         <div style={{ fontSize: '18px' }}> Yêu cầu: </div>
-                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1200' }} >{this.state.hotro[selectedRowKeys].ht_noidungyeucau}</Row>
+                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }} >{this.state.hotro[selectedRowKeys].ht_noidungyeucau}</Row>
                                         <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
-                                        <Row style={{ paddingTop: '7px' }}>{this.state.hotro[selectedRowKeys].ht_ghichu}</Row>
+                                        <Row style={{ paddingTop: '7px', borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }}>{this.state.hotro[selectedRowKeys].ht_ghichu}</Row>
+                                        <Row style={{ marginTop: '5px', marginBottom: '5px' }}>SĐT : {this.state.hotro[selectedRowKeys].kh_sodienthoai}</Row>
+                                        <Row style={{ marginTop: '5px', marginBottom: '5px' }} >Email : {this.state.hotro[selectedRowKeys].kh_email}</Row>
                                     </div>
                                 )
                             }}>
@@ -794,8 +830,6 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
-                                        // console.log("Hien thi array trang thai ", array_ht_trangthai[(this.state.page - 1) * 10 + j - 1])
-                                        // if (array_ht_trangthai[(this.state.page - 1) * 10 + j - 1] === "daxong") {
                                         if (array_ht_trangthai[j - 1] === "daxong") {
                                             return <Badge color={"brown"} />
                                         }
@@ -814,9 +848,20 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, text, j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Khách hàng" dataIndex="kh_ten" width={100}
+                            <Column title="Đơn vị" dataIndex="dm_dv_ten" width={150}
                                 render={text => {
-                                    return this.checkDate(i, text, j)
+                                    return (
+                                        <div>
+                                            <Row>{this.checkDate(i, text, j)}</Row>
+                                        </div>)
+                                }}
+                                width={150} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Khách hàng" dataIndex="kh_ten" width={150}
+                                render={text => {
+                                    return (
+                                        <div>
+                                            <Row>{this.checkDate(i, text, j)}</Row>
+                                        </div>)
                                 }}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Người tạo" dataIndex="ns_hoten"
@@ -892,12 +937,14 @@ class Hotro extends React.Component {
                         setidduan={this.state.id_duanfillmodal}
                         setNhansu={this.state.nhansu}
                         setKhachHang={this.state.khachhang}
+                        setDonVi={this.state.donvis}
                         onTodoChange={this.onTodoChange}
                         date={this.state.date}
-                        trangthai={this.state.trangthai}
+                        // trangthai={this.state.trangthai}
                         assignme={this.Assignme}
                         trangthaibutton={this.state.trangthaibutton}
                         changeButton={this.changeButton}
+                        set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
                     />
                     <Modal_Khachhangs
                         title="Thêm Khách Hàng"

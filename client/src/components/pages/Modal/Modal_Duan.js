@@ -15,27 +15,38 @@ const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
-const Modal_Duan = Form.create({ name: 'form_in_modal_duan' })(
+const Modal_Duan = Form.create({ name: 'form_in_modal' })(
   class extends React.Component {
     render() {
-      const { onOk_duan, visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, select_qtda } = this.props;
+      const { visible_duan_modal, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, comboBoxDatasource } = this.props;
+      var combobox = []
+      comboBoxDatasource.map((value, index) => {
+        combobox.push(<Option value={value.ns_id}>{value.ns_ten}</Option>)
+      })
+      console.log(id_visible)
       const { getFieldDecorator } = form;
-      var first_qtda = null;
-      console.log("Day la option ",select_qtda)
-      if (select_qtda.length !== 0) {
-        first_qtda = select_qtda[0].ns_id
-      }
       return (
         <Modal
-          visible={visible}
-          title="Nhập thông tin cho dự án"
+          visible={visible_duan_modal}
+          title={title}
           okText="Lưu"
           onCancel={onCancel}
-          onOk={onOk_duan}
+          onOk={onSave}
           confirmLoading={confirmLoading}
           width={1000}
         >
-           <Form layout={formtype}>
+          <Form layout={formtype}>
+            <Row gutter={24}>
+              <Col span={24}>
+                <div style={{ display: id_visible === true ? 'block' : 'none' }}>
+                  <Form.Item label="Id:" >
+                    {getFieldDecorator('id', {
+                      rules: [{}],
+                    })(<Input type="number" disabled />)}
+                  </Form.Item>
+                </div>
+              </Col>
+            </Row>
             <Row gutter={24}>
               <Col span={12}>
                 <Form.Item label="">
@@ -53,7 +64,7 @@ const Modal_Duan = Form.create({ name: 'form_in_modal_duan' })(
             </Row>
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label="Kí hiệu dự án">
+                <Form.Item label="Tiền tố">
                   {getFieldDecorator('dm_duan_key', {
                     rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Input type="text" />)}
@@ -62,17 +73,14 @@ const Modal_Duan = Form.create({ name: 'form_in_modal_duan' })(
               <Col span={12}>
                 <Form.Item label="Quản trị dự án">
                   {getFieldDecorator('ns_id_qtda', {
-                    rules: [{ required: true, message: 'Trường này không được để trống!', }], initialValue: first_qtda
+                    rules: [{ required: true, message: 'Trường này không được để trống!', }],
                   })(<Select
                     filterOption={(input, option) =>
                       option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
+                    showSearch
                   >
-                    {
-                      select_qtda.map((value, index) => {
-                        return (<Option value={value.ns_id}>{value.ns_hovaten}</Option>)
-                      })
-                    }
+                    {combobox}
                   </Select>)}
                 </Form.Item>
               </Col>

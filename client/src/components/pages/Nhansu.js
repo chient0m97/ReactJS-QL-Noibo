@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchLoading } from '@actions/common.action';
 import MultiFilter from '@components/common/GroupFilter'
+// import ReactModal from 'react-modal-resizable-draggable'
 import '@styles/style.css'
 //import { format } from 'util';
 const { Column } = Table;
@@ -38,6 +39,10 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             );
             return (
                 <Modal
+                    // isOpen={this.props.isOpen}
+                    // onRequestClose={onCancel}
+                    // initWidth={1000} 
+                    // initHeight={500}
                     centered
                     visible={visible}
                     title={title}
@@ -47,7 +52,8 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                     confirmLoading={confirmLoading}
                     width={'60%'}
                 >
-                    <Form layout={formtype}>
+                    <Form layout={formtype} style={{padding: '10px'}}>
+                        <h3>{title}</h3>
                         <Row gutter={24}>
                             <Col span={12}>
                                 <div style={{ display: id_visible === true ? 'block' : 'none' }}>
@@ -57,7 +63,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 </div>
                             </Col>
                         </Row>
-                        <Row gutter={24} align="middle">
+                        <Row gutter={24} align="middle" style={{marginTop: 'px'}}>
                             <Col span={6}>
                                 <Form.Item label="Họ">
                                     {getFieldDecorator('ns_ho', {
@@ -99,6 +105,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                     })(<Select
                                         size={"small"}
                                         onChange={this.handleChange}
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
@@ -116,18 +123,19 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                             rules: [{ required: true, message: 'Trường không được để trống!' }]
                                         })(<Select
                                             onChange={this.handleChange}
+                                            showSearch
                                             filterOption={(input, option) =>
                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
                                             initialValue="TT"
                                             size={"small"}
                                         >
-                                            <Option value="TT" > Thực Tập </Option>
-                                            <Option value="HC" > Học Việc </Option>
-                                            <Option value="TV" > Thử Việc </Option>
-                                            <Option value="CT" > Chính Thức </Option>
-                                            <Option value="NV" > Nghỉ Việc </Option>
-                                            <Option value="Khac" > Khác </Option>
+                                            <Option value="TT" >Thực Tập</Option>
+                                            <Option value="HC" >Học Việc</Option>
+                                            <Option value="TV" >Thử Việc</Option>
+                                            <Option value="CT" >Chính Thức</Option>
+                                            <Option value="NV" >Nghỉ Việc</Option>
+                                            <Option value="Khac" >Khác</Option>
                                         </Select>)}
                                     </Form.Item>
                                 </Col>
@@ -141,6 +149,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                         rules: [{ required: true, message: 'Trường không được để trống!', }],
                                     })(<Select
                                         size={"small"}
+                                        showSearch
                                         filterOption={(input, option) =>
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
@@ -252,6 +261,9 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 </Form.Item>
                             </Col>
                         </Row>
+                        {/* <Row>
+                            <Button onClick={this.props.onCancel}>Thoát</Button>
+                        </Row> */}
                     </Form>
                 </Modal>
             );
@@ -301,10 +313,17 @@ class Nhansu extends React.Component {
             selectedRowKeys: [],
             selectedId: [],
             selectedrow: [],
-            dinhdanh: []
+            dinhdanh: [],
+            modalIsOpen: false
         }
     }
 
+    openModal() {
+        this.setState({ modalIsOpen: true });
+    }
+    closeModal() {
+        this.setState({ modalIsOpen: false });
+    }
 
     formatDate(strDate, strFormat) {
         if (strDate == null)
@@ -327,7 +346,7 @@ class Nhansu extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                if(res.data.data.nhansu){
+                if (res.data.data.nhansu) {
                     this.setState({
                         nhansu: res.data.data.nhansu,
                         count: res.data.data.count
@@ -403,12 +422,11 @@ class Nhansu extends React.Component {
 
     set_Select_DinhDanh() {
         Request('nhansu/getdinhdanh', 'POST', {}).then((res) => {
-            if(res.data.data.users){
+            if (res.data.data.users) {
                 this.setState({
                     dinhdanh: res.data.data.users
                 })
             }
-            
         })
 
     }
@@ -491,6 +509,7 @@ class Nhansu extends React.Component {
         this.setState({
             visible: true
         });
+        this.openModal()
         form.resetFields();
         form.setFieldsValue({ ns_trangthai: 'TT' })
         if (nhansu.ns_id !== undefined) {
@@ -518,6 +537,7 @@ class Nhansu extends React.Component {
             visible: false,
             id_visible: false
         });
+        this.closeModal()
     };
 
     handleChangeInput = (e) => {
@@ -641,14 +661,14 @@ class Nhansu extends React.Component {
                             </Tooltip>
                         </Col>
                         <Col span={2}>
-                            <Tooltip title="Sửa Hỗ Trợ">
+                            <Tooltip title="Sửa Nhân Sự">
                                 <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                                     <Icon type="edit" />
                                 </Button>
                             </Tooltip>
                         </Col>
                         <Col span={2}>
-                            <Tooltip title="Xóa Hỗ Trợ">
+                            <Tooltip title="Xóa Nhân Sự">
                                 <Popconfirm
                                     title="Bạn chắc chắn muốn xóa?"
                                     onConfirm={this.deleteNhansu.bind(this, this.state.selectedId)}
@@ -682,6 +702,8 @@ class Nhansu extends React.Component {
                         formtype={this.state.formtype}
                         id_visible={this.state.id_visible}
                         dinhdanh={this.state.dinhdanh}
+                        isOpen={this.state.modalIsOpen}
+                        
                     />
                     <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
                         <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" onHeaderCell={this.onHeaderCell} />
