@@ -55,7 +55,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             <Row gutter={25}>
               <Col span={0}>
                 <Form.Item label="Id hợp đồng:" className="an">
-                  {getFieldDecorator('hd_id', {
+                  {getFieldDecorator('nkhd_id', {
                   })(<Input type="number" size="small" />)}
                 </Form.Item>
               </Col>
@@ -87,7 +87,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
               <Col span={4}>
                 <Form.Item label="Loại hợp đồng:">
-                  {getFieldDecorator('hd_loai', {
+                  {getFieldDecorator('nkhd_loai', {
                     initialValue: 'DV',
                     rules: [{ required: true, message: 'Trường này không được bỏ trống!', }],
                   })(
@@ -100,7 +100,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
               <Col span={12}>
                 <Form.Item label={propDatasourceSelectLoaiHopDong.label} >
-                  {getFieldDecorator('hd_doituong', {
+                  {getFieldDecorator('nkhd_doituong', {
                   })(
                     <Select
                       showSearch
@@ -116,13 +116,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             <Row gutter={25}>
               <Col span={4}>
                 <Form.Item label="Số hợp đồng:">
-                  {getFieldDecorator('hd_so', {
+                  {getFieldDecorator('nkhd_so', {
                   })(<Input type="text" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={5}>
                 <Form.Item label="Thời gian thực hiện(ngày):">
-                  {getFieldDecorator('hd_thoigianthuchien', {
+                  {getFieldDecorator('nkhd_thoigianthuchien', {
                     initialValue: '90'
                   })(<Input type="number" size="small" />)}
                 </Form.Item>
@@ -139,13 +139,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
               <Col span={6}>
                 <Form.Item label="Địa chỉ:">
-                  {getFieldDecorator('hd_diachi', {
+                  {getFieldDecorator('nkhd_diachi', {
                   })(<Input type="text" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={4}>
                 <Form.Item label="Công ty:">
-                  {getFieldDecorator('hd_congty', {
+                  {getFieldDecorator('nkhd_congty', {
                     initialValue: 'FSC'
                   })(
                     <Select size="small">
@@ -159,7 +159,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             <Row gutter={25}>
               <Col span={8}>
                 <Form.Item label="Ngày ký:">
-                  {getFieldDecorator('hd_ngayky', {
+                  {getFieldDecorator('nkhd_ngayky', {
                   })(
                     <Input type="date" size="small" />
                   )}
@@ -167,13 +167,13 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày thanh lý:">
-                  {getFieldDecorator('hd_ngaythanhly', {
+                  {getFieldDecorator('nkhd_ngaythanhly', {
                   })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày xuất hóa đơn:">
-                  {getFieldDecorator('hd_ngayxuathoadon', {
+                  {getFieldDecorator('nkhd_ngayxuathoadon', {
                   })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
@@ -181,19 +181,19 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             <Row gutter={25}>
               <Col span={8}>
                 <Form.Item label="Ngày thanh toán:">
-                  {getFieldDecorator('hd_ngaythanhtoan', {
+                  {getFieldDecorator('nkhd_ngaythanhtoan', {
                   })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Ngày nghiệm thu:">
-                  {getFieldDecorator('hd_ngayketthuc', {
+                  {getFieldDecorator('nkhd_ngayketthuc', {
                   })(<Input size={"small"} type="date" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item label="Trạng thái:">
-                  {getFieldDecorator('hd_trangthai', {
+                  {getFieldDecorator('nkhd_trangthai', {
                     initialValue: 'DTH'
                   })(
                     <Select size="small">
@@ -210,7 +210,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             <Row gutter={25}>
               <Col span={12}>
                 <Form.Item label="Files:">
-                  {getFieldDecorator('hd_files', {
+                  {getFieldDecorator('nkhd_files', {
                   })(
                     <div>
                       <label>Upload your file</label>
@@ -226,7 +226,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
               </Col>
               <Col span={12}>
                 <Form.Item label="Ghi chú:">
-                  {getFieldDecorator('hd_ghichu', {
+                  {getFieldDecorator('nkhd_ghichu', {
                   })(
                     <TextArea rows={4} />
                   )}
@@ -278,8 +278,8 @@ class Hopdong extends React.Component {
       }
     }
   }
-  deleteHopdong = (hd_id) => {
-    Request(`hopdong/delete`, 'DELETE', { hd_id: hd_id })
+  deleteHopdong = (nkhd_id) => {
+    Request(`hopdong/delete`, 'DELETE', { nkhd_id: nkhd_id })
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
           message: 'Thông báo',
@@ -303,7 +303,7 @@ class Hopdong extends React.Component {
     this.props.fetchLoading({
       loading: true
     })
-    Request('hopdong/get', 'POST', {
+    Request('hopdong/getnkhd', 'POST', {
       pageSize: this.state.pageSize,
       pageNumber: pageNumber,
       index: this.state.index,
@@ -342,10 +342,10 @@ class Hopdong extends React.Component {
       }
       if (this.state.selectedFile !== null) {
         const urlFile = "http://localhost:5000/upload/" + this.state.selectedFile.name;
-        values.hd_files = urlFile
+        values.nkhd_files = urlFile
       }
       else {
-        values.hd_files = " "
+        values.nkhd_files = " "
       }
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
       Request(url, 'POST', values)
@@ -408,13 +408,13 @@ class Hopdong extends React.Component {
   onchangeoption = (value) => {
     const { form } = this.formRef.props
     form.setFieldsValue({
-      hd_thoigianthuchien: value
+      nkhd_thoigianthuchien: value
     })
   }
   onChangeSelect = (value) => {
     const { form } = this.formRef.props
     form.setFieldsValue({
-      hd_doituong: value
+      nkhd_doituong: value
     })
   }
   showModal = async (hopdong) => {
@@ -428,7 +428,7 @@ class Hopdong extends React.Component {
       })
       const { form } = this.formRef.props
       form.setFieldsValue({
-        hd_doituong: res.data[0].id
+        nkhd_doituong: res.data[0].id
       })
     })
     Request('hopdong/getduan', 'POST', null).then(res => {
@@ -443,13 +443,13 @@ class Hopdong extends React.Component {
       action: 'insert'
     });
     form.resetFields();
-    if (hopdong.hd_id !== undefined) {
+    if (hopdong.nkhd_id !== undefined) {
       this.setState({
         id_visible: true,
         action: 'update'
       })
-      var label = hopdong.hd_loai === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
-      var api = hopdong.hd_loai === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
+      var label = hopdong.nkhd_loai === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
+      var api = hopdong.nkhd_loai === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
       const { form } = this.formRef.props
       Request(api, 'post', null).then((res) => {
         this.setState({
@@ -459,17 +459,17 @@ class Hopdong extends React.Component {
           }
         })
         form.setFieldsValue({
-          hd_doituong: hopdong.hd_doituong
+          nkhd_doituong: hopdong.nkhd_doituong
         })
       })
       this.setState({
         labelCombobox: label
       })
-      hopdong.hd_ngayky = hopdong.hd_ngayky === null ? null : formatdate(hopdong.hd_ngayky, 'yyyy-mm-dd')
-      hopdong.hd_ngaythanhly = hopdong.hd_ngaythanhly === null ? null : formatdate(hopdong.hd_ngaythanhly, 'yyyy-mm-dd')
-      hopdong.hd_ngaythanhtoan = hopdong.hd_ngaythanhtoan === null ? null : formatdate(hopdong.hd_ngaythanhtoan, 'yyyy-mm-dd')
-      hopdong.hd_ngayxuathoadon = hopdong.hd_ngayxuathoadon === null ? null : formatdate(hopdong.hd_ngayxuathoadon, 'yyyy-mm-dd')
-      hopdong.hd_ngayketthuc = hopdong.hd_ngayketthuc === null ? null : formatdate(hopdong.hd_ngayketthuc, 'yyyy-mm-dd')
+      hopdong.nkhd_ngayky = hopdong.nkhd_ngayky === null ? null : formatdate(hopdong.nkhd_ngayky, 'yyyy-mm-dd')
+      hopdong.nkhd_ngaythanhly = hopdong.nkhd_ngaythanhly === null ? null : formatdate(hopdong.nkhd_ngaythanhly, 'yyyy-mm-dd')
+      hopdong.nkhd_ngaythanhtoan = hopdong.nkhd_ngaythanhtoan === null ? null : formatdate(hopdong.nkhd_ngaythanhtoan, 'yyyy-mm-dd')
+      hopdong.nkhd_ngayxuathoadon = hopdong.nkhd_ngayxuathoadon === null ? null : formatdate(hopdong.nkhd_ngayxuathoadon, 'yyyy-mm-dd')
+      hopdong.nkhd_ngayketthuc = hopdong.nkhd_ngayketthuc === null ? null : formatdate(hopdong.nkhd_ngayketthuc, 'yyyy-mm-dd')
       form.setFieldsValue(hopdong);
     }
   };
@@ -594,7 +594,7 @@ class Hopdong extends React.Component {
         }
       })
       form.setFieldsValue({
-        hd_doituong: res.data[0].id
+        nkhd_doituong: res.data[0].id
       })
     })
     this.setState({
@@ -638,10 +638,9 @@ class Hopdong extends React.Component {
     this.onSelectChange([], [])
   };
   onRowClick = (row) => {
-    this.onSelectChange([row.hd_id], [row])
+    this.onSelectChange([row.nkhd_id], [row])
   }
   render() {
-    const { selectedRowKeys } = this.state
     var dateFormat = require('dateformat');
     if (token)
       return (
@@ -710,30 +709,30 @@ class Hopdong extends React.Component {
             />
             <Table 
              pagination={false} dataSource={this.state.hopdongs} 
-             bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}
+             bordered='1' rowKey="nkhd_id" scroll={{ x: 1000 }}
              dataSource={this.state.hopdongs}
               expandedRowRender={(record, selectedRowKeys) => {
                 return (
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
-                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].hd_ghichu}</Row>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].nkhd_ghichu}</Row>
                     <div style={{ paddingTop: '10px', fontSize: '18px' }}> Địa chỉ: </div>
-                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].hd_diachi}</Row>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].nkhd_diachi}</Row>
+                    <div style={{ paddingTop: '10px', fontSize: '18px' }}> Loại hợp đồng: </div>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_nkhd_loai}</Row>
                     <div style={{ paddingTop: '10px', fontSize: '18px' }}> Khách hàng: </div>
-                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_doituong}</Row>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_nkhd_doituong}</Row>
                     <div style={{ paddingTop: '10px', fontSize: '18px' }}> Trạng thái: </div>
-                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_trangthai}</Row>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_nkhd_trangthai}</Row>
                   </div>
                 )
               }}
             >
               <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
-              <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell}/>
-              <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell}/>
-              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
-              <Column title="Công ty" dataIndex="hd_congty" key="hd_congty"
+              <Column title="Số hợp đồng" dataIndex="nkhd_so" key="nkhd_so" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
+              <Column title="Công ty" dataIndex="nkhd_congty" key="nkhd_congty"
                 onHeaderCell={this.onHeaderCell} style={{width: '70px'}} />
-              <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}
+              <Column title="Thời gian thực hiện" dataIndex="nkhd_thoigianthuchien" key="nkhd_thoigianthuchien" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}
                 render={
                   text => {
                     if (text === null)
@@ -742,36 +741,35 @@ class Hopdong extends React.Component {
                       return text + ' ngày'
                   }}
               />
-              <Column title="Địa chỉ" className="hidden-action" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell}/>
-              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" width={150} render={
+              <Column title="Ngày ký" dataIndex="nkhd_ngayky" key="nkhd_ngayky" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" width={150} render={
+              <Column title="Ngày thanh lý" dataIndex="nkhd_ngaythanhly" key="nkhd_ngaythanhly" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" width={150} render={
+              <Column title="Ngày xuất hóa đơn" dataIndex="nkhd_ngayxuathoadon" key="nkhd_ngayxuathoadon" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" width={150} render={
+              <Column title="Ngày thanh toán" dataIndex="nkhd_ngaythanhtoan" key="nkhd_ngaythanhtoan" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
                 }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày nghiệm thu" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
+              <Column title="Ngày nghiệm thu" dataIndex="nkhd_ngayketthuc" key="nkhd_ngayketthuc" width={150}
                 render={
                   text => {
                     if (text === null)
@@ -780,21 +778,23 @@ class Hopdong extends React.Component {
                       return dateFormat(text, "dd/mm/yyyy")
                   }}
                 onHeaderCell={this.onHeaderCell} />
-              <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Trạng thái" className="hidden-action" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Thời gian thực hiện" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
-              <Column title="Hành động" dataIndex="hd_files" key="hd_files" style={{width: '70px'}}
-                render={(text) => 
-                  (
-                  <span>
-                    <h1>Thêm mới</h1>
-                    <Tooltip title="Tải xuống">
-                      <Button className="hidden-action" shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
-                        <Icon type="download" />
-                      </Button>
-                    </Tooltip>
-                  </span>
-                )}
+              <Column title="Thời gian thực hiện" dataIndex="nkhd_thoigiancapnhat" key="nkhd_thoigiancapnhat" width={150}
+              render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                  return dateFormat(text, "dd/mm/yyyy")
+                }}
+              onHeaderCell={this.onHeaderCell} style={{width: '70px'}} />
+              <Column title="Hành động" dataIndex="nkhd_action" key="nkhd_action" style={{width: '70px'}}
+               render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return <h1>{text}</h1>
+                }}
               />
             </Table>
           </Row>

@@ -47,27 +47,12 @@ var corsOptions = {
     }
   }
 }
-var multer = require('multer')
 app.use(cors());
 
-// var multer = require('multer')
-// var storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, './upfille')
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.originalname)
-//   }
-// })
-// var upload = multer({ storage: storage })
-// app.post('/upfile', upload.single("file"), function (req, res ){
-//   console.log(req.file)
-//   res.send("Success")
-// })
-
-
 app.use('/nhansu', nhansuRoute);
+
 app.use('/member', memberRoute);
+
 app.use('/changepass', ChangePass);
 
 app.use('/hotro', hotroRoute)
@@ -112,27 +97,6 @@ app.use('/user',authorize,userRouter);
 
 app.use('/unit', router);
 
-//upload multer
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'upload')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname)
-  }
-})
-var upload = multer({ storage: storage }).single('file')
-app.post('/upload', function (req, res) {
-  console.log('da vao upload');
-  upload(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      return res.status(500).json(err)
-    } else if (err) {
-      return res.status(500).json(err)
-    }
-    return res.status(200).send(req.file)
-  })
-});
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 app.post('/verify')

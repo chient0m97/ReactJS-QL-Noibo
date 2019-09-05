@@ -19,6 +19,13 @@ var HopdongController = {
             callback(data);
         });
     },
+    getNhatkyHopdong: function getNhatkyHopdong(pageNumber, pageSize, callback) {
+        let limit = pageSize;
+        let offset = pageSize * (pageNumber - 1);
+        hopdongData.getNhatkyHopdong(limit, offset, (data) => {
+            callback(data);
+        });
+    },
     /**
      * Get user by Id.
      * @param {Number} Id The identify of user

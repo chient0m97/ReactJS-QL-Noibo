@@ -657,7 +657,7 @@ class Hopdong extends React.Component {
               <Col span={2}>
                 <Tooltip title="Thêm Hợp Đồng">
                   <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                    <Icon type="user-add" />
+                    <Icon type="plus" />
                   </Button>
                 </Tooltip>
               </Col>
@@ -722,6 +722,8 @@ class Hopdong extends React.Component {
                     <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].hd_ghichu}</Row>
                     <div style={{ paddingTop: '10px', fontSize: '18px' }}> Địa chỉ: </div>
                     <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].hd_diachi}</Row>
+                    <div style={{ paddingTop: '10px', fontSize: '18px' }}> Loại hợp đồng: </div>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_loai}</Row>
                     <div style={{ paddingTop: '10px', fontSize: '18px' }}> Khách hàng: </div>
                     <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_doituong}</Row>
                   </div>
