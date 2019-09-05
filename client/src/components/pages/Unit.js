@@ -638,7 +638,7 @@ class Unit extends React.Component {
     };
 
     onRowClick = (row) => {
-        if (this.state.select_diabanhuyen[0] === row.dm_dv_id){
+        if (this.state.selectedRowKeys[0] === row.dm_dv_id){
             this.onSelectChange([], [])
         }
         else{

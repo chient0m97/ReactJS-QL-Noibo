@@ -17,11 +17,13 @@ import Member from '../components/pages/Member';
 import ChangePassword from '../components/pages/Modal/ChangePassword';
 import ok from '../components/common/ok';
 import Hoadon from '../components/pages/Quanly_hoadon'
+import Request from '@pages/Request'
+import Half from '@pages/Half'
 
 const routers = [
   
     {
-        path: '/group/:mem',
+        path: '/member',
         component: Member,
         name: 'member'
     },
@@ -110,6 +112,16 @@ const routers = [
         path: '/ok',
         component: ok,
         name: 'ok'
+    },
+    {
+        path: '/request',
+        component: Request,
+        name: 'Request'
+    },
+    {
+        path: '/half',
+        component: Half,
+        name: 'Half'
     },
 ]
 

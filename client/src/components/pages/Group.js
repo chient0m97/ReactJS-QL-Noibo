@@ -138,7 +138,6 @@ class Group extends React.Component {
                             groups: data.data.groups,
                             count: Number(data.data.count)//eps kieeru veef
                         })
-
                 }
 
             })
@@ -355,7 +354,6 @@ class Group extends React.Component {
         if (name) {
             this.setState({
                 modalRoleVisible: true,
-
             })
         }
         else {

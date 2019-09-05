@@ -33,7 +33,7 @@ class Groupfilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: "Tiềm kiếm nâng cao",
+      title: "Tìm kiếm nâng cao",
       visible: false,
       placement: "top",
       message_fail: "Điều kiện lọc không hợp",

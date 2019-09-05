@@ -15,9 +15,52 @@ const token = cookie.load('token');
 const { Column } = Table;
 const { Option } = Select
 const { Search } = Input;
-
+const FormModalImport = Form.create({ name: 'from_in_modal' })(
+    class extends React.Component {
+        render() {
+            return (
+                <Modal
+                    title="Import File Đơn Vị"
+                    visible={this.props.visibleImport}
+                    onCancel={this.props.onCancel}
+                >
+                    <div>
+                        <label>File của bạn</label>
+                        <input type="file" name="file"
+                            // onChange={onChangeFile}
+                            // onChange={onChangeHandler}
+                        />
+                    </div>
+                </Modal>
+            )
+        }
+    }
+)
 const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
     class extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                visibleImport: false
+            }
+        }
+        showModalImport = () => {
+            const { form } = this.formRef.props
+            this.setState({
+                visibleImport: true
+            })
+        }
+
+        saveFormRef = formRef => {
+            this.formRef = formRef;
+        }
+
+        handleCancel = e => {
+            this.setState({
+                visibleImport: false
+            });
+        };
+
         render() {
             const { Option } = Select;
             const combobox = [];
@@ -62,7 +105,6 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                 <Col span={4}>
                                     <Form.Item label='Số điện thoại'>
                                         {getFieldDecorator('dm_dv_sodienthoai', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
@@ -178,7 +220,6 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                 <Col span={8}>
                                     <Form.Item label='Mã số thuế'>
                                         {getFieldDecorator('dm_dv_masothue', {
-                                            rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!' }],
                                         })(<Input type="text" />)}
                                     </Form.Item>
                                 </Col>
@@ -188,10 +229,10 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                             // rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!',}],
                                         })(
                                             <Select
-                                            filterOption={(input, option) =>
-                                                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                            }
-                                            showSearch
+                                                filterOption={(input, option) =>
+                                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                }
+                                                showSearch
                                             >
                                                 {datacha.map((item, i) => {
                                                     return (
@@ -203,8 +244,16 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                     </Form.Item>
                                 </Col>
                             </Row>
+                            {/* <Row>
+                                <Button onClick={this.showModalImport.bind(this)}>Import File</Button>
+                            </Row> */}
                         </Form>
                     </Modal>
+                    <FormModalImport
+                        wrappedComponentRef={this.saveFormRef}
+                        visibleImport={this.state.visibleImport}
+                        onCancel={this.handleCancel}
+                    />
                 </div>
             );
 

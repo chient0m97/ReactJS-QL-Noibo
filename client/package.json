@@ -21,7 +21,6 @@
     "express": "^4.17.1",
     "express-validator": "^6.0.1",
     "formatdate": "^0.3.3",
-    "fs": "0.0.1-security",
     "history": "^4.9.0",
     "jquery": "^3.4.1",
     "jsonwebtoken": "^8.5.1",
@@ -41,7 +40,8 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
     "react-tinymce": "^0.7.0",
-    "utf8": "^3.0.0"
+    "utf8": "^3.0.0",
+    "xlsx": "^0.15.1"
   },
   "scripts": {
     "start": "concurrently \"npm run dev\"",

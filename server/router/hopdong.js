@@ -2,6 +2,45 @@ var express = require('express')
 var router = express.Router()
 var hopdongController = require('../controller/hopdongController');
 var duanController = require('../controller/duanController');
+var app = express();
+var multer = require('multer')
+var cors = require('cors');
+app.use(cors())
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+    cb(null, 'upload')
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' +file.originalname )
+  }
+})
+var upload = multer({ storage: storage }).single('file')
+app.post('/upload',function(req, res) {
+     
+    upload(req, res, function (err) {
+           if (err instanceof multer.MulterError) {
+               return res.status(500).json(err)
+           } else if (err) {
+               return res.status(500).json(err)
+           }
+      return res.status(200).send(req.file)
+
+    })
+
+});
+router.post('/upload',function(req, res) {
+     
+  upload(req, res, function (err) {
+         if (err instanceof multer.MulterError) {
+             return res.status(500).json(err)
+         } else if (err) {
+             return res.status(500).json(err)
+         }
+    return res.status(200).send(req.file)
+
+  })
+
+});
 router.use(function timeLog(req, res, next) {
   console.log('Time: ', Date.now())
   next()
@@ -25,7 +64,9 @@ router.post('/insert', function (req, res) {
   })
 })
 router.post('/duan/insert', function (req, res) {
-  duanController.insertDuan(req.body, function (data) {
+  console.log(req.body, 'req.body day');
+  
+  hopdongController.insertDuan(req.body, function (data) {
     res.send(data);
   })
 })
@@ -66,13 +107,8 @@ router.post('/getduan', function (req, res) {
   })
 })
 router.post('/insertduan', function (req, res) {
-  hopdongController.getinsertduan(function (data) {
+  duanController.insertDuan(req.body, function (data) {
     res.send(data);
-  })
 })
-router.post('/upload', function (req, res) {
-  hopdongController.getupload(function (data) {
-    res.send(data);
-  })
-});
+})
 module.exports = router

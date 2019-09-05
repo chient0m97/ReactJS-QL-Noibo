@@ -447,10 +447,11 @@ class User extends React.Component {
     let canUpdate = claims.indexOf(Permission.User.Update) >= 0;
     let canDelete = claims.indexOf(Permission.User.Delete) >= 0;
     let canCreate = claims.indexOf(Permission.User.Insert) >= 0;
-    // const { selectedRowKeys } = this.state
+    const { selectedRowKeys } = this.state
     const rowSelection = {
       type: 'radio',
       hideDefaultSelections: true,
+      selectedRowKeys,
       onChange: async (selectedRowKeys, selectedRows) => {
         let sl = selectedRowKeys[0]
         console.log('==================================================', sl)

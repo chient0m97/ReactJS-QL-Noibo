@@ -8,6 +8,8 @@ import { NavLink } from 'react-router-dom'
 import { Value } from 'devextreme-react/range-selector';
 import { async } from 'q';
 import Modal_Hotro from '@pages/Modal/Modal_Hotro.js'
+import AppHeader from '../base/AppHeader'
+
 const { Option } = Select
 var formatDate = require('dateformat')
 const { RangePicker } = DatePicker;
@@ -16,7 +18,6 @@ const { Column } = Table;
 const { Text } = Typography;
 const ButtonGroup = Button.Group;
 const dateFormat = 'YYYY/MM/DD';
-
 var format = require('dateformat')
 var data = {
     labels: [
@@ -45,7 +46,6 @@ export default class HomePage extends Component {
         this.state = {
             visible: false,
             pageNumber: 1,
-            nhansu: [],
             page: 1,
             pageSize: 10,
             countNhanSu: 1,
@@ -231,6 +231,7 @@ export default class HomePage extends Component {
                 labels: [],
                 datasets: [{ data: [], backgroundColor: [], hoverBackgroundColor: [] }]
             }
+
             dataFollowMonth.labels = arrayName
             dataFollowMonth.datasets[0].data = arrayCount
             dataFollowMonth.datasets[0].backgroundColor = arrayBackGround
@@ -303,6 +304,16 @@ export default class HomePage extends Component {
 
     onChangeSelected = (ht_trangthai) => {
         var values = this.state.rowRecordSelected
+        if (ht_trangthai === "daxong") {
+            values.ht_thoigian_hoanthanh = format(new Date(), "yyyy-mm-dd")
+            values.ht_thoigian_dukien_hoanthanh = format(new Date(), "yyyy-mm-dd")
+        }
+        else {
+            values.ht_thoigian_hoanthanh = null
+        }
+        if (values.ht_thoigian_dukien_hoanthanh === null) {
+            values.ht_thoigian_dukien_hoanthanh = format(new Date(), "yyyy-mm-dd")
+        }
         values.ht_trangthai = ht_trangthai
         let user_cookie = cookie.load('user');
         values.ns_id_capnhat = user_cookie
@@ -436,18 +447,7 @@ export default class HomePage extends Component {
         })
     }
 
-    set_Select_KhachHang(dv) {
-        if (dv === null) {
-            dv = ""
-        }
-        Request('hotro/getkhachhangwhere', 'POST', { dv }).then((res) => {
-            if (res.data.data.khachhangs) {
-                this.setState({
-                    khachhang: res.data.data.khachhangs
-                })
-            }
-        })
-    }
+
 
     set_Select_DonVi() {
         Request('hotro/getdonvi', 'POST', {}).then((res) => {
@@ -617,7 +617,7 @@ export default class HomePage extends Component {
                             <Card>
                                 {/* <h1 style={{ textAlign: 'center' }}> Bảng công việc cá nhân</h1> */}
                                 <Text mark style={{ fontSize: '18px', marginBottom: '10px', color: '#1890ff' }}>Bảng công việc cá nhân</Text>
-                                <Button style={{ marginLeft: '57%' }} onClick={this.showModal.bind(this)}><Icon type="plus" />Tạo nhanh công việc</Button>
+
                                 <Divider style={{ margin: '5px' }} />
                                 <Tabs type="card">
                                     <TabPane tab="Công việc được giao" key="10">
@@ -626,37 +626,37 @@ export default class HomePage extends Component {
                                             {/* <Button style={{ marginLeft: '47%' }} onClick={this.showModal.bind(this)}><Icon type="plus" />Tạo nhanh công việc</Button> */}
                                         </Row>
                                         <Row>
-                                        <Col span={4} style={{ fontSize: '16px' }}>Trạng thái công việc</Col>
-                                        <Col span={3}>
-                                            <Select
-                                                showSearch
-                                                filterOption={(input, option) =>
-                                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                }
-                                                style={{ zIndex: 999 }}
-                                                // size='small'
-                                                // defaultValue='tiepnhan'
-                                                disabled={this.state.stateSelect}
-                                                value={this.state.valueOption}
-                                                onChange={this.onChangeSelected}
-                                            >
-                                                <Option value='tiepnhan'>Tiếp Nhận</Option>
-                                                <Option value='dangxuly'>Đang xử lý</Option>
-                                                <Option value='dangxem'>Đang xem</Option>
-                                                <Option value='daxong'>Đã xong</Option>
-                                            </Select>
-                                        </Col>
-                                        <Col span={3} offset={8}>
-                                            <span style={{ fontSize: '16px' }}>Loại công việc</span>
-                                        </Col>
-                                        <Col span={6}>
-                                            <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
-                                                <Button onClick={this.getNhansu.bind(this)}>Tất cả</Button>
-                                                <Button onClick={this.getDataGap.bind(this)}>Gấp</Button>
-                                                <Button onClick={this.getDataDaxong.bind(this)}>Đã xong</Button>
-                                                {/* <Button >Đang xử lý</Button> */}
-                                            </ButtonGroup>
-                                        </Col>
+                                            <Col span={4} style={{ fontSize: '16px' }}>Trạng thái công việc</Col>
+                                            <Col span={3}>
+                                                <Select
+                                                    showSearch
+                                                    filterOption={(input, option) =>
+                                                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                    }
+                                                    style={{ zIndex: 999 }}
+                                                    // size='small'
+                                                    // defaultValue='tiepnhan'
+                                                    disabled={this.state.stateSelect}
+                                                    value={this.state.valueOption}
+                                                    onChange={this.onChangeSelected}
+                                                >
+                                                    <Option value='tiepnhan'>Tiếp Nhận</Option>
+                                                    <Option value='dangxuly'>Đang xử lý</Option>
+                                                    <Option value='dangxem'>Đang xem</Option>
+                                                    <Option value='daxong'>Đã xong</Option>
+                                                </Select>
+                                            </Col>
+                                            <Col span={3} offset={8}>
+                                                <span style={{ fontSize: '16px' }}>Loại công việc</span>
+                                            </Col>
+                                            <Col span={6}>
+                                                <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
+                                                    <Button onClick={this.getNhansu.bind(this)}>Tất cả</Button>
+                                                    <Button onClick={this.getDataGap.bind(this)}>Gấp</Button>
+                                                    <Button onClick={this.getDataDaxong.bind(this)}>Đã xong</Button>
+                                                    {/* <Button >Đang xử lý</Button> */}
+                                                </ButtonGroup>
+                                            </Col>
                                         </Row>
                                         <Table bordered components={this.components} dataSource={this.state.myself} rowKey="ht_id" size="small" scroll={{ x: 500 }}
                                             rowSelection={rowSelection}
@@ -689,8 +689,24 @@ export default class HomePage extends Component {
                                                     }
                                                 }
                                             />
-                                            <Column title="Phân loại" dataIndex="ht_phanloai" width={70} />
-                                            <Column title="Ưu tiên" dataIndex="ht_uutien" />
+                                            <Column title="Phân loại" dataIndex="ht_phanloai" width={70}
+                                                render={text => {
+                                                    if (text === 'bug') { return "Lỗi" }
+                                                    if (text === 'new') {
+                                                        return "Việc mới"
+                                                    }
+                                                    return "Việc tương lai"
+                                                }}
+                                            />
+                                            <Column title="Ưu tiên" dataIndex="ht_uutien" width={50}
+                                                render={text => {
+                                                    if (text === 'GAP') { return <span> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /></span> }
+                                                    if (text === 'CAO') { return <span> <Icon type="up" style={{ color: 'orange' }} /></span> }
+                                                    if (text === 'TB') { return <span> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /></span> }
+                                                    if (text === 'THAP') { return <span> <Icon type="down" style={{ color: '#ccff33' }} /></span> }
+                                                    return <span> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /></span>
+                                                }}
+                                            />
                                             <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
                                                 render={text => {
                                                     return format(text, "dd/mm/yyyy")
@@ -906,6 +922,9 @@ export default class HomePage extends Component {
                         assignme={this.Assignme}
                         trangthaibutton={this.state.trangthaibutton}
                         set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
+                    />
+                    <AppHeader
+                        getNhansu={this.getNhansu}
                     />
                 </Form>
             </div>

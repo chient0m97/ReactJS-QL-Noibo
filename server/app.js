@@ -1,5 +1,4 @@
-const express = require('express');
-//const bodyParser = require("body-parser");
+var express = require('express');
 const cors = require("cors");
 const path = require('path')
 jwt = require('jsonwebtoken');
@@ -12,7 +11,12 @@ const setpermiss = require('./router/setpermission')
 const role_action = require('./router/role_action')
 const port = 5000;
 
-
+// var xlsx = require("xlsx")
+// var wb = xlsx.readFile("./upload/test_Read_excel.xlsx")
+// var ws = wb.Sheets["Sheet1"]
+// var data =xlsx.utils.sheet_to_json(ws)
+// console.log("day la data ",data[1]['KIỂU DỮ LIỆU'])
+// console.log("day la name ",data[1].name)
 
 var groupRoute = require('./router/group')
 var setGroupPermission = require('./router/setGroupPermission')
@@ -36,7 +40,6 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 app.set('Secret', config.secret);
-
 var whitelist = ['http://localhost:3000', 'http://localhost:5000']
 var corsOptions = {
   origin: function (origin, callback) {
@@ -47,6 +50,7 @@ var corsOptions = {
     }
   }
 }
+var multer = require('multer')
 app.use(cors());
 
 // var multer = require('multer')
@@ -95,18 +99,43 @@ app.use('/setGroupPermission', setGroupPermission);
 
 app.use('/Login', login);
 
+app.use('/setGroupPermission', setGroupPermission);
+
+app.use('/Login', login);
+
 app.use('/checkrole', checked)
 
 app.use('/setpermission', setpermiss)
 
 app.use('/role_action', role_action)
 
-app.use('/user',authorize,userRouter);
+app.use('/user', authorize, userRouter);
 
 //app.use('/', authorize, hopdongrouters );
 
 app.use('/unit', router);
 
+//upload multer
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'upload')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+var upload = multer({ storage: storage }).single('file')
+app.post('/upload', function (req, res) {
+  console.log('da vao upload');
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json(err)
+    } else if (err) {
+      return res.status(500).json(err)
+    }
+    return res.status(200).send(req.file)
+  })
+});
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 app.post('/verify')

@@ -48,7 +48,7 @@ class Quanly_hoadon extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
-                if (res) {
+                if (res.data.data) {
                     this.setState({
                         qlhd: res.data.data.quanly_hoadons,
                         count: res.data.data.count

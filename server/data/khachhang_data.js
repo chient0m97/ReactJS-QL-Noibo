@@ -31,6 +31,7 @@ module.exports = {
     },
 
     insertKhachhang: function (khachhangs, callback) {
+        
         knex.from('khachhangs').insert(khachhangs).then(res => {
             callback({
                 success: true

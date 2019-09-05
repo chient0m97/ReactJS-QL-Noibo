@@ -427,7 +427,6 @@ class Nhansu extends React.Component {
                     dinhdanh: res.data.data.users
                 })
             }
-
         })
 
     }

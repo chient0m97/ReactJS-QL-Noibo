@@ -111,16 +111,10 @@ var CustomerController = {
     },
 
     insertCustomer: async function insertCustomer(customer, callback) {
-        customer.kh_id = uuidv1();
-        customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
-        customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
-        customer.dm_db_id_xa = customer.dm_db_id_xa_customer
-        delete customer.dm_db_id_huyen_customer
-        delete customer.dm_db_id_tinh_customer
-        delete customer.dm_db_id_xa_customer
-        if (
-            await Validator.db.unique('khachhangs', 'kh_sodienthoai', customer.kh_sodienthoai, 'Số điện thoại này đã tồn tại !!')
-        ) {
+        if (customer.length > 1) {
+            await customer.forEach((element, index) => {
+                customer[index].kh_id = uuidv1()
+            });
             customerData.insertCustomer(customer, (response) => {
                 var message = constant.successInseart;
                 var status = 200;
@@ -131,17 +125,42 @@ var CustomerController = {
                 callback({
                     message: message,
                     success: response.success,
-                    id_customer: customer.kh_id
+                    
                 }, status);
             })
         }
         else {
-            var eror = Validator.getError()
-            console.log('lỗi trả về', eror)
-            callback({
-                message: eror,
-                success: false
-            }, 400);
+            customer.kh_id = uuidv1();
+            customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
+            customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
+            customer.dm_db_id_xa = customer.dm_db_id_xa_customer
+            delete customer.dm_db_id_huyen_customer
+            delete customer.dm_db_id_tinh_customer
+            delete customer.dm_db_id_xa_customer
+
+            if (customer.kh_sodienthoai === undefined || await (Validator.db.unique('khachhangs', 'kh_sodienthoai', customer.kh_sodienthoai, 'Số điện thoại này đã tồn tại !!'))) {
+                customerData.insertCustomer(customer, (response) => {
+                    var message = constant.successInseart;
+                    var status = 200;
+                    if (!response.success) {
+                        Validator.error.push(constant.errorSys)
+                        message = Validator.getError()
+                    }
+                    callback({
+                        message: message,
+                        success: response.success,
+                        id_customer: customer.kh_id
+                    }, status);
+                })
+            }
+            else {
+                var eror = Validator.getError()
+                console.log('lỗi trả về', eror)
+                callback({
+                    message: eror,
+                    success: false
+                }, 400);
+            }
         }
     },
 
@@ -161,14 +180,14 @@ var CustomerController = {
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
-        console.log("data kh ",customer)
+        console.log("data kh ", customer)
         // customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
         // customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
         // customer.dm_db_id_xa = customer.dm_db_id_xa_customer
         // delete customer.dm_db_id_huyen_customer
         // delete customer.dm_db_id_tinh_customer
         // delete customer.dm_db_id_xa_customer
-        
+
         customer.dm_db_id_tinh = customer.idtinh
         customer.dm_db_id_huyen = customer.idhuyen
         customer.dm_db_id_xa = customer.idxa

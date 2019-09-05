@@ -421,7 +421,7 @@ class Duan extends React.Component {
               select_qtda={this.state.select_qtda}
               getTienTo={this.getTienTo}
             />
-            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id" scroll={{ y: 400 }} >
+            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id">
               <Column title="Tiền tố" dataIndex="dm_duan_key" onHeaderCell={this.onHeaderCell}
                 render={text => {
                   return <div style={{ textAlign: 'left' }}>{text}</div>
@@ -431,7 +431,6 @@ class Duan extends React.Component {
                 render={text => {
                   return <div style={{ textAlign: 'left' }}>{text}</div>
                 }} />
-
               <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} />
             </Table>
           </Row>

@@ -9,6 +9,8 @@ import { fetchLoading } from '@actions/common.action';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import { async } from 'q';
+import axios from 'axios';
+import Modal_Filekhachhangs from '@pages/Modal/Modal_Filekhachhangs.js'
 const token = cookie.load('token');
 const { Column } = Table;
 class Customer extends React.Component {
@@ -52,6 +54,8 @@ class Customer extends React.Component {
             title_dv: 'Thêm mới đơn vị',
             stateoption: true,
             visible_dv: false,
+            selectedFile: null,
+            visibleImport: false,
         }
     }
 
@@ -111,7 +115,6 @@ class Customer extends React.Component {
             if (err) {
                 return
             }
-            console.log("hien thi value ", values)
 
             var url = this.state.action === 'insert' ? 'customer/insert' : 'customer/update'
             if (url === 'customer/update') {
@@ -120,9 +123,9 @@ class Customer extends React.Component {
                 // values.dm_db_id_huyen_customer = this.state.rowcustomerselected.idhuyen
                 // values.dm_db_id_xa_customer = this.state.rowcustomerselected.idxa
 
-                values.idtinh=this.state.rowcustomerselected.idtinh
-                values.idhuyen=this.state.rowcustomerselected.idhuyen
-                values.idxa=this.state.rowcustomerselected.idxa
+                values.idtinh = this.state.rowcustomerselected.idtinh
+                values.idhuyen = this.state.rowcustomerselected.idhuyen
+                values.idxa = this.state.rowcustomerselected.idxa
             }
             Request(url, 'POST', values)
                 .then((response) => {
@@ -258,7 +261,6 @@ class Customer extends React.Component {
                     select_tendv: res.data
                 })
             }
-
         })
     }
 
@@ -270,7 +272,6 @@ class Customer extends React.Component {
                     select_donvicha: res.data
                 })
             }
-
         })
     }
 
@@ -282,7 +283,6 @@ class Customer extends React.Component {
                     select_tenkh: res.data
                 })
             }
-
         })
     }
 
@@ -294,7 +294,6 @@ class Customer extends React.Component {
                     select_tinh: res.data
                 })
             }
-
         })
     }
 
@@ -307,7 +306,6 @@ class Customer extends React.Component {
                     select_huyen: res.data
                 })
             }
-
         })
     }
 
@@ -320,7 +318,6 @@ class Customer extends React.Component {
                     select_xa: res.data
                 })
             }
-
         })
     }
 
@@ -330,9 +327,10 @@ class Customer extends React.Component {
                 visible_dv: true,
                 stateoption: true
             })
-            var form = null
+             var form = null
+            
             if (this.state.visible_dv) {
-                form = this.formRef.props.form
+                 form = this.formRefUnit.props.form
                 form.setFieldsValue({ dm_dv_trangthai: 'HD' })
                 try {
                     this.set_select_donvicha()
@@ -375,7 +373,6 @@ class Customer extends React.Component {
                     select_tenkh: res.data
                 })
             }
-
         })
     }
 
@@ -417,7 +414,6 @@ class Customer extends React.Component {
                     select_diabantinh: res.data
                 })
             }
-
         })
     }
 
@@ -430,7 +426,6 @@ class Customer extends React.Component {
                     select_diabanhuyen: res.data
                 })
             }
-
         })
     }
 
@@ -443,7 +438,6 @@ class Customer extends React.Component {
                     select_diabanxa: res.data
                 })
             }
-
         })
     }
 
@@ -557,7 +551,7 @@ class Customer extends React.Component {
     }
 
     saveFormRefCreate = formRef => {
-        this.saveFormRefCreate = formRef;
+        this.formRefUnit = formRef;
     }
 
     onCancel_dv = () => {
@@ -567,7 +561,7 @@ class Customer extends React.Component {
     }
 
     onOk_dv = async () => {
-        const { form } = this.formRef.props;
+        const { form } = this.formRefUnit.props;
         form.validateFields((err, values) => {
             if (err) {
                 return
@@ -612,7 +606,6 @@ class Customer extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys, selectedRows) => {
-        console.log("day la record ", selectedRows[0])
         this.setState({
             selectedRowKeys,
             selectedId: selectedRowKeys
@@ -639,6 +632,109 @@ class Customer extends React.Component {
             })
         }
     }
+
+    onClickHandler = () => {
+        const data = new FormData()
+        if (this.state.selectedFile !== null) {
+            data.append('file', this.state.selectedFile)
+            axios.post("http://localhost:5000/upload", data, {
+                // receive two    parameter endpoint url ,form data
+            })
+                .then(res => { // then print response status
+                })
+        }
+    }
+
+    saveFormRefImport = formRef => {
+        this.formRefImport = formRef;
+    }
+
+    showModalImport = () => {
+        this.setState({
+            visibleImport: true
+        });
+    }
+
+    handleCancelImport = e => {
+        this.setState({
+            visibleImport: false
+        });
+    };
+
+    onChangeFile = async (e) => {
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+        var file = e.target.files[0];
+        var fileUploadHopdong = await toBase64(file);
+        var fileName = file.name;
+        this.setState({
+            valuefile: fileUploadHopdong,
+            valuename: fileName
+        })
+    }
+
+    onChangeHandler = event => {
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
+    }
+
+    insertImport = async () => {
+        this.onClickHandler();
+        const { form } = this.formRefImport.props;
+        form.validateFields((err, values) => {
+            if (err) {
+                return
+            }
+            if (this.state.selectedFile !== null) {
+                const urlFile = "http://localhost:5000/upload/" + this.state.selectedFile.name;
+                values.file_data = urlFile
+            }
+            else {
+                values.file_data = " "
+            }
+            var url = 'filekhachhangs/insert'
+            Request(url, 'POST', values)
+                .then(async (response) => {
+                    Request('customer/insert', 'POST', response.data.dataExcel)
+                    .then((response) => {
+                        if (response.status === 200 & response.data.success === true) {
+                            form.resetFields();
+                        this.getCustomers(this.state.page)
+                        }})
+                    if (response.status === 200 & response.data.success === true) {
+                        form.resetFields();
+                        this.setState({
+                            visibleImport: false,
+                            message: response.data.message
+                        })
+                    }
+                    var description = response.data.message
+                    var notifi_type = 'success'
+                    var message = 'Thành Công'
+
+                    console.log("check response ", response.data.success)
+                    if (!!!response.data.success) {
+                        message = 'Có lỗi xảy ra !'
+                        notifi_type = 'error'
+                        description = response.data.message.map((value, index) => {
+                            return <Alert type='error' message={value}></Alert>
+                        })
+                    }
+                    await notification[notifi_type]({
+                        message: message,
+                        description: description
+                    });
+                    this.getCustomers(this.state.page)
+                })
+        })
+    }
+
     render() {
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -658,7 +754,7 @@ class Customer extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm khách hàng">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
-                                    <Icon type="plus" />
+                                        <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -688,11 +784,14 @@ class Customer extends React.Component {
                                     </Button>
                                 </Tooltip>
                             </Col>
+                            <Col span={3}>
+                                <Button shape="round" type="primary" onClick={this.showModalImport.bind(this)}>Import File</Button>
+                            </Col>
                         </Row>
                     </Card>
                     <Row style={{ marginTop: 5 }}>
                         <CreateModalCustomer
-                            wrappedComponentRef={this.state.visible_dv ? this.saveFormRefCreate : this.saveFormRef}
+                            wrappedComponentRef={ this.saveFormRef}
                             visible={this.state.visible}
                             onCancel={this.handleCancel}
                             onOk_kh={this.InsertOrUpdateCustomer}
@@ -710,7 +809,7 @@ class Customer extends React.Component {
                         />
                         <CreateModalUnit
                             datacha={this.state.select_donvicha}
-                            wrappedComponentRef={!this.state.visible_dv ? this.saveFormRefCreate : this.saveFormRef}
+                            wrappedComponentRef={this.saveFormRefCreate}
                             visible={this.state.visible_dv}
                             onCancel={this.onCancel_dv}
                             onSave={this.onOk_dv}
@@ -748,6 +847,17 @@ class Customer extends React.Component {
                     <Row>
                         <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
                     </Row>
+
+                    <Modal_Filekhachhangs
+                        wrappedComponentRef={this.saveFormRefImport}
+                        visible={this.state.visibleImport}
+                        onCancel={this.handleCancelImport}
+                        onSave={this.insertImport}
+                        formtype={this.state.formtype}
+                        onChangeFile={this.onChangeFile}
+                        onChangeHandler={this.onChangeHandler}
+                    />
+
                 </div>
             );
         else
