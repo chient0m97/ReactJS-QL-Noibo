@@ -24,7 +24,7 @@ import NhatkyHopdong from '@pages/NhatkyHopdong'
 const routers = [
   
     {
-        path: '/group/:mem',
+        path: '/member',
         component: Member,
         name: 'member'
     },

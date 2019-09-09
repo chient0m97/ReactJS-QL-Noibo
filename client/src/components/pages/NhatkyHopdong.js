@@ -638,9 +638,19 @@ class Hopdong extends React.Component {
     this.onSelectChange([], [])
   };
   onRowClick = (row) => {
-    this.onSelectChange([row.nkhd_id], [row])
+    this.onSelectChange([row.nkhd_tutang], [row])
   }
   render() {
+    const { selectedRowKeys } = this.state
+    const rowSelection = {
+      hideDefaultSelections: true,
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+      getCheckboxProps: record => ({
+        disabled: Column.title === 'Id',
+        name: record.name,
+      }),
+    };
     var dateFormat = require('dateformat');
     if (token)
       return (
@@ -707,9 +717,9 @@ class Hopdong extends React.Component {
               onchangpagefile={this.onchangpagefile}
               onClickDownloadFile={this.onClickDownloadFile}
             />
-            <Table 
+            <Table onRowClick={this.onRowClick}
              pagination={false} dataSource={this.state.hopdongs} 
-             bordered='1' rowKey="nkhd_id" scroll={{ x: 1000 }}
+             bordered='1' rowKey="nkhd_tutang" scroll={{ x: 1000 }}
              dataSource={this.state.hopdongs}
               expandedRowRender={(record, selectedRowKeys) => {
                 return (
@@ -790,10 +800,13 @@ class Hopdong extends React.Component {
               <Column title="Hành động" dataIndex="nkhd_action" key="nkhd_action" style={{width: '70px'}}
                render={
                 text => {
-                  if (text === null)
-                    return ' '
+                  if (text === 'INSERT')
+                    return 'Thêm mới'
                   else
-                    return <h1>{text}</h1>
+                    if(text === 'UPDATE')
+                    return 'Sửa'
+                    else
+                    return 'Xóa'
                 }}
               />
             </Table>

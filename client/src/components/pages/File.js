@@ -5,6 +5,8 @@ import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action'
 import { fetchLoading } from '@actions/common.action'
 import Modal_Filekhachhangs from '@pages/Modal/Modal_Filekhachhangs.js'
+import axios from 'axios';
+
 import '@styles/style.css'
 const { Column } = Table;
 
@@ -31,11 +33,11 @@ class File extends React.Component {
             rowthotroselected: [],
             selectedId: [],
             selectedRowKeys: [],
+            selectedFile: null,
         }
     }
 
     getFile = (pageNumber) => {
-        var array = []
         if (pageNumber <= 0)
             return;
         this.props.fetchLoading({
@@ -48,6 +50,7 @@ class File extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
+                // console.log(res)
                 if (res.data.data) {
                     this.setState({
                         file_khachhangs: res.data.data.file_khachhangs,
@@ -61,15 +64,23 @@ class File extends React.Component {
     }
 
     insertOrUpdate = () => {
+        this.onClickHandler();
         const { form } = this.formRef.props;
         form.validateFields((err, values) => {
             if (err) {
                 return
             }
-            values.file_data = this.state.valuefile
+            if (this.state.selectedFile !== null) {
+                const urlFile = "http://localhost:5000/upload/" + this.state.selectedFile.name;
+                values.file_data = urlFile
+            }
+            else {
+                values.file_data = " "
+            }
             var url = this.state.action === 'insert' ? 'filekhachhangs/insert' : 'filekhachhangs/update'
             Request(url, 'POST', values)
                 .then(async (response) => {
+                    console.log("data ",response.data.dataExcel)
                     this.setState({
                         rowthotroselected: values
                     })
@@ -101,8 +112,8 @@ class File extends React.Component {
         })
     }
 
-    deleteFilekhachhangs = (file_tenfile) => {
-        Request(`file/delete`, 'DELETE', { file_tenfile: file_tenfile })
+    deleteFilekhachhangs = (file_id) => {
+        Request(`filekhachhangs/delete`, 'DELETE', { file_id: file_id })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
                     message: 'Thong Bao',
@@ -115,7 +126,6 @@ class File extends React.Component {
                     selectedRowKeys: []
                 })
                 this.getFile(this.state.page)
-                this.render()
             })
     }
 
@@ -199,6 +209,19 @@ class File extends React.Component {
         this.onSelectChange([], [])
     };
 
+    cancel = (e) => {
+        this.setState({
+            stateconfirmdelete: false
+        })
+    }
+
+    onChangeHandler = event => {
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
+    }
+
     onChangeFile = async (e) => {
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -216,11 +239,32 @@ class File extends React.Component {
     }
 
     onRowClick = (row) => {
-        if (this.state.selectedRowKeys[0] === row.file_tenfile) {
+        if (this.state.selectedRowKeys[0] === row.file_id) {
             this.onSelectChange([], [])
         }
         else {
-            this.onSelectChange([row.file_tenfile], [row])
+            this.onSelectChange([row.file_id], [row])
+        }
+    }
+
+    onClickDownloadFile = (text) => {
+        if (text === null) {
+            alert("Hợp đồng này không có file");
+        }
+        else {
+            window.open(text)
+        }
+    }
+
+    onClickHandler = () => {
+        const data = new FormData()
+        if (this.state.selectedFile !== null) {
+            data.append('file', this.state.selectedFile)
+            axios.post("http://localhost:5000/upload", data, {
+                // receive two    parameter endpoint url ,form data
+            })
+                .then(res => { // then print response status
+                })
         }
     }
 
@@ -239,7 +283,7 @@ class File extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm File">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                                    <Icon type="plus" />
+                                        <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -276,15 +320,25 @@ class File extends React.Component {
                         </Card>
                     </Row>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.file_khachhangs} rowKey="file_tenfile" bordered>
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.file_khachhangs} rowKey="file_id" size={"small"} bordered>
                             <Column title="Tên File" dataIndex="file_tenfile" width={200} />
-                            {/* <Column title="Data" dataIndex="file_data" width={250} /> */}
+                            <Column title="Data" dataIndex="file_data" width={250}
+                                render={(text) => (
+                                    <span>
+                                        <Tooltip title="Tải xuống">
+                                            <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
+                                                <Icon type="download" />
+                                            </Button>
+                                        </Tooltip>
+                                    </span>
+                                )}
+                            />
                         </Table>
                     </Row>
                     <Row>
                         <Pagination onChange={this.onchangpage} total={this.state.count} style={{ marginTop: 10 }} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
                     </Row>
-                    {/* <Modal_Filekhachhangs
+                    <Modal_Filekhachhangs
                         wrappedComponentRef={this.saveFormRef}
                         title={this.state.title}
                         visible={this.state.visible}
@@ -292,7 +346,9 @@ class File extends React.Component {
                         onSave={this.insertOrUpdate}
                         formtype={this.state.formtype}
                         onChangeFile={this.onChangeFile}
-                    /> */}
+                        onChangeHandler={this.onChangeHandler}
+                    />
+
                 </Form>
             </div>
         )

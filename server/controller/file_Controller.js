@@ -25,7 +25,8 @@ var fileController = {
             }
             callback({
                 message: message,
-                success: response.success
+                success: response.success,
+                dataExcel: response.dataExcel
             }, status);
         });
     },
@@ -39,8 +40,8 @@ var fileController = {
         })
     },
 
-    deleteFile_khachhangsById: async function deleteFile_khachhangsById(file_tenfile, callback) {
-        file_data.deleteFile_khachhangs(file_tenfile, data => {
+    deleteFile_khachhangsById: async function deleteFile_khachhangsById(file_id, callback) {
+        file_data.deleteFile_khachhangs(file_id, data => {
             if (data.success === true) {
                 callback({
                     success: data.success,

@@ -540,9 +540,7 @@ class Hotro extends React.Component {
     }
 
     showModal = async (hotro) => {
-        this.setState({
-            action: 'insert'
-        })
+        
         if (hotro.ht_trangthai === "daxong") {
             this.setState({
                 trangthai: true,

@@ -5,7 +5,10 @@ router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now())
     next()
 })
+router.get('*', function (req, res) {
+    res.send(JSON.stringify(req.url).trim().toLocaleLowerCase())
 
+})
 router.post('/get', function (req, res) {
     let body = req.body;
     let pageNumber = body.pageNumber;

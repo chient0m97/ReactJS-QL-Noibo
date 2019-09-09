@@ -37,14 +37,25 @@ module.exports = {
         })
     },
 
-    insertCustomer: function (customer, callback) {
-        knex.from('khachhangs').insert(customer)
-            .then(res => {
-                var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
-                if (customer.kh_lienlac === 'DD')
-                    knex.raw(sql).then(res => {
-                        console.log('dã update')
-                    })
+    insertCustomer:async function (customer, callback) {
+       await knex('khachhangs').insert(customer)
+            .then(async res => {
+                if (customer.length > 1) {
+                    
+                    var sql = ""
+                   await customer.forEach((element, index) => {
+                        sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer[index].kh_id + "'" + ' where dm_dv_id = ' + "'" + customer[index].dm_dv_id + "'"
+                        if (customer.kh_lienlac === 'DD')
+                            knex.raw(sql).then(res => {
+                            })
+                    });
+                }
+                else {
+                    var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
+                    if (customer.kh_lienlac === 'DD')
+                        knex.raw(sql).then(res => {
+                        })
+                }
                 callback({ success: true });
             }).catch(err => {
                 console.log(err)
@@ -60,11 +71,11 @@ module.exports = {
                 // console.log("tang data khach hang")
                 if (customer.kh_lienlac === 'DD') {
                     var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
-                    knex.raw(sql).then(ress=> {
+                    knex.raw(sql).then(ress => {
                         console.log('dã update')
                         callback({ success: true })
                     })
-                    
+
                 }
                 callback({ success: true })
             }).catch(err => {

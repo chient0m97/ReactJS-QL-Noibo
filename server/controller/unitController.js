@@ -114,10 +114,8 @@ var UnitController = {
 
     insertUnit: async function insertUnit(unit, callback) {
         unit.dm_dv_id = uuidv1();
-        if (
-            await Validator.db.unique('donvis', 'dm_dv_ten', unit.dm_dv_ten, 'Tên đơn vị này đã tồn tại !!')
-            & await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!')
-            & await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!')
+        if ((unit.dm_dv_masothue === undefined || await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!'))
+            & (unit.dm_dv_sodienthoai === undefined || await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!'))
         ) {
             unitData.insertUnit(unit, (response) => {
                 var message = constant.successInseart;

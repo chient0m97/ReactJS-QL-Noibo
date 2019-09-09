@@ -98,6 +98,7 @@ module.exports = {
         hd.nkhd_files,\
         hd.nkhd_ghichu,\
         hd.nkhd_action,\
+        hd.nkhd_tutang,\
         hd.nkhd_thoigiancapnhat\
         from nhatky_hopdongs hd,\
         duans da \
@@ -130,6 +131,8 @@ module.exports = {
         knex.from('hopdongs').whereIn('hd_id', hd_id).del().then(res => {
             callback({ success: true });
         }).catch(err => {
+            console.log(err);
+            
             callback({ success: false })
         })
     },
@@ -145,6 +148,7 @@ module.exports = {
             .update(hopdong).then(res => {
                 callback({ success: true })
             }).catch(err => {
+                console.log(err)
                 callback({ success: false })
             })
     },

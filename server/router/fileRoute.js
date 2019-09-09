@@ -30,7 +30,7 @@ router.post('/update', function (req, res) {
 })
 
 router.delete('/delete', function (req, res) {
-    fileController.deleteFile_khachhangsById(req.body.file_tenfile, function (data) {
+    fileController.deleteFile_khachhangsById(req.body.file_id, function (data) {
         res.send(data);
     })
 })

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag, Pagination, Card, Tooltip, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Tag, Pagination, Card, Tooltip, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge } from 'antd';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
@@ -155,11 +155,17 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             </Row>
             <Row gutter={25}>
               <Col span={8}>
-                <Form.Item label="Ngày ký:">
+                <Form.Item label="Ngày ký hợp đồng:">
                   {getFieldDecorator('hd_ngayky', {
                   })(
                     <Input type="date" size="small" />
                   )}
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Ngày nghiệm thu:">
+                  {getFieldDecorator('hd_ngayketthuc', {
+                  })(<Input size={"small"} type="date" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -168,24 +174,18 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
+            </Row>
+            <Row gutter={25}>
               <Col span={8}>
                 <Form.Item label="Ngày xuất hóa đơn:">
                   {getFieldDecorator('hd_ngayxuathoadon', {
                   })(<Input type="date" size="small" />)}
                 </Form.Item>
               </Col>
-            </Row>
-            <Row gutter={25}>
               <Col span={8}>
                 <Form.Item label="Ngày thanh toán:">
                   {getFieldDecorator('hd_ngaythanhtoan', {
                   })(<Input type="date" size="small" />)}
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Ngày nghiệm thu:">
-                  {getFieldDecorator('hd_ngayketthuc', {
-                  })(<Input size={"small"} type="date" />)}
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -212,11 +212,10 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                     <div>
                       <label>Upload your file</label>
                       <hr style={{ width: '0px' }} />
-                      <input type="file" name="file"
+                      <input type="file" name="file" id="file"
                         onChange={onChangeHandler}
                       />
                       <hr style={{ width: '0px' }} />
-                      <Tag color="#f50">Chỉ upload file nén</Tag>
                     </div>
                   )}
                 </Form.Item>
@@ -346,7 +345,7 @@ class Hopdong extends React.Component {
       }
       var url = this.state.action === 'insert' ? 'hopdong/insert' : 'hopdong/update'
       Request(url, 'POST', values)
-        .then((response) => {
+        .then(async (response) => {
           this.setState({
             rowthotroselected: values
           })
@@ -360,14 +359,15 @@ class Hopdong extends React.Component {
           var description = response.data.message
           var notifi_type = 'success'
           var message = 'Thành công'
+          console.log(response.data, 'data  res')
           if (!!!response.data.success) {
             message = 'Có lỗi xảy ra!'
             notifi_type = 'error'
-            description = response.data.message.map((values) => {
+            description = response.data.message.map((values, index) => {
               return <Alert type='error' message={values}></Alert>
             })
           }
-          notification[notifi_type]({
+          await notification[notifi_type]({
             message: message,
             description: description
           })
@@ -434,7 +434,7 @@ class Hopdong extends React.Component {
       })
     })
     const { form } = this.formRef.props
-    await form.resetFields();
+    form.resetFields();
     this.setState({
       visible: true,
       action: 'insert'
@@ -469,6 +469,7 @@ class Hopdong extends React.Component {
       hopdong.hd_ngayketthuc = hopdong.hd_ngayketthuc === null ? null : formatdate(hopdong.hd_ngayketthuc, 'yyyy-mm-dd')
       form.setFieldsValue(hopdong);
     }
+    console.log(this.state.selectedFile, 'file day ne'); 
   };
   handleOK = e => {
     this.setState({
@@ -476,6 +477,12 @@ class Hopdong extends React.Component {
     });
   };
   handleCancel = e => {
+    this.setState({
+      selectedFile: null
+    });
+    document.getElementById('file').value=''
+    const {form} = this.formRef.props
+    form.resetFields()
     this.setState({
       visible: false,
       id_visible: false
@@ -746,28 +753,7 @@ class Hopdong extends React.Component {
                   }}
               />
               <Column title="Địa chỉ" className="hidden-action" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} width={150} />
-              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" render={
-                text => {
-                  if (text === null)
-                    return ' '
-                  else
-                    return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" render={
-                text => {
-                  if (text === null)
-                    return ' '
-                  else
-                    return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" render={
-                text => {
-                  if (text === null)
-                    return ' '
-                  else
-                    return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
-              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" render={
+              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
@@ -783,6 +769,27 @@ class Hopdong extends React.Component {
                       return dateFormat(text, "dd/mm/yyyy")
                   }}
                 onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" width={150} render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return dateFormat(text, "dd/mm/yyyy")
+                }} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" width={150} render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return dateFormat(text, "dd/mm/yyyy")
+                }} onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" width={150} render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return dateFormat(text, "dd/mm/yyyy")
+                }} onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
               <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" className="hidden-action" onHeaderCell={this.onHeaderCell} />

@@ -9,12 +9,12 @@ const { Option } = Select
 const Modal_Filekhachhangs = Form.create({ name: 'from_in_modal_file_khachhangs' })(
     class extends React.Component {
         render() {
-            const { title, visible, onCancel, onSave, formtype, form, onChangeFile } = this.props;
+            const { title, visible, onCancel, onSave, formtype, form, onChangeFile, onChangeHandler } = this.props;
             const { getFieldDecorator } = form;
             return (
                 <Modal
                     centered
-                    title={title}
+                    // title={title}
                     visible={visible}
                     onCancel={onCancel}
                     onOk={onSave}
@@ -37,7 +37,10 @@ const Modal_Filekhachhangs = Form.create({ name: 'from_in_modal_file_khachhangs'
                                     })(
                                         <div>
                                             <label>Upload your file</label>
-                                            <input type="file" name="file" onChange={onChangeFile}/>
+                                            <input type="file" name="file" 
+                                            // onChange={onChangeFile}
+                                            onChange={onChangeHandler}
+                                            />
                                         </div>)}
                                 </Form.Item>
                             </Col>

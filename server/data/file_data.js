@@ -1,4 +1,5 @@
 var knex = require('./common/DB')
+var xlsx = require("xlsx")
 module.exports = {
     getFile: (limit, offset, index, sortBy, callback) => {
         knex.select('*').from('file_khachhangs').orderBy(index, sortBy).limit(limit).offset(offset)
@@ -27,9 +28,24 @@ module.exports = {
     },
 
     inserFile_khachhangs: function (file_khachhangs, callback) {
+        // console.log(file_khachhangs)
         knex.from('file_khachhangs').insert(file_khachhangs).then(res => {
+            var fileName=file_khachhangs.file_data.replace('http://localhost:5000','.')
+            // console.log("data ", fileName)
+            
+            var wb = xlsx.readFile(fileName)
+
+            var sheet_name_list = wb.SheetNames;
+            
+            var xlData = xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[0]]);
+
+            // var ws = wb.Sheets["Hợp đồng"]
+            // var data =xlsx.utils.sheet_to_json(ws)
+            // console.log("day la data ",xlData)
+
             callback({
-                success: true
+                success: true,
+                dataExcel: xlData
             })
         }).catch(err => {
             console.log(err)
@@ -37,7 +53,7 @@ module.exports = {
                 success: false
             })
         })
-    },
+    },  
 
     updateFile_khachhangs: function (file_khachhangs, callback) {
         knex.from('file_khachhangs').where('file_tenfile', file_khachhangs.file_tenfile).update(file_khachhangs).then(res => {
@@ -53,8 +69,8 @@ module.exports = {
         })
     },
 
-    deleteFile_khachhangs: function (file_khachhangs, callback) {
-        knex.from('file_khachhangs').whereIn('file_tenfile', file_khachhangs).del().then(res => {
+    deleteFile_khachhangs: function (file_id, callback) {
+        knex.from('file_khachhangs').whereIn('file_id', file_id).del().then(res => {
             callback({
                 success: true
             })

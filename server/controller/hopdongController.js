@@ -86,9 +86,9 @@ var HopdongController = {
             hopdongData.updateHopdong(hopdong, (res) => {
                 callback({
                     success: res.success,
-                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
+                    message: res.success === true ? [constant.successUpdate] : [constant.errorUpdate]
                 })
-            })
+            }) 
         }
     },
     getcha: function getcha(callback) {
