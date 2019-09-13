@@ -62,10 +62,77 @@ module.exports = {
                     })
             })
     },
+    getNhatkyHopdong: (limit, offset, callback) => {
+        knex.raw("select hd.nkhd_id, \
+        case (hd.nkhd_loai) \
+            when 'DV' then 'Đơn Vị'\
+            when 'CN' then 'Cá Nhân'\
+        end ten_nkhd_loai,\
+        hd.nkhd_loai,\
+        hd.nkhd_doituong,\
+        case (hd.nkhd_loai)\
+            when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.nkhd_doituong)\
+            when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.nkhd_doituong)\
+        end ten_nkhd_doituong,\
+        hd.nkhd_doituong,\
+        hd.dm_duan_id,\
+        da.dm_duan_ten,\
+        hd.nkhd_so,\
+        hd.nkhd_thoigianthuchien,\
+        hd.nkhd_ngayketthuc,\
+        hd.nkhd_diachi,\
+        hd.nkhd_ngayky,\
+        hd.nkhd_ngaythanhly,\
+        hd.nkhd_ngayxuathoadon,\
+        hd.nkhd_ngaythanhtoan,\
+        hd.nkhd_congty,\
+        hd.nkhd_trangthai,\
+        case (hd.nkhd_trangthai)\
+             when 'DTH' then 'Đang thực hiện'\
+             when 'TL'  then 'Thanh lý'\
+             when 'XHD' then 'Xuất hóa đơn'\
+             when 'DTT' then 'Đã thanh toán'\
+             when 'DONG' then 'Đóng'\
+        end ten_nkhd_trangthai,\
+        hd.nkhd_trangthai,\
+        hd.nkhd_files,\
+        hd.nkhd_ghichu,\
+        hd.nkhd_action,\
+        hd.nkhd_tutang,\
+        hd.nkhd_thoigiancapnhat\
+        from nhatky_hopdongs hd,\
+        duans da \
+        where hd.dm_duan_id = da.dm_duan_id "+ ' offset ' + offset + ' limit ' + limit)
+            .then(res => {
+                knex('nhatky_hopdongs').count()
+                    .then((resCount) => {
+                        callback({
+                            success: true,
+                            data: {
+                                hopdongs: res.rows,
+                                count: resCount[0].count
+                            }
+                        })
+                    }).catch((err) => {
+                        console.log(err),
+                            callback({
+                                success: false
+                            })
+                    })
+            })
+            .catch((err) => {
+                console.log(err),
+                    callback({
+                        success: false
+                    })
+            })
+    },
     deleteHopdongbyId: function (hd_id, callback) {
         knex.from('hopdongs').whereIn('hd_id', hd_id).del().then(res => {
             callback({ success: true });
         }).catch(err => {
+            console.log(err);
+            
             callback({ success: false })
         })
     },
@@ -81,6 +148,7 @@ module.exports = {
             .update(hopdong).then(res => {
                 callback({ success: true })
             }).catch(err => {
+                console.log(err)
                 callback({ success: false })
             })
     },
@@ -106,7 +174,7 @@ module.exports = {
         })
     },
     getkhachhang: function (callback) {
-        let strSqlKH = "select kh_id as id, kh_ten || '(' || kh_email || ')' ten from khachhangs";
+        let strSqlKH = "select kh_id as id, kh_ten || ' (' || coalesce(kh_email, 'Không có email') || ')' ten from khachhangs";
         knex.raw(strSqlKH).then(res => {
             callback(res.rows);
         }).catch((err) => {

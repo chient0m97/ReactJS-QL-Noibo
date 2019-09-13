@@ -19,6 +19,13 @@ var HopdongController = {
             callback(data);
         });
     },
+    getNhatkyHopdong: function getNhatkyHopdong(pageNumber, pageSize, callback) {
+        let limit = pageSize;
+        let offset = pageSize * (pageNumber - 1);
+        hopdongData.getNhatkyHopdong(limit, offset, (data) => {
+            callback(data);
+        });
+    },
     /**
      * Get user by Id.
      * @param {Number} Id The identify of user
@@ -39,7 +46,6 @@ var HopdongController = {
                     message: data.success === true ? constant.successDelete : constant.errorMessage
                 })
             }
-            callback(data, 400);
         })
     },
     insertHopdong: async function insertHopdong(hopdong, callback) {
@@ -80,9 +86,9 @@ var HopdongController = {
             hopdongData.updateHopdong(hopdong, (res) => {
                 callback({
                     success: res.success,
-                    message: res.success === true ? constant.successUpdate : constant.errorUpdate
+                    message: res.success === true ? [constant.successUpdate] : [constant.errorUpdate]
                 })
-            })
+            }) 
         }
     },
     getcha: function getcha(callback) {
@@ -120,10 +126,8 @@ var HopdongController = {
     validateCreate: (req, res, next) => {
         next()
     },
-
     insertDuan: async function insertDuan(duan, callback) {
-        console.log(duan,'duan day');
-        
+        console.log(duan,'duan day'); 
         if (1
         ) {
             if (1){

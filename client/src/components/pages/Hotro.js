@@ -434,7 +434,7 @@ class Hotro extends React.Component {
                 values.nkht_thoigiancapnhat = new Date()
             }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
-                values.ht_thoigian_dukien_hoanthanh = format(new Date(), 'yyyy-mm-dd')
+                values.ht_thoigian_dukien_hoanthanh = format(new Date(),'yyyy-mm-dd')
             }
             Request(url, 'POST', values)
                 .then(async (response) => {
@@ -541,9 +541,7 @@ class Hotro extends React.Component {
     }
 
     showModal = async (hotro) => {
-        this.setState({
-            action: 'insert'
-        })
+        
         if (hotro.ht_trangthai === "daxong") {
             this.setState({
                 trangthai: true,
@@ -572,7 +570,7 @@ class Hotro extends React.Component {
                 form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: formatDateModal(hotro.ht_thoigian_dukien_hoanthanh, "yyyy-mm-dd") })
             }
         }
-        var user_cookie = cookie.load('user');
+        //var user_cookie = cookie.load('user');
         var nguoitao = ""
         await Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
             if (res) {
