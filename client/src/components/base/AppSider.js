@@ -63,9 +63,8 @@ class AppSider extends Component {
     };
 
     changeTheme = value => {
-        console.log(value)
         this.setState({
-            theme: value ? 'dark' : 'light'
+            theme: value ? 'light' : 'dark'
         });
     }
 
@@ -118,7 +117,8 @@ class AppSider extends Component {
 
             <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
                 <div className="logo" />
-                <Menu theme={this.state.theme}
+                <Menu
+                    theme={this.state.theme}
                     defaultSelectedKeys={['1']} mode="inline"
                     openKeys={this.state.openKeys}
                     onOpenChange={this.onOpenChange}
@@ -138,7 +138,6 @@ class AppSider extends Component {
                             </span>
                         }
                     >
-
                         {claims.map((item, i) => {
                             if (item.url) {
                                 if (item.menu === 1) {
@@ -146,6 +145,9 @@ class AppSider extends Component {
                                 }
                             }
                         })}
+                        {/* <Menu.Item key="26">
+                            <NavLink to="/chat" className="">Chat all</NavLink >
+                        </Menu.Item> */}
                     </SubMenu>
                     <SubMenu
                         key="sub2"
@@ -192,6 +194,13 @@ class AppSider extends Component {
                         <Menu.Item key="/231123das"><NavLink to="" className="">omg</NavLink></Menu.Item> */}
                         <Menu.Item key="123"><NavLink to="/nkhd" className="">Nhật ký hợp đồng</NavLink></Menu.Item>
                     </SubMenu>
+                    <Menu.Item key="14">
+                        <Icon type="file" />
+                        <span><NavLink to="/file" className="">Tập tin Khách Hàng</NavLink ></span>
+                    </Menu.Item>
+                    <Menu.Item key="13">
+                        <Icon type="setting" onClick={this.showDrawer} />Cài Đặt
+                    </Menu.Item>
                     <SubMenu key="sub4" title={
                         <span>
                             <Icon type="form" />
@@ -201,17 +210,10 @@ class AppSider extends Component {
                         <Menu.Item key="15">
                             <NavLink to="/half" className="">Nghỉ nửa ngày</NavLink >
                         </Menu.Item>
-                        <Menu.Item key="14">
+                        <Menu.Item key="16">
                             <NavLink to="/request" className="">Nghỉ 1 hoặc nhiều ngày</NavLink >
                         </Menu.Item>
                     </SubMenu>
-                    <Menu.Item key="12">
-                        <Icon type="file" />
-                        <span><NavLink to="/file" className="">Tập Tin Khách Hàng</NavLink ></span>
-                    </Menu.Item>
-                    <Menu.Item key="13">
-                        <Icon type="setting" onClick={this.showDrawer} />Cài Đặt
-                    </Menu.Item>
                 </Menu>
                 <Drawer
                     title="Cài Đặt"
@@ -221,10 +223,8 @@ class AppSider extends Component {
                     placement="right"
                 >
                     <Switch
-                        checkedChildren="Tối"
-                        unCheckedChildren="Sáng"
                         onChange={this.changeTheme}
-                    />
+                    />Đổi màu giao diện
                 </Drawer>
             </Sider>
 

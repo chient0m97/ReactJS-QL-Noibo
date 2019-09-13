@@ -12,7 +12,7 @@ import { Width } from 'devextreme-react/linear-gauge';
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
-
+const ButtonGroup = Button.Group;
 
 var format = require('dateformat')
 
@@ -45,6 +45,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
+            console.log("KH ",khachhang)
             var donvi = this.props.setDonVi;
             var first_kh_id = null;
             var first_da_id = null;
@@ -313,9 +314,9 @@ class Hotro extends React.Component {
             searchText: '',
             columnSearch: 'ht_uutien',
             isSort: true,
-            sortBy: '',
-            index: 'ht_id',
-            orderby: 'arrow-up',
+            sortBy: 'DESC',
+            index: 'ht_thoigiantiepnhan',
+            orderby: 'arrow-down',
             date: null,
             trangthaibutton: false,
             selectedId: [],
@@ -327,7 +328,7 @@ class Hotro extends React.Component {
             khachhangs: [],
             selectedrow: [],
             selectedRowKeys: [],
-            donvis: []
+            donvis: [],
         }
     }
 
@@ -433,7 +434,7 @@ class Hotro extends React.Component {
                 values.nkht_thoigiancapnhat = new Date()
             }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
-                values.ht_thoigian_dukien_hoanthanh = format(new Date(),'yyyy-mm-dd')
+                values.ht_thoigian_dukien_hoanthanh = format(new Date(), 'yyyy-mm-dd')
             }
             Request(url, 'POST', values)
                 .then(async (response) => {
@@ -446,11 +447,11 @@ class Hotro extends React.Component {
                     }
                     var description = response.data.message
                     var notifi_type = 'success'
-                    var message = 'Thanh Cong'
+                    var message = 'Thành Công'
 
                     console.log("check response ", response.data.success)
                     if (await !!!response.data.success) {
-                        message = 'Co loi xay ra !'
+                        message = 'Có lỗi xảy ra !'
                         notifi_type = 'error'
                         description = response.data.message.map((value, index) => {
                             return <Alert type='error' message={value}></Alert>
@@ -558,8 +559,6 @@ class Hotro extends React.Component {
         });
 
         await form.resetFields();
-        let user_cookie = cookie.load('user');
-        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
         form.setFieldsValue({ ht_thoigiantiepnhan: formatDateModal(new Date(), "yyyy-mm-dd") });
         if (hotro.ht_id !== undefined) {
             this.setState({
@@ -749,6 +748,22 @@ class Hotro extends React.Component {
         }
     }
 
+    getDataGap = () => {
+        this.render()
+        var user_cookie = null
+        Request('hotro/getmyselfgap', 'POST', { user_cookie }).then((res) => {
+            if (res.data.data.myselfGap) {
+                this.setState({
+                    hotro: res.data.data.myselfGap,
+                })
+                array_ht_trangthai = []
+                res.data.data.myselfGap.map((data, index) => {
+                    array_ht_trangthai.push(data.ht_trangthai)
+                })
+            }
+        })
+    }
+
     render() {
         var i = 0
         var j = 0
@@ -770,7 +785,7 @@ class Hotro extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm Hỗ Trợ">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                                    <Icon type="plus" />
+                                        <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -804,6 +819,16 @@ class Hotro extends React.Component {
                                     </Button>
                                 </Tooltip>
                             </Col>
+                            {/* <Col span={3} offset={6}>
+                                <span style={{ fontSize: '16px' }}>Loại công việc</span>
+                            </Col>
+                            <Col span={6}>
+                                <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
+                                    <Button >Tất cả</Button>
+                                    <Button onClick={this.getDataGap.bind(this)}>Gấp</Button>
+                                    <Button >Đã xong</Button>
+                                </ButtonGroup>
+                            </Col> */}
                         </Row>
                     </Card>
                     <Row style={{ marginTop: 5 }}>
@@ -828,6 +853,7 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
+                                        console.log("day la j ",j)
                                         if (array_ht_trangthai[j - 1] === "daxong") {
                                             return <Badge color={"brown"} />
                                         }
@@ -839,6 +865,7 @@ class Hotro extends React.Component {
                                             i = 0
                                             return <Badge color={"green"} />
                                         }
+                                        
                                     }}
                             />
                             <Column title="Dự án" dataIndex="dm_duan_ten" width={150}
