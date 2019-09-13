@@ -4,7 +4,6 @@ var router = express.Router()
 var role_actionController = require('../controller/phanquyen/role_actionController');
 
 router.post('/get', function (req, res) {
-    console.log('ddadasdsdasds')
     let body = req.body;
     let pageNumber = body.pageNumber;
     let pageSize = body.pageSize;
@@ -45,7 +44,6 @@ router.post('/search',function(req,res){
   let columnSearch = req.body.columnSearch;
   let index = req.body.p1;
   let sortBy = req.body.p2
-  console.log('helo')
   
   role_actionController.search(pageSize,pageNumber,textSearch, columnSearch,index,sortBy ,function(data){
       res.send(data);
@@ -62,13 +60,11 @@ router.post('/getRoleAction',function(req,res){
     })
 })
 router.post('/roleInsert',function(req,res){
-    console.log('------------------------------------body role insertttttttt',req.body)
     role_actionController.insertRole(req.body.name,req.body.des,function(data){
         res.send(data)
     })
 })
 router.post('/actionInsert',function(req,res){
-    console.log('------------------------------------body action insertttttttt',req.body)
     role_actionController.insertAction(req.body.name,function(data){
         res.send(data)
     })

@@ -180,7 +180,7 @@ var CustomerController = {
     },
 
     updateCustomer: function updateCustomer(customer, callback) {
-        console.log("data kh ", customer)
+        // console.log("data kh ", customer)
         // customer.dm_db_id_tinh = customer.dm_db_id_tinh_customer
         // customer.dm_db_id_huyen = customer.dm_db_id_huyen_customer
         // customer.dm_db_id_xa = customer.dm_db_id_xa_customer
@@ -208,9 +208,6 @@ var CustomerController = {
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         customerData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
-            console.log(limit)
-            console.log(offset)
-            console.log('aaaaaaaaa', data)
             callback(data);
         })
     },

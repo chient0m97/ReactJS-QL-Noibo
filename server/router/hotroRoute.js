@@ -63,7 +63,8 @@ router.post('/getmyself', function (req, res) {
 })
 
 router.post('/getmyselfdaxong', function (req, res) {
-    hotroController.getDataMyselfDaxong(req.body, function (data) {
+    console.log("hien thi req.body ",req.body)
+    hotroController.getDataMyselfDaxong(req.body.user_cookie, req.body.pageSize, req.body.pageNumber, function (data) {
         res.send(data)
     })
 })

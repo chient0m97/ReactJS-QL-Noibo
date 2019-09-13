@@ -2,6 +2,7 @@ var Validator = require('../validate/common')
 const unitData = require('../data/unit.data')
 const constant = require('./constant')
 const uuidv1 = require('uuid/v1');
+var knex = require('../data/common/DB')
 var UnitController = {
     /**
      * Get user paging.
@@ -13,7 +14,7 @@ var UnitController = {
      * @para
      */
     getUnit: function getUnit(pageNumber, pageSize, index, sortBy, callback) {
-        console.log('---------controller---------------')
+        // console.log('---------controller---------------')
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         var res_unit = []
@@ -113,31 +114,81 @@ var UnitController = {
     },
 
     insertUnit: async function insertUnit(unit, callback) {
-        unit.dm_dv_id = uuidv1();
-        if ((unit.dm_dv_masothue === undefined || await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!'))
-            & (unit.dm_dv_sodienthoai === undefined || await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!'))
-        ) {
-            unitData.insertUnit(unit, (response) => {
-                var message = constant.successInseart;
-                var status = 200;
-                if (!response.success) {
-                    Validator.error.push(constant.errorSys)
-                    message = Validator.getError()
-                }
-                callback({
-                    message: message,
-                    success: response.success,
-                    id_unit: unit.dm_dv_id
-                }, status);
-            })
+        if (unit.length > 1) {
+            // await unit.forEach((element, index) => {
+            //     unit[index].dm_dv_id = uuidv1()
+            //     if (element.dm_dv_id_cha === undefined) {
+            //         unit[index].dm_dv_id_cha = null
+            //     }
+            //     else
+            //         knex.raw("select dm_dv_id from donvis where dm_dv_ten='" + element.dm_dv_id_cha + "'").then((res) => {
+
+            //             unit[index].dm_dv_id_cha = res.rows[0].dm_dv_id_cha
+            //         })
+            //     knex.raw("select dm_db_id from diabans where dm_db_ten='" + element.dm_db_id_tinh + "' and dm_db_cap = 1").then((res) => {
+            //         unit[index].dm_db_id_tinh = res.rows[0].dm_db_id
+            //     })
+            //     knex.raw("select dm_db_id from diabans where dm_db_ten='" + element.dm_db_id_huyen + "' and dm_db_cap = 2").then((res) => {
+            //         unit[index].dm_db_id_huyen = res.rows[0].dm_db_id
+            //     })
+            //     knex.raw("select dm_db_id from diabans where dm_db_ten='" + element.dm_db_id_xa + "' and dm_db_cap = 3").then((res) => {
+            //         unit[index].dm_db_id_xa = res.rows[0].dm_db_id
+            //     })
+            //     unit[index].kh_id_nguoidaidien = ''
+            //     if (unit[index].dm_dv_trangthai === "Hoạt Động") {
+            //         unit[index].dm_dv_trangthai = "HD"
+            //     }
+            //     else if (unit[index].dm_dv_trangthai === "Giải Thể") {
+            //         unit[index].dm_dv_trangthai = "GT"
+            //     }
+            //     else
+            //         unit[index].dm_dv_trangthai = "DHD"
+
+            // });
+            // unitData.insertUnit(unit, (response) => {
+            //     var message = constant.successInseart;
+            //     var status = 200;
+            //     if (!response.success) {
+            //         Validator.error.push(constant.errorSys)
+            //         message = Validator.getError()
+            //     }
+            //     callback({
+            //         message: message,
+            //         success: response.success,
+
+            //     }, status);
+            // })
+
+            
         }
         else {
-            var eror = Validator.getError()
-            callback({
-                message: eror,
-                success: false
-            }, 400);
+            unit.dm_dv_id = uuidv1();
+            if ((unit.dm_dv_masothue === undefined || await Validator.db.unique('donvis', 'dm_dv_masothue', unit.dm_dv_masothue, 'Mã số thuế này đã tồn tại !!'))
+                & (unit.dm_dv_sodienthoai === undefined || await Validator.db.unique('donvis', 'dm_dv_sodienthoai', unit.dm_dv_sodienthoai, 'Số điện thoại này đã tồn tại !!'))
+            ) {
+                unitData.insertUnit(unit, (response) => {
+                    var message = constant.successInseart;
+                    var status = 200;
+                    if (!response.success) {
+                        Validator.error.push(constant.errorSys)
+                        message = Validator.getError()
+                    }
+                    callback({
+                        message: message,
+                        success: response.success,
+                        id_unit: unit.dm_dv_id
+                    }, status);
+                })
+            }
+            else {
+                var eror = Validator.getError()
+                callback({
+                    message: eror,
+                    success: false
+                }, 400);
+            }
         }
+
     },
     updateUnit: function updateUnit(unit, callback) {
         // if(await Validator.db.unique('donvis', 'dm_dv_id_cha', unit.dm_dv_id_cha, 'Error!!')){

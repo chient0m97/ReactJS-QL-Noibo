@@ -14,7 +14,7 @@ var fileController = {
     },
 
     insertFile_khachhangs: function insertFile_khachhangs(file_khachhangs, callback) {
-        file_khachhangs.file_id=uuidv1();
+        file_khachhangs.file_id = uuidv1();
         file_data.inserFile_khachhangs(file_khachhangs, (response) => {
             var message = constant.successInsert;
             var status = 200;
@@ -26,7 +26,8 @@ var fileController = {
             callback({
                 message: message,
                 success: response.success,
-                dataExcel: response.dataExcel
+                dataExcel: response.dataExcel,
+                dataSheet1: response.dataSheet1
             }, status);
         });
     },

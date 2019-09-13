@@ -39,19 +39,29 @@ module.exports = {
         })
     },
 
-    insertUnit: function (unit, callback) {
+    insertUnit:async function (unit, callback) {
         knex.from('donvis').insert(unit)
-        .then(res => {
-            var sql = 'update khachhangs set dm_dv_id = ' + "'" + unit.dm_dv_id + "'" + ' where kh_id = ' + "'" + unit.kh_id_nguoidaidien + "'"
-            knex.raw(sql).then(res => {
+            .then(async res => {
+                if (unit.length > 1) {
+                    var sql = ""
+                    await unit.forEach((element, index) => {
+                         sql = 'update khachhangs set dm_dv_id = ' + "'" + unit[index].dm_dv_id + "'" + ' where kh_id = ' + "'" + unit[index].kh_id_nguoidaidien + "'"
+                        knex.raw(sql).then(res => {
+                        })
+                    });
+                }
+                else {
+                    sql = 'update khachhangs set dm_dv_id = ' + "'" + unit.dm_dv_id + "'" + ' where kh_id = ' + "'" + unit.kh_id_nguoidaidien + "'"
+                    knex.raw(sql).then(res => {
+                    })
+                }
+                callback({
+                    success: true
+                });
+            }).catch(err => {
+                console.log(err, 'lỗi  ínert')
+                callback({ success: false })
             })
-            callback({
-                success: true
-            });
-        }).catch(err => {
-            console.log(err, 'lỗi  ínert')
-            callback({ success: false })
-        })
     },
 
     updateUnit: function (unit, callback) {

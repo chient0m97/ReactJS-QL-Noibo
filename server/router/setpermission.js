@@ -7,9 +7,7 @@ const bcrypt = require('bcryptjs');
 app.set('Secret', config.secret);
 
 router.post('/', (req, res) => {
-    console.log('permissionnnnnnnnnnnnnnasdasds',req.body)
     userController.setPermission(req.body,(data)=>{
-        console.log('----------------------data-------',data)
         res.send(data);
     })
 });

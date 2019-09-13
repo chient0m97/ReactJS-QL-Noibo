@@ -71,6 +71,8 @@ class Customer extends React.Component {
     }
 
     getDonvis = () => {
+        // 
+        console.log("tesst get data")
         Request('customer/getdonvi', 'POST', {
         }).then((response) => {
             let data = response.data;
@@ -648,7 +650,7 @@ class Customer extends React.Component {
     saveFormRefImport = formRef => {
         this.formRefImport = formRef;
     }
-
+    
     showModalImport = () => {
         this.setState({
             visibleImport: true
@@ -692,7 +694,7 @@ class Customer extends React.Component {
                 return
             }
             if (this.state.selectedFile !== null) {
-                const urlFile = "http://localhost:5000/upload/" + this.state.selectedFile.name;
+                const urlFile = "upload/" + this.state.selectedFile.name;
                 values.file_data = urlFile
             }
             else {
@@ -701,6 +703,11 @@ class Customer extends React.Component {
             var url = 'filekhachhangs/insert'
             Request(url, 'POST', values)
                 .then(async (response) => {
+                    console.log(response.data.dataExcel[1])
+                    // array.forEach(element => {
+                        
+                    // });
+                    return
                     Request('customer/insert', 'POST', response.data.dataExcel)
                     .then((response) => {
                         if (response.status === 200 & response.data.success === true) {

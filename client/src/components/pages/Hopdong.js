@@ -308,7 +308,7 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
                   })(
                     <div>
                       <label>Upload your file</label>
-                      <input type="file" name="file"
+                      <input type="file" name="file" id="inputFile"
                         onChange={onChangeHandler}
                       // onChange={onChangeFile}
                       />
@@ -396,7 +396,7 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false
     })
   }
-  
+
   getDuan = async () => {
     await Request('duan/get', 'POST', {
     }).then(async (response) => {
@@ -420,7 +420,6 @@ class Hopdong extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        console.log("day la res ",response )
         if (response)
           this.setState({
             hopdongs: response.data.data.hopdongs,
@@ -436,12 +435,10 @@ class Hopdong extends React.Component {
     const data = new FormData()
     if (this.state.selectedFile !== null) {
       data.append('file', this.state.selectedFile)
-      console.log(this.state.selectedFile, 'file day');
       axios.post("http://localhost:5000/upload", data, {
         // receive two    parameter endpoint url ,form data
       })
         .then(res => { // then print response status
-          console.log(res.statusText)
         })
     }
   }
@@ -490,6 +487,8 @@ class Hopdong extends React.Component {
           this.getHopdongs(this.state.page)
         })
     });
+    document.getElementById('inputFile').value = ""
+    
   }
 
   refresh = () => {
@@ -566,17 +565,17 @@ class Hopdong extends React.Component {
     Request('duan/getcha', 'POST', {
     }).then((res) => {
       if (res.data) {
-        console.log("Day la res.data ", res.data)
         this.setState({
           select_qtda: res.data
         })
       }
     })
   }
+
   showModal = async (hopdong) => {
+    // console.log("record hopdong ",hopdong)
     this.set_select_qtda()
     Request('duan/getcha', 'POST', null).then(res => {
-      console.log(res, 'res day');
 
       this.setState({
         comboBoxDatasourceDuan: res.data
@@ -602,12 +601,13 @@ class Hopdong extends React.Component {
     })
     const { form } = this.formRef.props
     await form.resetFields();
-    this.setState({
+    await this.setState({
       visible: true,
       visible_duan: false,
       action: 'insert'
     });
     form.resetFields();
+
     if (hopdong.hd_id !== undefined) {
       this.setState({
         id_visible: true,
@@ -637,6 +637,8 @@ class Hopdong extends React.Component {
       hopdong.hd_ngayketthuc = hopdong.hd_ngayketthuc === null ? null : formatdate(hopdong.hd_ngayketthuc, 'yyyy-mm-dd')
       form.setFieldsValue(hopdong);
     }
+     document.getElementById('inputFile').value = ''
+    //  console.log("value ",document.getElementById('inputFile').value)
   };
 
   handleOK = e => {
@@ -646,6 +648,9 @@ class Hopdong extends React.Component {
   };
 
   handleCancel = e => {
+    console.log("ccancel")
+    const { form } = this.formRef.props
+    form.resetFields()
     this.setState({
       visible: false,
       id_visible: false
@@ -675,6 +680,7 @@ class Hopdong extends React.Component {
   showTotal = (total) => {
     return `Total ${total} items `;
   }
+
   onShowSizeChange = async (current, size) => {
     await this.setState({
       pageSize: size
@@ -687,6 +693,7 @@ class Hopdong extends React.Component {
       this.getHopdongs(this.state.page, this.state.index, this.state.sortBy)
     }
   }
+
   onChangeSearchType = async (value) => {
     await this.setState({
       columnSearch: value,
@@ -734,7 +741,7 @@ class Hopdong extends React.Component {
       loaded: 0,
     })
   }
-  
+
   onChangeFile = async (e) => {
     const toBase64 = file => new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -745,7 +752,7 @@ class Hopdong extends React.Component {
     var file = e.target.files[0];
     var fileUploadHopdong = await toBase64(file);
     var fileName = file.name;
-    console.log(fileName, 'ten file');
+    // console.log(fileName, 'ten file');
 
     this.setState({
       valuefile: fileUploadHopdong,
@@ -779,6 +786,7 @@ class Hopdong extends React.Component {
   }
 
   onSelectChange = (selectedRowKeys, selectedRows) => {
+    // console.log("rowkeys ",selectedRowKeys,"va rows ",selectedRows)
     this.setState({
       selectedRowKeys,
       selectedId: selectedRowKeys
@@ -827,12 +835,13 @@ class Hopdong extends React.Component {
   }
 
   onCancel_duan = () => {
+
     this.setState({
       visible_duan: false
     })
   }
   onOk_duan = async () => {
-    console.log('da vao insert duan');
+    // console.log('da vao insert duan');
     const { form } = this.formRef.props;
     form.validateFields((err, values) => {
       if (err) {
@@ -882,9 +891,11 @@ class Hopdong extends React.Component {
   saveFormRefCreate = formRef => {
     this.saveFormRefCreate = formRef
   }
+
   saveFormRef = formRef => {
     this.formRef = formRef;
   }
+
   // CreateDuan = e => {
   //   e.preventDefault();
   //   const { form } = this.formRef.props;
@@ -899,6 +910,7 @@ class Hopdong extends React.Component {
   //       })
   //   })
   // }
+
   render() {
     const { selectedRowKeys } = this.state
     const rowSelection = {

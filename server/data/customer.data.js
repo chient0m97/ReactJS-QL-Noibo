@@ -37,13 +37,12 @@ module.exports = {
         })
     },
 
-    insertCustomer:async function (customer, callback) {
-       await knex('khachhangs').insert(customer)
+    insertCustomer: async function (customer, callback) {
+        await knex('khachhangs').insert(customer)
             .then(async res => {
                 if (customer.length > 1) {
-                    
                     var sql = ""
-                   await customer.forEach((element, index) => {
+                    await customer.forEach((element, index) => {
                         sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer[index].kh_id + "'" + ' where dm_dv_id = ' + "'" + customer[index].dm_dv_id + "'"
                         if (customer.kh_lienlac === 'DD')
                             knex.raw(sql).then(res => {
@@ -65,21 +64,17 @@ module.exports = {
 
 
     updateCustomer: function (customer, callback) {
-        // console.log("Day la data khach hang ",customer)
         knex.from('khachhangs').where('kh_id', customer.kh_id)
             .update(customer).then(res => {
-                // console.log("tang data khach hang")
                 if (customer.kh_lienlac === 'DD') {
                     var sql = 'update donvis set kh_id_nguoidaidien = ' + "'" + customer.kh_id + "'" + ' where dm_dv_id = ' + "'" + customer.dm_dv_id + "'"
                     knex.raw(sql).then(ress => {
-                        console.log('dã update')
                         callback({ success: true })
                     })
 
                 }
                 callback({ success: true })
             }).catch(err => {
-                // console.log(err)
                 callback({ success: false })
             })
     },

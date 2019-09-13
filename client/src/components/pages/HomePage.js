@@ -658,7 +658,10 @@ export default class HomePage extends Component {
                                                 </ButtonGroup>
                                             </Col>
                                         </Row>
-                                        <Table bordered components={this.components} dataSource={this.state.myself} rowKey="ht_id" size="small" scroll={{ x: 500 }}
+                                        <Table bordered dataSource={this.state.myself}
+                                            rowKey="ht_id" 
+                                            size="small" 
+                                            scroll={{ x: 500 }}
                                             rowSelection={rowSelection}
                                             onRowClick={this.onRowClick.bind(this)}
                                             expandedRowRender={(record, selectedRowKeys) => {
@@ -671,7 +674,7 @@ export default class HomePage extends Component {
                                                     </div>
                                                 )
                                             }}
-                                            rowClassName={this.setRowClassName}
+                                            rowClassName={this.setRowClassName.bind(this)}
                                         >
                                             >
                                     <Column title="Dự án" dataIndex="dm_duan_ten" width={150} />

@@ -60,24 +60,24 @@ module.exports = {
     },
 
     getKhachHangWhere(dv, callback) {
-        if(dv.dv===""){
-        knex.select('kh_id', 'kh_ten').from('khachhangs').where('dm_dv_id', dv.dv).orWhereNull('dm_dv_id').then((res) => {
-            callback({
-                data: {
-                    khachhangs: res
-                }
+        if (dv.dv === "") {
+            knex.select('kh_id', 'kh_ten').from('khachhangs').where('dm_dv_id', dv.dv).orWhereNull('dm_dv_id').then((res) => {
+                callback({
+                    data: {
+                        khachhangs: res
+                    }
+                })
             })
-        })
-    }
-    else{
-        knex.select('kh_id', 'kh_ten').from('khachhangs').where('dm_dv_id', dv.dv).then((res) => {
-            callback({
-                data: {
-                    khachhangs: res
-                }
+        }
+        else {
+            knex.select('kh_id', 'kh_ten').from('khachhangs').where('dm_dv_id', dv.dv).then((res) => {
+                callback({
+                    data: {
+                        khachhangs: res
+                    }
+                })
             })
-        })
-    }
+        }
     },
 
     getDonVi(callback) {
@@ -111,16 +111,34 @@ module.exports = {
             })
     },
 
-    getDataMyselfDaxong: function (ht_id_nguoitao, callback) {
-        if (new Date().getDate)
-            knex.raw("select myself.* from (select  hotro.* , nhansu.ns_hovaten, nhs.ns_dinhdanhcanhan, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id,ns_dinhdanhcanhan from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass) as myself where myself.ns_id_ass=(select ns_id from nhansu where ns_dinhdanhcanhan=(select madinhdanh from users where name='" + ht_id_nguoitao.user_cookie + "') and ht_trangthai='daxong')")
-                .then((res) => {
-                    callback({
-                        data: {
-                            myself: res.rows
-                        }
+    getDataMyselfDaxong: function (ht_id_nguoitao, limit, offset, callback) {
+        if (ht_id_nguoitao === null) {
+            if (new Date().getDate)
+                knex.raw("select myself.* from (select  hotro.* , nhansu.ns_hovaten, nhs.ns_dinhdanhcanhan, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id,ns_dinhdanhcanhan from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass) as myself where ht_trangthai='daxong' offset " + offset + " limit " + limit)
+                    .then((res) => {
+                        knex.raw("select count(*) from (select  hotro.* , nhansu.ns_hovaten, nhs.ns_dinhdanhcanhan, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id,ns_dinhdanhcanhan from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass) as myself where ht_trangthai='daxong'")
+                            .then((resCount) => {
+                                callback({
+                                    data: {
+                                        myselfDaxong: res.rows,
+                                        count: resCount.rows[0].count
+                                    }
+                                })
+                            })
                     })
-                })
+        }
+        else {
+            if (new Date().getDate)
+                knex.raw("select myself.* from (select  hotro.* , nhansu.ns_hovaten, nhs.ns_dinhdanhcanhan, dm_da.dm_duan_ten, khh.kh_ten, nhs.ns_hoten from hotros hotro left join (select da.dm_duan_ten dm_duan_ten, da.dm_duan_id dm_duan_id from duans da) as dm_da on dm_da.dm_duan_id = hotro.dm_duan_id left join (select kh_ten, kh.kh_id kh_id from khachhangs kh) as khh on khh.kh_id = hotro.kh_id left join (select us.madinhdanh,us.name from users us) as users on users.name = hotro.ns_id_nguoitao left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hoten, ns_dinhdanhcanhan from nhansu ns) as nhs on nhs.ns_dinhdanhcanhan=users.madinhdanh left join (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten, ns_id,ns_dinhdanhcanhan from nhansu ns) as nhansu on nhansu.ns_id=hotro.ns_id_ass) as myself where myself.ns_id_ass=(select ns_id from nhansu where ns_dinhdanhcanhan=(select madinhdanh from users where name='" + ht_id_nguoitao.user_cookie + "') and ht_trangthai='daxong')")
+                    .then((res) => {
+                        callback({
+                            data: {
+                                myself: res.rows
+                            }
+                        })
+                    })
+        }
+
     },
 
     getDataMyselfGap: function (ht_id_nguoitao, callback) {

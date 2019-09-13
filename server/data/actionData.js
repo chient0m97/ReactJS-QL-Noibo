@@ -1,7 +1,7 @@
 var knex = require('./common/DB')
 let pool = require('./connect')
 module.exports = {
-    getUser: (limit, offset,index, sortBy, callback) => {
+    getUser: (limit, offset, index, sortBy, callback) => {
         knex.from('users').select('*').orderBy(index, sortBy).limit(limit).offset(offset)
             .then((res) => {
                 var users = res
@@ -39,7 +39,7 @@ module.exports = {
     insertUser: function (user, callback) {
         knex.from('users').insert(user).then(res => {
             console.log('inserted');
-            callback({ success: true});
+            callback({ success: true });
         }).catch(err => {
             console.log(err)
             callback({ success: false })
@@ -47,25 +47,25 @@ module.exports = {
     },
     updateUser: function (user, callback) {
         knex.from('users').where('id', user.id)
-        .update(user).then(res=>{
-            callback({ success: true })
-         }).catch(err=>{
-            console.log(err)
-            callback({ success: false })
-         })
+            .update(user).then(res => {
+                callback({ success: true })
+            }).catch(err => {
+                console.log(err)
+                callback({ success: false })
+            })
     },
     selectUser: function (user, callback) {
-        knex.from('users').select('*').where('id', user.id).then(res=>{
+        knex.from('users').select('*').where('id', user.id).then(res => {
             callback(res[0]);
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err)
             callback({ success: false })
         })
     },
     getUserLogin: function (username, callback) {
-        knex.from('users').select('password').where('name','=',username).then(res=>{
+        knex.from('users').select('password').where('name', '=', username).then(res => {
             callback(res[0]);
-        }).catch(err=>{
+        }).catch(err => {
             console.log(err, 'lỗi kết nối')
         })
     },
@@ -73,11 +73,9 @@ module.exports = {
         pool.connect()
             .then(client => {
                 query = "SELECT * FROM users WHERE " + columnSearch + " LIKE '%" + textSearch + "%'  ORDER BY " + index + " " + sortBy + " LIMIT " + limit + " OFFSET " + offset
-                console.log('aaaaaaaaaaaa', query)
                 return client.query(query)
                     .then(res => {
                         let users = res.rows;
-                        console.log('uuuuuuuuuuuuuu', users)
                         client.query("SELECT count(*) as count FROM users WHERE " + columnSearch + " LIKE '%" + textSearch + "%'  ").then(res2 => {
                             client.release();
                             let count = res2.rows[0].count;
@@ -91,7 +89,6 @@ module.exports = {
                                 }
                             };
                             callback(dataCallback)
-                            console.log('---datacallback-------', dataCallback)
 
                         })
                     })

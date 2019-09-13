@@ -1,21 +1,21 @@
 #root {
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
 }
 .ant-menu-dark .ant-menu-item a {
   color: #fff;
 }
 .modal-loading {
   position: fixed;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   background-color: rgba(0, 0, 0, 0.65);
 }
 .loading-ring {
   position: absolute;
   /*Moves the word loading down and into the center of the page*/
-  top: 50%;
-  left: 50%;
+  top: 50% !important;
+  left: 50% !important;
   /*Moves the circle and loading word to the center of the page*/
   transform: translate(-50%, -50%);
   width: 150px;
@@ -25,7 +25,7 @@
   /*Creates a square*/
   border: 3px solid #3c3c3c;
   /*turns the square to a circle*/
-  border-radius: 50%;
+  border-radius: 50% !important;
   /* Aligns the word Loading to the right so it is in the center of the circle*/
   text-align: center;
   /*Moves the word Loading down and into the center of the circle*/
@@ -52,15 +52,15 @@
   /*originally set to 0px, but it was off, so changed to -3px to align with the loading circle*/
   top: -3px;
   left: -3px;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   /*Creates half a circle for the spinner portion*/
   border: 3px solid transparent;
   /*creates only top and right square border portion*/
   border-top: 3px solid #ff69b4;
   border-right: 3px solid #ff69b4;
   /*turns the box radius into a half circle :) */
-  border-radius: 50%;
+  border-radius: 50% !important;
   /*creates animation*/
   animation: animateCircle 2s linear infinite;
 }
@@ -71,8 +71,8 @@
   position: absolute;
   /* The calc() function takes a single expression as its parameter, with the expression's result used as the value */
   top: calc(50% - 2px);
-  left: 50%;
-  width: 50%;
+  left: 50% !important;
+  width: 50% !important;
   height: 4px;
   background: transparent;
   transform-origin: left;
@@ -84,7 +84,7 @@
   position: absolute;
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: 50% !important;
   background: #ff69b4;
   /*moves the ball to the top of the line created in the previous span*/
   top: -6px;
@@ -197,29 +197,29 @@
 
 .filer-float-block .ant-select-selection__rendered,
 .filter-column-grid .ant-select-selection__rendered {
-  line-height: 23px;
+  line-height: 23px !important;
 }
 
 .filer-float-block .ant-select-selection--single,
 .filter-column-grid .ant-select-selection--single {
-  height: 25px;
+  height: 25px !important;
 }
 
 .filter-column-grid input {
-  height: 25px;
-  line-height: 13px;
-  width: 200px;
+  height: 25px !important;
+  line-height: 13px !important;
+  width: 200px !important;
 }
 /* end filter*/
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace ;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace !important;
 }
 
 .action-show{
@@ -298,8 +298,8 @@ margin-bottom: 0px !important;
   zoom: 1!important;
 } */
 .ant-card-body {
-  padding: 7px;
-  zoom: 1;
+  padding: 7px !important;
+  zoom: 1 !important;
 }
 
 .ant-table-thead > tr > th {
@@ -368,7 +368,7 @@ thead[class*="ant-table-thead"] th{
 .flexible-modal-mask {
   position: fixed;
   z-index: 999999999;
-  height: 100%;
+  height: 100% !important;
   background: rgba(55, 55, 55, 0.6);
   top:0;
   left:0;
@@ -395,4 +395,38 @@ thead[class*="ant-table-thead"] th{
 } */
 
 .clickRowStyl{
-  background-color: #00b4ed !important}
+  background-color: #00b4ed !important
+}
+
+.login-page {
+  width: 100% !important;
+  height: 100% !important;
+  background-image: url(../images/background/company.jpg) !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+.background-login {
+  width: 30% !important;
+  margin-left: 35% !important;
+  height: 50% !important;
+  position: absolute !important;
+}
+.login-form{
+  width: 30% !important;
+  max-width: 350px !important;
+  max-height: 250px !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, 20px) !important;
+  border: 2px solid #1890ff !important;
+  padding: 20px !important;
+  box-shadow: 3px 3px 4px #1890ff !important;
+  background: #fff !important;
+  border-radius: 5px !important;
+
+}
+.login-form-forgot{
+  float: right !important;
+}
+  

@@ -70,7 +70,9 @@ app.use(cors());
 
 
 app.use('/nhansu', nhansuRoute);
+
 app.use('/member', memberRoute);
+
 app.use('/changepass', ChangePass);
 
 app.use('/hotro', hotroRoute)
@@ -125,8 +127,8 @@ var storage = multer.diskStorage({
   }
 })
 var upload = multer({ storage: storage }).single('file')
+
 app.post('/upload', function (req, res) {
-  console.log('da vao upload');
   upload(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(500).json(err)
@@ -136,6 +138,7 @@ app.post('/upload', function (req, res) {
     return res.status(200).send(req.file)
   })
 });
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 app.post('/verify')

@@ -3,10 +3,8 @@ let pool = require('./connect')
 const uuidv1 = require('uuid/v1');
 module.exports = {
     getUser: (limit, offset, index, sortBy, callback) => {
-        console.log('12222222222222222222222222222222222')
         knex.from('users').select('*').orderBy(index, sortBy).limit(limit).offset(offset)
             .then((res) => {
-
                 var users = res
                 knex('users').count()
                     .then((resCount) => {
@@ -62,19 +60,15 @@ module.exports = {
         knex.from('users').insert(abc).then(res => {
             callback({ success: true });
         }).catch(err => {
-
             console.log(err)
             callback({ success: false })
         })
     },
     updateUser: function (user, callback) {
-        console.log('ewweeeeeeeeeeeeeeeeeeeeeeeeeeeee')
         knex.from('users').where('id', user.id)
             .update(user).then(res => {
-
                 callback({ success: true })
             }).catch(err => {
-
                 console.log(err)
                 callback({ success: false })
             })
@@ -94,23 +88,17 @@ module.exports = {
     },
     selectUser: function (user, callback) {
         knex.from('users').select('*').where('id', user.id).then(res => {
-
             callback(res[0]);
         }).catch(err => {
-
             console.log(err)
             callback({ success: false })
         })
     },
     getUserLogin: function (username, callback) {
-        console.log('name:', username)
         knex('users').select('password', 'fullname').where('name', username).then(res => {
-
-            console.log('result', res)
             callback(res[0])
         }).catch(err => {
-
-            console.log('lỗi cmnr', err)
+            console.log('Lỗi', err)
         })
     },
     search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
@@ -119,7 +107,6 @@ module.exports = {
                 var users = res
                 knex('users').where(columnSearch, 'like', '%' + textSearch + '%').count()
                     .then(resCount => {
-
                         var count = resCount[0].count
                         let dataCallback = {
                             success: true,
@@ -142,13 +129,11 @@ module.exports = {
             })
     },
     getClaims: function (username, callback) {
-        console.log('data aloooo')
         pool.connect()
             .then(client => {
                 query = "select pq_roles.name as role,pq_actions.name as action from pq_role_user_group left join users on users.name = pq_role_user_group.group_user_code left join pq_role_action on pq_role_action.id = pq_role_user_group.role_action_code left join pq_roles on pq_roles.id = pq_role_action.role_code left join pq_actions on pq_actions.id = pq_role_action.action_code where users.name ='" + username + "'"
                 return client.query(query)
                     .then(res => {
-
                         let data = res.rows
                         client.release()
                         callback({
@@ -157,7 +142,6 @@ module.exports = {
                         })
                     }).catch(err => {
                         client.release()
-                        console.log('lỗi con mẹ nó rồi em ey', err)
                         callback({
                             success: false
                         })
@@ -170,7 +154,6 @@ module.exports = {
             })
     },
     updateRole: function (per, callback) {
-        console.log('user name', per.user)
         callback({ message: 'dcm' })
         pool.connect().then(client => {
             client.query("delete from pq_role_user_group where group_user_code ='" + per.user + "'").then(res1 => {
@@ -180,23 +163,18 @@ module.exports = {
                     if (role && action) {
                         let id_role_action = uuidv1()
                         client.query("select * from pq_role_action where role_code = (select id from pq_roles where name ='" + role + "' ) and action_code = (select id from pq_actions where name = '" + action + "')").then(res1 => {
-                            console.log('resssssssssssssssssssssssssssssssssssssssssssssssssssss',res1.rows)
-                            if (res1.rows.length>0) {
+                            if (res1.rows.length > 0) {
                                 let idra = res1.rows[0].id
                                 let idgr = uuidv1();
                                 client.query("insert into pq_role_user_group values('" + per.user + "','" + idra + "','" + idgr + "')").then(res2 => {
-                                    console.log('them moi thagnh cong')
                                 })
                             }
                             else {
-                                console.log('inserttttttttttttttttttttttttttttttttt')
                                 client.query("insert into pq_role_action values((select id from pq_roles where name ='" + role + "' ),(select id from pq_actions where name = '" + action + "'),'" + id_role_action + "')").then(res => {
-                                    console.log('-------------------------id----------------------', res.rows)
                                     client.query("select * from pq_role_action where role_code = (select id from pq_roles where name ='" + role + "' ) and action_code = (select id from pq_actions where name = '" + action + "')").then(response => {
                                         let idra = response.rows[0].id
                                         let idgr = uuidv1();
                                         client.query("insert into pq_role_user_group values('" + per.user + "','" + idra + "','" + idgr + "')").then(res2 => {
-                                            console.log('them moi thagnh cong')
                                         })
                                     })
 

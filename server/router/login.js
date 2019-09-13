@@ -8,8 +8,6 @@ app.set('Secret', config.secret);
 
 router.post('/', (req, res) => {
     userController.Login(req.body.username, function (data) {
-        console.log(req.body.username)
-        console.log(req.body.password);
         bcrypt.compare(req.body.password, data.password, function (err, match) {
             console.log('matching ', match)
             if (match) {
