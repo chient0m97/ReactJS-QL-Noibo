@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar, Badge, notification } from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar, Badge } from 'antd'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
 import Request from '@apis/Request'
@@ -155,7 +155,7 @@ class AppHeader extends Component {
     return (
       <Menu>
         <Menu.Item key="0">
-          <a href="https://www.google.com/">View Profile</a>
+        <a href="https://www.google.com/">View Profile</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a href="/changepassword">Đổi mật khẩu</a>
@@ -258,9 +258,9 @@ class AppHeader extends Component {
           </Button>
           <Button style={{ marginLeft: '50%' }} onClick={this.showModal.bind(this)}><Icon type="plus" />Tạo nhanh công việc</Button>
           <Dropdown overlay={this.state.menu} trigger={['click']}>
-            <a style={{ marginLeft: '2%' }} className="ant-dropdown-link" href="/">
-              <Badge count={0} style={{ fontSize: '20px', margin: '20px' }}>
-                <Icon type="bell" style={{ fontSize: '25px', margin: '20px' }} />
+            <a style={{ marginLeft: '70%' }} className="ant-dropdown-link" href="/">
+              <Badge count={0} style={{fontSize: '20px', margin: '20px'}}>
+                <Icon type="bell" style={{fontSize: '25px', margin: '20px'}}/>
               </Badge>
               <Avatar icon="user" style={{ fontSize: '20px', backgroundColor: 'orange' }} />
               <Tooltip title="Tên tài khoản">

@@ -1,15 +1,15 @@
 diff a/server/app.js b/server/app.js	(rejected hunks)
-@@ -43,9 +43,12 @@
- app.use('/menu', menuRoute)
+@@ -43,10 +43,13 @@
+     }
+   }
+ }
++var multer = require('multer')
+ app.use(cors());
  
- app.use('/khachhangRoute', khachhangRoute)
-+app.use('/', cusrouter);
  
- app.use('/', authorize, routers);
+ app.use('/nhansu', nhansuRoute);
++app.use('/member', memberRoute);
++app.use('/changepass', ChangePass);
  
-+app.use('/', router);
-+
- app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+ app.use('/hotro', hotroRoute)
  
- app.post('/verify')
-\ No newline at end of file

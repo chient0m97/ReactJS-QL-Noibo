@@ -117,6 +117,7 @@ class Customer extends React.Component {
             if (err) {
                 return
             }
+            console.log("hien thi value ", values)
 
             var url = this.state.action === 'insert' ? 'customer/insert' : 'customer/update'
             if (url === 'customer/update') {
@@ -761,7 +762,7 @@ class Customer extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm khách hàng">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
-                                        <Icon type="plus" />
+                                    <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>

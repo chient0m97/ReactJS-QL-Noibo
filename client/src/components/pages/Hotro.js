@@ -445,7 +445,7 @@ class Hotro extends React.Component {
                 values.nkht_thoigiancapnhat = new Date()
             }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
-                values.ht_thoigian_dukien_hoanthanh = format(new Date(), 'yyyy-mm-dd')
+                values.ht_thoigian_dukien_hoanthanh = format(new Date(),'yyyy-mm-dd')
             }
             Request(url, 'POST', values)
                 .then(async (response) => {
@@ -790,6 +790,7 @@ class Hotro extends React.Component {
     }
 
     getDataDaxong = (pageNumber) => {
+        console.log("haha")
         var user_cookie = null
         Request('hotro/getmyselfdaxong', 'POST', {
             user_cookie,
@@ -973,7 +974,7 @@ class Hotro extends React.Component {
                                     >Gấp</Button>
                                     <Button
                                         disabled={this.state.stateButtonDaxong}
-                                        onClick={this.getDataDaxong.bind(this, this.state.pageSize)}
+                                        onClick={this.getDataDaxong.bind(this, this.state.page)}
                                     >Đã xong</Button>
                                 </ButtonGroup>
                             </Col>
