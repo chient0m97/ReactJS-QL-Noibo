@@ -30,7 +30,7 @@ class Request extends Component {
           autosize={{ minRows: 3, maxRows: 5 }}
         />
         <hr style={{ width: '0px' }} />
-        <Button type="primary" onClick={()=>sendData()}>Đăng ký</Button>
+        <Button type="primary">Đăng ký</Button>
       </div>
     );
   }

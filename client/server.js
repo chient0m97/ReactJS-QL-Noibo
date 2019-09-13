@@ -12,36 +12,16 @@ app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'dist', './index.html'));
 })
 
-var mangUsers=[];
 io.on("connection", function(socket){
     console.log('co nguoi ket noi '+socket.id);
-    socket.on("client-send-Username", function(data){
-        console.log('da co nguoi vao', data);
-        
-        if(mangUsers.indexOf(data)>=0){
-            socket.emit("server-send-dki-thatbai");
-        }else{
-            mangUsers.push(data);
-            socket.Username=data;
-            socket.emit("server-send-dki-thanhcong", data);
-            io.sockets.emit("server-send-danhsach-Users", mangUsers);
-        }     
-    });
-    socket.on("logout", function(){
-        mangUsers.splice(
-            mangUsers.indexOf(socket.Username), 1
-        );
-        socket.broadcast.emit("server-send-danhsach-Users", mangUsers);
-    });
     socket.on("user-send-message", function(data){
-        io.sockets.emit("server-send-message", {un:socket.Username, nd:data});
+        io.sockets.emit("server-send-message", {un:data.user, nd:data.text});
     });
     socket.on("toi-dang-go-chu", function(){
-        var s = socket.Username+" dang go chu"; 
-        socket.broadcast.emit("ai-do-dang-go-chu", s);
+        socket.broadcast.emit("ai-do-dang-go-chu", "ai đó đang nhập tin nhắn");
     });
     socket.on("toi-stop-go-chu", function(){
         io.sockets.emit("ai-do-stop-go-chu");
     });
-});
+}); 
 //app.listen(88)
