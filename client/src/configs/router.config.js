@@ -20,6 +20,7 @@ import Hoadon from '../components/pages/Quanly_hoadon'
 import Request from '@pages/Request'
 import Half from '@pages/Half'
 import NhatkyHopdong from '@pages/NhatkyHopdong'
+import Chat from '@pages/Chat'
 
 const routers = [
   
@@ -128,6 +129,11 @@ const routers = [
         path: '/nkhd',
         component: NhatkyHopdong,
         name: 'NhatkyHopdong'
+    },
+    {
+        path: '/chat',
+        component: Chat,
+        name: 'Chat'
     },
 ]
 

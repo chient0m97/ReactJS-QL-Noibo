@@ -65,7 +65,7 @@ router.post('/insert', function (req, res) {
 })
 
 router.post('/update', function (req, res) {
-    console.log("day la update")
+    // console.log("day la update")
     customerController.updateCustomer(req.body, function (data) {
         res.send(data);
     })

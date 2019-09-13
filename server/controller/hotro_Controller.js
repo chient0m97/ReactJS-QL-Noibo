@@ -50,74 +50,74 @@ var hotroController = {
         })
     },
 
-    getDataMyself: function getDataMyself(myself, callback){
-        hotroData.getDataMyself(myself,(data)=>{
+    getDataMyself: function getDataMyself(myself, callback) {
+        hotroData.getDataMyself(myself, (data) => {
             callback(data);
         })
     },
 
-    getDataMyselfDaxong: function getDataMyselfDaxong(myself, callback){
-        hotroData.getDataMyselfDaxong(myself,(data)=>{
+    getDataMyselfDaxong: function getDataMyselfDaxong(myself,limit, offset, callback) {
+        hotroData.getDataMyselfDaxong(myself, limit, offset, (data) => {
             callback(data);
         })
     },
 
-    getDataMyselfGap: function getDataMyselfGap(myself, callback){
-        hotroData.getDataMyselfGap(myself,(data)=>{
+    getDataMyselfGap: function getDataMyselfGap(myself, callback) {
+        hotroData.getDataMyselfGap(myself, (data) => {
             callback(data);
         })
     },
 
-    getDataNguoitao: function getDataNguoitao(dataNguoiTao, callback){
-        hotroData.getDataNguoiTao(dataNguoiTao,(data)=>{
+    getDataNguoitao: function getDataNguoitao(dataNguoiTao, callback) {
+        hotroData.getDataNguoiTao(dataNguoiTao, (data) => {
             callback(data);
         })
     },
 
-    getIdDuan(callback){
-        hotroData.getIdDuan(function(data){
+    getIdDuan(callback) {
+        hotroData.getIdDuan(function (data) {
             callback(data);
         })
     },
 
-    getNhanSu(callback){
-        hotroData.getNhanSu(function(data){
+    getNhanSu(callback) {
+        hotroData.getNhanSu(function (data) {
             callback(data);
         })
     },
 
-    getKhachHang(callback){
-        hotroData.getKhachHang(function(data){
+    getKhachHang(callback) {
+        hotroData.getKhachHang(function (data) {
             callback(data);
         })
     },
 
-    getKhachHangWhere(dv,callback){
-        hotroData.getKhachHangWhere(dv,function(data){
+    getKhachHangWhere(dv, callback) {
+        hotroData.getKhachHangWhere(dv, function (data) {
             callback(data);
         })
     },
 
-    getDonVi(callback){
-        hotroData.getDonVi(function(data){
+    getDonVi(callback) {
+        hotroData.getDonVi(function (data) {
             callback(data);
         })
     },
 
-    getHopDong(callback){
-        hotroData.getHopDong(function(data){
+    getHopDong(callback) {
+        hotroData.getHopDong(function (data) {
             callback(data);
         })
     },
 
-    getDataKhachHang: function getDataKhachHang(ht_id, callback){
-        hotroData.getDataKhachhang(ht_id,(data)=>{
+    getDataKhachHang: function getDataKhachHang(ht_id, callback) {
+        hotroData.getDataKhachhang(ht_id, (data) => {
             callback(data);
         })
     },
 
-    getName: function getName(cookie, callback){
-        hotroData.getName(cookie,(data)=>{
+    getName: function getName(cookie, callback) {
+        hotroData.getName(cookie, (data) => {
             callback(data);
         })
     },

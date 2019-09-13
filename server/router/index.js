@@ -20,24 +20,20 @@ router.post('/get', function (req, res) {
 
 
 router.delete('/delete', function (req, res) {
-    console.log('----------delete-----------------user', req.body)
     userController.DeleteUserbyId(req.body.id, function (data) {
         res.send(data);
     })
 })
 
 router.post('/insert', function (req, res) {
-    console.log('----------------insert-------------', req.body)
     userController.insertUser(req.body, function (data) {
         res.send(data);
-        console.log('result', data)
 
     })
 
 })
 
 router.post('/update', function (req, res) {
-    console.log('---------------update-------------', req.body)
     userController.updateUser(req.body, function (data) {
         res.send(data);
     })
@@ -49,14 +45,12 @@ router.post('/search', function (req, res) {
     let columnSearch = req.body.columnSearch;
     let index = req.body.p1;
     let sortBy = req.body.p2
-    console.log('helo')
 
     userController.search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, function (data) {
         res.send(data);
     })
 })
 router.post('/checkrole', function (req, res) {
-    console.log('checkkkkkkkkkkkkkkkkkkkkkkkkkk ', req.body.name)
     userController.Login(req.body.name, (data) => {
         res.send(data);
     })

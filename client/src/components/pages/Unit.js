@@ -11,6 +11,8 @@ import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 // import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 import { async } from 'q';
+import Modal_FileDonvis from '@pages/Modal/Modal_FileDonvis.js'
+import axios from 'axios';
 
 const token = cookie.load('token');
 const { Column } = Table;
@@ -62,7 +64,9 @@ class Unit extends React.Component {
             selectedrow: [],
             selectedId: [],
             rowunitselected: {},
-            checked: true
+            checked: true,
+            visibleImport: false,
+            selectedFile: null,
         }
     }
     //---Delete---
@@ -638,11 +642,11 @@ class Unit extends React.Component {
     };
 
     onRowClick = (row) => {
-        if (this.state.selectedRowKeys[0] === row.dm_dv_id){
+        if (this.state.selectedRowKeys[0] === row.dm_dv_id) {
             this.onSelectChange([], [])
         }
-        else{
-            this.onSelectChange([row.dm_dv_id],[row])
+        else {
+            this.onSelectChange([row.dm_dv_id], [row])
         }
     }
 
@@ -674,6 +678,116 @@ class Unit extends React.Component {
         }
     }
 
+    showModalImport = () => {
+        this.setState({
+            visibleImport: true
+        });
+    }
+
+    handleCancelImport = e => {
+        this.setState({
+            visibleImport: false
+        });
+    };
+
+    onClickHandler = () => {
+        const data = new FormData()
+        if (this.state.selectedFile !== null) {
+            data.append('file', this.state.selectedFile)
+            axios.post("http://localhost:5000/upload", data, {
+                // receive two    parameter endpoint url ,form data
+            })
+                .then(res => { // then print response status
+                })
+        }
+    }
+
+    saveFormRefImport = formRef => {
+        this.formRefImport = formRef;
+    }
+
+    onChangeFile = async (e) => {
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+        var file = e.target.files[0];
+        var fileUploadHopdong = await toBase64(file);
+        var fileName = file.name;
+        this.setState({
+            valuefile: fileUploadHopdong,
+            valuename: fileName
+        })
+    }
+
+    onChangeHandler = event => {
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
+    }
+
+    insertImport = async () => {
+        this.onClickHandler();
+        const { form } = this.formRefImport.props;
+        form.validateFields((err, values) => {
+            if (err) {
+                return
+            }
+            if (this.state.selectedFile !== null) {
+                const urlFile = "upload/" + this.state.selectedFile.name;
+                values.file_data = urlFile
+            }
+            else {
+                values.file_data = " "
+            }
+            var url = 'filekhachhangs/insert'
+            Request(url, 'POST', values)
+                .then(async (response) => {
+                    var excel = {}
+                //    await response.data.dataSheet1.forEach(element => {
+                //        if( element.dm_dv_id_cha ===undefined)
+                //        excel.push({dm_dv_id_cha: null})
+                //     });
+                   await console.log('excel ',response.data.dataSheet1)
+                    return
+                    Request('unit/insert', 'POST', response.data.dataExcel)
+                        .then((response) => {
+                            if (response.status === 200 & response.data.success === true) {
+                                form.resetFields();
+                                this.getUnits(this.state.page)
+                            }
+                        })
+                    if (response.status === 200 & response.data.success === true) {
+                        form.resetFields();
+                        this.setState({
+                            visibleImport: false,
+                            message: response.data.message
+                        })
+                    }
+                    var description = response.data.message
+                    var notifi_type = 'success'
+                    var message = 'Thành Công'
+
+                    console.log("check response ", response.data.success)
+                    if (!!!response.data.success) {
+                        message = 'Có lỗi xảy ra !'
+                        notifi_type = 'error'
+                        description = response.data.message.map((value, index) => {
+                            return <Alert type='error' message={value}></Alert>
+                        })
+                    }
+                    await notification[notifi_type]({
+                        message: message,
+                        description: description
+                    });
+                    this.getUnits(this.state.page)
+                })
+        })
+    }
+
     render() {
         const { selectedRowKeys } = this.state
         const rowSelection = {
@@ -693,7 +807,7 @@ class Unit extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm đơn vị">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModalInsert.bind(null)}>
-                                    <Icon type="plus" />
+                                        <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -725,6 +839,11 @@ class Unit extends React.Component {
                                             <Icon type="reload" />
                                         </Button>
                                     </Tooltip>
+                                </Col>
+                                <Col span={3}>
+                                    <Button shape="round" type="primary"
+                                        onClick={this.showModalImport.bind(this)}
+                                    >Import File</Button>
                                 </Col>
                             </span>
                         </Row>
@@ -769,9 +888,9 @@ class Unit extends React.Component {
                             onSelectDv={this.onSelectDv}
                             stateoption={this.state.stateoption}
                         />
-                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} className="table-contents" pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: '130%'}} rowKey="dm_dv_id">
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} className="table-contents" pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: '130%' }} rowKey="dm_dv_id">
                             <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} width={150} />
-                            <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hidden-action"/>
+                            <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hidden-action" />
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
                             <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
@@ -785,13 +904,22 @@ class Unit extends React.Component {
                             <Column title="Mã người đại diện" dataIndex="kh_id_nguoidaidien" key="kh_id_nguoidaidien" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Người đại diện" dataIndex="tennguoidaidien" key="tennguoidaidien" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Trạng thái đơn vị" dataIndex="dm_dv_trangthai" key="dm_dv_trangthai" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Trạng thái" dataIndex="dm_dv_trangthai_txt" key="dm_dv_trangthai_txt"  />
+                            <Column title="Trạng thái" dataIndex="dm_dv_trangthai_txt" key="dm_dv_trangthai_txt" />
                             <Column />
                         </Table>
                     </Row>
                     <Row>
                         <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
                     </Row>
+
+                    <Modal_FileDonvis
+                        wrappedComponentRef={this.saveFormRefImport}
+                        visible={this.state.visibleImport}
+                        onCancel={this.handleCancelImport}
+                        onSave={this.insertImport}
+                        onChangeFile={this.onChangeFile}
+                        onChangeHandler={this.onChangeHandler}
+                    />
                 </div>
             );
         else

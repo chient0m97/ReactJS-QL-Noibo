@@ -234,7 +234,6 @@ class Duan extends React.Component {
     Request('duan/getcha', 'POST', {
     }).then((res) => {
       if (res.data) {
-        console.log("Day la res.data ", res.data)
         this.setState({
           select_qtda: res.data
         })

@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { Tag, Icon, Input, Button, Select, DatePicker } from 'antd';
+import io from 'socket.io-client';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const { TextArea } = Input;
 class Request extends Component {
+  componentWillMount(){
+    this.socket = io('localhost:6969');
+  }
   render() {
     var formatDateHMS = require('dateformat')
     return (
@@ -26,7 +30,7 @@ class Request extends Component {
           autosize={{ minRows: 3, maxRows: 5 }}
         />
         <hr style={{ width: '0px' }} />
-        <Button type="primary">Đăng ký</Button>
+        <Button type="primary" onClick={()=>sendData()}>Đăng ký</Button>
       </div>
     );
   }

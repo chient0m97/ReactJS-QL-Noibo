@@ -7,11 +7,8 @@ const bcrypt = require('bcryptjs');
 app.set('Secret', config.secret);
 
 router.post('/', (req, res) => {
-    console.log(req.body)
     userController.changePass(req.body,(data)=>{
-        console.log('checkkkkkkkkkkkkkkkkkkkkkkkkkkkkk',data)
         res.send(data);
-        console.log('asdasds')
     })
 });
 module.exports = router;

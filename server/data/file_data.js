@@ -37,15 +37,18 @@ module.exports = {
 
             var sheet_name_list = wb.SheetNames;
             
-            var xlData = xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[0]]);
+            var xlData = xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[1]]);
+            var xlDataSheet1 = xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[0]]);
 
             // var ws = wb.Sheets["Hợp đồng"]
             // var data =xlsx.utils.sheet_to_json(ws)
             // console.log("day la data ",xlData)
 
+            console.log(xlDataSheet1)
             callback({
                 success: true,
-                dataExcel: xlData
+                dataExcel: xlData,
+                dataSheet1: xlDataSheet1
             })
         }).catch(err => {
             console.log(err)

@@ -22,7 +22,6 @@ class NormalLoginForm extends Component {
                     username: this.state.username,
                     password: this.state.password,
                 };
-                console.log('data post: ', user);
                 Request('Login', 'POST', user)
                     .then((response) => {
                         if (response.data.success === true) {
@@ -73,7 +72,9 @@ class NormalLoginForm extends Component {
                 <Form onSubmit={this.Login} className="login-form">
                     <h3 style={{
                         fontSize: '20px', fontStyle: 'italic', fontWeight: 'bold', textAlign: 'center', color: '#40a9ff'
-                    }}>Đăng nhập hệ thống</h3>
+                    }}>
+                        Đăng nhập hệ thống
+                    </h3>
                     <Form.Item>
                         {getFieldDecorator('username', {
                             rules: [{ required: true, message: 'Tên đăng nhập không  được để trống!' }],

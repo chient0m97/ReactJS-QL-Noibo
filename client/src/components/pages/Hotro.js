@@ -9,13 +9,15 @@ import cookie from 'react-cookies'
 import '@styles/style.css'
 import moment from 'moment';
 import { Width } from 'devextreme-react/linear-gauge';
+import { async } from 'q';
+//import Highlighter from 'react-highlight-words';
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
 const ButtonGroup = Button.Group;
 
 var format = require('dateformat')
-
+var demclass = 0
 const FormModal = Form.create({ name: 'from_in_modal' })(
     class extends React.Component {
         clear = e => {
@@ -37,7 +39,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
         }
 
         onOk = (value) => {
-            console.log('onOk: ', value);
+            // console.log('onOk: ', value);
         }
 
         render() {
@@ -50,8 +52,9 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var first_kh_id = null;
             var first_da_id = null;
             var first_ns_id = null;
-            var first_dv_id = null
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton, set_Select_KhachHang } = this.props;
+            var first_dv_id = null;
+            var date_Tiepnhan = null
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton, set_Select_KhachHang, dateTiepnhan } = this.props;
             const { getFieldDecorator } = form;
             if (khachhang.length !== 0) {
                 first_kh_id = khachhang[0].kh_id
@@ -64,6 +67,12 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             }
             if (nhansu.length !== 0) {
                 first_ns_id = nhansu[0].ns_id
+            }
+            if (id_visible === true) {
+                date_Tiepnhan = formatDateHMS(dateTiepnhan, "dd / mm / yyyy -- HH : MM : ss")
+            }
+            else {
+                date_Tiepnhan = formatDateHMS(new Date(), "dd / mm / yyyy -- HH : MM : ss")
             }
             return (
                 <Modal
@@ -245,7 +254,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 <Form.Item label="Thời gian tiếp nhận">
                                     {getFieldDecorator('ht_thoigiantiepnhan', {
                                         rules: [{}],
-                                    })(<Tag > <Icon type="clock-circle" />&ensp;&ensp;&ensp;&ensp; {formatDateHMS(new Date(), "dd / mm / yyyy -- HH : MM : ss")}&ensp;&ensp;&ensp;&ensp; </Tag>)}
+                                    })(<Tag > <Icon type="clock-circle" />&ensp;&ensp;&ensp;&ensp; {date_Tiepnhan}&ensp;&ensp;&ensp;&ensp; </Tag>)}
                                 </Form.Item>
                             </Col>
                             <Col span={8}>
@@ -329,6 +338,11 @@ class Hotro extends React.Component {
             selectedrow: [],
             selectedRowKeys: [],
             donvis: [],
+            dateTiepnhan: null,
+            stateButtonDaxong: false,
+            stateButtonTatca: false,
+            stateButtonGap: false,
+            searchText: '',
         }
     }
 
@@ -391,10 +405,10 @@ class Hotro extends React.Component {
                 if (res.data.data.hotros !== undefined) {
                     this.setState({
                         hotro: res.data.data.hotros,
-                        count: res.data.data.count
-                    })
-                    this.props.fetchLoading({
-                        loading: false
+                        count: res.data.data.count,
+                        stateButtonTatca: true,
+                        stateButtonDaxong: false,
+                        stateButtonGap: false
                     })
                     var array_duan = []
                     array_ht_trangthai = []
@@ -406,11 +420,9 @@ class Hotro extends React.Component {
                         id_duanfilltable: array_duan
                     })
                 }
-                else {
-                    this.props.fetchLoading({
-                        loading: false
-                    })
-                }
+                this.props.fetchLoading({
+                    loading: false
+                })
 
             })
     }
@@ -497,8 +509,9 @@ class Hotro extends React.Component {
     async componentDidMount() {
         await this.getHotro(this.state.pageNumber, this.state.index, this.state.sortBy);
         document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
-        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
+        // document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
+        // document.getElementsByClassName('')
         document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
     }
 
@@ -506,12 +519,14 @@ class Hotro extends React.Component {
         this.setState({
             page: page
         })
-        this.getHotro(page);
-        if (this.state.isSearch === 1) {
-            this.search(this.state.searchText)
+        if (this.state.stateButtonTatca === true) {
+            this.getHotro(page)
+        }
+        else if (this.state.stateButtonGap === true) {
+            this.getDataGap(page)
         }
         else {
-            this.getHotro(page)
+            this.getDataDaxong(page)
         }
     }
 
@@ -541,7 +556,10 @@ class Hotro extends React.Component {
     }
 
     showModal = async (hotro) => {
-        
+        // console.log("hotro ", hotro)
+        this.setState({
+            action: 'insert'
+        })
         if (hotro.ht_trangthai === "daxong") {
             this.setState({
                 trangthai: true,
@@ -563,24 +581,28 @@ class Hotro extends React.Component {
         if (hotro.ht_id !== undefined) {
             this.setState({
                 id_visible: true,
-                action: 'update'
+                action: 'update',
+                dateTiepnhan: hotro.ht_thoigiantiepnhan
             })
             form.setFieldsValue(hotro);
             if (hotro.ht_thoigian_dukien_hoanthanh !== null) {
                 form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: formatDateModal(hotro.ht_thoigian_dukien_hoanthanh, "yyyy-mm-dd") })
             }
         }
-        //var user_cookie = cookie.load('user');
-        var nguoitao = ""
-        await Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
-            if (res) {
-                if (res.data.data.name[0] === undefined)
-                    nguoitao = "Chưa có tài khoản"
-                else
-                    nguoitao = res.data.data.name[0].ns_hovaten
-            }
-        })
-        form.setFieldsValue({ ns_id_nguoitao: user_cookie })
+        else {
+            var user_cookie = cookie.load('user');
+            var nguoitao = ""
+            await Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
+                if (res) {
+                    if (res.data.data.name[0] === undefined)
+                        nguoitao = "Chưa có tài khoản"
+                    else
+                        nguoitao = res.data.data.name[0].ns_hovaten
+                }
+            })
+            form.setFieldsValue({ ns_id_nguoitao: user_cookie })
+            form.setFieldsValue({ ht_thoigian_dukien_hoanthanh: formatDateModal(new Date(), "yyyy-mm-dd") })
+        }
         this.set_Select_id_duan();
         this.set_Select_NhanSu();
         this.set_Select_KhachHang(null);
@@ -714,6 +736,7 @@ class Hotro extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys, selectedRows) => {
+        // console.log("key ",selectedRowKeys)
         this.setState({
             selectedRowKeys,
             selectedId: selectedRowKeys
@@ -749,28 +772,146 @@ class Hotro extends React.Component {
     }
 
     getDataGap = () => {
-        this.render()
         var user_cookie = null
         Request('hotro/getmyselfgap', 'POST', { user_cookie }).then((res) => {
             if (res.data.data.myselfGap) {
                 this.setState({
                     hotro: res.data.data.myselfGap,
+                    stateButtonTatca: false,
+                    stateButtonGap: true,
+                    stateButtonDaxong: false
                 })
                 array_ht_trangthai = []
                 res.data.data.myselfGap.map((data, index) => {
                     array_ht_trangthai.push(data.ht_trangthai)
                 })
             }
+            this.forceUpdate()
         })
     }
 
+    getDataDaxong = (pageNumber) => {
+        console.log("haha")
+        var user_cookie = null
+        Request('hotro/getmyselfdaxong', 'POST', {
+            user_cookie,
+            pageSize: this.state.pageSize,
+            pageNumber: pageNumber,
+        }).then((res) => {
+            if (res.data.data.myselfDaxong) {
+                this.setState({
+                    hotro: res.data.data.myselfDaxong,
+                    count: res.data.data.count,
+                    stateButtonDaxong: true,
+                    stateButtonTatca: false,
+                    stateButtonGap: false
+                })
+                array_ht_trangthai = []
+                res.data.data.myselfDaxong.map((data, index) => {
+                    array_ht_trangthai.push(data.ht_trangthai)
+                })
+            }
+            this.forceUpdate()
+        })
+    }
+
+    // handleSearch = (selectedKeys, confirm) => {
+    //     confirm();
+    //     this.setState({ searchText: selectedKeys[0] });
+    //   };
+    
+    //   handleReset = clearFilters => {
+    //     clearFilters();
+    //     this.setState({ searchText: '' });
+    //   };
+
+    // getColumnSearchProps = dataIndex => ({
+
+    //     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+
+    //         <div style={{ padding: 8 }}>
+    //             <Input
+    //                 ref={node => {
+    //                     console.log("day la search ", selectedKeys[0])
+    //                     this.searchInput = node;
+    //                 }}
+    //                 placeholder={` Từ cần tìm ${dataIndex}`}
+    //                 value={selectedKeys[0]}
+    //                 onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+    //                 onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+    //                 style={{ width: 188, marginBottom: 8, display: 'block' }}
+
+    //             />
+    //             <Button
+    //                 type="primary"
+    //                 onClick={() => this.handleSearch(selectedKeys, confirm)}
+    //                 icon="search"
+    //                 size="small"
+    //                 style={{ width: 90, marginRight: 8 }}
+    //             >
+    //                 Tìm Kiếm
+    //         </Button>
+    //             <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+    //                 Xóa
+    //         </Button>
+    //         </div>
+    //     ),
+    //     filterIcon: filtered => (
+    //         <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    //       ),
+    //       onFilter: (value, record) =>
+    //         record[dataIndex]
+    //           .toString()
+    //           .toLowerCase()
+    //           .includes(value.toLowerCase()),
+    //       onFilterDropdownVisibleChange: visible => {
+    //         if (visible) {
+    //           setTimeout(() => this.searchInput.select());
+    //         }
+    //       },
+    //       render: text => (
+    //         <Highlighter
+    //           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+    //           searchWords={[this.state.searchText]}
+    //           autoEscape
+    //         //   textToHighlight={text.toString()}
+    //         />
+    //       ),
+    // });
+
+    search = async (xxxx) => {
+        Request('user/search', 'POST', {
+            pageSize: this.state.pageSize,
+            pageNumber: this.state.page,
+            searchText: xxxx,
+            columnSearch: this.state.columnSearch,
+            p1: this.state.index,
+            p2: this.state.sortBy,
+
+        })
+            .then((response) => {
+                let data = response.data;
+
+                if (data.data)
+                    this.setState({
+                        // users: data.data.users,
+                        // count: Number(data.data.count),//eps kieeru veef,
+                        // searchText: xxxx,
+                        // isSearch: 1
+                    })
+
+            })
+
+    }
+
     render() {
+
         var i = 0
         var j = 0
-        // var demclickplus = 0
         var formatDate = require('dateformat')
         const { selectedRowKeys } = this.state
         const rowSelection = {
+            columnWidth: '60px',
             hideDefaultSelections: true,
             selectedRowKeys,
             onChange: this.onSelectChange,
@@ -819,24 +960,34 @@ class Hotro extends React.Component {
                                     </Button>
                                 </Tooltip>
                             </Col>
-                            {/* <Col span={3} offset={6}>
+                            <Col span={3} offset={6}>
                                 <span style={{ fontSize: '16px' }}>Loại công việc</span>
                             </Col>
                             <Col span={6}>
                                 <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
-                                    <Button >Tất cả</Button>
-                                    <Button onClick={this.getDataGap.bind(this)}>Gấp</Button>
-                                    <Button >Đã xong</Button>
+                                    <Button
+                                        disabled={this.state.stateButtonTatca}
+                                        onClick={this.getHotro.bind(this, this.state.page)}
+                                    >Tất cả</Button>
+                                    <Button
+                                        disabled={this.state.stateButtonGap}
+                                        onClick={this.getDataGap.bind(this)}
+                                    >Gấp</Button>
+                                    <Button
+                                        disabled={this.state.stateButtonDaxong}
+                                        onClick={this.getDataDaxong.bind(this, this.state.page)}
+                                    >Đã xong</Button>
                                 </ButtonGroup>
-                            </Col> */}
+                            </Col>
                         </Row>
                     </Card>
                     <Row style={{ marginTop: 5 }}>
-                        <Table rowSelection={rowSelection}
-                            onRowClick={this.onRowClick}
+                        <Table
+                            rowSelection={rowSelection}
+                            onRowClick={this.onRowClick.bind(this)}
                             pagination={false}
                             dataSource={this.state.hotro}
-                            rowKey="ht_id" bordered scroll={{ x: 1000 }}
+                            rowKey="ht_id" bordered scroll={{ x: 1000, y: 400 }}
                             expandedRowRender={(record, selectedRowKeys) => {
                                 return (
                                     <div style={{ textAlign: 'left' }}>
@@ -848,7 +999,8 @@ class Hotro extends React.Component {
                                         <Row style={{ marginTop: '5px', marginBottom: '5px' }} >Email : {this.state.hotro[selectedRowKeys].kh_email}</Row>
                                     </div>
                                 )
-                            }}>
+                            }}
+                        >
                             <Column dataIndex="ht_thoigian_dukien_hoanthanh" align='center' className="hidden-action" width={150}
                                 render={
                                     text => {
@@ -865,14 +1017,15 @@ class Hotro extends React.Component {
                                             i = 0
                                             return <Badge color={"green"} />
                                         }
-                                        
                                     }}
                             />
                             <Column title="Dự án" dataIndex="dm_duan_ten" width={150}
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
-                                onHeaderCell={this.onHeaderCell} />
+                                onHeaderCell={this.onHeaderCell}
+                                // {...this.getColumnSearchProps('Dự án')}
+                            />
                             <Column title="Đơn vị" dataIndex="dm_dv_ten" width={150}
                                 render={text => {
                                     return (
@@ -880,7 +1033,9 @@ class Hotro extends React.Component {
                                             <Row>{this.checkDate(i, text, j)}</Row>
                                         </div>)
                                 }}
-                                width={150} onHeaderCell={this.onHeaderCell} />
+                                width={150} onHeaderCell={this.onHeaderCell}
+                                // {...this.getColumnSearchProps('Đơn vị')}
+                            />
                             <Column title="Khách hàng" dataIndex="kh_ten" width={150}
                                 render={text => {
                                     return (
@@ -931,7 +1086,8 @@ class Hotro extends React.Component {
                             />
                             <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
                                 render={text => {
-                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy '-' HH:MM:ss"), j)
+                                    // return this.checkDate(i, formatDate(text, "dd/mm/yyyy '-' HH:MM:ss"), j)
+                                    return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
@@ -970,6 +1126,7 @@ class Hotro extends React.Component {
                         trangthaibutton={this.state.trangthaibutton}
                         changeButton={this.changeButton}
                         set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
+                        dateTiepnhan={this.state.dateTiepnhan}
                     />
                     <Modal_Khachhangs
                         title="Thêm Khách Hàng"

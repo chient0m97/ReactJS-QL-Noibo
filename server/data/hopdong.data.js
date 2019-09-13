@@ -9,10 +9,10 @@ module.exports = {
         hd.hd_loai,\
         hd.hd_doituong,\
         case (hd.hd_loai)\
-            when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
+            when 'DV' then (select dv.dm_dv_ten || ' - ' || \
+            dv.dm_dv_diachi from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
             when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
         end ten_hd_doituong,\
-        hd.hd_doituong,\
         hd.dm_duan_id,\
         da.dm_duan_ten,\
         hd.hd_so,\
@@ -32,7 +32,6 @@ module.exports = {
              when 'DTT' then 'Đã thanh toán'\
              when 'DONG' then 'Đóng'\
         end ten_hd_trangthai,\
-        hd.hd_trangthai,\
         hd.hd_files,\
         hd.hd_ghichu\
         from hopdongs hd,\
@@ -74,7 +73,6 @@ module.exports = {
             when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.nkhd_doituong)\
             when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.nkhd_doituong)\
         end ten_nkhd_doituong,\
-        hd.nkhd_doituong,\
         hd.dm_duan_id,\
         da.dm_duan_ten,\
         hd.nkhd_so,\
@@ -94,7 +92,6 @@ module.exports = {
              when 'DTT' then 'Đã thanh toán'\
              when 'DONG' then 'Đóng'\
         end ten_nkhd_trangthai,\
-        hd.nkhd_trangthai,\
         hd.nkhd_files,\
         hd.nkhd_ghichu,\
         hd.nkhd_action,\
@@ -132,7 +129,7 @@ module.exports = {
             callback({ success: true });
         }).catch(err => {
             console.log(err);
-            
+
             callback({ success: false })
         })
     },
@@ -144,13 +141,22 @@ module.exports = {
         })
     },
     updateHopdong: function (hopdong, callback) {
-        knex.from('hopdongs').where('hd_id', hopdong.hd_id)
-            .update(hopdong).then(res => {
+        console.log(hopdong, 'hopdong');
+        if (hopdong.hd_files === ' ') {
+            knex.from('hopdongs').where('hd_id', hopdong.hd_id)
+                .update('hd_loai', hopdong.hd_loai, 'hd_so', hopdong.hd_so, 'hd_thoigianthuchien', hopdong.hd_thoigianthuchien, 'hd_ngayketthuc', hopdong.hd_ngayketthuc, 'hd_diachi', hopdong.hd_diachi, 'hd_ngayky', hopdong.hd_ngayky, 'hd_ngaythanhly', hopdong.hd_ngaythanhly, 'hd_ngayxuathoadon', hopdong.hd_ngayxuathoadon, 'hd_ngaythanhtoan', hopdong.hd_ngaythanhtoan, 'hd_trangthai', hopdong.hd_trangthai, 'hd_ghichu', hopdong.hd_ghichu, 'hd_doituong', hopdong.hd_doituong, 'dm_duan_id', hopdong.dm_duan_id, 'hd_congty', hopdong.hd_congty).then(res => {
+                    callback({ success: true })
+                }).catch(err => {
+                    callback({ success: false })
+                })
+        }
+        else {
+            knex.from('hopdongs').update(hopdong).where('hd_id', hopdong.hd_id).then(res => {
                 callback({ success: true })
             }).catch(err => {
-                console.log(err)
                 callback({ success: false })
             })
+        }
     },
     selectHopdong: function (hopdong, callback) {
         knex.from('hopdongs').select('*').where('hd_id', hopdong.hd_id).then(res => {
@@ -167,7 +173,7 @@ module.exports = {
         })
     },
     getdonvi: function (callback) {
-        let strSqlDV = "select dm_dv_id as id, dm_dv_ten ten from donvis";
+        let strSqlDV = "select dm_dv_id as id, dm_dv_ten || ' (' || dm_dv_diachi || ')' ten from donvis";
         knex.raw(strSqlDV).then(res => {
             callback(res.rows);
         }).catch((err) => {

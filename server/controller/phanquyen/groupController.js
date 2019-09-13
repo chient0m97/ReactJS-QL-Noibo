@@ -25,10 +25,8 @@ var groupController = {
         );
     },
 
-  
     deleteGroup: async function deleteGroup(Id, callback) {
         groupData.deleteGroup(Id, (data) => {
-            console.log('erioertioertioerhiotero', data.success)
             if (data.success === true) {
                 callback({
                     success: data.success,
@@ -37,35 +35,31 @@ var groupController = {
             }
             else {
                 callback(data, 400);
-
             }
         })
     },
 
     insertGroup: function insertGroup(user, callback) {
-       
-            groupData.insertGroup(user, (response) => {
-                var message = constant.successInsert;
-                var status = 200;
-                if (!response.success) {
-                    Validator.error.push(constant.errorSys)
-                    message = Validator.getError()
-                    status = 400
-                }
-                callback({
-                    message: message,
-                    success: response.success
-                }, status);
-            })
-       
+        groupData.insertGroup(user, (response) => {
+            var message = constant.successInsert;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError()
+                status = 400
+            }
+            callback({
+                message: message,
+                success: response.success
+            }, status);
+        })
     },
+
     updateGroup: function updateGroup(user, callback) {
-        console.log('controller')
         if (Validator.isMail(user.email, 'Email không đúng định dạng')
             & Validator.isNumAlpha(user.name, 'Tên đăng nhập không đúng định dạng')
             & Validator.isPass(user.password, 'Mật khẩu không đúng định dạng')
         ) {
-            console.log('go to db')
             bcrypt.hash(user.password, 10, function (err, hash) {
                 user.password = hash;
                 groupData.updateGroup(user, (res) => {
@@ -75,15 +69,12 @@ var groupController = {
                     })
                 })
             });
-
-
         }
     },
+
     Login: function getUserLogin(userName, callback) {
         groupData.getUserLogin(userName, (data) => {
-            console.log('data', data)
             if (data) {
-                console.log('vao get claim')
                 this.getClaimsByUser(userName, (cls) => {
                     data.claims = cls;
                     callback(data);
@@ -93,7 +84,6 @@ var groupController = {
                 callback(data)
 
             }
-
         })
 
     },
@@ -102,17 +92,13 @@ var groupController = {
             if (data.data.length > 0) {
                 var data = data.data.map(function (value) {
                     return value.role + '.' + value.action
-                    
                 });
                 callback(data)
             }
             else {
-                console.log('readdddd')
-                
                 callback(data.data)
             }
         })
-
     },
 
     getClaimsByGroupUser: (groupUserName, callback) => {
@@ -130,30 +116,27 @@ var groupController = {
             callback(data);
         }
     },
+
     search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
-        console.log('dm')
         let limit = pageSize;
         let offset = pageSize * (pageNumber - 1);
         groupData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
-            console.log('aaaaaaaaa', data)
             callback(data);
         })
     },
 
     setGroupPermission: function (permiss, callback) {
         groupData.updateRole(permiss, (data) => {
-            console.log(data)
             callback(data)
         })
-        console.log('perrrrrrrrrrrrrrrrrrrrrrrrr', permiss)
         //    let per =  permiss.map(function (value) {
         //         return value = { role: value.split('.')[0], action: value.split('.')[1] }
         //     })
         //     callback(per)
     },
+
     validateCreate: (req, res, next) => {
         next()
     },
-
 }
 module.exports = groupController;

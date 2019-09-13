@@ -323,12 +323,10 @@ class Hopdong extends React.Component {
     const data = new FormData()
     if (this.state.selectedFile !== null) {
       data.append('file', this.state.selectedFile)
-      console.log(this.state.selectedFile, 'file day');
       axios.post("http://localhost:5000/upload", data, {
         // receive two    parameter endpoint url ,form data
       })
         .then(res => { // then print response status
-          console.log(res.statusText)
         })
     }
   }
@@ -379,6 +377,8 @@ class Hopdong extends React.Component {
           this.getHopdongs(this.state.page)
         })
     });
+    document.getElementById('inputFile').value = ""
+    
   }
 
   refresh = () => {
@@ -451,6 +451,7 @@ class Hopdong extends React.Component {
     });
     //document.getElementById('file').value = ''
     form.resetFields();
+
     if (hopdong.hd_id !== undefined) {
       this.setState({
         id_visible: true,
@@ -494,11 +495,14 @@ class Hopdong extends React.Component {
     });
   };
   handleCancel = e => {
+    console.log("ccancel")
+    const { form } = this.formRef.props
+    form.resetFields()
     this.setState({
       selectedFile: null
     });
-    document.getElementById('file').value = ''
-    const { form } = this.formRef.props
+    document.getElementById('file').value=''
+    //const {form} = this.formRef.props
     form.resetFields()
     this.setState({
       visible: false,
@@ -529,6 +533,7 @@ class Hopdong extends React.Component {
   showTotal = (total) => {
     return `Total ${total} items `;
   }
+
   onShowSizeChange = async (current, size) => {
     await this.setState({
       pageSize: size
@@ -541,6 +546,7 @@ class Hopdong extends React.Component {
       this.getHopdongs(this.state.page, this.state.index, this.state.sortBy)
     }
   }
+
   onChangeSearchType = async (value) => {
     await this.setState({
       columnSearch: value,
@@ -586,7 +592,6 @@ class Hopdong extends React.Component {
     // if (extension === null){
     //   event.target.files.name = '';
     // }
-      var clearFile = event.target.value;
       this.setState({
         selectedFile: event.target.files[0],
 

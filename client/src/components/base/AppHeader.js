@@ -161,7 +161,7 @@ class AppHeader extends Component {
           <a href="/changepassword">Đổi mật khẩu</a>
         </Menu.Item>
         <Menu.Item key="2">
-          <a onClick={this.logOut} href="/">Đăng xuất</a>
+          <a onClick={this.logOut} href="/"> <Icon type="logout" />Đăng xuất</a>
         </Menu.Item>
       </Menu>
     );
