@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-
 const app = express();
 var server = require('http').Server(app);
 var port = (process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 6969);
@@ -11,7 +10,6 @@ app.use(express.static(path.join(__dirname, 'dist', './')));
 app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'dist', './index.html'));
 })
-
 io.on("connection", function(socket){
     console.log('co nguoi ket noi '+socket.id);
     socket.on("user-send-message", function(data){
@@ -23,5 +21,24 @@ io.on("connection", function(socket){
     socket.on("toi-stop-go-chu", function(){
         io.sockets.emit("ai-do-stop-go-chu");
     });
+    socket.on("user-send-registration", function(data){
+        console.log(data,'data');
+        if(data.dangKy==="nhuan")
+        {
+            io.sockets.emit("server-send-nhuan", data);
+            console.log(data, 'data to nhuan');
+        }
+        else if(data.dangKy==="phe")
+        {
+            io.sockets.emit("server-send-phe", data);
+        }
+        else if(data.dangKy==="hoai")
+        {
+            io.sockets.emit("server-send-hoai", data);
+        }
+        else
+        {
+            io.sockets.emit("server-send-hoa", data);
+        }
+    })
 }); 
-//app.listen(88)

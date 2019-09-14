@@ -196,7 +196,11 @@ class AppSider extends Component {
                     </SubMenu>
                     <Menu.Item key="14">
                         <Icon type="file" />
-                        <span><NavLink to="/file" className="">Tập tin Khách Hàng</NavLink ></span>
+                        <span><NavLink to="/file" className="">Tập Tin Khách Hàng</NavLink ></span>
+                    </Menu.Item>
+                    <Menu.Item key="17">
+                        <Icon type="file-done" />
+                        <span><NavLink to="/approved" className="">Phê Duyệt</NavLink ></span>
                     </Menu.Item>
                     <Menu.Item key="13">
                         <Icon type="setting" onClick={this.showDrawer} />Cài Đặt

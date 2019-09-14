@@ -6,9 +6,6 @@ import cookie from 'react-cookies'
 import { Button, Input } from 'antd'
 var socket = io('localhost:6969');
 var ten = cookie.load('user');
-socket.on("server-send-dki-thatbai", function () {
-    //alert("Sai Username ( co nguoi dang ky roi )");
-});
 socket.on("server-send-danhsach-Users", function (data) {
     $("#boxContent").html("");
     data.forEach(function (i) {
@@ -53,10 +50,12 @@ class Chat extends Component {
             tempValue: '',
         }
     }
-    
+
     clientSendUsername = (tempValue) => {
         console.log(tempValue, 'tempValue');
         socket.emit("user-send-message", tempValue);
+        document.getElementById("txtMessage").value=''
+        document.getElementById('txtMessage').focus();
     }
     textChat(event) {
         const name = event.target.name;
@@ -75,7 +74,7 @@ class Chat extends Component {
             socket.emit("toi-stop-go-chu");
         });
     }
-    
+
     render() {
         var obj = {
             text: this.state.tempValue,
@@ -89,8 +88,11 @@ class Chat extends Component {
                         <div id="listMessages"></div>
                         <div id="thongbao"></div>
                         <div>
-                            <Input type="text" name="text" id="txtMessage" placeholder="Type your message here..." onChange={(event) => this.textChat(event)}  /><Button onClick={()=>this.clientSendUsername(obj)}>Send</Button>
-                        </div>         
+                            <Input style={{marginBottom: "15px"}} type="text" name="text" id="txtMessage" placeholder="Type your message here..." onChange={(event) => this.textChat(event)} />
+                        </div>
+                        <div>
+                            <Button onClick={() => this.clientSendUsername(obj)}>Send</Button>
+                        </div>
                     </div>
                 </div>
             </div>

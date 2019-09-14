@@ -774,7 +774,7 @@ class Hopdong extends React.Component {
                 onchangpagefile={this.onchangpagefile}
                 onClickDownloadFile={this.onClickDownloadFile}
               />
-              <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}
+              <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered rowKey="hd_id" bordered scroll={{ x: 1000 }}
                 expandedRowRender={(record, selectedRowKeys) => {
                   return (
                     <div style={{ textAlign: 'left' }}>
