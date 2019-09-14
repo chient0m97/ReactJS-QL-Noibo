@@ -21,11 +21,6 @@ const Modal_Duan = Form.create({ name: 'form_in_modal_duan' })(
       const { onOk_duan, visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, select_qtda } = this.props;
       const { getFieldDecorator } = form;
       var first_qtda = null;
-<<<<<<< HEAD
-      console.log("Day la option ",select_qtda)
-=======
-      // console.log("Day la option ",select_qtda)
->>>>>>> b09220f09052b203aae00b0565c56b2761010866
       if (select_qtda.length !== 0) {
         first_qtda = select_qtda[0].ns_id
       }

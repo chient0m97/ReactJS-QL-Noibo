@@ -26,7 +26,7 @@ var fileController = {
             callback({
                 message: message,
                 success: response.success,
-                dataExcel: response.dataExcel,
+                dataSheet2: response.dataSheet2,
                 dataSheet1: response.dataSheet1
             }, status);
         });
