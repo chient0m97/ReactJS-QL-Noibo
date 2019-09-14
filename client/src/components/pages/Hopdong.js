@@ -330,6 +330,7 @@ class Hopdong extends React.Component {
         })
     }
   }
+  
   InsertOrUpdateHopdong = () => {
     this.onClickHandler();
     console.log(this.state.selectedFile, 'file day');

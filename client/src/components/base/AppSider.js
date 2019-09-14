@@ -82,7 +82,7 @@ class AppSider extends Component {
                     claims[i] = { url: '/user', des: 'User', menu: 1 }
                 }
                 else if (claims[i] === Permission.Hotro.Read) {
-                    claims[i] = { url: '/hotro', des: 'Công Việc - Hỗ trợ', menu: 2 }
+                    claims[i] = { url: '/hotro', des: 'Công Việc & Hỗ trợ', menu: 2 }
                 }
                 else if (claims[i] === Permission.Nhansu.Read) {
                     claims[i] = { url: '/nhansu', des: 'Nhân sự', menu: 1 }
