@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar, Badge } from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar, Badge, notification } from 'antd'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
 import Request from '@apis/Request'
@@ -155,7 +155,7 @@ class AppHeader extends Component {
     return (
       <Menu>
         <Menu.Item key="0">
-        <a href="https://www.google.com/">View Profile</a>
+          <a href="https://www.google.com/">View Profile</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a href="/changepassword">Đổi mật khẩu</a>

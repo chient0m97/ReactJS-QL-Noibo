@@ -10,7 +10,7 @@ import '@styles/style.css'
 import moment from 'moment';
 import { Width } from 'devextreme-react/linear-gauge';
 import { async } from 'q';
-import Highlighter from 'react-highlight-words';
+//import Highlighter from 'react-highlight-words';
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
@@ -47,6 +47,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
+            console.log("KH ",khachhang)
             var donvi = this.props.setDonVi;
             var first_kh_id = null;
             var first_da_id = null;
@@ -445,7 +446,7 @@ class Hotro extends React.Component {
                 values.nkht_thoigiancapnhat = new Date()
             }
             if (values.ht_thoigian_dukien_hoanthanh === null) {
-                values.ht_thoigian_dukien_hoanthanh = format(new Date(),'yyyy-mm-dd')
+                values.ht_thoigian_dukien_hoanthanh = format(new Date(), 'yyyy-mm-dd')
             }
             Request(url, 'POST', values)
                 .then(async (response) => {
@@ -1003,6 +1004,7 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
+                                        console.log("day la j ",j)
                                         if (array_ht_trangthai[j - 1] === "daxong") {
                                             return <Badge color={"brown"} />
                                         }

@@ -6,11 +6,17 @@ jwt = require('jsonwebtoken');
 config = require('./configurations/config');
 var app = express();
 app.use('/upload', express.static(path.join(__dirname, 'upload', './')))
+// app.use(express.static("./public"));
+// app.set("view engine", "ejs");
+// app.set("views", "./views");
 const login = require('./router/login')
 const checked = require('./router/checkrole')
 const setpermiss = require('./router/setpermission')
-const role_action = require('./router/role_action')
-const port = 5000;
+const role_action = require('./router/role_action') 
+// var server = require("http").Server(app);
+// var io = require("socket.io")(server);
+// server.listen(3000);
+const port = 5000; 
 
 // var xlsx = require("xlsx")
 // var wb = xlsx.readFile("./upload/test_Read_excel.xlsx")
@@ -101,6 +107,10 @@ app.use('/user', authorize, userRouter);
 
 app.use('/unit', router);
 
+// io.on("connection", function(socket){
+//   console.log('co nguoi ket noi '+socket.id);
+// })
+
 var storage = multer.diskStorage({
   destination: function(req, file, cb){
     cb(null, 'upload')
@@ -121,7 +131,8 @@ app.post('/upload', function(req, res){
     return res.status(200).send(req.file)
   })
 })
-
+// app.get("/", function(req, res){
+//   res.render("trangchu");
+// });
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
 app.post('/verify')
