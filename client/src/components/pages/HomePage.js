@@ -926,6 +926,9 @@ export default class HomePage extends Component {
                         trangthaibutton={this.state.trangthaibutton}
                         set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
                     />
+                    <AppHeader
+                        getNhansu={this.getNhansu}
+                    />
                 </Form>
             </div>
         );
