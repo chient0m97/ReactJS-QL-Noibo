@@ -789,8 +789,7 @@ class Hotro extends React.Component {
         })
     }
 
-    getDataDaxong = (pageNumber) => {
-        console.log("haha")
+    getDataDaxong =async (pageNumber) => {
         var user_cookie = null
         Request('hotro/getmyselfdaxong', 'POST', {
             user_cookie,
@@ -873,35 +872,35 @@ class Hotro extends React.Component {
     //           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
     //           searchWords={[this.state.searchText]}
     //           autoEscape
-    //         //   textToHighlight={text.toString()}
+    //           textToHighlight={text.toString()}
     //         />
     //       ),
     // });
 
-    search = async (xxxx) => {
-        Request('user/search', 'POST', {
-            pageSize: this.state.pageSize,
-            pageNumber: this.state.page,
-            searchText: xxxx,
-            columnSearch: this.state.columnSearch,
-            p1: this.state.index,
-            p2: this.state.sortBy,
+    // search = async (xxxx) => {
+    //     Request('user/search', 'POST', {
+    //         pageSize: this.state.pageSize,
+    //         pageNumber: this.state.page,
+    //         searchText: xxxx,
+    //         columnSearch: this.state.columnSearch,
+    //         p1: this.state.index,
+    //         p2: this.state.sortBy,
 
-        })
-            .then((response) => {
-                let data = response.data;
+    //     })
+    //         .then((response) => {
+    //             let data = response.data;
 
-                if (data.data)
-                    this.setState({
-                        // users: data.data.users,
-                        // count: Number(data.data.count),//eps kieeru veef,
-                        // searchText: xxxx,
-                        // isSearch: 1
-                    })
+    //             if (data.data)
+    //                 this.setState({
+    //                     // users: data.data.users,
+    //                     // count: Number(data.data.count),//eps kieeru veef,
+    //                     // searchText: xxxx,
+    //                     // isSearch: 1
+    //                 })
 
-            })
+    //         })
 
-    }
+    // }
 
     render() {
 

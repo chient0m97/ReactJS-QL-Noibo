@@ -730,9 +730,9 @@ class Unit extends React.Component {
     }
 
     insertImport = async () => {
-        this.onClickHandler();
-        const { form } = this.formRefImport.props;
-        form.validateFields((err, values) => {
+        await this.onClickHandler();
+        const { form } = await this.formRefImport.props;
+        await form.validateFields((err, values) => {
             if (err) {
                 return
             }
@@ -746,12 +746,118 @@ class Unit extends React.Component {
             var url = 'filekhachhangs/insert'
             Request(url, 'POST', values)
                 .then(async (response) => {
+                    // console.log("day la res ", response)
                     var excel = {}
-                //    await response.data.dataSheet1.forEach(element => {
-                //        if( element.dm_dv_id_cha ===undefined)
-                //        excel.push({dm_dv_id_cha: null})
-                //     });
-                   await console.log('excel ',response.data.dataSheet1)
+                    var listExcelNotParent = []
+                    var listExcelParent = []
+                    var dm_dv_id_tinh = []
+                    var dm_dv_id_huyen = []
+                    var dm_dv_id_xa = []
+                    response.data.dataSheet2.forEach(element => {
+                        dm_dv_id_tinh.push({
+                            tenTinh: element["Tỉnh/Thành Phố"],
+                            maTinh: element["Mã Tỉnh"]
+                        })
+                        dm_dv_id_huyen.push({
+                            tenHuyen: element["Huyện Quận"],
+                            maHuyen: element["Mã Huyện"]
+                        })
+                        dm_dv_id_xa.push({
+                            tenXa: element["Xã Phường"],
+                            maXa: element["Mã Xã"]
+                        })
+                    })
+                    await response.data.dataSheet1.forEach(async element => {
+
+                        if (element.dm_dv_id_cha === undefined) {
+                            if (element["Mã Số Thuế"] === undefined) {
+                                element["Mã Số Thuế"] = null
+                            }
+                            if (element["Số Điện Thoại"] === undefined) {
+                                element["Số Điện Thoại"] = null
+                            }
+                            if (element["Trạng Thái"] === "Hoạt Động") {
+                                element["Trạng Thái"] = "HD"
+                            }
+                            else if (element["Trạng Thái"] === "Dừng hoạt động") {
+                                element["Trạng Thái"] = "DHD"
+                            }
+                            else {
+                                element["Trạng Thái"] = "GT"
+                            }
+                            dm_dv_id_tinh.forEach(element_Tinh => {
+                                if (element_Tinh.tenTinh === element["Tỉnh/Thành Phố"]) {
+                                    element["Tỉnh/Thành Phố"] = element_Tinh.maTinh
+                                }
+                            })
+                            dm_dv_id_huyen.forEach(element_Huyen => {
+                                if (element_Huyen.tenHuyen === element["Huyện Quận"]) {
+                                    element["Huyện Quận"] = element_Huyen.maHuyen
+                                }
+                            })
+                            dm_dv_id_xa.forEach(element_Xa => {
+                                if (element_Xa.tenXa === element["Xã Phường"]) {
+                                    element["Xã Phường"] = element_Xa.maXa
+                                }
+                            })
+                            excel.dm_dv_id_cha = null
+                            excel.dm_db_id_tinh = element["Tỉnh/Thành Phố"]
+                            excel.dm_db_id_huyen = element["Huyện Quận"]
+                            excel.dm_db_id_xa = element["Xã Phường"]
+                            excel.dm_dv_diachi = element["Địa Chỉ"]
+                            excel.dm_dv_ten = element["Tên Đơn Vị"]
+                            excel.dm_dv_masothue = element["Mã Số Thuế"]
+                            excel.dm_dv_trangthai = element["Trạng Thái"]
+                            excel.dm_dv_sodienthoai = element["Số Điện Thoại"]
+                            excel.kh_id_nguoidaidien = null
+                            listExcelNotParent.push(excel)
+                        }
+                        else {
+                            if (element["Mã Số Thuế"] === undefined) {
+                                element["Mã Số Thuế"] = null
+                            }
+                            if (element["Số Điện Thoại"] === undefined) {
+                                element["Số Điện Thoại"] = null
+                            }
+                            if (element["Trạng Thái"] === "Hoạt Động") {
+                                element["Trạng Thái"] = "HD"
+                            }
+                            else if (element["Trạng Thái"] === "Dừng hoạt động") {
+                                element["Trạng Thái"] = "DHD"
+                            }
+                            else {
+                                element["Trạng Thái"] = "GT"
+                            }
+                            dm_dv_id_tinh.forEach(element_Tinh => {
+                                if (element_Tinh.tenTinh === element["Tỉnh/Thành Phố"]) {
+                                    element["Tỉnh/Thành Phố"] = element_Tinh.maTinh
+                                }
+                            })
+                            dm_dv_id_huyen.forEach(element_Huyen => {
+                                if (element_Huyen.tenHuyen === element["Huyện Quận"]) {
+                                    element["Huyện Quận"] = element_Huyen.maHuyen
+                                }
+                            })
+                            dm_dv_id_xa.forEach(element_Xa => {
+                                if (element_Xa.tenXa === element["Xã Phường"]) {
+                                    element["Xã Phường"] = element_Xa.maXa
+                                }
+                            })
+                            excel.dm_dv_id_cha = null
+                            excel.dm_db_id_tinh = element["Tỉnh/Thành Phố"]
+                            excel.dm_db_id_huyen = element["Huyện Quận"]
+                            excel.dm_db_id_xa = element["Xã Phường"]
+                            excel.dm_dv_diachi = element["Địa Chỉ"]
+                            excel.dm_dv_ten = element["Tên Đơn Vị"]
+                            excel.dm_dv_masothue = element["Mã Số Thuế"]
+                            excel.dm_dv_trangthai = element["Trạng Thái"]
+                            excel.dm_dv_sodienthoai = element["Số Điện Thoại"]
+                            excel.kh_id_nguoidaidien = null
+                            listExcelParent.push(excel)
+                        }
+
+                    });
+                    await console.log('excel con ', listExcelNotParent, 'va co cha la ',listExcelParent)
                     return
                     Request('unit/insert', 'POST', response.data.dataExcel)
                         .then((response) => {

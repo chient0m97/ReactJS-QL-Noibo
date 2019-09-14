@@ -29,26 +29,21 @@ module.exports = {
 
     inserFile_khachhangs: function (file_khachhangs, callback) {
         // console.log(file_khachhangs)
-        knex.from('file_khachhangs').insert(file_khachhangs).then(res => {
-            var fileName=file_khachhangs.file_data.replace('http://localhost:5000','.')
+        knex.from('file_khachhangs').insert(file_khachhangs).then(async res => {
+            var fileName = await file_khachhangs.file_data.replace('http://localhost:5000', '.')
             // console.log("data ", fileName)
-            
-            var wb = xlsx.readFile(fileName)
 
-            var sheet_name_list = wb.SheetNames;
-            
-            var xlData = xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[1]]);
-            var xlDataSheet1 = xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[0]]);
+            var wb = await xlsx.readFile(fileName)
 
-            // var ws = wb.Sheets["Hợp đồng"]
-            // var data =xlsx.utils.sheet_to_json(ws)
-            // console.log("day la data ",xlData)
+            var sheet_name_list = await wb.SheetNames;
 
-            console.log(xlDataSheet1)
-            callback({
+            var xlDataSheet2 = await xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[1]]);
+            var xlDataSheet1 = await xlsx.utils.sheet_to_json(wb.Sheets[sheet_name_list[0]]);
+            await callback({
                 success: true,
-                dataExcel: xlData,
-                dataSheet1: xlDataSheet1
+                // dataExcel: xlData,
+                dataSheet1: xlDataSheet1,
+                dataSheet2: xlDataSheet2
             })
         }).catch(err => {
             console.log(err)
@@ -56,7 +51,7 @@ module.exports = {
                 success: false
             })
         })
-    },  
+    },
 
     updateFile_khachhangs: function (file_khachhangs, callback) {
         knex.from('file_khachhangs').where('file_tenfile', file_khachhangs.file_tenfile).update(file_khachhangs).then(res => {

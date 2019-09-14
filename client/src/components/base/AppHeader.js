@@ -258,9 +258,9 @@ class AppHeader extends Component {
           </Button>
           <Button style={{ marginLeft: '50%' }} onClick={this.showModal.bind(this)}><Icon type="plus" />Tạo nhanh công việc</Button>
           <Dropdown overlay={this.state.menu} trigger={['click']}>
-            <a style={{ marginLeft: '70%' }} className="ant-dropdown-link" href="/">
-              <Badge count={0} style={{fontSize: '20px', margin: '20px'}}>
-                <Icon type="bell" style={{fontSize: '25px', margin: '20px'}}/>
+            <a style={{ marginLeft: '2%' }} className="ant-dropdown-link" href="/">
+              <Badge count={0} style={{ fontSize: '20px', margin: '20px' }}>
+                <Icon type="bell" style={{ fontSize: '25px', margin: '20px' }} />
               </Badge>
               <Avatar icon="user" style={{ fontSize: '20px', backgroundColor: 'orange' }} />
               <Tooltip title="Tên tài khoản">
