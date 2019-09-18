@@ -47,7 +47,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
-            console.log("KH ",khachhang)
+            console.log("KH ", khachhang)
             var donvi = this.props.setDonVi;
             var first_kh_id = null;
             var first_da_id = null;
@@ -343,6 +343,7 @@ class Hotro extends React.Component {
             stateButtonTatca: false,
             stateButtonGap: false,
             searchText: '',
+            timkiem: []
         }
     }
 
@@ -500,6 +501,61 @@ class Hotro extends React.Component {
                 console.log(err)
             })
     }
+
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8, align: 'center' }}>
+                <Input
+                    ref={node => {
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    icon="search"
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Search
+            </Button>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+    });
+
+    handleSearch = (selectedKeys, value, confirm) => {
+        let vl = { values: selectedKeys[0], keys: value }
+        if (value && selectedKeys.length > 0) {
+            this.state.timkiem.push(vl)
+        }
+        Request(`hotro/search`, 'POST',
+            {
+                timkiem: this.state.timkiem,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.page
+            })
+            .then((res) => {
+                notification[res.data.success === true ? 'success' : 'error']({
+                    message: 'Đã xuất hiện bản ghi',
+                    description: res.data.message
+                });
+                this.setState({
+                    hotro: res.data.data.hotros,
+                })
+            })
+
+
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    };
 
     refresh = async (pageNumber) => {
         message.success('Refresh success', 1);
@@ -790,7 +846,7 @@ class Hotro extends React.Component {
         })
     }
 
-    getDataDaxong =async (pageNumber) => {
+    getDataDaxong = async (pageNumber) => {
         var user_cookie = null
         Request('hotro/getmyselfdaxong', 'POST', {
             user_cookie,
@@ -818,7 +874,7 @@ class Hotro extends React.Component {
     //     confirm();
     //     this.setState({ searchText: selectedKeys[0] });
     //   };
-    
+
     //   handleReset = clearFilters => {
     //     clearFilters();
     //     this.setState({ searchText: '' });
@@ -1004,7 +1060,7 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
-                                        console.log("day la j ",j)
+                                        console.log("day la j ", j)
                                         if (array_ht_trangthai[j - 1] === "daxong") {
                                             return <Badge color={"brown"} />
                                         }
@@ -1023,8 +1079,9 @@ class Hotro extends React.Component {
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
+                                {...this.getColumnSearchProps('dm_duan_ten')}
                                 onHeaderCell={this.onHeaderCell}
-                                // {...this.getColumnSearchProps('Dự án')}
+                            // {...this.getColumnSearchProps('Dự án')}
                             />
                             <Column title="Đơn vị" dataIndex="dm_dv_ten" width={150}
                                 render={text => {
@@ -1033,8 +1090,9 @@ class Hotro extends React.Component {
                                             <Row>{this.checkDate(i, text, j)}</Row>
                                         </div>)
                                 }}
+                                {...this.getColumnSearchProps('dm_dv_ten')}
                                 width={150} onHeaderCell={this.onHeaderCell}
-                                // {...this.getColumnSearchProps('Đơn vị')}
+                            // {...this.getColumnSearchProps('Đơn vị')}
                             />
                             <Column title="Khách hàng" dataIndex="kh_ten" width={150}
                                 render={text => {
@@ -1043,16 +1101,19 @@ class Hotro extends React.Component {
                                             <Row>{this.checkDate(i, text, j)}</Row>
                                         </div>)
                                 }}
+                                {...this.getColumnSearchProps('kh_ten')}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Người tạo" dataIndex="ns_hoten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
+                                {...this.getColumnSearchProps('ns_hoten')}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Người được giao" dataIndex="ns_hovaten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
+                                {...this.getColumnSearchProps('ns_hovaten')}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái" dataIndex="ht_trangthai" width={150}
                                 render={

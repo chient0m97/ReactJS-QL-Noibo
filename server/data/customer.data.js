@@ -1,4 +1,5 @@
 var knex = require('./common/DB')
+
 module.exports = {
     getCustomer: (limit, offset, index, sortBy, callback) => {
         knex.raw("select *, khs.iddv as dm_dv_id, khs.tendv as tendonvi, dibtinh.idtinh as dm_db_id_tinh ,dibtinh.tentinh as tentinh , dibhuyen.idhuyen as dm_db_id_huyen ,dibhuyen.tenhuyen as tenhuyen , dibxa.idxa as dm_db_id_xa ,dibxa.tenxa as tenxa from khachhangs kh left join(select dbs.dm_db_id idtinh, dbs.dm_db_ten as tentinh from diabans dbs) as dibtinh on dibtinh.idtinh = kh.dm_db_id_tinh left join(select dbs.dm_db_id idhuyen, dbs.dm_db_ten as tenhuyen from diabans dbs) as dibhuyen on dibhuyen.idhuyen = kh.dm_db_id_huyen left join(select dbs.dm_db_id idxa, dbs.dm_db_ten as tenxa from diabans dbs) as dibxa on dibxa.idxa = kh.dm_db_id_xa left join (select dvs.dm_dv_id iddv, dvs.dm_dv_ten tendv from donvis dvs) as khs on khs.iddv = kh.dm_dv_id   order by " + ' ' + index + ' ' + sortBy + ' limit ' + limit + ' offset ' + offset)
@@ -88,35 +89,45 @@ module.exports = {
         })
     },
 
-    search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        // console.log('chip chip')
-        // console.log('================', limit)
-        knex('khachhangs').where(columnSearch, 'like', '%' + textSearch + '%').orderBy(index, sortBy).limit(limit).offset(offset)
-            .then(res => {
-                var customers = res
-                // console.log('unit', customers)
-                knex('khachhangs').where(columnSearch, 'like', '%' + textSearch + '%').count()
-                    .then(resCount => {
-                        var count = resCount[0].count
+    search: function (limit, offset, timkiem, callback) {
+        let qr = ""
+        if (timkiem.length > 0) {
+            for (i = 0; i < timkiem.length; i++) {
+                let a = timkiem[i]
+                if (!a.values) {
+                    a.values = ''
+                }
+                qr = qr + "upper(cast(khachhangs." + a.dm_dv_id + " as text)) like upper('%" + a.dm_dv_ten + "%') and "
+            }
+            let queryy = qr.slice(0, qr.length - 5)
+            let query = "select * from khachhangs where " + queryy + ""
+            knex.raw(query)
+                .then(res => {
+                    knex.raw("select count(*) from khachhangs where " + queryy + "")
+                        .then(resCount => {
+                            callback({
+                                success: true,
+                                data: {
+                                    khachhangs: res.rows,
+                                    count: resCount.rows[0].count
+                                }
+                            })
+                        })
+                        .catch((err) => {
+                            console.log('lỗi  kết nối', err)
+                        })
+                })
+                .catch((err) => {
+                    console.log('lỗi  kết nối', err)
+                })
+        }
+        else {
+            this.getCustomer(limit, offset, callback);
+        }
 
-                        let dataCallback = {
-                            success: true,
-                            message: 'Get data success',
-                            data: {
-                                customers: customers,
-                                count: count
-                            }
-                        }
-                        callback(dataCallback)
-                    })
-                    .catch((err) => {
-                        console.log('lỗi  kết nối', err)
-                    })
-            })
-            .catch((err) => {
-                console.log('lỗi  kết nối', err)
-            })
     },
+
+   
     // getcha:function(callback){
     //     knex('donvis').select('dm_dv_id_cha').then(res=>{
     //         callback(res);
@@ -172,7 +183,4 @@ module.exports = {
             callback({ success: false })
         })
     }
-
-
-
 };

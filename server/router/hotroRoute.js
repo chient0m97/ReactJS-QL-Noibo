@@ -63,7 +63,7 @@ router.post('/getmyself', function (req, res) {
 })
 
 router.post('/getmyselfdaxong', function (req, res) {
-    console.log("hien thi req.body ",req.body)
+    console.log("hien thi req.body ", req.body)
     hotroController.getDataMyselfDaxong(req.body.user_cookie, req.body.pageSize, req.body.pageNumber, function (data) {
         res.send(data)
     })
@@ -114,6 +114,17 @@ router.delete('/delete', function (req, res) {
 router.post('/getfollowmonth', function (req, res) {
     hotroController.getHotroFollowMonth(req.body, function (data) {
         res.send(data)
+    })
+})
+
+router.post('/search', function (req, res) {
+    let pageSize = req.body.pageSize;
+    let pageNumber = req.body.pageNumber;
+    let timkiem = req.body.timkiem;
+    console.log('ssss', req.body.timkiem)
+    hotroController.search(pageSize, pageNumber, timkiem, function (data) {
+        console.log('tttttttttt', data)
+        res.send(data);
     })
 })
 

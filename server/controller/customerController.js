@@ -125,7 +125,7 @@ var CustomerController = {
                 callback({
                     message: message,
                     success: response.success,
-                    
+
                 }, status);
             })
         }

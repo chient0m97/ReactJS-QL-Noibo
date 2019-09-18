@@ -139,6 +139,14 @@ var hotroController = {
         });
     },
 
+    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
+        let limit = pageSize;
+        let offset = pageSize * (pageNumber - 1);
+        hotroData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
+            callback(data);
+        })
+    },
+
     validateCreate: (req, res, next) => {
         next();
     }
