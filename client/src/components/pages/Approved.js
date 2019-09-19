@@ -44,7 +44,7 @@ class Approved extends Component {
         this.props.fetchLoading({
             loading: true
         })
-        if (ten === "test") { //tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { //tai khoan anh Nhuan
             Request('several/get', 'POST', {
                 pageSize: this.state.pageSize,
                 pageNumber: pageNumber,
@@ -52,7 +52,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res data count ", response.data.data.count)
+                    //console.log("day la res data count ", response.data.data.count)
                     if (response)
                         this.setState({
                             several: response.data.data.several,
@@ -60,7 +60,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "anhnhuan") //tai khoan anh Phe
+        else if (ten === "lephe") //tai khoan anh Phe
         {
             Request('several/get1', 'POST', {
                 pageSize: this.state.pageSize,
@@ -69,7 +69,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res ", response)
+                    //console.log("day la res ", response)
                     if (response)
                         this.setState({
                             several: response.data.data.several,
@@ -77,7 +77,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "chientom") // tai khoan chi Hoai
+        else if (ten === "vuson") // tai khoan chi Hoai
         {
             Request('several/get2', 'POST', {
                 pageSize: this.state.pageSize,
@@ -86,7 +86,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res ", response)
+                    //console.log("day la res ", response)
                     if (response)
                         this.setState({
                             several: response.data.data.several,
@@ -94,7 +94,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "tri")// tai khoan chi Hoa
+        else if (ten === "tranhoa")// tai khoan chi Hoa
         {
             Request('several/get3', 'POST', {
                 pageSize: this.state.pageSize,
@@ -103,7 +103,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res ", response)
+                    //console.log("day la res ", response)
                     if (response)
                         this.setState({
                             several: response.data.data.several,
@@ -124,7 +124,7 @@ class Approved extends Component {
         this.props.fetchLoading({
             loading: true
         })
-        if (ten === "test") { //tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { //tai khoan anh Nhuan
             Request('several/getaccept', 'POST', {
                 pageSize: this.state.pageSize,
                 pageNumber: pageNumber,
@@ -132,7 +132,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severals: response.data.data.several,
@@ -140,7 +140,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "anhnhuan") //tai khoan anh Phe
+        else if (ten === "lephe") //tai khoan anh Phe
         {
             Request('several/getaccept1', 'POST', {
                 pageSize: this.state.pageSize,
@@ -149,7 +149,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severals: response.data.data.several,
@@ -157,7 +157,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "chientom") // tai khoan chi Hoai
+        else if (ten === "vuson") // tai khoan chi Hoai
         {
             Request('several/getaccept2', 'POST', {
                 pageSize: this.state.pageSize,
@@ -166,7 +166,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severals: response.data.data.several,
@@ -174,7 +174,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "tri")// tai khoan chi Hoa
+        else if (ten === "tranhoa")// tai khoan chi Hoa
         {
             Request('several/getaccept3', 'POST', {
                 pageSize: this.state.pageSize,
@@ -183,7 +183,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severals: response.data.data.several,
@@ -204,7 +204,7 @@ class Approved extends Component {
         this.props.fetchLoading({
             loading: true
         })
-        if (ten === "test") { //tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { //tai khoan anh Nhuan
             Request('several/getrefuse', 'POST', {
                 pageSize: this.state.pageSize,
                 pageNumber: pageNumber,
@@ -212,7 +212,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severalss: response.data.data.several,
@@ -220,7 +220,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "anhnhuan") //tai khoan anh Phe
+        else if (ten === "lephe") //tai khoan anh Phe
         {
             Request('several/getrefuse1', 'POST', {
                 pageSize: this.state.pageSize,
@@ -229,7 +229,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severalss: response.data.data.several,
@@ -237,7 +237,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "chientom") // tai khoan chi Hoai
+        else if (ten === "vuson") // tai khoan chi Hoai
         {
             Request('several/getrefuse2', 'POST', {
                 pageSize: this.state.pageSize,
@@ -246,7 +246,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severalss: response.data.data.several,
@@ -254,7 +254,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "tri")// tai khoan chi Hoa
+        else if (ten === "tranhoa")// tai khoan chi Hoa
         {
             Request('several/getrefuse3', 'POST', {
                 pageSize: this.state.pageSize,
@@ -263,7 +263,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res 1", response)
+                    //console.log("day la res 1", response)
                     if (response)
                         this.setState({
                             severalss: response.data.data.several,
@@ -284,7 +284,7 @@ class Approved extends Component {
         this.props.fetchLoading({
             loading: true
         })
-        if (ten === "test") { //tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { //tai khoan anh Nhuan
             Request('half/get', 'POST', {
                 pageSize: this.state.pageSize,
                 pageNumber: pageNumber,
@@ -292,7 +292,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res half", response)
+                    //console.log("day la res half", response)
                     if (response)
                         this.setState({
                             half: response.data.data.half,
@@ -300,7 +300,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "anhnhuan") //tai khoan anh Phe
+        else if (ten === "lephe") //tai khoan anh Phe
         {
             Request('half/get1', 'POST', {
                 pageSize: this.state.pageSize,
@@ -309,7 +309,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res half", response)
+                    //console.log("day la res half", response)
                     if (response)
                         this.setState({
                             half: response.data.data.half,
@@ -317,7 +317,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "chientom") // tai khoan chi Hoai
+        else if (ten === "vuson") // tai khoan chi Hoai
         {
             Request('half/get2', 'POST', {
                 pageSize: this.state.pageSize,
@@ -326,7 +326,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res half", response)
+                    //console.log("day la res half", response)
                     if (response)
                         this.setState({
                             half: response.data.data.half,
@@ -334,7 +334,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "tri")// tai khoan chi Hoa
+        else if (ten === "tranhoa")// tai khoan chi Hoa
         {
             Request('half/get3', 'POST', {
                 pageSize: this.state.pageSize,
@@ -343,7 +343,7 @@ class Approved extends Component {
                 sortBy: this.state.sortBy
             })
                 .then((response) => {
-                    console.log("day la res half", response)
+                    //console.log("day la res half", response)
                     if (response)
                         this.setState({
                             half: response.data.data.half,
@@ -364,7 +364,7 @@ class Approved extends Component {
         this.props.fetchLoading({
             loading: true
         })
-        if (ten === "test") { //tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { //tai khoan anh Nhuan
             Request('half/getaccept', 'POST', {
                 pageSize: this.state.pageSize,
                 pageNumber: pageNumber,
@@ -379,7 +379,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "anhnhuan") //tai khoan anh Phe
+        else if (ten === "lephe") //tai khoan anh Phe
         {
             Request('half/getaccept1', 'POST', {
                 pageSize: this.state.pageSize,
@@ -395,7 +395,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "chientom") // tai khoan chi Hoai
+        else if (ten === "vuson") // tai khoan chi Hoai
         {
             Request('half/getaccept2', 'POST', {
                 pageSize: this.state.pageSize,
@@ -411,7 +411,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "tri")// tai khoan chi Hoa
+        else if (ten === "tranhoa")// tai khoan chi Hoa
         {
             Request('half/getaccept3', 'POST', {
                 pageSize: this.state.pageSize,
@@ -440,7 +440,7 @@ class Approved extends Component {
         this.props.fetchLoading({
             loading: true
         })
-        if (ten === "test") { //tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { //tai khoan anh Nhuan
             Request('half/getrefuse', 'POST', {
                 pageSize: this.state.pageSize,
                 pageNumber: pageNumber,
@@ -455,7 +455,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "anhnhuan") //tai khoan anh Phe
+        else if (ten === "lephe") //tai khoan anh Phe
         {
             Request('half/getrefuse1', 'POST', {
                 pageSize: this.state.pageSize,
@@ -471,7 +471,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "chientom") // tai khoan chi Hoai
+        else if (ten === "vuson") // tai khoan chi Hoai
         {
             Request('half/getrefuse2', 'POST', {
                 pageSize: this.state.pageSize,
@@ -487,7 +487,7 @@ class Approved extends Component {
                         })
                 })
         }
-        else if (ten === "tri")// tai khoan chi Hoa
+        else if (ten === "tranhoa")// tai khoan chi Hoa
         {
             Request('half/getrefuse3', 'POST', {
                 pageSize: this.state.pageSize,
@@ -529,26 +529,26 @@ class Approved extends Component {
     }
 
     componentWillMount() {
-        if (ten === "test") { //anh Nhuan
+        if (ten === "nguyennhuan") { //anh Nhuan
             socket.on("server-send-nhuan", function (data) {
-                console.log(data, 'data');
+                //console.log(data, 'data');
             })
         }
-        else if (ten === "anhnhuan") { //anh Phe
+        else if (ten === "lephe") { //anh Phe
             socket.on("server-send-phe", function (data) {
-                console.log(data, 'data');
+                //console.log(data, 'data');
             })
         }
-        else if (ten === "chientom") //chi Hoai
+        else if (ten === "vuson") //chi Hoai
         {
             socket.on("server-send-hoai", function (data) {
-                console.log(data, 'data');
+                //console.log(data, 'data');
             })
         }
-        else if (ten === "tri") //chi Hoa
+        else if (ten === "tranhoa") //chi Hoa
         {
             socket.on("server-send-hoa", function (data) {
-                console.log(data, 'data');
+                //console.log(data, 'data');
             })
         }
         else {
@@ -568,12 +568,12 @@ class Approved extends Component {
     }
 
     onClickPheDuyet = (text) => {
-        console.log(text, 'text');
-        if (ten === "test") { // tai khoan anh Nhuan
-            console.log(this.state.several, 'several');
+        //console.log(text, 'text');
+        if (ten === "nguyennhuan") { // tai khoan anh Nhuan
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -584,11 +584,11 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "anhnhuan") { // tai khoan anh Phe
-            console.log(this.state.several, 'several');
+        else if (ten === "lephe") { // tai khoan anh Phe
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update1', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -599,11 +599,11 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "chientom") { // tai khoan chi Hoai
-            console.log(this.state.several, 'several');
+        else if (ten === "vuson") { // tai khoan chi Hoai
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update2', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -614,12 +614,12 @@ class Approved extends Component {
                 }
             })
         }
-        else //tai khaon chi Hoa
+        else if(ten === "tranhoa")//tai khaon chi Hoa
         {
-            console.log(this.state.several, 'several');
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update3', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -630,9 +630,13 @@ class Approved extends Component {
                 }
             })
         }
+        else
+        {
+            alert("Bạn không có quyền vào đây")
+        }
     }
     onClickPheDuyetHalf = (text) => {
-        if (ten === "test") { // tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { // tai khoan anh Nhuan
             this.state.half.map((value) => {
                 if (text === value.id) {
                     Request('half/update', 'POST', value).then((response) => {
@@ -645,7 +649,7 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "anhnhuan") { // tai khoan anh Phe
+        else if (ten === "lephe") { // tai khoan anh Phe
             this.state.half.map((value) => {
                 if (text === value.id) {
                     Request('half/update1', 'POST', value).then((response) => {
@@ -658,7 +662,7 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "chientom") { // tai khoan chi Hoai
+        else if (ten === "vuson") { // tai khoan chi Hoai
             this.state.half.map((value) => {
                 if (text === value.id) {
                     Request('half/update2', 'POST', value).then((response) => {
@@ -671,7 +675,7 @@ class Approved extends Component {
                 }
             })
         }
-        else //tai khaon chi Hoa
+        else if(ten === "tranhoa")//tai khaon chi Hoa
         {
             this.state.half.map((value) => {
                 if (text === value.id) {
@@ -685,14 +689,18 @@ class Approved extends Component {
                 }
             })
         }
+        else
+        {
+            alert("Bạn không có quyền vào đây")
+        }
     }
     onClickKhongPheDuyet = (text) => {
-        console.log(text, 'text');
-        if (ten === "test") { // tai khoan anh Nhuan
-            console.log(this.state.several, 'several');
+        //console.log(text, 'text');
+        if (ten === "nguyennhuan") { // tai khoan anh Nhuan
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update4', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -703,11 +711,11 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "anhnhuan") { // tai khoan anh Phe
-            console.log(this.state.several, 'several');
+        else if (ten === "lephe") { // tai khoan anh Phe
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update5', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -718,11 +726,11 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "chientom") { // tai khoan chi Hoai
-            console.log(this.state.several, 'several');
+        else if (ten === "vuson") { // tai khoan chi Hoai
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update6', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -733,12 +741,12 @@ class Approved extends Component {
                 }
             })
         }
-        else //tai khaon chi Hoa
+        else if(ten === "tranhoa")//tai khaon chi Hoa
         {
-            console.log(this.state.several, 'several');
+            //console.log(this.state.several, 'several');
             this.state.several.map((value) => {
                 if (text === value.id) {
-                    console.log(value, 'value');
+                    //console.log(value, 'value');
                     Request('several/update7', 'POST', value).then((response) => {
                         if (response.status === 200 & response.data.success === true) {
                             this.getHopdong(this.state.page)
@@ -749,9 +757,13 @@ class Approved extends Component {
                 }
             })
         }
+        else
+        {
+            alert("Bạn không có quyền vào đây")
+        }
     }
     onClickKhongPheDuyetHalf = (text) => {
-        if (ten === "test") { // tai khoan anh Nhuan
+        if (ten === "nguyennhuan") { // tai khoan anh Nhuan
             this.state.half.map((value) => {
                 if (text === value.id) {
                     Request('half/update4', 'POST', value).then((response) => {
@@ -764,7 +776,7 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "anhnhuan") { // tai khoan anh Phe
+        else if (ten === "lephe") { // tai khoan anh Phe
             this.state.half.map((value) => {
                 if (text === value.id) {
                     Request('half/update5', 'POST', value).then((response) => {
@@ -777,7 +789,7 @@ class Approved extends Component {
                 }
             })
         }
-        else if (ten === "chientom") { // tai khoan chi Hoai
+        else if (ten === "vuson") { // tai khoan chi Hoai
             this.state.half.map((value) => {
                 if (text === value.id) {
                     Request('half/update6', 'POST', value).then((response) => {
@@ -790,7 +802,7 @@ class Approved extends Component {
                 }
             })
         }
-        else //tai khaon chi Hoa
+        else if(ten === "tranhoa")//tai khaon chi Hoa
         {
             this.state.half.map((value) => {
                 if (text === value.id) {
@@ -803,6 +815,10 @@ class Approved extends Component {
                     })
                 }
             })
+        }
+        else
+        {
+            alert("Bạn không có quyền vào đây")
         }
     }
 

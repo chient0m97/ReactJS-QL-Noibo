@@ -26,39 +26,54 @@ class Requests extends Component {
       reason: ''
     }
   }
+  
   isChangeDateStart = (date) => {
-    console.log(date.target.value, 'date');
-    console.log(formatDateHMS(date.target.value, "dd/mm/yyyy"), 'date format start');
     this.setState({
       dateStart: formatDateHMS(date.target.value, "dd/mm/yyyy")
     });
   }
+
   isChangeDateEnd = (date) => {
-    console.log(date.target.value, 'date');
-    console.log(formatDateHMS(date.target.value, "dd/mm/yyyy"), 'date format end');
     this.setState({
       dateEnd: formatDateHMS(date.target.value, "dd/mm/yyyy")
     });
   }
+
   isChangeSelect = (select) => {
-    console.log(select, 'select');
-    this.setState({
-      selectWho: select
-    });
+    if ((ten === "vuson" && select === "hoai") || (ten === "nguyennhuan" && select === "nhuan") || (ten === "tranhoa" && select === "hoa") || (ten === "lephe" && select === "phe")) {
+      alert("Bạn không được phép đăng ký nghỉ cho chính mình")
+      this.setState({
+        selectWho: ''
+      })
+    }
+    else {
+      this.setState({
+        selectWho: select
+      });
+    }
   }
+
   isChangeReason = (reason) => {
-    console.log(reason.target.value, 'reason');
     this.setState({
       textReason: reason.target.value
     });
   }
+
   onClickRegistrationRequest = (e) => {
-    console.log(e, 'e');
     socket.emit("user-send-registration", e);
-    Request('several/insert', 'POST', e).then(() => {
-      console.log('da vao insert');
-    })
+    if (e.dangKy !== "" && e.lyDo !== "" && e.ngayBatDau !== "" && e.ngayKetThuc !== "") {
+      Request('several/insert', 'POST', e).then(() => {
+        alert("Đăng ký nghỉ thành công")
+      })
+    }
+    else if (e.dangKy === "" && e.lyDo !== "" && e.ngayBatDau !== "" && e.ngayKetThuc !== "") {
+      alert("Bạn chưa chọn người để đăng ký nghỉ hoặc chọn sai")
+    }
+    else {
+      alert("Bạn chưa điền đủ thông tin")
+    }
   }
+
   onChangeHalfDay = (day) => {
     this.setState({
       halfDay: day
@@ -72,9 +87,17 @@ class Requests extends Component {
   }
 
   onChangePerson = (person) => {
-    this.setState({
-      selectPerson: person
-    });
+    if ((ten === "vuson" && person === "hoai") || (ten === "nguyennhuan" && person === "nhuan") || (ten === "tranhoa" && person === "hoa") || (ten === "lephe" && person === "phe")) {
+      alert("Bạn không được phép đăng ký nghỉ cho chính mình")
+      this.setState({
+        selectPerson: ''
+      })
+    }
+    else {
+      this.setState({
+        selectPerson: person
+      });
+    }
   }
 
   onChangeReason = (reason) => {
@@ -84,11 +107,19 @@ class Requests extends Component {
   }
 
   onClickRegistrationHalf = (obj) => {
-    console.log('obj', obj);
-    Request('several/insert1', 'POST', obj).then(() => {
-      console.log('da vao insert');
-    })
+    if (obj.date !== "" && obj.day !== "" && obj.person !== "" && obj.reason !== "") {
+      Request('several/insert1', 'POST', obj).then(() => {
+        alert("Đăng ký nghỉ thành công")
+      })
+    }
+    else if (obj.person === "" && obj.date !== "" && obj.day !== "" && obj.reason !== "") {
+      alert("Bạn chưa chọn người để đăng ký nghỉ hoặc chọn sai")
+    }
+    else {
+      alert("Bạn chưa điền đủ thông tin")
+    }
   }
+
   render() {
     var obj = {
       thoiGianDangKy: this.state.timeNow,
@@ -123,7 +154,7 @@ class Requests extends Component {
               <input type="date" onChange={(date) => this.isChangeDateEnd(date)} />
             </div>
             <div id="select">
-              <Select style={{ width: 316 }} placeholder="Đăng ký cho ai?" onChange={(select) => this.isChangeSelect(select)}>
+              <Select id="selectPerson" style={{ width: 316 }} placeholder="Đăng ký cho ai?" onChange={(select) => this.isChangeSelect(select)}>
                 <Option value="nhuan">anh Nhuận</Option>
                 <Option value="phe">anh Phê</Option>
                 <Option value="hoai">chị Hoài</Option>
@@ -175,7 +206,6 @@ class Requests extends Component {
             <Button type="primary" onClick={() => this.onClickRegistrationHalf(obj1)}>Đăng ký</Button>
           </Panel>
         </Collapse>
-
       </div>
     );
   }

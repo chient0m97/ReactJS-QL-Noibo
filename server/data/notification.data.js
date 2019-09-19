@@ -1,7 +1,7 @@
 var knex = require('./common/DB')
 module.exports = {
     getNotification: (limit, offset, name, callback) => {
-        console.log(name,'name');     
+        //console.log(name,'name');     
         knex.raw("select * from several where name = '"+name+"' and status = '1' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where name = '"+name+"' and status = '1' ")
@@ -14,14 +14,14 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        //console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                //console.log(err),
                     callback({
                         success: false
                     })
@@ -40,21 +40,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        //console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                //console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getNotificationss: (limit, offset, name, callback) => {
-        console.log('da vao .data cua approved');
+        //console.log('da vao .data cua approved');
         knex.raw("select * from half where name = '"+name+"' and status = '1' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from half where name = '"+name+"' and status = '1' ")
@@ -67,14 +67,14 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        //console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                //console.log(err),
                     callback({
                         success: false
                     })
@@ -93,14 +93,14 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        //console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                //console.log(err),
                     callback({
                         success: false
                     })

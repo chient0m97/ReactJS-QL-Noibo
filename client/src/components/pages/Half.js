@@ -45,9 +45,9 @@ class Half extends Component {
     }
 
     onClickRegistrationHalf = (obj) => {
-        console.log('obj', obj);
+        ////console.log('obj', obj);
         Request('several/insert1', 'POST', obj).then(() => {
-            console.log('da vao insert');
+            ////console.log('da vao insert');
         })
     }
 
@@ -60,7 +60,7 @@ class Half extends Component {
             reason: this.state.reason,
             name: ten
           }
-          console.log(obj,'obj');
+          ////console.log(obj,'obj');
           
         var formatDateHMS = require('dateformat')
         return (

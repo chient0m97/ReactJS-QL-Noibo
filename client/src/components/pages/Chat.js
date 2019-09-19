@@ -52,7 +52,7 @@ class Chat extends Component {
     }
 
     clientSendUsername = (tempValue) => {
-        console.log(tempValue, 'tempValue');
+        //console.log(tempValue, 'tempValue');
         socket.emit("user-send-message", tempValue);
         document.getElementById("txtMessage").value=''
         document.getElementById('txtMessage').focus();
@@ -60,8 +60,8 @@ class Chat extends Component {
     textChat(event) {
         const name = event.target.name;
         const value = event.target.value;
-        console.log(name);//text
-        console.log(value);
+        //console.log(name);//text
+        //console.log(value);
         this.setState({
             tempValue: event.target.value
         });

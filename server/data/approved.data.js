@@ -2,7 +2,6 @@ var knex = require('./common/DB')
 const uuidv4 = require('uuid/v4');
 module.exports = {
     getHopdong: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'nhuan' and status = '0' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'nhuan' and status = '0' ")
@@ -15,21 +14,18 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err, 'day la loi'),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdong1: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'phe' and status = '0' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'phe' and status = '0' ")
@@ -42,21 +38,18 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdong2: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'hoai' and status = '0' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'hoai' and status = '0' ")
@@ -69,21 +62,20 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdong3: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'hoa' and status = '0' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'hoa' and status = '0' ")
@@ -96,21 +88,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongAccept: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'nhuan' and status = '1' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'nhuan' and status = '1' ")
@@ -123,21 +115,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongAccept1: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'phe' and status = '1' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'phe' and status = '1' ")
@@ -150,21 +142,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongAccept2: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'hoai' and status = '1' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'hoai' and status = '1' ")
@@ -177,21 +169,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongAccept3: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'hoa' and status = '1' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'hoa' and status = '1' ")
@@ -204,21 +196,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongRefuse: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'nhuan' and status = '2' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'nhuan' and status = '2' ")
@@ -231,21 +223,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongRefuse1: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'phe' and status = '2' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'phe' and status = '2' ")
@@ -258,21 +250,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongRefuse2: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'hoai' and status = '2' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'hoai' and status = '2' ")
@@ -285,21 +277,21 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     getHopdongRefuse3: (limit, offset, callback) => {
-        console.log('da vao .data cua approved');
+        ////console.log('da vao .data cua approved');
         knex.raw("select * from several where who = 'hoa' and status = '2' "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {    
                 knex.raw("select count(*) from several where who = 'hoa' and status = '2' ")
@@ -312,27 +304,27 @@ module.exports = {
                             }
                         })
                     }).catch((err) => {
-                        console.log(err),
+                        ////console.log(err),
                             callback({
                                 success: false
                             })
                     })
             })
             .catch((err) => {
-                console.log(err),
+                ////console.log(err),
                     callback({
                         success: false
                     })
             })
     },
     insertHopdong: function (hopdong, callback) {
-        console.log('da vao .data');
-        console.log(hopdong, 'hopdong');
+        ////console.log('da vao .data');
+        ////console.log(hopdong, 'hopdong');
     
         knex.raw("insert into several(name, registration_time, day_start, day_end, reason, who, id, status) values ( '"+hopdong.nguoiDangKy+"' , '"+hopdong.thoiGianDangKy+"' , '"+hopdong.ngayBatDau+"' , '"+hopdong.ngayKetThuc+"' , '"+hopdong.lyDo+"' , '"+hopdong.dangKy+"' , '"+uuidv4()+"' , '0')").then(res => {
             callback({ success: true });
         }).catch(err => {
-            console.log(err,'err');   
+            ////console.log(err,'err');   
             callback({ success: false })
         })
     },
@@ -340,12 +332,12 @@ module.exports = {
         knex.from('half').insert(hopdong).then(res => {
             callback({ success: true });
         }).catch(err => {
-            console.log(err,'err');
+            ////console.log(err,'err');
             callback({ success: false })
         })
     },
     updateHopdong: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '1' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
@@ -353,7 +345,7 @@ module.exports = {
                 })      
     },
     updateHopdong1: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '1' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
@@ -361,7 +353,7 @@ module.exports = {
                 })      
     },
     updateHopdong2: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '1' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
@@ -369,7 +361,7 @@ module.exports = {
                 })      
     },
     updateHopdong3: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '1' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
@@ -377,7 +369,7 @@ module.exports = {
                 })      
     },
     updateHopdong4: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '2' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
@@ -385,7 +377,7 @@ module.exports = {
                 })      
     },
     updateHopdong5: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '2' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
@@ -393,7 +385,7 @@ module.exports = {
                 })      
     },
     updateHopdong6: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '2' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
@@ -401,7 +393,7 @@ module.exports = {
                 })      
     },
     updateHopdong7: function (hopdong, callback) {
-        console.log(hopdong, 'hopdong');
+        ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '2' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })
                 }).catch(err => {
