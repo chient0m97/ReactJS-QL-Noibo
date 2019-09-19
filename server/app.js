@@ -33,6 +33,9 @@ var menuRoute = require('./router/menu_Route')
 var quanly_hoadonRoute = require('./router/quanly_hoadonRoute')
 var khachhangRoute = require('./router/khachhangRoute')
 var router = require('./router/unitRoute');
+var approved = require('./router/approved');
+var half = require('./router/half');
+var notification = require('./router/notification');
 var cusrouter = require('./router/customerRoute')
 var hopdong = require('./router/hopdong')
 var userRouter = require('./router/index');
@@ -106,6 +109,12 @@ app.use('/user', authorize, userRouter);
 //app.use('/', authorize, hopdongrouters );
 
 app.use('/unit', router);
+
+app.use('/several', approved);
+
+app.use('/half', half);
+
+app.use('/notification', notification);
 
 // io.on("connection", function(socket){
 //   console.log('co nguoi ket noi '+socket.id);

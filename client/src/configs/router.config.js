@@ -22,6 +22,7 @@ import Half from '@pages/Half'
 import NhatkyHopdong from '@pages/NhatkyHopdong'
 import Chat from '@pages/Chat'
 import Approved from '@pages/Approved'
+import Notification from '@pages/Notification'
 
 const routers = [
   
@@ -140,6 +141,11 @@ const routers = [
         path: '/approved',
         component: Approved,
         name: 'Approved'
+    },
+    {
+        path: '/notification',
+        component: Notification,
+        name: 'Notification'
     },
 ]
 

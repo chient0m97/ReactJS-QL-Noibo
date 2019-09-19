@@ -208,14 +208,17 @@ class AppSider extends Component {
                     <SubMenu key="sub4" title={
                         <span>
                             <Icon type="form" />
-                            <span>Đăng Ký Nghỉ</span>
+                            <span>Đăng Ký</span>
                         </span>
                     }>
-                        <Menu.Item key="15">
+                        {/* <Menu.Item key="15">
                             <NavLink to="/half" className="">Nghỉ nửa ngày</NavLink >
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="16">
-                            <NavLink to="/request" className="">Nghỉ 1 hoặc nhiều ngày</NavLink >
+                            <NavLink to="/request" className="">Đăng ký nghỉ</NavLink >
+                        </Menu.Item>
+                        <Menu.Item key="18">
+                            <NavLink to="/notification" className="">Thông báo nghỉ</NavLink >
                         </Menu.Item>
                     </SubMenu>
                 </Menu>

@@ -38,6 +38,7 @@ module.exports = {
         duans da \
         where hd.dm_duan_id = da.dm_duan_id "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {
+                console.log(res,'res');
                 knex('hopdongs').count()
                     .then((resCount) => {
                         callback({

@@ -307,7 +307,7 @@ class Hopdong extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        console.log("day la res ", response)
+        console.log("day la res data count ", response.data.data.count)
         if (response)
           this.setState({
             hopdongs: response.data.data.hopdongs,

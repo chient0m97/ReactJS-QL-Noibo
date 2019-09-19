@@ -75,6 +75,16 @@ class Chat extends Component {
         });
     }
 
+    _handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            var obj = {
+                text: this.state.tempValue,
+                user: ten
+            }
+            this.clientSendUsername(obj)
+          }
+    }
+
     render() {
         var obj = {
             text: this.state.tempValue,
@@ -88,7 +98,7 @@ class Chat extends Component {
                         <div id="listMessages"></div>
                         <div id="thongbao"></div>
                         <div>
-                            <Input style={{marginBottom: "15px"}} type="text" name="text" id="txtMessage" placeholder="Type your message here..." onChange={(event) => this.textChat(event)} />
+                            <Input style={{marginBottom: "15px"}} type="text" name="text" id="txtMessage" placeholder="Type your message here..." onChange={(event) => this.textChat(event)} onKeyDown={this._handleKeyDown}/>
                         </div>
                         <div>
                             <Button onClick={() => this.clientSendUsername(obj)}>Send</Button>
