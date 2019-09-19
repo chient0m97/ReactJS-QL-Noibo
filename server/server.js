@@ -11,7 +11,7 @@ app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'dist', './index.html'));
 })
 io.on("connection", function(socket){
-    console.log('co nguoi ket noi '+socket.id);
+    //console.log('co nguoi ket noi '+socket.id);
     socket.on("user-send-message", function(data){
         io.sockets.emit("server-send-message", {un:data.user, nd:data.text});
     });
@@ -22,11 +22,11 @@ io.on("connection", function(socket){
         io.sockets.emit("ai-do-stop-go-chu");
     });
     socket.on("user-send-registration", function(data){
-        console.log(data,'data');
+        //console.log(data,'data');
         if(data.dangKy==="nhuan")
         {
             io.sockets.emit("server-send-nhuan", data);
-            console.log(data, 'data to nhuan');
+            //console.log(data, 'data to nhuan');
         }
         else if(data.dangKy==="phe")
         {
