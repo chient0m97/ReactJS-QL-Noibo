@@ -145,9 +145,9 @@ class AppSider extends Component {
                                 }
                             }
                         })}
-                        <Menu.Item key="26">
+                        {/* <Menu.Item key="26">
                             <NavLink to="/chat" className="">Chat all</NavLink >
-                        </Menu.Item>
+                        </Menu.Item> */}
                     </SubMenu>
                     <SubMenu
                         key="sub2"

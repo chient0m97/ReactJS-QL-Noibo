@@ -110,4 +110,4 @@ class Chat extends Component {
     }
 }
 
-export default Chat;
+ export default Chat;
