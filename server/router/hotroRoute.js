@@ -70,7 +70,12 @@ router.post('/getmyselfdaxong', function (req, res) {
 })
 
 router.post('/getmyselfgap', function (req, res) {
-    hotroController.getDataMyselfGap(req.body, function (data) {
+    let body = req.body;
+    let pageNumber = body.pageNumber;
+    let pageSize = body.pageSize;
+    let index = body.index;
+    let sortBy = body.sortBy;
+    hotroController.getDataMyselfGap(req.body.user_cookie,pageNumber, pageSize, index, sortBy, function (data) {
         res.send(data)
     })
 })

@@ -47,7 +47,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
-            console.log("KH ", khachhang)
             var donvi = this.props.setDonVi;
             var first_kh_id = null;
             var first_da_id = null;
@@ -455,7 +454,8 @@ class Hotro extends React.Component {
                         form.resetFields();
                         this.setState({
                             visible: false,
-                            message: response.data.message
+                            message: response.data.message,
+                            trangthaibutton: false
                         })
                     }
                     var description = response.data.message
@@ -475,7 +475,6 @@ class Hotro extends React.Component {
                         description: description
                     });
                     this.getHotro(this.state.page)
-                    this.render()
                 }).catch((err) => {
                     console.log(err)
                 })
@@ -489,14 +488,14 @@ class Hotro extends React.Component {
                     message: 'Thong Bao',
                     description: res.data.message
                 });
-                this.getHotro(this.state.page)
+
                 this.setState({
                     stateconfirmdelete: false,
                     statebuttondelete: true,
                     statebuttonedit: true,
                     selectedRowKeys: []
                 })
-                this.render()
+                this.getHotro(this.state.page)
             }).catch((err) => {
                 console.log(err)
             })
@@ -509,7 +508,7 @@ class Hotro extends React.Component {
                     ref={node => {
                         this.searchInput = node;
                     }}
-                    placeholder={`Search ${dataIndex}`}
+                    placeholder={'Từ tìm kiếm'}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
@@ -522,7 +521,7 @@ class Hotro extends React.Component {
                     size="small"
                     style={{ width: 90 }}
                 >
-                    Search
+                    Tìm kiếm
             </Button>
             </div>
         ),
@@ -614,7 +613,7 @@ class Hotro extends React.Component {
     showModal = async (hotro) => {
         // console.log("hotro ", hotro)
         this.setState({
-            action: 'insert'
+            action: 'insert',
         })
         if (hotro.ht_trangthai === "daxong") {
             this.setState({
@@ -829,21 +828,28 @@ class Hotro extends React.Component {
 
     getDataGap = () => {
         var user_cookie = null
-        Request('hotro/getmyselfgap', 'POST', { user_cookie }).then((res) => {
-            if (res.data.data.myselfGap) {
-                this.setState({
-                    hotro: res.data.data.myselfGap,
-                    stateButtonTatca: false,
-                    stateButtonGap: true,
-                    stateButtonDaxong: false
-                })
-                array_ht_trangthai = []
-                res.data.data.myselfGap.map((data, index) => {
-                    array_ht_trangthai.push(data.ht_trangthai)
-                })
-            }
-            this.forceUpdate()
-        })
+        Request('hotro/getmyselfgap', 'POST',
+            {
+                user_cookie,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.pageNumber,
+                index: this.state.index,
+                sortBy: this.state.sortBy
+            }).then((res) => {
+                if (res.data.data.myselfGap) {
+                    this.setState({
+                        hotro: res.data.data.myselfGap,
+                        stateButtonTatca: false,
+                        stateButtonGap: true,
+                        stateButtonDaxong: false
+                    })
+                    array_ht_trangthai = []
+                    res.data.data.myselfGap.map((data, index) => {
+                        array_ht_trangthai.push(data.ht_trangthai)
+                    })
+                }
+                this.forceUpdate()
+            })
     }
 
     getDataDaxong = async (pageNumber) => {
@@ -1021,13 +1027,16 @@ class Hotro extends React.Component {
                             <Col span={6}>
                                 <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
                                     <Button
+                                        disabled={this.state.stateButtonGap}
+                                        onClick={this.getDataGap.bind(this)}
+                                    >
+                                        Gấp
+                                    </Button>
+                                    <Button
                                         disabled={this.state.stateButtonTatca}
                                         onClick={this.getHotro.bind(this, this.state.page)}
                                     >Tất cả</Button>
-                                    <Button
-                                        disabled={this.state.stateButtonGap}
-                                        onClick={this.getDataGap.bind(this)}
-                                    >Gấp</Button>
+
                                     <Button
                                         disabled={this.state.stateButtonDaxong}
                                         onClick={this.getDataDaxong.bind(this, this.state.page)}
@@ -1060,7 +1069,6 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
-                                        console.log("day la j ", j)
                                         if (array_ht_trangthai[j - 1] === "daxong") {
                                             return <Badge color={"brown"} />
                                         }
