@@ -291,7 +291,7 @@ class Hopdong extends React.Component {
         })
         this.render()
       }).catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }
   getHopdongs = (pageNumber) => {
@@ -307,7 +307,7 @@ class Hopdong extends React.Component {
       sortBy: this.state.sortBy
     })
       .then((response) => {
-        console.log("day la res ", response)
+        //console.log("day la res data count ", response.data.data.count)
         if (response)
           this.setState({
             hopdongs: response.data.data.hopdongs,
@@ -333,7 +333,7 @@ class Hopdong extends React.Component {
   
   InsertOrUpdateHopdong = () => {
     this.onClickHandler();
-    console.log(this.state.selectedFile, 'file day');
+    //console.log(this.state.selectedFile, 'file day');
     const { form } = this.formRef.props;
     form.validateFields(async (err, values) => {
       if (err) {
@@ -363,7 +363,7 @@ class Hopdong extends React.Component {
           var description = response.data.message
           var notifi_type = 'success'
           var message = 'Thành công'
-          console.log(response.data, 'data  res')
+          //console.log(response.data, 'data  res')
           if (!!!response.data.success) {
             message = 'Có lỗi xảy ra!'
             notifi_type = 'error'
@@ -484,7 +484,7 @@ class Hopdong extends React.Component {
       hopdong.hd_ngayketthuc = hopdong.hd_ngayketthuc === null ? null : formatdate(hopdong.hd_ngayketthuc, 'yyyy-mm-dd')
       form.setFieldsValue(hopdong);
     }
-    console.log(this.state.selectedFile, 'file day ne');
+    //console.log(this.state.selectedFile, 'file day ne');
     //document.getElementById("file").value = ""
     this.setState({
       selectedFile: null
@@ -496,7 +496,7 @@ class Hopdong extends React.Component {
     });
   };
   handleCancel = e => {
-    console.log("ccancel")
+    //console.log("ccancel")
     const { form } = this.formRef.props
     form.resetFields()
     this.setState({
@@ -522,11 +522,11 @@ class Hopdong extends React.Component {
     })
   }
   confirm = (e) => {
-    console.log(e);
+    //console.log(e);
     message.success('Bấm yes để xác nhận');
   }
   cancel = (e) => {
-    console.log(e);
+    //console.log(e);
     this.setState({
       stateconfirmdelete: false
     })
@@ -598,7 +598,7 @@ class Hopdong extends React.Component {
 
         loaded: 0,
       })
-      console.log(this.state.selectedFile, 'file day');
+      //console.log(this.state.selectedFile, 'file day');
     }
     onChangeFile = async (e) => {
       const toBase64 = file => new Promise((resolve, reject) => {
@@ -610,7 +610,7 @@ class Hopdong extends React.Component {
       var file = e.target.files[0];
       var fileUploadHopdong = await toBase64(file);
       var fileName = file.name;
-      console.log(fileName, 'ten file');
+      //console.log(fileName, 'ten file');
 
       this.setState({
         valuefile: fileUploadHopdong,
@@ -775,7 +775,7 @@ class Hopdong extends React.Component {
                 onchangpagefile={this.onchangpagefile}
                 onClickDownloadFile={this.onClickDownloadFile}
               />
-              <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered='1' rowKey="hd_id" scroll={{ x: 1000 }}
+              <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered rowKey="hd_id" bordered scroll={{ x: 1000 }}
                 expandedRowRender={(record, selectedRowKeys) => {
                   return (
                     <div style={{ textAlign: 'left' }}>

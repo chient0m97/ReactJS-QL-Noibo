@@ -11,7 +11,7 @@ server.listen(3000);
 var mangUsers=[];
 
 io.on("connection", function(socket){
-    console.log('co nguoi ket noi '+socket.id);
+    //console.log('co nguoi ket noi '+socket.id);
     socket.on("client-send-Username", function(data){
         if(mangUsers.indexOf(data)>=0){
             socket.emit("server-send-dki-thatbai");
