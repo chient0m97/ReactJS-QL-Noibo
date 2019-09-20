@@ -47,39 +47,31 @@ var DuanController = {
     },
 
     insertDuan: async function insertDuan(duan, callback) {
-        if (1
-        ) {
-            if (1){
-                let firstInsert;
-                firstInsert = duan;
-                firstInsert.dm_duan_id = uuidv4();
-                duanData.insertDuan(duan, (response) => {
-                    var message = constant.successInsert;
-                    var status = 200;
-                    if (!response.success) {
-                        Validator.error.push(constant.errorSys)
-                        message = Validator.getError()
-                    }
-                    callback({
-                        message: message,
-                        success: response.success
-                    }, status);
-                })
-            } 
-            else {
+        if (1) {
+            let firstInsert;
+            firstInsert = duan;
+            firstInsert.dm_duan_id = uuidv4();
+            duanData.insertDuan(duan, (response) => {
+                var message = constant.successInsert;
+                var status = 200;
+                if (!response.success) {
+                    Validator.error.push(constant.errorSys)
+                    message = Validator.getError()
+                }
                 callback({
-                    message: Validator.getError(),
-                    success: false
+                    message: message,
+                    success: response.success
                 }, status);
-            }
-
-        } else {
+            })
+        }
+        else {
             callback({
                 message: Validator.getError(),
                 success: false
-            }, 400);
+            }, status);
         }
     },
+
     updateDuan: async function updateDuan(duan, callback) {
         if (1) {
             if (1) {
@@ -90,16 +82,26 @@ var DuanController = {
                         message: res.success === true ? constant.successUpdate : constant.errorUpdate
                     })
                 })
-          }
+            }
         }
     },
 
-    getcha:function getcha(callback){
-        duanData.getcha((data)=>{
+    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
+        console.log('dm')
+        let limit = pageSize;
+        let offset = pageSize * (pageNumber - 1);
+        duanData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
+            console.log('aaaaaaaaa', data)
+            callback(data);
+        })
+    },
+
+    getcha: function getcha(callback) {
+        duanData.getcha((data) => {
             callback(data)
         })
     },
-   
+
     validateCreate: (req, res, next) => {
         next()
     },

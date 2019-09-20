@@ -61,6 +61,35 @@ module.exports = {
             callback({ success: false })
         })
     },
+
+    search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
+        knex('duans').where(columnSearch, 'like', '%' + textSearch + '%').orderBy(index, sortBy).limit(limit).offset(offset)
+            .then(res => {
+                var duans = res
+                knex('duans').where(columnSearch, 'like', '%' + textSearch + '%').count()
+                    .then(resCount => {
+                        var count = resCount[0].count
+                        let dataCallback = {
+                            success: true,
+                            message: 'Get data success',
+                            data: {
+                                duans: duans,
+                                count: count
+                            }
+                        }
+                        callback(dataCallback)
+                    })
+                    .catch((err) => {
+
+                        console.log('lỗi  kết nối', err)
+                    })
+            })
+            .catch((err) => {
+
+                console.log('lỗi  kết nối', err)
+            })
+    },
+
     getQTDA: function (callback) {
         knex('nhansu').select('ns_id', knex.raw("coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '')  || ' ' || coalesce (ns_ten, '') as ns_ten")).then(res => {
             callback(res);
@@ -75,10 +104,10 @@ module.exports = {
             console.log(err, 'lỗi kết nối')
         })
     },
-    getcha:function(callback){
-        knex('nhansu').select('ns_id', knex.raw("coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten")).then(res=>{
+    getcha: function (callback) {
+        knex('nhansu').select('ns_id', knex.raw("coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten")).then(res => {
             callback(res);
-        }).catch((err)=> {
+        }).catch((err) => {
             console.log(err)
         })
     },

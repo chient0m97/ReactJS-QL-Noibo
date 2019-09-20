@@ -48,7 +48,7 @@ var nhansuController = {
     },
 
     updateNhansu: function updateNhansu(nhansu, callback) {
-        if ( Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng') || nhansu.ns_email==="null") {
+        if (Validator.isMail(nhansu.ns_email, 'Email không đúng định dạng') || nhansu.ns_email === "null") {
             if (1) {
                 nhansuData.updateNhansu(nhansu, (res) => {
                     callback({
@@ -89,6 +89,14 @@ var nhansuController = {
             }
             callback(data);
         });
+    },
+
+    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
+        let limit = pageSize;
+        let offset = pageSize * (pageNumber - 1);
+        nhansuData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
+            callback(data);
+        })
     },
 
     validateCreate: (req, res, next) => {

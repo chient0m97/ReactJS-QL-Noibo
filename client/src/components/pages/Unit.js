@@ -254,6 +254,7 @@ class Unit extends React.Component {
     }
 
     showModalUpdate = async (unit) => {
+        console.log('dcmm',unit)
         const { form } = this.formRef.props
         this.setState({
             visible: true,
@@ -289,12 +290,6 @@ class Unit extends React.Component {
                 form.setFieldsValue({ dm_db_id_xa: '' })
             }
             form.setFieldsValue(unit);
-            if (unit.kh_id_nguoidaidien) {
-                console.log('hihi haha')
-            }
-            else {
-                form.setFieldsValue({ kh_id_nguoidaidien: '' })
-            }
         }
     };
 
