@@ -111,6 +111,16 @@ router.post('/insert1', function (req, res) {
     res.send(data);
   })
 })
+router.post('/insert2', function (req, res) {
+  halfController.insertHalf2(req.body, function (data) {
+    res.send(data);
+  })
+})
+router.post('/insert3', function (req, res) {
+  halfController.insertHalf3(req.body, function (data) {
+    res.send(data);
+  })
+})
 router.post('/update', function (req, res) {
   halfController.UpdateHalf(req.body, function (data) {
     res.send(data);
