@@ -145,9 +145,9 @@ class AppSider extends Component {
                                 }
                             }
                         })}
-                        {/* <Menu.Item key="26">
+                        <Menu.Item key="26">
                             <NavLink to="/chat" className="">Chat all</NavLink >
-                        </Menu.Item> */}
+                        </Menu.Item>
                     </SubMenu>
                     <SubMenu
                         key="sub2"
@@ -196,7 +196,11 @@ class AppSider extends Component {
                     </SubMenu>
                     <Menu.Item key="14">
                         <Icon type="file" />
-                        <span><NavLink to="/file" className="">Tập tin Khách Hàng</NavLink ></span>
+                        <span><NavLink to="/file" className="">Tập Tin Khách Hàng</NavLink ></span>
+                    </Menu.Item>
+                    <Menu.Item key="17">
+                        <Icon type="file-done" />
+                        <span><NavLink to="/approved" className="">Phê Duyệt</NavLink ></span>
                     </Menu.Item>
                     <Menu.Item key="13">
                         <Icon type="setting" onClick={this.showDrawer} />Cài Đặt
@@ -204,14 +208,17 @@ class AppSider extends Component {
                     <SubMenu key="sub4" title={
                         <span>
                             <Icon type="form" />
-                            <span>Đăng Ký Nghỉ</span>
+                            <span>Đăng Ký</span>
                         </span>
                     }>
-                        <Menu.Item key="15">
+                        {/* <Menu.Item key="15">
                             <NavLink to="/half" className="">Nghỉ nửa ngày</NavLink >
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="16">
-                            <NavLink to="/request" className="">Nghỉ 1 hoặc nhiều ngày</NavLink >
+                            <NavLink to="/request" className="">Đăng ký nghỉ</NavLink >
+                        </Menu.Item>
+                        <Menu.Item key="18">
+                            <NavLink to="/notification" className="">Thông báo nghỉ</NavLink >
                         </Menu.Item>
                     </SubMenu>
                 </Menu>
