@@ -12,6 +12,7 @@ import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import { async } from 'q';
 import axios from 'axios';
 import Modal_Filekhachhangs from '@pages/Modal/Modal_Filekhachhangs.js'
+import { element } from 'prop-types';
 const token = cookie.load('token');
 const { Column } = Table;
 class Customer extends React.Component {
@@ -58,7 +59,7 @@ class Customer extends React.Component {
             visible_dv: false,
             selectedFile: null,
             visibleImport: false,
-            timkiem : []
+            timkiem: []
         }
     }
 
@@ -70,7 +71,16 @@ class Customer extends React.Component {
                     description: res.data.message
                 });
                 this.getCustomers(this.state.page)
+                this.setState({
+                    stateconfirmdelete: false,
+                    statebuttondelete: true,
+                    statebuttonedit: true,
+                    selectedRowKeys: []
+                })
             })
+        this.setState({
+            stateconfirmdelete: false
+        })
     }
 
     getDonvis = () => {
@@ -238,20 +248,17 @@ class Customer extends React.Component {
     }
 
     showModalUpdate = async (customer) => {
+        console.log('dcmm', customer)
         const { form } = this.formRef.props
         this.setState({
             visible: true,
             visible_dv: false
         });
         if (customer.kh_id !== undefined) {
-            await this.setState({
+            this.setState({
                 kh_id_visible: true,
                 action: 'update'
             })
-            await this.set_select_tendv();
-            if (this.state.select_tendv.length === 0) {
-                await form.setFieldsValue({ dm_dv_id: '' })
-            }
             await form.setFieldsValue({ dm_dv_id: customer.tendonvi })
             await this.set_select_tinh();
             if (this.state.select_tinh.length > 0) {
@@ -273,17 +280,11 @@ class Customer extends React.Component {
                 await form.setFieldsValue({ dm_db_id_xa_customer: customer.tenxa })
             }
             form.setFieldsValue(customer);
-            if (customer.dm_dv_id) {
-                console.log('xóa là tạch')
-            }
-            else {
-                form.setFieldsValue({ dm_dv_id: '' })
-            }
-            form.setFieldsValue(customer)
         }
-    };
+    }
 
     showModalInsert = async (customer) => {
+        console.log('insert', customer)
         const { form } = this.formRef.props
         this.setState({
             visible: true,
@@ -627,8 +628,7 @@ class Customer extends React.Component {
             if (err) {
                 return
             }
-            var url = this.state.action === 'insert' ? 'unit/insert' : 'customer/update'
-            Request(url, 'POST', values)
+            Request('unit/insert', 'POST', values)
                 .then(async (response) => {
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields()
@@ -680,6 +680,8 @@ class Customer extends React.Component {
     }
 
     onSelectChange = (selectedRowKeys, selectedRows) => {
+        console.log('dm toan', selectedRowKeys)
+        console.log('dm toan tiep', selectedRows)
         this.setState({
             selectedRowKeys,
             selectedId: selectedRowKeys,
@@ -697,7 +699,7 @@ class Customer extends React.Component {
         if (selectedRowKeys.length === 1) {
             this.setState({
                 statebuttonedit: false,
-                rowunitselected: selectedRows[0]
+                rowcustomerselected: selectedRows[0]
             })
         }
         else {
@@ -952,7 +954,7 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps,
     {
-          fetchUser,
+        fetchUser,
         fetchLoading
     })
     (Customer);

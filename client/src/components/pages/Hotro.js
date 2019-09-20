@@ -557,7 +557,7 @@ class Hotro extends React.Component {
     };
 
     refresh = async (pageNumber) => {
-        message.success('Refresh success', 1);
+        message.success('Tải lại thành công', 1);
         await this.getHotro(this.state.pageNumber)
     }
 

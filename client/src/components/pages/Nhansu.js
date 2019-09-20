@@ -314,7 +314,8 @@ class Nhansu extends React.Component {
             selectedId: [],
             selectedrow: [],
             dinhdanh: [],
-            modalIsOpen: false
+            modalIsOpen: false,
+            timkiem : []
         }
     }
 
@@ -432,7 +433,7 @@ class Nhansu extends React.Component {
     }
 
     refresh = async (pageNumber) => {
-        message.success('Refresh success', 1);
+        message.success('Tải lại thành công', 1);
         await this.getNhansu(this.state.pageNumber)
     }
 
@@ -454,26 +455,60 @@ class Nhansu extends React.Component {
         }
     }
 
-    search = async (xxxx) => {
-        Request('nhansu/search', 'POST', {
-            pageSize: this.state.pageSize,
-            pageNumber: this.state.pageNumber,
-            textSearch: xxxx,
-            columnSearch: this.state.columnSearch,
-            p1: this.state.index,
-            p2: this.state.sortBy
-        })
-            .then((response) => {
-                let data = response.data;
-                if (data.data)
-                    this.setState({
-                        nhansu: data.data.nhansu,
-                        count: Number(data.data.count),
-                        searchText: xxxx,
-                        isSearch: 1
-                    })
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8, align : 'center' }}>
+                <Input
+                    ref={node => {
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    icon="search"
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Search
+            </Button>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+    });
+
+    handleSearch = (selectedKeys, value, confirm) => {
+        let vl = { values: selectedKeys[0], keys: value }
+        if (value && selectedKeys.length > 0) {
+            this.state.timkiem.push(vl)
+        }
+        Request(`nhansu/search`, 'POST',
+            {
+                timkiem: this.state.timkiem,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.page
             })
-    }
+            .then((res) => {
+                notification[res.data.success === true ? 'success' : 'error']({
+                    message: 'Đã xuất hiện bản ghi',
+                    description: res.data.message
+                });
+                this.setState({
+                    nhansu: res.data.data.nhansu,
+                })
+            })
+
+
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    };
 
     onHeaderCell = (column) => {
         return {
@@ -706,16 +741,16 @@ class Nhansu extends React.Component {
                         
                     />
                     <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.nhansu} rowKey="ns_id" bordered scroll={{ x: 1000 }}>
-                        <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Họ và tên" width={150} dataIndex="ns_hovaten" key="ns_hovaten" align="center" onHeaderCell={this.onHeaderCell} />
+                        <Column title="Định danh cá nhân" dataIndex={"ns_dinhdanhcanhan"} align="center" {...this.getColumnSearchProps('ns_dinhdanhcanhan')} onHeaderCell={this.onHeaderCell} />
+                        <Column title="Họ và tên" width={150} dataIndex="ns_hovaten" key="ns_hovaten" align="center" {...this.getColumnSearchProps('ns_hovaten')}  onHeaderCell={this.onHeaderCell} />
                         <Column title="Ngày sinh" dataIndex="ns_ngaysinh" key="ns_ngaysinh" align="center" render={text => formatDate(text, "dd/mm/yyyy")} onHeaderCell={this.onHeaderCell} />
                         <Column title="Giới tính" dataIndex="ns_gioitinh" key="ns_gioitinh" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Số điện thoại" dataIndex="ns_sodienthoai" key="ns_sodienthoai" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Email" dataIndex="ns_email" key="ns_email" align="center" onHeaderCell={this.onHeaderCell} />
+                        <Column title="Số điện thoại" dataIndex="ns_sodienthoai" key="ns_sodienthoai" align="center" {...this.getColumnSearchProps('ns_sodienthoai')} onHeaderCell={this.onHeaderCell} />
+                        <Column title="Email" dataIndex="ns_email" key="ns_email" align="center" {...this.getColumnSearchProps('ns_email')} onHeaderCell={this.onHeaderCell} />
                         <Column title="Địa chỉ hiện nay" width={150} dataIndex="ns_diachihiennay" key="ns_diachihiennay" align="center" onHeaderCell={this.onHeaderCell} />
                         <Column title="Nguyên quán" dataIndex="ns_nguyenquan" key="ns_nguyenquan" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Người liên hệ" dataIndex="ns_nguoilienhe" key="ns_nguoilienhe" align="center" onHeaderCell={this.onHeaderCell} />
-                        <Column title="Bằng cấp" dataIndex="ns_bangcap" key="ns_bangcap" align="center" onHeaderCell={this.onHeaderCell} />
+                        <Column title="Người liên hệ" dataIndex="ns_nguoilienhe" key="ns_nguoilienhe" align="center" {...this.getColumnSearchProps('ns_nguoilienhe')}  onHeaderCell={this.onHeaderCell} />
+                        <Column title="Bằng cấp" dataIndex="ns_bangcap" key="ns_bangcap" align="center" {...this.getColumnSearchProps('ns_bangcap')}  onHeaderCell={this.onHeaderCell} />
                     </Table>
                 </Row>
                 <Row>
