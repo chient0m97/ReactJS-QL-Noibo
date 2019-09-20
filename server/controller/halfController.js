@@ -141,6 +141,46 @@ var halfController = {
             }, status);
         });
     },
+    insertHalf2: async function insertHalf2(hopdong, callback) {
+        let firtInsert;
+        firtInsert = hopdong;
+        firtInsert.id = uuidv4();
+        firtInsert.day = 'sang'
+        firtInsert.status = '0'
+        halfData.insertHalf2(firtInsert, (response) => {
+            var message = constant.successInsert;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError();
+                status = 400
+            }
+            callback({
+                message: message,
+                success: response.success
+            }, status);
+        });
+    },
+    insertHalf3: async function insertHalf3(hopdong, callback) {
+        let firtInsert;
+        firtInsert = hopdong;
+        firtInsert.id = uuidv4();
+        firtInsert.day = 'chieu'
+        firtInsert.status = '0'
+        halfData.insertHalf3(firtInsert, (response) => {
+            var message = constant.successInsert;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError();
+                status = 400
+            }
+            callback({
+                message: message,
+                success: response.success
+            }, status);
+        });
+    },
     UpdateHalf: async function updateHalf(hopdong, callback) {
             halfData.updateHalf(hopdong, (res) => {
                 callback({

@@ -47,12 +47,17 @@ router.post('/update', function (req, res) {
 router.post('/search', function (req, res) {
   let pageSize = req.body.pageSize;
   let pageNumber = req.body.pageNumber;
-  let textSearch = req.body.textSearch;
-  let columnSearch = req.body.columnSearch;
-  let index = req.body.p1;
-  let sortBy = req.body.p2
-  hopdongController.search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, function (data) {
-    res.send(data);
+  let timkiem = req.body.timkiem;
+  hopdongController.search(pageSize, pageNumber, timkiem, function (data) {
+      res.send(data);
+  })
+})
+router.post('/search1', function (req, res) {
+  let pageSize = req.body.pageSize;
+  let pageNumber = req.body.pageNumber;
+  let timkiem = req.body.timkiem;
+  hopdongController.search1(pageSize, pageNumber, timkiem, function (data) {
+      res.send(data);
   })
 })
 router.post('/getcha', function (req, res) {

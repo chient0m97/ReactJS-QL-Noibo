@@ -265,6 +265,7 @@ class Hopdong extends React.Component {
       stateconfirmdelete: false,
       selectedRowKeys: [],
       selectedId: [],
+      timkiem: [],
       comboBoxDatasource: [],
       comboBoxDuanSource: [],
       propDatasourceSelectLoaiHopDong: {
@@ -319,6 +320,61 @@ class Hopdong extends React.Component {
     })
   }
 
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8, align: 'center' }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={'Từ tìm kiếm'}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90 }}
+        >
+          Tìm kiếm
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+  });
+
+  handleSearch = (selectedKeys, value, confirm) => {
+    let vl = { values: selectedKeys[0], keys: value }
+    if (value && selectedKeys.length > 0) {
+        this.state.timkiem.push(vl)
+    }
+    Request(`hopdong/search`, 'POST',
+        {
+            timkiem: this.state.timkiem,
+            pageSize: this.state.pageSize,
+            pageNumber: this.state.page
+        })
+        .then((res) => {
+            notification[res.data.success === true ? 'success' : 'error']({
+                message: 'Đã xuất hiện bản ghi',
+                description: res.data.message
+            });
+            this.setState({
+                hopdongs: res.data.data.hopdongs,
+            })
+        })
+
+
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+};
+
   onClickHandler = () => {
     const data = new FormData()
     if (this.state.selectedFile !== null) {
@@ -330,7 +386,7 @@ class Hopdong extends React.Component {
         })
     }
   }
-  
+
   InsertOrUpdateHopdong = () => {
     this.onClickHandler();
     //console.log(this.state.selectedFile, 'file day');
@@ -378,8 +434,8 @@ class Hopdong extends React.Component {
           this.getHopdongs(this.state.page)
         })
     });
-    document.getElementById('inputFile').value = ""
-    
+    //document.getElementById('inputFile').value = ""
+
   }
 
   refresh = () => {
@@ -425,7 +481,7 @@ class Hopdong extends React.Component {
       hd_doituong: value
     })
   }
-  showModal = async (hopdong) => {    
+  showModal = async (hopdong) => {
     Request('hopdong/getdonvi', 'POST', null).then(res => {
       this.setState({
         propDatasourceSelectLoaiHopDong: {
@@ -502,7 +558,7 @@ class Hopdong extends React.Component {
     this.setState({
       selectedFile: null
     });
-    document.getElementById('file').value=''
+    document.getElementById('file').value = ''
     //const {form} = this.formRef.props
     form.resetFields()
     this.setState({
@@ -593,287 +649,292 @@ class Hopdong extends React.Component {
     // if (extension === null){
     //   event.target.files.name = '';
     // }
-      this.setState({
-        selectedFile: event.target.files[0],
+    this.setState({
+      selectedFile: event.target.files[0],
 
-        loaded: 0,
-      })
-      //console.log(this.state.selectedFile, 'file day');
-    }
-    onChangeFile = async (e) => {
-      const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      });
-      var file = e.target.files[0];
-      var fileUploadHopdong = await toBase64(file);
-      var fileName = file.name;
-      //console.log(fileName, 'ten file');
+      loaded: 0,
+    })
+    //console.log(this.state.selectedFile, 'file day');
+  }
+  onChangeFile = async (e) => {
+    const toBase64 = file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+    var file = e.target.files[0];
+    var fileUploadHopdong = await toBase64(file);
+    var fileName = file.name;
+    //console.log(fileName, 'ten file');
 
+    this.setState({
+      valuefile: fileUploadHopdong,
+      valuename: fileName
+    })
+  }
+  onChangeClick_loaihopdong = (e) => {
+    var label = e === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
+    var api = e === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
+    const { form } = this.formRef.props
+    Request(api, 'post', null).then((res) => {
       this.setState({
-        valuefile: fileUploadHopdong,
-        valuename: fileName
+        propDatasourceSelectLoaiHopDong: {
+          label: label,
+          dataSource: res.data,
+          type: e
+        }
+      })
+      form.setFieldsValue({
+        hd_doituong: res.data[0].id
+      })
+    })
+    this.setState({
+      labelCombobox: label
+    })
+  }
+  checkDate = (check, text) => {
+    if (check === 0) {
+      return <a style={{ color: 'black' }}><Badge count={<Icon type="clock-circle" style={{ color: '#f5222d' }} />}>
+        {text}
+      </Badge></a>
+    }
+    if (check === 1)
+      return <Tooltip title="Cảnh báo hợp đồng sắp hết hạn"><Badge count={<Icon type="warning" style={{ color: '#f5222d' }} />}>
+        {text}
+      </Badge></Tooltip>
+  }
+  onSelectChange = (selectedRowKeys, selectedRows) => {
+    this.setState({
+      selectedRowKeys,
+      selectedId: selectedRowKeys
+    });
+    if (selectedRowKeys.length > 0) {
+      this.setState({
+        statebuttondelete: false
       })
     }
-    onChangeClick_loaihopdong = (e) => {
-      var label = e === 'DV' ? 'Chọn khách hàng là đơn vị:' : 'Chọn khách hàng là cá nhân:'
-      var api = e === 'DV' ? 'hopdong/getdonvi' : 'hopdong/getkhachhang'
-      const { form } = this.formRef.props
-      Request(api, 'post', null).then((res) => {
-        this.setState({
-          propDatasourceSelectLoaiHopDong: {
-            label: label,
-            dataSource: res.data,
-            type: e
-          }
-        })
-        form.setFieldsValue({
-          hd_doituong: res.data[0].id
-        })
-      })
+    else
       this.setState({
-        labelCombobox: label
+        statebuttondelete: true
+      })
+    if (selectedRowKeys.length === 1) {
+      this.setState({
+        statebuttonedit: false,
+        rowthotroselected: selectedRows[0]
       })
     }
-    checkDate = (check, text) => {
-      if (check === 0) {
-        return <a style={{ color: 'black' }}><Badge count={<Icon type="clock-circle" style={{ color: '#f5222d' }} />}>
-          {text}
-        </Badge></a>
-      }
-      if (check === 1)
-        return <Tooltip title="Cảnh báo hợp đồng sắp hết hạn"><Badge count={<Icon type="warning" style={{ color: '#f5222d' }} />}>
-          {text}
-        </Badge></Tooltip>
-    }
-    onSelectChange = (selectedRowKeys, selectedRows) => {
+    else
       this.setState({
-        selectedRowKeys,
-        selectedId: selectedRowKeys
-      });
-      if (selectedRowKeys.length > 0) {
-        this.setState({
-          statebuttondelete: false
-        })
-      }
-      else
-        this.setState({
-          statebuttondelete: true
-        })
-      if (selectedRowKeys.length === 1) {
-        this.setState({
-          statebuttonedit: false,
-          rowthotroselected: selectedRows[0]
-        })
-      }
-      else
-        this.setState({
-          statebuttonedit: true
-        })
-    }
-    checkStateConfirm = () => {
-      this.setState({
-        stateconfirmdelete: true
+        statebuttonedit: true
       })
-    }
-    clearChecked = () => {
+  }
+  checkStateConfirm = () => {
+    this.setState({
+      stateconfirmdelete: true
+    })
+  }
+  clearChecked = () => {
+    this.onSelectChange([], [])
+  };
+  onRowClick = (row) => {
+    if (this.state.selectedRowKeys[0] === row.hd_id) {
       this.onSelectChange([], [])
-    };
-    onRowClick = (row) => {
-      if (this.state.selectedRowKeys[0] === row.hd_id) {
-        this.onSelectChange([], [])
-      }
-      else {
-        this.onSelectChange([row.hd_id], [row])
-      }
     }
-    saveFormRef = formRef => {
-      this.formRef = formRef;
-    }
-    render() {
-      const { selectedRowKeys } = this.state
-      //   const rowSelection = {
-      //     type: 'radio',
-      //     hideDefaultSelections: true,
-      //     selectedRowKeys,
-      //     onChange: this.onSelectChange,
-      // };
-      const rowSelection = {
-        hideDefaultSelections: true,
-        selectedRowKeys,
-        onChange: this.onSelectChange,
-        getCheckboxProps: record => ({
-          disabled: Column.title === 'Id',
-          name: record.name,
-        }),
-      };
-      var dateFormat = require('dateformat');
-      if (token)
-        return (
-          <div>
-            <Card>
-              <Row>
-                <Col span={2}>
-                  <Tooltip title="Thêm Hợp Đồng">
-                    <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                      <Icon type="plus" />
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col span={2}>
-                  <Tooltip title="Sửa Hợp Đồng">
-                    <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
-                      <Icon type="edit" />
-                    </Button>
-                  </Tooltip>
-                </Col>
-                <Col span={2}>
-                  <Tooltip title="Xóa Hợp Đồng">
-                    <Popconfirm
-                      title="Bạn chắc chắn muốn xóa?"
-                      onConfirm={this.deleteHopdong.bind(this, this.state.selectedId)}
-                      onCancel={this.cancel}
-                      okText="Yes"
-                      cancelText="No"
-                      visible={this.state.stateconfirmdelete}
-                    >
-                      <Button shape="round" type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
-                        <Icon type="delete" />
-                      </Button>
-                    </Popconfirm>
-                  </Tooltip>
-                </Col>
-                <Col span={2}>
-                  <Tooltip title="Tải Lại">
-                    <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
-                      <Icon type="reload" />
-                    </Button>
-                  </Tooltip>
-                </Col>
-              </Row>
-            </Card>
-            <Row style={{ marginTop: 5 }}>
-              <FormModal
-                wrappedComponentRef={this.saveFormRef}
-                visible={this.state.visible}
-                onCancel={this.handleCancel}
-                onSave={this.InsertOrUpdateHopdong}
-                title={this.state.title}
-                formtype={this.state.formtype}
-                id_visible={this.state.id_visible}
-                onchangeoption={this.onchangeoption}
-                onChangeId={this.onchangeid}
-                onChangeSelect={this.onChangeSelect}
-                comboBoxDatasource={this.state.comboBoxDatasource}
-                comboBoxDuanSource={this.state.comboBoxDuanSource}
-                onChangeClick_loaihopdong={this.onChangeClick_loaihopdong}
-                propDatasourceSelectLoaiHopDong={this.state.propDatasourceSelectLoaiHopDong}
-                onChangeFile={this.onChangeFile}
-                onChangeHandler={this.onChangeHandler}
-                onchangpagefile={this.onchangpagefile}
-                onClickDownloadFile={this.onClickDownloadFile}
-              />
-              <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered rowKey="hd_id" bordered scroll={{ x: 1000 }}
-                expandedRowRender={(record, selectedRowKeys) => {
-                  return (
-                    <div style={{ textAlign: 'left' }}>
-                      <div style={{ paddingTop: '10px', fontSize: '18px' }}> Dự án: </div>
-                      <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].dm_duan_ten}</Row>
-                      <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
-                      <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].hd_ghichu}</Row>
-                      <div style={{ paddingTop: '10px', fontSize: '18px' }}> Loại hợp đồng: </div>
-                      <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_loai}</Row>
-                    </div>
-                  )
-                }}
-              >
-                <Column title="Tên khách hàng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell}
-                //  render={text => {
-                //   return this.checkDate(1, text)
-                // }} 
-                />
-                <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
-                <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
-                <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} />
-                <Column title="Công ty" dataIndex="hd_congty" key="hd_congty"
-                  onHeaderCell={this.onHeaderCell} width={150} />
-                <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} width={150}
-                  render={
-                    text => {
-                      if (text === null)
-                        return ' '
-                      else
-                        return text + ' ngày'
-                    }}
-                />
-                <Column title="Địa chỉ" className="hidden-action" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} width={150} />
-                <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" width={150} render={
-                  text => {
-                    if (text === null)
-                      return ' '
-                    else
-                      return dateFormat(text, "dd/mm/yyyy")
-                  }} onHeaderCell={this.onHeaderCell} />
-                <Column title="Ngày nghiệm thu" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
-                  render={
-                    text => {
-                      if (text === null)
-                        return ' '
-                      else
-                        return dateFormat(text, "dd/mm/yyyy")
-                    }}
-                  onHeaderCell={this.onHeaderCell} />
-                <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" width={150} render={
-                  text => {
-                    if (text === null)
-                      return ' '
-                    else
-                      return dateFormat(text, "dd/mm/yyyy")
-                  }} onHeaderCell={this.onHeaderCell} />
-                <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" width={150} render={
-                  text => {
-                    if (text === null)
-                      return ' '
-                    else
-                      return dateFormat(text, "dd/mm/yyyy")
-                  }} onHeaderCell={this.onHeaderCell} />
-                <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" width={150} render={
-                  text => {
-                    if (text === null)
-                      return ' '
-                    else
-                      return dateFormat(text, "dd/mm/yyyy")
-                  }} onHeaderCell={this.onHeaderCell} />
-                <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
-                <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} />
-                <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" className="hidden-action" onHeaderCell={this.onHeaderCell} />
-                <Column title="Tải xuống" dataIndex="hd_files" key="hd_files"
-                  render={(text) => (
-                    <span>
-                      <Tooltip title="Tải xuống">
-                        <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
-                          <Icon type="download" />
-                        </Button>
-                      </Tooltip>
-                    </span>
-                  )}
-                />
-              </Table>
-            </Row>
-            <Row>
-              <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
-            </Row>
-          </div>
-        );
+    else {
+      this.onSelectChange([row.hd_id], [row])
     }
   }
-  const mapStateToProps = state => ({
-    ...state
-  })
-  export default connect(mapStateToProps,
-    {
-      fetchLoading
-    }
-  )(Hopdong);
+  saveFormRef = formRef => {
+    this.formRef = formRef;
+  }
+  render() {
+    const { selectedRowKeys } = this.state
+    //   const rowSelection = {
+    //     type: 'radio',
+    //     hideDefaultSelections: true,
+    //     selectedRowKeys,
+    //     onChange: this.onSelectChange,
+    // };
+    const rowSelection = {
+      hideDefaultSelections: true,
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+      getCheckboxProps: record => ({
+        disabled: Column.title === 'Id',
+        name: record.name,
+      }),
+    };
+    var dateFormat = require('dateformat');
+    if (token)
+      return (
+        <div>
+          <Card>
+            <Row>
+              <Col span={2}>
+                <Tooltip title="Thêm Hợp Đồng">
+                  <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
+                    <Icon type="plus" />
+                  </Button>
+                </Tooltip>
+              </Col>
+              <Col span={2}>
+                <Tooltip title="Sửa Hợp Đồng">
+                  <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                    <Icon type="edit" />
+                  </Button>
+                </Tooltip>
+              </Col>
+              <Col span={2}>
+                <Tooltip title="Xóa Hợp Đồng">
+                  <Popconfirm
+                    title="Bạn chắc chắn muốn xóa?"
+                    onConfirm={this.deleteHopdong.bind(this, this.state.selectedId)}
+                    onCancel={this.cancel}
+                    okText="Yes"
+                    cancelText="No"
+                    visible={this.state.stateconfirmdelete}
+                  >
+                    <Button shape="round" type="danger" style={{ marginLeft: '10px' }} size="default" onClick={this.checkStateConfirm} disabled={this.state.statebuttondelete} >
+                      <Icon type="delete" />
+                    </Button>
+                  </Popconfirm>
+                </Tooltip>
+              </Col>
+              <Col span={2}>
+                <Tooltip title="Tải Lại">
+                  <Button shape="round" type="primary" size="default" onClick={this.refresh.bind(null)}>
+                    <Icon type="reload" />
+                  </Button>
+                </Tooltip>
+              </Col>
+            </Row>
+          </Card>
+          <Row style={{ marginTop: 5 }}>
+            <FormModal
+              wrappedComponentRef={this.saveFormRef}
+              visible={this.state.visible}
+              onCancel={this.handleCancel}
+              onSave={this.InsertOrUpdateHopdong}
+              title={this.state.title}
+              formtype={this.state.formtype}
+              id_visible={this.state.id_visible}
+              onchangeoption={this.onchangeoption}
+              onChangeId={this.onchangeid}
+              onChangeSelect={this.onChangeSelect}
+              comboBoxDatasource={this.state.comboBoxDatasource}
+              comboBoxDuanSource={this.state.comboBoxDuanSource}
+              onChangeClick_loaihopdong={this.onChangeClick_loaihopdong}
+              propDatasourceSelectLoaiHopDong={this.state.propDatasourceSelectLoaiHopDong}
+              onChangeFile={this.onChangeFile}
+              onChangeHandler={this.onChangeHandler}
+              onchangpagefile={this.onchangpagefile}
+              onClickDownloadFile={this.onClickDownloadFile}
+            />
+            <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.hopdongs} bordered rowKey="hd_id" scroll={{ x: 1000 }}
+              expandedRowRender={(record, selectedRowKeys) => {
+                return (
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ paddingTop: '10px', fontSize: '18px' }}> Dự án: </div>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].dm_duan_ten}</Row>
+                    <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].hd_ghichu}</Row>
+                    <div style={{ paddingTop: '10px', fontSize: '18px' }}> Loại hợp đồng: </div>
+                    <Row style={{ paddingTop: '7px' }}>{this.state.hopdongs[selectedRowKeys].ten_hd_loai}</Row>
+                  </div>
+                )
+              }}
+            >
+              <Column title="Tên khách hàng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell}
+              //  render={text => {
+              //   return this.checkDate(1, text)
+              // }} 
+              {...this.getColumnSearchProps('ten_hd_doituong')}
+              />
+              <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
+              <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
+              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} {...this.getColumnSearchProps('hd_so')}/>
+              <Column title="Công ty" dataIndex="hd_congty" key="hd_congty"
+                onHeaderCell={this.onHeaderCell} width={150} {...this.getColumnSearchProps('hd_congty')}/>
+              <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} width={150}
+                render={
+                  text => {
+                    if (text === null)
+                      return ' '
+                    else
+                      return text + ' ngày'
+                  }}
+                  {...this.getColumnSearchProps('hd_thoigianthuchien')}
+              />
+              <Column title="Địa chỉ" className="hidden-action" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} width={150} />
+              <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" width={150} render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return dateFormat(text, "dd/mm/yyyy")
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngayky')}/>
+              <Column title="Ngày nghiệm thu" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
+                render={
+                  text => {
+                    if (text === null)
+                      return ' '
+                    else
+                      return dateFormat(text, "dd/mm/yyyy")
+                  }}
+                  {...this.getColumnSearchProps('hd_ngayketthuc')}
+                onHeaderCell={this.onHeaderCell} />
+              <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" width={150} render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return dateFormat(text, "dd/mm/yyyy")
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngaythanhly')}/>
+              <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" width={150} render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return dateFormat(text, "dd/mm/yyyy")
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngayxuathoadon')}/>
+              <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" width={150} render={
+                text => {
+                  if (text === null)
+                    return ' '
+                  else
+                    return dateFormat(text, "dd/mm/yyyy")
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngaythanhtoan')}/>
+              <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
+              <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} 
+              {...this.getColumnSearchProps('ten_hd_trangthai')}
+              />
+              <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" className="hidden-action" onHeaderCell={this.onHeaderCell} />
+              <Column title="Tải xuống" dataIndex="hd_files" key="hd_files"
+                render={(text) => (
+                  <span>
+                    <Tooltip title="Tải xuống">
+                      <Button shape="round" type="primary" onClick={this.onClickDownloadFile.bind(this, text)}>
+                        <Icon type="download" />
+                      </Button>
+                    </Tooltip>
+                  </span>
+                )}
+              />
+            </Table>
+          </Row>
+          <Row>
+            <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
+          </Row>
+        </div>
+      );
+  }
+}
+const mapStateToProps = state => ({
+  ...state
+})
+export default connect(mapStateToProps,
+  {
+    fetchLoading
+  }
+)(Hopdong);

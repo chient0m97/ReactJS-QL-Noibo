@@ -344,6 +344,22 @@ module.exports = {
             callback({ success: false })
         })
     },
+    insertHalf2: function (hopdong, callback) {
+        knex.from('half').insert(hopdong).then(res => {
+            callback({ success: true });
+        }).catch(err => {
+            //console.log(err,'err');
+            callback({ success: false })
+        })
+    },
+    insertHalf3: function (hopdong, callback) {
+        knex.from('half').insert(hopdong).then(res => {
+            callback({ success: true });
+        }).catch(err => {
+            //console.log(err,'err');
+            callback({ success: false })
+        })
+    },
     updateHalf: function (hopdong, callback) {
             knex.raw("update half set status = '1' where id='"+hopdong.id+"'").then(res => {
                     callback({ success: true })

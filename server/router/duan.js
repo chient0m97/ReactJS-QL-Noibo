@@ -51,4 +51,12 @@ router.post('/getcha',function(req,res){
     res.send(data);
   })
 })
+router.post('/search', function (req, res) {
+  let pageSize = req.body.pageSize;
+  let pageNumber = req.body.pageNumber;
+  let timkiem = req.body.timkiem;
+  duanController.search(pageSize, pageNumber, timkiem, function (data) {
+      res.send(data);
+  })
+})
 module.exports = router

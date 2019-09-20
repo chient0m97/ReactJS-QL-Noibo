@@ -246,6 +246,7 @@ class Hopdong extends React.Component {
       pageNumber: 1,
       current: 1,
       page: 1,
+      timkiem: [],
       pageSize: 10,
       showPopup: false,
       count: 1,
@@ -320,6 +321,60 @@ class Hopdong extends React.Component {
       loading: false
     })
   }
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8, align: 'center' }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={'Từ tìm kiếm'}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90 }}
+        >
+          Tìm kiếm
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+  });
+
+  handleSearch = (selectedKeys, value, confirm) => {
+    let vl = { values: selectedKeys[0], keys: value }
+    if (value && selectedKeys.length > 0) {
+        this.state.timkiem.push(vl)
+    }
+    Request(`hopdong/search1`, 'POST',
+        {
+            timkiem: this.state.timkiem,
+            pageSize: this.state.pageSize,
+            pageNumber: this.state.page
+        })
+        .then((res) => {
+            notification[res.data.success === true ? 'success' : 'error']({
+                message: 'Đã xuất hiện bản ghi',
+                description: res.data.message
+            });
+            this.setState({
+                hopdongs: res.data.data.hopdongs,
+            })
+        })
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+};
+
   onClickHandler = () => {
     const data = new FormData()
     if (this.state.selectedFile !== null) {
@@ -738,10 +793,11 @@ class Hopdong extends React.Component {
                 )
               }}
             >
-              <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
-              <Column title="Số hợp đồng" dataIndex="nkhd_so" key="nkhd_so" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}/>
+              <Column title="Tên dự án" dataIndex="dm_duan_ten" key="dm_duan_ten" onHeaderCell={this.onHeaderCell} style={{width: '70px'}} {...this.getColumnSearchProps('dm_duan_ten')}/>
+              <Column title="Số hợp đồng" dataIndex="nkhd_so" key="nkhd_so" onHeaderCell={this.onHeaderCell} style={{width: '70px'}} {...this.getColumnSearchProps('nkhd_so')}/>
               <Column title="Công ty" dataIndex="nkhd_congty" key="nkhd_congty"
-                onHeaderCell={this.onHeaderCell} style={{width: '70px'}} />
+                onHeaderCell={this.onHeaderCell} style={{width: '70px'}} {...this.getColumnSearchProps('nkhd_congty')}
+                />
               <Column title="Thời gian thực hiện" dataIndex="nkhd_thoigianthuchien" key="nkhd_thoigianthuchien" onHeaderCell={this.onHeaderCell} style={{width: '70px'}}
                 render={
                   text => {
@@ -750,6 +806,7 @@ class Hopdong extends React.Component {
                     else
                       return text + ' ngày'
                   }}
+                  {...this.getColumnSearchProps('nkhd_thoigianthuchien')}
               />
               <Column title="Ngày ký" dataIndex="nkhd_ngayky" key="nkhd_ngayky" width={150} render={
                 text => {
@@ -757,28 +814,28 @@ class Hopdong extends React.Component {
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('nkhd_ngayky')}/>
               <Column title="Ngày thanh lý" dataIndex="nkhd_ngaythanhly" key="nkhd_ngaythanhly" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('nkhd_ngaythanhly')}/>
               <Column title="Ngày xuất hóa đơn" dataIndex="nkhd_ngayxuathoadon" key="nkhd_ngayxuathoadon" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('nkhd_ngayxuathoadon')}/>
               <Column title="Ngày thanh toán" dataIndex="nkhd_ngaythanhtoan" key="nkhd_ngaythanhtoan" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} />
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('nkhd_ngaythanhtoan')}/>
               <Column title="Ngày nghiệm thu" dataIndex="nkhd_ngayketthuc" key="nkhd_ngayketthuc" width={150}
                 render={
                   text => {
@@ -787,7 +844,7 @@ class Hopdong extends React.Component {
                     else
                       return dateFormat(text, "dd/mm/yyyy")
                   }}
-                onHeaderCell={this.onHeaderCell} />
+                onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('nkhd_ngayketthuc')}/>
               <Column title="Thời gian thực hiện" dataIndex="nkhd_thoigiancapnhat" key="nkhd_thoigiancapnhat" width={150}
               render={
                 text => {
@@ -796,8 +853,8 @@ class Hopdong extends React.Component {
                   else
                   return dateFormat(text, "dd/mm/yyyy")
                 }}
-              onHeaderCell={this.onHeaderCell} style={{width: '70px'}} />
-              <Column title="Hành động" dataIndex="nkhd_action" key="nkhd_action" style={{width: '70px'}}
+              onHeaderCell={this.onHeaderCell} style={{width: '70px'}} {...this.getColumnSearchProps('nkhd_thoigiancapnhat')}/>
+              <Column title="Hành động" className="hidden-action" dataIndex="nkhd_action" key="nkhd_action" style={{width: '70px'}}
                render={
                 text => {
                   if (text === 'INSERT')
@@ -809,6 +866,8 @@ class Hopdong extends React.Component {
                     return 'Xóa'
                 }}
               />
+              <Column title="Hành động" dataIndex="ten_nkhd_action" key="ten_nkhd_action" style={{width: '70px'}}
+              {...this.getColumnSearchProps('ten_nkhd_action')}/>
             </Table>
           </Row>
           <Row>

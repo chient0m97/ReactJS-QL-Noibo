@@ -38,7 +38,6 @@ module.exports = {
         duans da \
         where hd.dm_duan_id = da.dm_duan_id "+ ' offset ' + offset + ' limit ' + limit)
             .then(res => {
-                console.log(res,'res');
                 knex('hopdongs').count()
                     .then((resCount) => {
                         callback({
@@ -96,6 +95,11 @@ module.exports = {
         hd.nkhd_files,\
         hd.nkhd_ghichu,\
         hd.nkhd_action,\
+        case (hd.nkhd_action) \
+                            when 'INSERT' then 'Thêm mới' \
+                            when 'UPDATE' then 'Sửa' \
+                            when 'DELETE' then 'Xóa' \
+                        end ten_nkhd_action, \
         hd.nkhd_tutang,\
         hd.nkhd_thoigiancapnhat\
         from nhatky_hopdongs hd,\
@@ -201,28 +205,236 @@ module.exports = {
             callback({ success: false })
         })
     },
-    search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        knex('hopdongs').where(columnSearch, 'like', textSearch).orderBy(index, sortBy).limit(limit).offset(offset)
-            .then(res => {
-                var hopdongs = res
-                knex('hopdongs').where(columnSearch, 'like', textSearch).count()
-                    .then(resCount => {
-                        var count = resCount[0].count
-                        let dataCallback = {
-                            success: true,
-                            message: 'Get data success',
-                            data: {
-                                hopdongs: hopdongs,
-                                count: count
-                            }
-                        }
-                        callback(dataCallback)
-                    })
-                    .catch((err) => {
-                    })
-            })
-            .catch((err) => {
-            })
+    search: function (limit, offset, timkiem, callback) {
+        var qr = ""
+        if (timkiem.length > 0) {
+            for (i = 0; i < timkiem.length; i++) {
+                let a = timkiem[i]
+                if (!a.values) {
+                    a.values = ''
+                }     
+                qr = qr + "upper(cast(hopdongs." + a.keys + " as text)) like upper('%" + a.values + "%') and "
+            }
+            var queryy = qr.slice(0, qr.length - 5)
+            var query = "select * from (select hd.hd_id, \
+                case (hd.hd_loai) \
+                    when 'DV' then 'Đơn Vị'\
+                    when 'CN' then 'Cá Nhân'\
+                end ten_hd_loai,\
+                hd.hd_loai,\
+                hd.hd_doituong,\
+                case (hd.hd_loai)\
+                    when 'DV' then (select dv.dm_dv_ten || ' - ' || \
+                    dv.dm_dv_diachi from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
+                    when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
+                end ten_hd_doituong,\
+                hd.dm_duan_id,\
+                da.dm_duan_ten,\
+                hd.hd_so,\
+                hd.hd_thoigianthuchien,\
+                hd.hd_ngayketthuc,\
+                hd.hd_diachi,\
+                hd.hd_ngayky,\
+                hd.hd_ngaythanhly,\
+                hd.hd_ngayxuathoadon,\
+                hd.hd_ngaythanhtoan,\
+                hd.hd_congty,\
+                hd.hd_trangthai,\
+                case (hd.hd_trangthai)\
+                     when 'DTH' then 'Đang thực hiện'\
+                     when 'TL'  then 'Thanh lý'\
+                     when 'XHD' then 'Xuất hóa đơn'\
+                     when 'DTT' then 'Đã thanh toán'\
+                     when 'DONG' then 'Đóng'\
+                end ten_hd_trangthai,\
+                hd.hd_files,\
+                hd.hd_ghichu\
+                from hopdongs hd,\
+                duans da \
+                where hd.dm_duan_id = da.dm_duan_id) as hopdongs where " + queryy + " "
+                console.log(query,'query');
+                
+            knex.raw(query)
+                .then(res => {
+                    knex.raw("select count(*) from (select hd.hd_id, \
+                        case (hd.hd_loai) \
+                            when 'DV' then 'Đơn Vị'\
+                            when 'CN' then 'Cá Nhân'\
+                        end ten_hd_loai,\
+                        hd.hd_loai,\
+                        hd.hd_doituong,\
+                        case (hd.hd_loai)\
+                            when 'DV' then (select dv.dm_dv_ten || ' - ' || \
+                            dv.dm_dv_diachi from donvis dv where dv.dm_dv_id = hd.hd_doituong)\
+                            when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.hd_doituong)\
+                        end ten_hd_doituong,\
+                        hd.dm_duan_id,\
+                        da.dm_duan_ten,\
+                        hd.hd_so,\
+                        hd.hd_thoigianthuchien,\
+                        hd.hd_ngayketthuc,\
+                        hd.hd_diachi,\
+                        hd.hd_ngayky,\
+                        hd.hd_ngaythanhly,\
+                        hd.hd_ngayxuathoadon,\
+                        hd.hd_ngaythanhtoan,\
+                        hd.hd_congty,\
+                        hd.hd_trangthai,\
+                        case (hd.hd_trangthai)\
+                             when 'DTH' then 'Đang thực hiện'\
+                             when 'TL'  then 'Thanh lý'\
+                             when 'XHD' then 'Xuất hóa đơn'\
+                             when 'DTT' then 'Đã thanh toán'\
+                             when 'DONG' then 'Đóng'\
+                        end ten_hd_trangthai,\
+                        hd.hd_files,\
+                        hd.hd_ghichu\
+                        from hopdongs hd,\
+                        duans da \
+                        where hd.dm_duan_id = da.dm_duan_id) as hopdongs where " + queryy + "")
+                        .then(resCount => {
+                            callback({
+                                success: true,
+                                data: {
+                                    hopdongs: res.rows,
+                                    count: resCount.rows[0].count
+                                }
+                            })
+                        })
+                        .catch((err) => {
+                            console.log('lỗi  kết nối', err)
+                        })
+                })
+                .catch((err) => {
+                    console.log('lỗi  kết nối', err)
+                })
+        }
+        else {
+            this.getHopdong(limit, offset, callback);
+        }
+
+    },
+    search1: function (limit, offset, timkiem, callback) {
+        var qr = ""
+        if (timkiem.length > 0) {
+            for (i = 0; i < timkiem.length; i++) {
+                let a = timkiem[i]
+                if (!a.values) {
+                    a.values = ''
+                }     
+                qr = qr + "upper(cast(hopdongs." + a.keys + " as text)) like upper('%" + a.values + "%') and "
+            }
+            var queryy = qr.slice(0, qr.length - 5)
+            var query = "select * from (select hd.nkhd_id, \
+                case (hd.nkhd_loai) \
+                    when 'DV' then 'Đơn Vị'\
+                    when 'CN' then 'Cá Nhân'\
+                end ten_nkhd_loai,\
+                hd.nkhd_loai,\
+                hd.nkhd_doituong,\
+                case (hd.nkhd_loai)\
+                    when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.nkhd_doituong)\
+                    when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.nkhd_doituong)\
+                end ten_nkhd_doituong,\
+                hd.dm_duan_id,\
+                da.dm_duan_ten,\
+                hd.nkhd_so,\
+                hd.nkhd_thoigianthuchien,\
+                hd.nkhd_ngayketthuc,\
+                hd.nkhd_diachi,\
+                hd.nkhd_ngayky,\
+                hd.nkhd_ngaythanhly,\
+                hd.nkhd_ngayxuathoadon,\
+                hd.nkhd_ngaythanhtoan,\
+                hd.nkhd_congty,\
+                hd.nkhd_trangthai,\
+                case (hd.nkhd_trangthai)\
+                     when 'DTH' then 'Đang thực hiện'\
+                     when 'TL'  then 'Thanh lý'\
+                     when 'XHD' then 'Xuất hóa đơn'\
+                     when 'DTT' then 'Đã thanh toán'\
+                     when 'DONG' then 'Đóng'\
+                end ten_nkhd_trangthai,\
+                hd.nkhd_files,\
+                hd.nkhd_ghichu,\
+                hd.nkhd_action,\
+                case (hd.nkhd_action) \
+                            when 'INSERT' then 'Thêm mới' \
+                            when 'UPDATE' then 'Sửa' \
+                            when 'DELETE' then 'Xóa' \
+                        end ten_nkhd_action, \
+                hd.nkhd_tutang,\
+                hd.nkhd_thoigiancapnhat\
+                from nhatky_hopdongs hd,\
+                duans da \
+                where hd.dm_duan_id = da.dm_duan_id) as hopdongs where " + queryy + " "
+                console.log(query,'query');
+                
+            knex.raw(query)
+                .then(res => {
+                    knex.raw("select count(*) from (select hd.nkhd_id, \
+                        case (hd.nkhd_loai) \
+                            when 'DV' then 'Đơn Vị'\
+                            when 'CN' then 'Cá Nhân'\
+                        end ten_nkhd_loai,\
+                        hd.nkhd_loai,\
+                        hd.nkhd_doituong,\
+                        case (hd.nkhd_loai)\
+                            when 'DV' then (select dv.dm_dv_ten from donvis dv where dv.dm_dv_id = hd.nkhd_doituong)\
+                            when 'CN' then (select kh.kh_ten from khachhangs kh where kh.kh_id = hd.nkhd_doituong)\
+                        end ten_nkhd_doituong,\
+                        hd.dm_duan_id,\
+                        da.dm_duan_ten,\
+                        hd.nkhd_so,\
+                        hd.nkhd_thoigianthuchien,\
+                        hd.nkhd_ngayketthuc,\
+                        hd.nkhd_diachi,\
+                        hd.nkhd_ngayky,\
+                        hd.nkhd_ngaythanhly,\
+                        hd.nkhd_ngayxuathoadon,\
+                        hd.nkhd_ngaythanhtoan,\
+                        hd.nkhd_congty,\
+                        hd.nkhd_trangthai,\
+                        case (hd.nkhd_trangthai)\
+                             when 'DTH' then 'Đang thực hiện'\
+                             when 'TL'  then 'Thanh lý'\
+                             when 'XHD' then 'Xuất hóa đơn'\
+                             when 'DTT' then 'Đã thanh toán'\
+                             when 'DONG' then 'Đóng'\
+                        end ten_nkhd_trangthai,\
+                        hd.nkhd_files,\
+                        hd.nkhd_ghichu,\
+                        hd.nkhd_action,\
+                        case (hd.nkhd_action) \
+                            when 'INSERT' then 'Thêm mới' \
+                            when 'UPDATE' then 'Sửa' \
+                            when 'DELETE' then 'Xóa' \
+                        end ten_nkhd_action, \
+                        hd.nkhd_tutang,\
+                        hd.nkhd_thoigiancapnhat\
+                        from nhatky_hopdongs hd,\
+                        duans da \
+                        where hd.dm_duan_id = da.dm_duan_id) as hopdongs where " + queryy + "")
+                        .then(resCount => {
+                            callback({
+                                success: true,
+                                data: {
+                                    hopdongs: res.rows,
+                                    count: resCount.rows[0].count
+                                }
+                            })
+                        })
+                        .catch((err) => {
+                            console.log('lỗi  kết nối', err)
+                        })
+                })
+                .catch((err) => {
+                    console.log('lỗi  kết nối', err)
+                })
+        }
+        else {
+            this.getNhatkyHopdong(limit, offset, callback);
+        }
     },
     insertDuan: function (duan, callback) {
         knex.from('duans').insert(duan).then(res => {

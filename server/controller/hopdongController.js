@@ -123,6 +123,13 @@ var HopdongController = {
             callback(data);
         })
     },
+    search1: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
+        let limit = pageSize;
+        let offset = pageSize * (pageNumber - 1);
+        hopdongData.search1(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
+            callback(data);
+        })
+    },
     validateCreate: (req, res, next) => {
         next()
     },
