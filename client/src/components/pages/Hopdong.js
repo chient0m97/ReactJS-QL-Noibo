@@ -352,28 +352,28 @@ class Hopdong extends React.Component {
   handleSearch = (selectedKeys, value, confirm) => {
     let vl = { values: selectedKeys[0], keys: value }
     if (value && selectedKeys.length > 0) {
-        this.state.timkiem.push(vl)
+      this.state.timkiem.push(vl)
     }
     Request(`hopdong/search`, 'POST',
-        {
-            timkiem: this.state.timkiem,
-            pageSize: this.state.pageSize,
-            pageNumber: this.state.page
+      {
+        timkiem: this.state.timkiem,
+        pageSize: this.state.pageSize,
+        pageNumber: this.state.page
+      })
+      .then((res) => {
+        notification[res.data.success === true ? 'success' : 'error']({
+          message: 'Đã xuất hiện bản ghi',
+          description: res.data.message
+        });
+        this.setState({
+          hopdongs: res.data.data.hopdongs,
         })
-        .then((res) => {
-            notification[res.data.success === true ? 'success' : 'error']({
-                message: 'Đã xuất hiện bản ghi',
-                description: res.data.message
-            });
-            this.setState({
-                hopdongs: res.data.data.hopdongs,
-            })
-        })
+      })
 
 
     confirm();
     this.setState({ searchText: selectedKeys[0] });
-};
+  };
 
   onClickHandler = () => {
     const data = new FormData()
@@ -449,10 +449,14 @@ class Hopdong extends React.Component {
 
   onClickDownloadFile = (text) => {
     if (text === " ") {
-      alert("Hợp đồng này không có file");
+      notification['error']({
+        message: 'Lỗi',
+        description: 'Hợp đồng này không có file'
+      });
     }
     else {
       window.open(text)
+      //window.open('http://localhost:8017/')
     }
   }
 
@@ -654,7 +658,8 @@ class Hopdong extends React.Component {
 
       loaded: 0,
     })
-    //console.log(this.state.selectedFile, 'file day');
+    console.log(this.state.selectedFile, 'file day');
+    console.log(event.target.files[0], 'file day');
   }
   onChangeFile = async (e) => {
     const toBase64 = file => new Promise((resolve, reject) => {
@@ -846,16 +851,16 @@ class Hopdong extends React.Component {
               }}
             >
               <Column title="Tên khách hàng" dataIndex="ten_hd_doituong" key="ten_hd_doituong" onHeaderCell={this.onHeaderCell}
-              //  render={text => {
-              //   return this.checkDate(1, text)
-              // }} 
-              {...this.getColumnSearchProps('ten_hd_doituong')}
+                //  render={text => {
+                //   return this.checkDate(1, text)
+                // }} 
+                {...this.getColumnSearchProps('ten_hd_doituong')}
               />
               <Column title="Loại hợp đồng" className="hidden-action" dataIndex="hd_loai" key="hd_loai" onHeaderCell={this.onHeaderCell} />
               <Column title="Tên đối tượng" className="hidden-action" dataIndex="hd_doituong" key="hd_doituong" onHeaderCell={this.onHeaderCell} />
-              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} {...this.getColumnSearchProps('hd_so')}/>
+              <Column title="Số hợp đồng" dataIndex="hd_so" key="hd_so" onHeaderCell={this.onHeaderCell} width={150} {...this.getColumnSearchProps('hd_so')} />
               <Column title="Công ty" dataIndex="hd_congty" key="hd_congty"
-                onHeaderCell={this.onHeaderCell} width={150} {...this.getColumnSearchProps('hd_congty')}/>
+                onHeaderCell={this.onHeaderCell} width={150} {...this.getColumnSearchProps('hd_congty')} />
               <Column title="Thời gian thực hiện" dataIndex="hd_thoigianthuchien" key="hd_thoigianthuchien" onHeaderCell={this.onHeaderCell} width={150}
                 render={
                   text => {
@@ -864,7 +869,7 @@ class Hopdong extends React.Component {
                     else
                       return text + ' ngày'
                   }}
-                  {...this.getColumnSearchProps('hd_thoigianthuchien')}
+                {...this.getColumnSearchProps('hd_thoigianthuchien')}
               />
               <Column title="Địa chỉ" className="hidden-action" dataIndex="hd_diachi" key="hd_diachi" onHeaderCell={this.onHeaderCell} width={150} />
               <Column title="Ngày ký" dataIndex="hd_ngayky" key="hd_ngayky" width={150} render={
@@ -873,7 +878,7 @@ class Hopdong extends React.Component {
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngayky')}/>
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngayky')} />
               <Column title="Ngày nghiệm thu" dataIndex="hd_ngayketthuc" key="hd_ngayketthuc" width={150}
                 render={
                   text => {
@@ -882,7 +887,7 @@ class Hopdong extends React.Component {
                     else
                       return dateFormat(text, "dd/mm/yyyy")
                   }}
-                  {...this.getColumnSearchProps('hd_ngayketthuc')}
+                {...this.getColumnSearchProps('hd_ngayketthuc')}
                 onHeaderCell={this.onHeaderCell} />
               <Column title="Ngày thanh lý" dataIndex="hd_ngaythanhly" key="hd_ngaythanhly" width={150} render={
                 text => {
@@ -890,24 +895,24 @@ class Hopdong extends React.Component {
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngaythanhly')}/>
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngaythanhly')} />
               <Column title="Ngày xuất hóa đơn" dataIndex="hd_ngayxuathoadon" key="hd_ngayxuathoadon" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngayxuathoadon')}/>
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngayxuathoadon')} />
               <Column title="Ngày thanh toán" dataIndex="hd_ngaythanhtoan" key="hd_ngaythanhtoan" width={150} render={
                 text => {
                   if (text === null)
                     return ' '
                   else
                     return dateFormat(text, "dd/mm/yyyy")
-                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngaythanhtoan')}/>
+                }} onHeaderCell={this.onHeaderCell} {...this.getColumnSearchProps('hd_ngaythanhtoan')} />
               <Column title="Trạng thái" className="hidden-action" dataIndex="hd_trangthai" key="hd_trangthai" onHeaderCell={this.onHeaderCell} />
-              <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell} 
-              {...this.getColumnSearchProps('ten_hd_trangthai')}
+              <Column title="Trạng thái" dataIndex="ten_hd_trangthai" key="ten_hd_trangthai" onHeaderCell={this.onHeaderCell}
+                {...this.getColumnSearchProps('ten_hd_trangthai')}
               />
               <Column title="Ghi chú" dataIndex="hd_ghichu" key="hd_ghichu" className="hidden-action" onHeaderCell={this.onHeaderCell} />
               <Column title="Tải xuống" dataIndex="hd_files" key="hd_files"
