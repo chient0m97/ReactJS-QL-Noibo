@@ -44,6 +44,7 @@ var duanRoute = require('./router/duan')
 var memberRoute = require('./router/memberRoute')
 var fileRoute = require('./router/fileRoute')
 var ChangePass = require('./router/changepass')
+var ViewProfile = require('./router/viewprofile')
 var authorize = require('./middleware/authorize')
 var bodyParser = require('body-parser');
 
@@ -67,6 +68,8 @@ app.use('/nhansu', nhansuRoute);
 app.use('/member', memberRoute);
 
 app.use('/changepass', ChangePass);
+
+app.use('/viewprofile', ViewProfile);
 
 app.use('/hotro', hotroRoute)
 

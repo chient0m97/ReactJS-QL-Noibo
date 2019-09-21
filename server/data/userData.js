@@ -86,6 +86,9 @@ module.exports = {
             })
         })
     },
+    changeProfile: function (user, callback) {
+    
+    },
     selectUser: function (user, callback) {
         knex.from('users').select('*').where('id', user.id).then(res => {
             callback(res[0]);
@@ -95,7 +98,7 @@ module.exports = {
         })
     },
     getUserLogin: function (username, callback) {
-        knex('users').select('password', 'fullname').where('name', username).then(res => {
+        knex('users').select('password', 'fullname','madinhdanh').where('name', username).then(res => {
             callback(res[0])
         }).catch(err => {
             console.log('Lỗi', err)

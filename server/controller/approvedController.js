@@ -141,6 +141,44 @@ var approvedController = {
             }, status);
         });
     },
+    insertHopdong2: async function insertHopdong2(hopdong, callback) {
+        let firtInsert;
+        firtInsert = hopdong;
+        firtInsert.id = uuidv4();
+        firtInsert.status = '0'
+        approvedData.insertHopdong2(firtInsert, (response) => {
+            var message = constant.successInsert;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError();
+                status = 400
+            }
+            callback({
+                message: message,
+                success: response.success
+            }, status);
+        });
+    },
+    insertHopdong3: async function insertHopdong3(hopdong, callback) {
+        let firtInsert;
+        firtInsert = hopdong;
+        firtInsert.id = uuidv4();
+        firtInsert.status = '0'
+        approvedData.insertHopdong3(firtInsert, (response) => {
+            var message = constant.successInsert;
+            var status = 200;
+            if (!response.success) {
+                Validator.error.push(constant.errorSys)
+                message = Validator.getError();
+                status = 400
+            }
+            callback({
+                message: message,
+                success: response.success
+            }, status);
+        });
+    },
     UpdateHopdong: async function updateHopdong(hopdong, callback) {
             approvedData.updateHopdong(hopdong, (res) => {
                 callback({

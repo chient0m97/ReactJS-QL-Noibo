@@ -859,16 +859,17 @@ class Hotro extends React.Component {
             pageSize: this.state.pageSize,
             pageNumber: pageNumber,
         }).then((res) => {
-            if (res.data.data.myselfDaxong) {
+            console.log("res ",res)
+            if (res.data.data.myself) {
                 this.setState({
-                    hotro: res.data.data.myselfDaxong,
+                    hotro: res.data.data.myself,
                     count: res.data.data.count,
                     stateButtonDaxong: true,
                     stateButtonTatca: false,
                     stateButtonGap: false
                 })
                 array_ht_trangthai = []
-                res.data.data.myselfDaxong.map((data, index) => {
+                res.data.data.myself.map((data, index) => {
                     array_ht_trangthai.push(data.ht_trangthai)
                 })
             }

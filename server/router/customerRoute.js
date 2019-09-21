@@ -75,9 +75,7 @@ router.post('/search', function (req, res) {
     let pageSize = req.body.pageSize;
     let pageNumber = req.body.pageNumber;
     let timkiem = req.body.timkiem;
-    console.log('ssss', req.body.timkiem)
     customerController.search(pageSize, pageNumber, timkiem, function (data) {
-        console.log('tttttttttt', data)
         res.send(data);
     })
 })

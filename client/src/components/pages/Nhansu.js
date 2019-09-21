@@ -347,6 +347,7 @@ class Nhansu extends React.Component {
             sortBy: this.state.sortBy
         })
             .then((res) => {
+                console.log('zxczxcxcz',res.data.data.nhansu)
                 if (res.data.data.nhansu) {
                     this.setState({
                         nhansu: res.data.data.nhansu,

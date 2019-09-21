@@ -211,9 +211,9 @@ class AppSider extends Component {
                             <span>Đăng Ký</span>
                         </span>
                     }>
-                        {/* <Menu.Item key="15">
-                            <NavLink to="/half" className="">Nghỉ nửa ngày</NavLink >
-                        </Menu.Item> */}
+                        <Menu.Item key="15">
+                            <NavLink to="/half" className="">Đăng ký nghỉ mới</NavLink >
+                        </Menu.Item>
                         <Menu.Item key="16">
                             <NavLink to="/request" className="">Đăng ký nghỉ</NavLink >
                         </Menu.Item>

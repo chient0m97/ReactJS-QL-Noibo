@@ -336,6 +336,22 @@ module.exports = {
             callback({ success: false })
         })
     },
+    insertHopdong2: function (hopdong, callback) {
+        knex.from('several').insert(hopdong).then(res => {
+            callback({ success: true });
+        }).catch(err => {
+            console.log(err,'err');
+            callback({ success: false })
+        })
+    },
+    insertHopdong3: function (hopdong, callback) {
+        knex.from('several').insert(hopdong).then(res => {
+            callback({ success: true });
+        }).catch(err => {
+            console.log(err,'err');
+            callback({ success: false })
+        })
+    },
     updateHopdong: function (hopdong, callback) {
         ////console.log(hopdong, 'hopdong');
             knex.raw("update several set status = '1' where id='"+hopdong.id+"'").then(res => {

@@ -64,7 +64,8 @@ class AppHeader extends Component {
         values.ns_id_capnhat = user_cookie
         values.nkht_thoigiancapnhat = new Date()
       }
-      if (values.ht_thoigian_dukien_hoanthanh === null) {
+      console.log("values ",values)
+      if (values.ht_thoigian_dukien_hoanthanh === null || values.ht_thoigian_dukien_hoanthanh===undefined) {
         values.ht_thoigian_dukien_hoanthanh = format(new Date(), 'yyyy-mm-dd')
       }
       Request(url, 'POST', values)
@@ -93,6 +94,10 @@ class AppHeader extends Component {
             description: description
           });
           this.props.getNhansu
+          setTimeout(() => {
+            window.location.reload()
+          }, 50);
+          
           // this.render()
         }).catch((err) => {
           console.log(err)
@@ -155,7 +160,7 @@ class AppHeader extends Component {
     return (
       <Menu>
         <Menu.Item key="0">
-          <a href="https://www.google.com/">View Profile</a>
+          <a href="/viewprofile">View Profile</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a href="/changepassword">Đổi mật khẩu</a>
