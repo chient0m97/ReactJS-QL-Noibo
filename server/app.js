@@ -123,25 +123,28 @@ app.use('/notification', notification);
 //   console.log('co nguoi ket noi '+socket.id);
 // })
 
-var storage = multer.diskStorage({
-  destination: function(req, file, cb){
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
     cb(null, 'upload')
   },
-  filename: function(req, file, cb){
+  filename: (req, file, cb) => {
+    console.log(file,'file');
+    
     cb(null, file.originalname)
   }
-})
-var upload = multer({storage: storage}).single('file')
-app.post('/upload', function(req, res){
-  upload(req, res, function(err){
-    if(err instanceof multer.MulterError){
-      return res.status(500).json(err)
+});
+let upload = multer({storage: storage}).single("file");
+app.post('/upload', (req, res) => {
+  upload(req, res, (error) => {
+    // Nếu có lỗi thì trả về lỗi cho client.
+    // Ví dụ như upload một file không phải file ảnh theo như cấu hình của mình bên trên
+    if (error) {
+      return res.send(`Error when trying to upload: ${error}`);
     }
-    else if(err){
-      return res.status(500).json(err)
-    }
-    return res.status(200).send(req.file)
-  })
+    // Không có lỗi thì lại render cái file ảnh về cho client.
+    // Đồng thời file đã được lưu vào thư mục uploads
+    res.sendFile(path.join(`${__dirname}/upload/${req.file.originalname}`));
+  });
 })
 // app.get("/", function(req, res){
 //   res.render("trangchu");
