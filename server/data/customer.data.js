@@ -97,7 +97,7 @@ module.exports = {
                 if (!a.values) {
                     a.values = ''
                 }
-                qr = qr + "upper(cast(khachhangs." + a.dm_dv_id + " as text)) like upper('%" + a.dm_dv_ten + "%') and "
+                qr = qr + "upper(cast(khachhangs." + a.keys + " as text)) like upper('%" + a.values + "%') and "
             }
             let queryy = qr.slice(0, qr.length - 5)
             let query = "select * from khachhangs where " + queryy + ""

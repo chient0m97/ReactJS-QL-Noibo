@@ -108,14 +108,15 @@ module.exports = {
                 //     qr = qr + "upper(cast(nhansu.ns_ho || nhansu.ns_tenlot || nhansu.ns_ten as text)) like upper('%" + a.values.replace(/ /g) + "%') and"
                 //     console.log('qrrrr', qr)
                 // } 
-                    qr = qr + "upper(cast(nhansu." + a.keys + " as text)) like upper('%" + a.values + "%') and "
+                    qr = qr + "upper(cast(ns." + a.keys + " as text)) like upper('%" + a.values + "%') and "
             
             }
             let queryy = qr.slice(0, qr.length - 5)
-            let query = "select * from nhansu where " + queryy + ""
+            let query = "select * from (select *, coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten from nhansu)as ns where " + queryy + ""
+            
             knex.raw(query)
                 .then(res => {
-                    knex.raw("select count(*) from nhansu where " + queryy + "")
+                    knex.raw("select count(*) from (select *, coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten from nhansu)as ns where " + queryy + "")
                         .then(resCount => {
                             callback({
                                 success: true,

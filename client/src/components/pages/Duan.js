@@ -545,13 +545,8 @@ class Duan extends React.Component {
               select_qtda={this.state.select_qtda}
               getTienTo={this.getTienTo}
             />
-<<<<<<< HEAD
             <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id">
               <Column title="Tiền tố" dataIndex="dm_duan_key" onHeaderCell={this.onHeaderCell}
-=======
-            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id">
-              <Column title="Tiền tố" dataIndex="dm_duan_key" {...this.getColumnSearchProps('dm_duan_key')} onHeaderCell={this.onHeaderCell}
->>>>>>> 73bcd386d2174757e8877c4007d6b9ad2487c7ad
                 render={text => {
                   return <div style={{ textAlign: 'left' }}>{text}</div>
                 }}
@@ -560,17 +555,12 @@ class Duan extends React.Component {
               <Column title="Tên dự án" dataIndex="dm_duan_ten"  {...this.getColumnSearchProps('dm_duan_ten')} onHeaderCell={this.onHeaderCell}
                 render={text => {
                   return <div style={{ textAlign: 'left' }}>{text}</div>
-<<<<<<< HEAD
                 }} 
                 {...this.getColumnSearchProps('dm_duan_ten')}
                 />
               <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} 
                               {...this.getColumnSearchProps('ns_hovaten')}
               />
-=======
-                }} />
-              <Column title="Quản trị dự án" dataIndex="ns_hovaten" {...this.getColumnSearchProps('ns_hovaten')} onHeaderCell={this.onHeaderCell} />
->>>>>>> 73bcd386d2174757e8877c4007d6b9ad2487c7ad
             </Table>
           </Row>
           <Row>

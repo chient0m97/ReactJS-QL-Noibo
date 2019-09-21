@@ -42,17 +42,6 @@ router.post('/update', function (req, res) {
   })
 })
 
-router.post('/search', function (req, res) {
-  let pageSize = req.body.pageSize;
-  let pageNumber = req.body.pageNumber;
-  let textSearch = req.body.searchText;
-  let columnSearch = req.body.columnSearch;
-  let index = req.body.p1;
-  let sortBy = req.body.p2
-  duanController.search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, function (data) {
-      res.send(data);
-  })
-})
 
 router.post('/getqtda', function (req, res) {
   duanController.getcha(function (data) {

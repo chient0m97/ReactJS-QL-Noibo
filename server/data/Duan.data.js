@@ -112,6 +112,7 @@ module.exports = {
         })
     },
     search: function (limit, offset, timkiem, callback) {
+        console.log("tim kiem ",timkiem)
         var qr = ""
         if (timkiem.length > 0) {
             for (i = 0; i < timkiem.length; i++) {
