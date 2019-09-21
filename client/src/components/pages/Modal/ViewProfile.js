@@ -92,9 +92,6 @@ const FormSyss = Form.create({ name: 'normal_login' })(
             const { getFieldDecorator } = form;
             const profile = this.props.profile
             return (
-
-
-
                 <Form style={{ padding: '10px' }} onSubmit={this.handleSubmit}>
                     <Row gutter={24}>
                         <Col span={12}>
@@ -112,31 +109,25 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                     initialValue: "afc163",
                                     rules: [{ required: true, message: 'Trường không được để trống!' }]
                                 })(
-                                    //<Input size={"small"} type="text" />
-                                    <Mentions>
-                                        <Option value="afc163">afc163</Option>
-                                    </Mentions>
-                                    )}
+                                    <Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item label="Tên lót">
                                 {getFieldDecorator('ns_tenlot', {
                                     rules: [{}]
-                                })(<Input size={"small"} type="text" />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item label="Tên">
                                 {getFieldDecorator('ns_ten', {
                                     rules: [{ required: true, message: 'Trường không được để trống!', }],
-                                })(<Input size={"small"} type="text" />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={2} offset={2}><Avatar size="large" /></Col>
-
                     </Row>
-                  
                     <Row gutter={24}>
                         <Col span={6}>
                             <Form.Item label="Ngày Sinh">
@@ -144,7 +135,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                     rules: [{ required: true, message: 'Trường không được để trống!', }],
                                 })
                                     (
-                                        <Input type="date" size={"small"} />
+                                        <Input type="date" />
                                     )
 
                                 }
@@ -202,14 +193,14 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                             <Form.Item label="Số điện thoại">
                                 {getFieldDecorator('ns_sodienthoai', {
                                     rules: [{}],
-                                })(<Input size={"small"} type="text" />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item label="Email">
                                 {getFieldDecorator('ns_email', {
                                     rules: [{}],
-                                })(<Input size={"small"} type="email" />)}
+                                })(<Input type="email" />)}
                             </Form.Item>
                         </Col>
                     </Row>
@@ -218,21 +209,21 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                             <Form.Item label="Địa chỉ hiện nay">
                                 {getFieldDecorator('ns_diachihiennay', {
                                     rules: [{ required: true, message: 'Trường không được để trống!' }]
-                                })(<Input size={"small"} type="text" />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={9}>
                             <Form.Item label="Nguyên quán">
                                 {getFieldDecorator('ns_nguyenquan', {
                                     rules: [{ required: true, message: 'Trường không được để trống!' }]
-                                })(<Input size={"small"} type="text" />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item label="Người liên hệ">
                                 {getFieldDecorator('ns_nguoilienhe', {
                                     rules: [{}]
-                                })(<Input size={"small"} type="text" />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                     </Row>
@@ -241,21 +232,21 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                             <Form.Item label="Bằng cấp">
                                 {getFieldDecorator('ns_bangcap', {
                                     rules: [{}]
-                                })(<Input size={"small"} type="text" />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={9}>
                             <Form.Item label="Các giấy tờ đã nộp">
                                 {getFieldDecorator('ns_cacgiaytodanop', {
                                     rules: [{}]
-                                })(<Input type="text" size={"small"} />)}
+                                })(<Input type="text"/>)}
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item label="Tài khoản ngân hàng">
                                 {getFieldDecorator('ns_taikhoannganhang', {
                                     rules: [{}]
-                                })(<Input type="text" size={"small"} />)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                     </Row>
@@ -265,7 +256,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 {getFieldDecorator('ns_ngayhocviec', {
                                     rules: [{}]
                                 })(
-                                    <Input size={"small"} type="date" />
+                                    <Input  type="date" />
                                 )}
                             </Form.Item>
                         </Col>
@@ -274,7 +265,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 {getFieldDecorator('ns_ngaythuviec', {
                                     rules: [{ required: true, message: 'Trường không được để trống!' }]
                                 })(
-                                    <Input size={"small"} type="date" />
+                                    <Input type="date" />
                                 )}
                             </Form.Item>
                         </Col>
@@ -283,7 +274,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 {getFieldDecorator('ns_ngaylamchinhthuc', {
                                     rules: [{}]
                                 })(
-                                    <Input size={"small"} type="date" />
+                                    <Input type="date" />
                                 )}
                             </Form.Item>
                         </Col>
@@ -292,7 +283,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 {getFieldDecorator('ns_ngaydongbaohiem', {
                                     rules: [{}]
                                 })(
-                                    <Input size={"small"} type="date" />
+                                    <Input  type="date" />
                                 )}
                             </Form.Item>
                         </Col>
@@ -302,10 +293,10 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                         </Row> */}
                     <Form.Item style={{ marginTop: '25px' }}>
                         <Button type="primary" htmlType="submit" style={{ marginLeft: '490px' }} >
-                            SAVE CHANGES
+                            Lưu thay đổi
                         </Button>
                         <Button type="default" style={{ marginLeft: '10px' }} onClick={getProfile}  >
-                            DISCARD CHANGES
+                            Bỏ thay đổi
                          </Button>
                     </Form.Item>
                 </Form>

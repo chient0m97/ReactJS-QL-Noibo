@@ -62,34 +62,6 @@ module.exports = {
         })
     },
 
-    search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        knex('duans').where(columnSearch, 'like', '%' + textSearch + '%').orderBy(index, sortBy).limit(limit).offset(offset)
-            .then(res => {
-                var duans = res
-                knex('duans').where(columnSearch, 'like', '%' + textSearch + '%').count()
-                    .then(resCount => {
-                        var count = resCount[0].count
-                        let dataCallback = {
-                            success: true,
-                            message: 'Get data success',
-                            data: {
-                                duans: duans,
-                                count: count
-                            }
-                        }
-                        callback(dataCallback)
-                    })
-                    .catch((err) => {
-
-                        console.log('lỗi  kết nối', err)
-                    })
-            })
-            .catch((err) => {
-
-                console.log('lỗi  kết nối', err)
-            })
-    },
-
     getQTDA: function (callback) {
         knex('nhansu').select('ns_id', knex.raw("coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '')  || ' ' || coalesce (ns_ten, '') as ns_ten")).then(res => {
             callback(res);
@@ -111,24 +83,25 @@ module.exports = {
             console.log(err)
         })
     },
+
     search: function (limit, offset, timkiem, callback) {
-        console.log("tim kiem ",timkiem)
+        console.log("tim kiem ", timkiem)
         var qr = ""
         if (timkiem.length > 0) {
             for (i = 0; i < timkiem.length; i++) {
                 let a = timkiem[i]
                 if (!a.values) {
                     a.values = ''
-                }     
+                }
                 qr = qr + "upper(cast(da." + a.keys + " as text)) like upper('%" + a.values + "%') and "
             }
             var queryy = qr.slice(0, qr.length - 5)
-            var query = "select  da.*, nhs.ns_hovaten,nhs.ns_id from duans da left join \
+            var query = "select * from (select  da.*, nhs.ns_hovaten, nhs.ns_id from duans da left join \
             (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' \
              || coalesce (ns_ten, '') as ns_hovaten, ns.ns_id as ns_id from nhansu \
-             ns) as nhs on nhs.ns_id = da.ns_id_qtda where " + queryy + " "
-             console.log(query, 'query');
-             
+             ns) as nhs on nhs.ns_id = da.ns_id_qtda) as da where " + queryy + " "
+            console.log(query, 'query');
+
             knex.raw(query)
                 .then(res => {
                     knex.raw("select count(*) from (select  da.*, nhs.ns_hovaten,nhs.ns_id from duans da left join \
@@ -155,6 +128,6 @@ module.exports = {
         else {
             this.getDuan(limit, offset, callback);
         }
-
     },
 };
+

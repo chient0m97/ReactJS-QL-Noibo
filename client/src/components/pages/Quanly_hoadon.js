@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card } from 'antd'
+import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card, Input } from 'antd'
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action'
@@ -9,7 +9,6 @@ import '@styles/style.css'
 
 const { Column } = Table;
 var format = require('dateformat')
-
 class Quanly_hoadon extends React.Component {
     constructor(props) {
         super(props);
@@ -33,7 +32,8 @@ class Quanly_hoadon extends React.Component {
             rowthotroselected: [],
             selectedId: [],
             selectedRowKeys: [],
-            khachhangs: []
+            khachhangs: [],
+            timkiem: []
         }
     }
 
@@ -95,11 +95,11 @@ class Quanly_hoadon extends React.Component {
                     }
                     var description = response.data.message
                     var notifi_type = 'success'
-                    var message = 'Thanh Cong'
+                    var message = 'Thông báo'
 
                     console.log("check response ", response.data.success)
                     if (!!!response.data.success) {
-                        message = 'Co loi xay ra !'
+                        message = 'Có lỗi xảy ra!'
                         notifi_type = 'error'
                         description = response.data.message.map((value, index) => {
                             return <Alert type='error' message={value}></Alert>
@@ -118,7 +118,7 @@ class Quanly_hoadon extends React.Component {
         Request(`qlhd/delete`, 'DELETE', { qlhd_sohoadon: qlhd_sohoadon })
             .then((res) => {
                 notification[res.data.success === true ? 'success' : 'error']({
-                    message: 'Thong Bao',
+                    message: 'Thông báo',
                     description: res.data.message
                 });
                 this.setState({
@@ -131,6 +131,60 @@ class Quanly_hoadon extends React.Component {
                 this.render()
             })
     }
+
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8, align: 'center' }}>
+                <Input
+                    ref={node => {
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    icon="search"
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Tìm kiếm
+            </Button>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+    });
+
+    handleSearch = (selectedKeys, value, confirm) => {
+        let vl = { values: selectedKeys[0], keys: value }
+        if (value && selectedKeys.length > 0) {
+            this.state.timkiem.push(vl)
+        }
+        Request(`qlhd/search`, 'POST',
+            {
+                timkiem: this.state.timkiem,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.page
+            })
+            .then((res) => {
+                notification[res.data.success === true ? 'success' : 'error']({
+                    message: 'Đã xuất hiện bản ghi',
+                    description: res.data.message
+                });
+                this.setState({
+                    qlhd: res.data.data.quanly_hoadons,
+                })
+            })
+
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    };
 
     refresh = async (pageNumber) => {
         message.success('Refresh success', 1);
@@ -160,6 +214,7 @@ class Quanly_hoadon extends React.Component {
                 id_visible: true,
                 action: 'update',
             })
+            qlhd.qlhd_ngayxuat_hoadon = format(qlhd.qlhd_ngayxuat_hoadon, 'yyyy-mm-dd')
             form.setFieldsValue(qlhd);
         }
         this.getkhachhang();
@@ -233,7 +288,7 @@ class Quanly_hoadon extends React.Component {
                             <Col span={2}>
                                 <Tooltip title="Thêm Hoá Đơn">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                                    <Icon type="plus" />
+                                        <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
                             </Col>
@@ -271,20 +326,20 @@ class Quanly_hoadon extends React.Component {
                     </Row>
                     <Row style={{ marginTop: 5 }}>
                         <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.qlhd} rowKey="qlhd_sohoadon" bordered>
-                            <Column title="Số hóa đơn" dataIndex="qlhd_sohoadon" width={50} />
-                            <Column title="Tên hóa đơn" dataIndex="qlhd_tenhoadon" width={150} />
-                            <Column title="Ngày xuất hóa đơn" dataIndex="qlhd_ngayxuat_hoadon" width={150} 
-                            render={text=>{
-                                return format(text, 'dd-mm-yyyy')
-                            }}
+                            <Column title="Số hóa đơn" dataIndex="qlhd_sohoadon" {...this.getColumnSearchProps('qlhd_sohoadon')} width={50} />
+                            <Column title="Tên hóa đơn" dataIndex="qlhd_tenhoadon" {...this.getColumnSearchProps('qlhd_tenhoadon')} width={150} />
+                            <Column title="Ngày xuất hóa đơn" dataIndex="qlhd_ngayxuat_hoadon" {...this.getColumnSearchProps('qlhd_ngayxuat_hoadon')} width={150}
+                                render={text => {
+                                    return format(text, 'dd-mm-yyyy')
+                                }}
                             />
-                            <Column title="Tình trạng thanh toán" dataIndex="qlhd_tinhtrang_thanhtoan" width={150}
-                            render={text=>{
-                                if(text==='CTT'){
-                                    return 'Chưa thanh toán'
-                                }
-                                return 'Đã thanh toán '
-                            }}
+                            <Column title="Tình trạng thanh toán" dataIndex="qlhd_tinhtrang_thanhtoan" {...this.getColumnSearchProps('qlhd_tinhtrang_thanhtoan')} width={150}
+                                render={text => {
+                                    if (text === 'CTT') {
+                                        return 'Chưa thanh toán'
+                                    }
+                                    return 'Đã thanh toán '
+                                }}
                             />
                         </Table>
                     </Row>

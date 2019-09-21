@@ -108,7 +108,7 @@ class Duan extends React.Component {
       rowthotroselected: {},
       selectedrow: [],
       selectedRowKeys: [],
-      timkiem : []
+      timkiem: []
     }
   }
   //--------------DELETE-----------------------
@@ -209,61 +209,6 @@ class Duan extends React.Component {
 
     form.setFieldsValue({ dm_duan_key: tt })
   }
-
-  getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8, align: 'center' }}>
-        <Input
-          ref={node => {
-            this.searchInput = node;
-          }}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
-        />
-        <Button
-          type="primary"
-          onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
-          icon="search"
-          size="small"
-          style={{ width: 90 }}
-        >
-          Search
-        </Button>
-      </div>
-    ),
-    filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
-    ),
-  });
-
-  handleSearch = (selectedKeys, value, confirm) => {
-    let vl = { values: selectedKeys[0], keys: value }
-    if (value && selectedKeys.length > 0) {
-      this.state.timkiem.push(vl)
-    }
-    Request(`duan/search`, 'POST',
-      {
-        timkiem: this.state.timkiem,
-        pageSize: this.state.pageSize,
-        pageNumber: this.state.page
-      })
-      .then((res) => {
-        notification[res.data.success === true ? 'success' : 'error']({
-          message: 'Đã xuất hiện bản ghi',
-          description: res.data.message
-        });
-        this.setState({
-          duans: res.data.data.duans,
-        })
-      })
-
-
-    confirm();
-    this.setState({ searchText: selectedKeys[0] });
-  };
 
   refresh = (pageNumber) => {
     this.getDuans(this.state.pageNumber)
