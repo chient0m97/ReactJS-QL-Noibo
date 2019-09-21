@@ -39,13 +39,13 @@ module.exports = {
         })
     },
 
-    insertUnit:async function (unit, callback) {
+    insertUnit: async function (unit, callback) {
         knex.from('donvis').insert(unit)
             .then(async res => {
                 if (unit.length > 1) {
                     var sql = ""
                     await unit.forEach((element, index) => {
-                         sql = 'update khachhangs set dm_dv_id = ' + "'" + unit[index].dm_dv_id + "'" + ' where kh_id = ' + "'" + unit[index].kh_id_nguoidaidien + "'"
+                        sql = 'update khachhangs set dm_dv_id = ' + "'" + unit[index].dm_dv_id + "'" + ' where kh_id = ' + "'" + unit[index].kh_id_nguoidaidien + "'"
                         knex.raw(sql).then(res => {
                         })
                     });
@@ -82,31 +82,42 @@ module.exports = {
             callback({ success: false })
         })
     },
-    search: function (limit, offset, textSearch, columnSearch, index, sortBy, callback) {
-        knex('donvis').where(columnSearch, 'like', '%' + textSearch + '%').orderBy(index, sortBy).limit(limit).offset(offset)
-            .then(res => {
-                var units = res
-                knex('donvis').where(columnSearch, 'like', '%' + textSearch + '%').count()
-                    .then(resCount => {
-                        var count = resCount[0].count
+    search: function (limit, offset, timkiem, callback) {
+        let qr = ""
+        if (timkiem.length > 0) {
+            for (i = 0; i < timkiem.length; i++) {
+                let a = timkiem[i]
+                if (!a.values) {
+                    a.values = ''
+                }
+                qr = qr + "upper(cast(donvis." + a.keys + " as text)) like upper('%" + a.values + "%') and "
+            }
+            let queryy = qr.slice(0, qr.length - 5)
+            let query = "select * from donvis where " + queryy + ""
+            knex.raw(query)
+                .then(res => {
+                    knex.raw("select count(*) from donvis where " + queryy + "")
+                        .then(resCount => {
+                            callback({
+                                success: true,
+                                data: {
+                                    donvis: res.rows,
+                                    count: resCount.rows[0].count
+                                }
+                            })
+                        })
+                        .catch((err) => {
+                            console.log('lỗi  kết nối', err)
+                        })
+                })
+                .catch((err) => {
+                    console.log('lỗi  kết nối', err)
+                })
+        }
+        else {
+            this.getUnit(limit, offset, callback);
+        }
 
-                        let dataCallback = {
-                            success: true,
-                            message: 'Get data success',
-                            data: {
-                                units: units,
-                                count: count
-                            }
-                        }
-                        callback(dataCallback)
-                    })
-                    .catch((err) => {
-                        console.log('lỗi  kết nối', err)
-                    })
-            })
-            .catch((err) => {
-                console.log('lỗi  kết nối', err)
-            })
     },
     getcha: function (callback) {
         knex('donvis').select('dm_dv_id_cha').then(res => {

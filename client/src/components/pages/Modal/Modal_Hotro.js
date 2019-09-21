@@ -49,7 +49,7 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                     onOk={onSave}
                     // confirmLoading={confirmLoading}
                     width={'60%'}
-                    style={{zIndex: 99999999}}
+                    style={{ zIndex: 99999999 }}
                 >
                     <Form layout={'horizontal'} >
                         <Row gutter={24} align="middle">
@@ -108,7 +108,7 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                         </Row>
                         <Row gutter={24} align="middle">
                             <Col span={12}>
-                                <div style={{ display: "block"}}>
+                                <div style={{ display: "block" }}>
                                     <Form.Item  >
                                         {getFieldDecorator('ht_id')(<Input type="text" hidden />)}
                                     </Form.Item>
@@ -121,6 +121,7 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                                     {getFieldDecorator('dm_dv_id', {
                                         initialValue: null
                                     })(<Select
+                                        allowClear
                                         size={"small"}
                                         onChange={set_Select_KhachHang}
                                         showSearch
@@ -128,7 +129,6 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value={null}>Không thuộc đơn vị</Option>
                                         {
                                             donvi.map((value, index) => {
                                                 return (<Option value={value.dm_dv_id}>{value.dm_dv_ten}</Option>)
@@ -142,6 +142,7 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                                     {getFieldDecorator('kh_id', {
                                         initialValue: null
                                     })(<Select
+                                        allowClear
                                         size={"small"}
                                         // onChange={this.handleChange}
                                         showSearch
@@ -149,7 +150,6 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        <Option value={null}>Bỏ chọn</Option>
                                         {
                                             khachhang.map((value, index) => {
                                                 return (<Option value={value.kh_id}>{value.kh_ten}</Option>)
@@ -221,8 +221,8 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                                     {getFieldDecorator('ht_thoigiantiepnhan', {
                                         rules: [{}],
                                     })(
-                                    <Tag > <Icon type="clock-circle" />&ensp;&ensp;&ensp;&ensp; {formatDateHMS(new Date(), "dd / mm / yyyy ---  HH : MM : ss")}&ensp;&ensp;&ensp;&ensp;&ensp; </Tag>
-                                    // <Input type="text" disabled size={'small'}/>
+                                        <Tag > <Icon type="clock-circle" />&ensp;&ensp;&ensp;&ensp; {formatDateHMS(new Date(), "dd / mm / yyyy ---  HH : MM : ss")}&ensp;&ensp;&ensp;&ensp;&ensp; </Tag>
+                                        // <Input type="text" disabled size={'small'}/>
                                     )}
                                 </Form.Item>
                             </Col>
@@ -240,8 +240,8 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                                     {getFieldDecorator('ht_thoigian_hoanthanh', {
                                         rules: [{}],
                                     })(
-                                    <Tag > <Icon type="clock-circle" /> &ensp;&ensp;&ensp;&ensp;{this.props.date} &ensp;&ensp;&ensp;&ensp;&ensp;</Tag>
-                                    // <Input type="text" disabled size={'small'}/>
+                                        <Tag > <Icon type="clock-circle" /> &ensp;&ensp;&ensp;&ensp;{this.props.date} &ensp;&ensp;&ensp;&ensp;&ensp;</Tag>
+                                        // <Input type="text" disabled size={'small'}/>
                                     )}
                                 </Form.Item>
                             </Col>

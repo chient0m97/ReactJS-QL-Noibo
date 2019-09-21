@@ -74,6 +74,7 @@ const Modal_Menus = Form.create({ name: 'from_in_modal_menus' })(
                             <Col>
                                 <Form.Item label='Tình trạng thanh toán :'>
                                     {getFieldDecorator('qlhd_tinhtrang_thanhtoan', {
+                                        rules: [{ required: true, message: 'Vui lòng nhập vào ô này !!', }],
                                     })(
                                         <Select
                                             size={"small"}

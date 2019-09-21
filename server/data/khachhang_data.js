@@ -42,5 +42,42 @@ module.exports = {
                 success: false
             })
         })
-    }
+    },
+    search: function (limit, offset, timkiem, callback) {
+        let qr = ""
+        if (timkiem.length > 0) {
+            for (i = 0; i < timkiem.length; i++) {
+                let a = timkiem[i]
+                if (!a.values) {
+                    a.values = ''
+                }
+                qr = qr + "upper(cast(khachhangs." + a.keys + " as text)) like upper('%" + a.values + "%') and "
+            }
+            let queryy = qr.slice(0, qr.length - 5)
+            let query = "select * from khachhangs where " + queryy + ""
+            knex.raw(query)
+                .then(res => {
+                    knex.raw("select count(*) from khachhangs where " + queryy + "")
+                        .then(resCount => {
+                            callback({
+                                success: true,
+                                data: {
+                                    khachhangs: res.rows,
+                                    count: resCount.rows[0].count
+                                }
+                            })
+                        })
+                        .catch((err) => {
+                            console.log('lỗi  kết nối', err)
+                        })
+                })
+                .catch((err) => {
+                    console.log('lỗi  kết nối', err)
+                })
+        }
+        else {
+            this.getKhachhang(limit, offset, callback);
+        }
+
+    },
 }

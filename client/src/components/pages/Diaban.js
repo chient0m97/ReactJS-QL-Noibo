@@ -117,6 +117,7 @@ class Diaban extends React.Component {
       isSearch: 0,
       textSearch: '',
       columnSearch: '',
+      selectedRowKeys: [],
       isSort: true,
       rowdiabanselected: {},
       statebuttondelete: true,
@@ -430,6 +431,42 @@ class Diaban extends React.Component {
       },
     };
   }
+  onSelectChange = (selectedRowKeys, selectedRows) => {
+    this.setState({
+      selectedRowKeys,
+      selectedId: selectedRowKeys
+    });
+    if (selectedRowKeys.length > 0) {
+      this.setState({
+        statebuttondelete: false
+      })
+    }
+    else
+      this.setState({
+        statebuttondelete: true
+      })
+    if (selectedRowKeys.length === 1) {
+      this.setState({
+        statebuttonedit: false,
+        rowthotroselected: selectedRows[0]
+      })
+    }
+    else
+      this.setState({
+        statebuttonedit: true
+      })
+  }
+  clearChecked = () => {
+    this.onSelectChange([], [])
+  };
+  onRowClick = (row) => {
+    if (this.state.selectedRowKeys[0] === row.dm_db_id) {
+      this.onSelectChange([], [])
+    }
+    else {
+      this.onSelectChange([row.dm_db_id], [row])
+    }
+  }
 
   saveFormRef = formRef => {
     this.formRef = formRef;
@@ -470,7 +507,7 @@ class Diaban extends React.Component {
       selectedRowKeys,
       onChange: this.onSelectChange,
       getCheckboxProps: record => ({
-        disabled: Column.title === 'Id', // Column configuration not to be checked
+        disabled: Column.title === 'Id',
         name: record.name,
       }),
     };
@@ -531,7 +568,7 @@ class Diaban extends React.Component {
               datacha={this.state.dataSource_Select_Parent}
               handleChange={this.handleChange}
             />
-            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.diabans} bordered='1' scroll={{ x: 1000 }} rowKey="dm_db_id" >
+            <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.diabans} bordered='1' scroll={{ x: 1000 }} rowKey="dm_db_id" >
               <Column
                 title={<span>Id địa bàn <Icon type={this.state.orderby} /></span>}
                 dataIndex="dm_db_id"

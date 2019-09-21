@@ -126,7 +126,13 @@ export default class HomePage extends Component {
 
         var user_cookie = cookie.load('user');
 
-        Request('hotro/getmyself', 'POST', { user_cookie }).then(async (res) => {
+        Request('hotro/getmyself', 'POST', {
+            user_cookie,
+            pageSize: this.state.pageSize,
+            pageNumber: this.state.page,
+            index: this.state.index,
+            sortBy: this.state.sortBy
+        }).then(async (res) => {
             if (res.data.data.myself) {
                 await this.setState({
                     myself: res.data.data.myself
@@ -159,7 +165,6 @@ export default class HomePage extends Component {
 
     getDataGap = () => {
 
-        // console.log("day la data da xong", i++)
         var user_cookie = cookie.load('user');
 
         Request('hotro/getmyselfgap', 'POST', { user_cookie }).then((res) => {
@@ -184,6 +189,45 @@ export default class HomePage extends Component {
             }
         })
     }
+
+    getDataAllDaTao = () => {
+        var userDatao = cookie.load('user');
+        Request('hotro/getmyself', 'POST', { userDatao }).then((res) => {
+            if (res.data.data.myself) {
+                this.setState({
+                    myself: res.data.data.myself
+                })
+            }
+        })
+    }
+
+    getDataGapDaTao = () => {
+
+        // console.log("day la data da xong", i++)
+        var userDatao = cookie.load('user');
+
+        Request('hotro/getmyselfgap', 'POST', { userDatao }).then((res) => {
+            if (res.data.data.myselfGap) {
+                this.setState({
+                    myself: res.data.data.myselfGap
+                })
+            }
+        })
+    }
+
+    getDataDaxongDaTao = () => {
+
+        var userDaTao = cookie.load('user');
+
+        Request('hotro/getmyselfdaxong', 'POST', { userDaTao }).then((res) => {
+            if (res.data.data.myself) {
+                this.setState({
+                    myself: res.data.data.myself
+                })
+            }
+        })
+    }
+
 
     componentDidMount() {
         this.getNhansu(this.state.pageNumber, this.state.index, this.state.sortBy);
@@ -659,8 +703,8 @@ export default class HomePage extends Component {
                                             </Col>
                                         </Row>
                                         <Table bordered dataSource={this.state.myself}
-                                            rowKey="ht_id" 
-                                            size="small" 
+                                            rowKey="ht_id"
+                                            size="small"
                                             scroll={{ x: 500 }}
                                             rowSelection={rowSelection}
                                             onRowClick={this.onRowClick.bind(this)}
@@ -730,6 +774,19 @@ export default class HomePage extends Component {
                                         </Table>
                                     </TabPane>
                                     <TabPane tab="Công việc đã tạo" key="11">
+                                        <Row>
+                                            <Col span={3}>
+                                                <span style={{ fontSize: '16px' }}>Loại công việc</span>
+                                            </Col>
+                                            <Col span={6}>
+                                                <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
+                                                    <Button onClick={this.getDataAllDaTao.bind(this)}>Tất cả</Button>
+                                                    <Button onClick={this.getDataGap.bind(this)}>Gấp</Button>
+                                                    <Button onClick={this.getDataDaxong.bind(this)}>Đã xong</Button>
+                                                    {/* <Button >Đang xử lý</Button> */}
+                                                </ButtonGroup>
+                                            </Col>
+                                        </Row>
                                         <Table bordered components={this.components} dataSource={this.state.dataNguoiTao} rowKey="ht_id" size="small" scroll={{ x: 500 }}
                                             rowSelection={rowSelection}
                                             onRowClick={this.onRowClick.bind(this)}

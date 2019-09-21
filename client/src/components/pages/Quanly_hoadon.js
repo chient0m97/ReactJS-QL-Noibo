@@ -6,7 +6,9 @@ import { fetchUser } from '@actions/user.action'
 import { fetchLoading } from '@actions/common.action'
 import Modal_Hoadon from '@pages/Modal/Modal_Hoadon.js'
 import '@styles/style.css'
+
 const { Column } = Table;
+var format = require('dateformat')
 
 class Quanly_hoadon extends React.Component {
     constructor(props) {
@@ -271,7 +273,11 @@ class Quanly_hoadon extends React.Component {
                         <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.qlhd} rowKey="qlhd_sohoadon" bordered>
                             <Column title="Số hóa đơn" dataIndex="qlhd_sohoadon" width={50} />
                             <Column title="Tên hóa đơn" dataIndex="qlhd_tenhoadon" width={150} />
-                            <Column title="Ngày xuất hóa đơn" dataIndex="qlhd_ngayxuat_hoadon" width={150} />
+                            <Column title="Ngày xuất hóa đơn" dataIndex="qlhd_ngayxuat_hoadon" width={150} 
+                            render={text=>{
+                                return format(text, 'dd-mm-yyyy')
+                            }}
+                            />
                             <Column title="Tình trạng thanh toán" dataIndex="qlhd_tinhtrang_thanhtoan" width={150}
                             render={text=>{
                                 if(text==='CTT'){

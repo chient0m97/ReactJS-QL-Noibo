@@ -4,6 +4,7 @@ import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
+import { fetchUser } from '@actions/user.action';
 // import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
@@ -11,6 +12,7 @@ import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import { async } from 'q';
 import axios from 'axios';
 import Modal_Filekhachhangs from '@pages/Modal/Modal_Filekhachhangs.js'
+import { element } from 'prop-types';
 const token = cookie.load('token');
 const { Column } = Table;
 class Customer extends React.Component {
@@ -51,11 +53,13 @@ class Customer extends React.Component {
             stateconfirmdelete: false,
             selectedId: [],
             selectedrow: [],
+            selectedRowKeys: [],
             title_dv: 'Thêm mới đơn vị',
             stateoption: true,
             visible_dv: false,
             selectedFile: null,
             visibleImport: false,
+            timkiem: []
         }
     }
 
@@ -67,7 +71,16 @@ class Customer extends React.Component {
                     description: res.data.message
                 });
                 this.getCustomers(this.state.page)
+                this.setState({
+                    stateconfirmdelete: false,
+                    statebuttondelete: true,
+                    statebuttonedit: true,
+                    selectedRowKeys: []
+                })
             })
+        this.setState({
+            stateconfirmdelete: false
+        })
     }
 
     getDonvis = () => {
@@ -162,6 +175,61 @@ class Customer extends React.Component {
         })
     }
 
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8, align: 'center' }}>
+                <Input
+                    ref={node => {
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    icon="search"
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Search
+            </Button>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+    });
+
+    handleSearch = (selectedKeys, value, confirm) => {
+        let vl = { values: selectedKeys[0], keys: value }
+        if (value && selectedKeys.length > 0) {
+            this.state.timkiem.push(vl)
+        }
+        Request(`customer/search`, 'POST',
+            {
+                timkiem: this.state.timkiem,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.page
+            })
+            .then((res) => {
+                notification[res.data.success === true ? 'success' : 'error']({
+                    message: 'Đã xuất hiện bản ghi',
+                    description: res.data.message
+                });
+                this.setState({
+                    customers: res.data.data.khachhangs,
+                })
+            })
+
+
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    };
+
     refresh = (pageNumber) => {
         this.getCustomers(this.state.pageNumber)
     }
@@ -180,20 +248,17 @@ class Customer extends React.Component {
     }
 
     showModalUpdate = async (customer) => {
+        console.log('dcmm', customer)
         const { form } = this.formRef.props
         this.setState({
             visible: true,
             visible_dv: false
         });
         if (customer.kh_id !== undefined) {
-            await this.setState({
+            this.setState({
                 kh_id_visible: true,
                 action: 'update'
             })
-            await this.set_select_tendv();
-            if (this.state.select_tendv.length === 0) {
-                await form.setFieldsValue({ dm_dv_id: '' })
-            }
             await form.setFieldsValue({ dm_dv_id: customer.tendonvi })
             await this.set_select_tinh();
             if (this.state.select_tinh.length > 0) {
@@ -215,16 +280,11 @@ class Customer extends React.Component {
                 await form.setFieldsValue({ dm_db_id_xa_customer: customer.tenxa })
             }
             form.setFieldsValue(customer);
-            if (customer.dm_dv_id) {
-                console.log('xóa là tạch')
-            }
-            else {
-                form.setFieldsValue({ dm_dv_id: '' })
-            }
         }
-    };
+    }
 
     showModalInsert = async (customer) => {
+        console.log('insert', customer)
         const { form } = this.formRef.props
         this.setState({
             visible: true,
@@ -329,10 +389,10 @@ class Customer extends React.Component {
                 visible_dv: true,
                 stateoption: true
             })
-             var form = null
-            
+            var form = null
+
             if (this.state.visible_dv) {
-                 form = this.formRefUnit.props.form
+                form = this.formRefUnit.props.form
                 form.setFieldsValue({ dm_dv_trangthai: 'HD' })
                 try {
                     this.set_select_donvicha()
@@ -568,8 +628,7 @@ class Customer extends React.Component {
             if (err) {
                 return
             }
-            var url = this.state.action === 'insert' ? 'unit/insert' : 'customer/update'
-            Request(url, 'POST', values)
+            Request('unit/insert', 'POST', values)
                 .then(async (response) => {
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields()
@@ -607,10 +666,25 @@ class Customer extends React.Component {
         })
     }
 
+    clearChecked = () => {
+        this.onSelectChange([], [])
+    };
+
+    onRowClick = (row) => {
+        if (this.state.selectedRowKeys[0] === row.kh_id) {
+            this.onSelectChange([], [])
+        }
+        else {
+            this.onSelectChange([row.kh_id], [row])
+        }
+    }
+
     onSelectChange = (selectedRowKeys, selectedRows) => {
+        console.log('dm toan', selectedRowKeys)
+        console.log('dm toan tiep', selectedRows)
         this.setState({
             selectedRowKeys,
-            selectedId: selectedRowKeys
+            selectedId: selectedRowKeys,
         });
         if (selectedRowKeys.length > 0) {
             this.setState({
@@ -650,7 +724,7 @@ class Customer extends React.Component {
     saveFormRefImport = formRef => {
         this.formRefImport = formRef;
     }
-    
+
     showModalImport = () => {
         this.setState({
             visibleImport: true
@@ -705,15 +779,16 @@ class Customer extends React.Component {
                 .then(async (response) => {
                     console.log(response.data.dataExcel[1])
                     // array.forEach(element => {
-                        
+
                     // });
                     return
                     Request('customer/insert', 'POST', response.data.dataExcel)
-                    .then((response) => {
-                        if (response.status === 200 & response.data.success === true) {
-                            form.resetFields();
-                        this.getCustomers(this.state.page)
-                        }})
+                        .then((response) => {
+                            if (response.status === 200 & response.data.success === true) {
+                                form.resetFields();
+                                this.getCustomers(this.state.page)
+                            }
+                        })
                     if (response.status === 200 & response.data.success === true) {
                         form.resetFields();
                         this.setState({
@@ -798,7 +873,7 @@ class Customer extends React.Component {
                     </Card>
                     <Row style={{ marginTop: 5 }}>
                         <CreateModalCustomer
-                            wrappedComponentRef={ this.saveFormRef}
+                            wrappedComponentRef={this.saveFormRef}
                             visible={this.state.visible}
                             onCancel={this.handleCancel}
                             onOk_kh={this.InsertOrUpdateCustomer}
@@ -832,10 +907,10 @@ class Customer extends React.Component {
                             onSelectKh={this.onSelectKh}
                             stateoption={this.state.stateoption}
                         />
-                        <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
-                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" onHeaderCell={this.onHeaderCell} width={150} />
-                            <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Email" dataIndex="kh_email" key="kh_email" onHeaderCell={this.onHeaderCell} />
+                        <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
+                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" {...this.getColumnSearchProps('kh_ten')} onHeaderCell={this.onHeaderCell} width={150} />
+                            <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" {...this.getColumnSearchProps('kh_sodienthoai')} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Email" dataIndex="kh_email" key="kh_email" {...this.getColumnSearchProps('kh_email')} onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" />
                             <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
@@ -844,11 +919,10 @@ class Customer extends React.Component {
                             <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" />
                             <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hidden-action' disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" {...this.getColumnSearchProps('tendonvi')} onHeaderCell={this.onHeaderCell} />
                             <Column title="Vị trí công tác" dataIndex="kh_vitricongtac" key="kh_vitricongtac" onHeaderCell={this.onHeaderCell} />
                             <Column title="Liên lạc" dataIndex="kh_lienlac" key="kh_lienlac" className='hidden-action' disabaled onHeaderCell={this.onHeaderCell} />
                             <Column title="Liên lạc" dataIndex="kh_lienlac_txt" key="kh_lienlac_txt" />
-                            <Column />
                         </Table>
                     </Row>
                     <Row>
@@ -880,7 +954,7 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps,
     {
-        //   fetchUser,
+        fetchUser,
         fetchLoading
     })
     (Customer);

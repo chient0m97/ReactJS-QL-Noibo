@@ -63,17 +63,22 @@ router.post('/getmyself', function (req, res) {
 })
 
 router.post('/getmyselfdaxong', function (req, res) {
-    console.log("hien thi req.body ",req.body)
-    hotroController.getDataMyselfDaxong(req.body.user_cookie, req.body.pageSize, req.body.pageNumber, function (data) {
+    hotroController.getDataMyselfDaxong(req.body, req.body.pageSize, req.body.pageNumber, function (data) {
         res.send(data)
     })
 })
 
 router.post('/getmyselfgap', function (req, res) {
-    hotroController.getDataMyselfGap(req.body, function (data) {
+    let body = req.body;
+    let pageNumber = body.pageNumber;
+    let pageSize = body.pageSize;
+    let index = body.index;
+    let sortBy = body.sortBy;
+    hotroController.getDataMyselfGap(req.body, pageNumber, pageSize, index, sortBy, function (data) {
         res.send(data)
     })
 })
+
 
 router.post('/getdatanguoitao', function (req, res) {
     hotroController.getDataNguoitao(req.body, function (data) {
@@ -114,6 +119,15 @@ router.delete('/delete', function (req, res) {
 router.post('/getfollowmonth', function (req, res) {
     hotroController.getHotroFollowMonth(req.body, function (data) {
         res.send(data)
+    })
+})
+
+router.post('/search', function (req, res) {
+    let pageSize = req.body.pageSize;
+    let pageNumber = req.body.pageNumber;
+    let timkiem = req.body.timkiem;
+    hotroController.search(pageSize, pageNumber, timkiem, function (data) {
+        res.send(data);
     })
 })
 

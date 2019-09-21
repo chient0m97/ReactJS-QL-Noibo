@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, Select, AutoComplete} from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -13,16 +13,30 @@ import { fetchLoading } from '@actions/common.action';
 // import { async } from 'q';
 const token = cookie.load('token');
 const { Column } = Table;
-const { Option } = Select
+const { Option } = AutoComplete;
 const { Search } = Input;
 const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
     class extends React.Component {
+        state = {
+            result: [],
+        };
+        handleSearch = value => {
+            let result;
+            if (!value || value.indexOf('@') >= 0) {
+                result = [];
+            } else {
+                result = ['gmail.com', 'yahoo.com', 'qq.com'].map(domain => `${value}@${domain}`);
+            }
+            this.setState({ result });
+        };
         render() {
             const { Option } = Select;
             const combobox = [];
             combobox.push(<Option key={'DD'}>Đại diện</Option>);
             combobox.push(<Option key={'DM'}>Đầu mối liên lạc</Option>);
             combobox.push(<Option key={'TXLL'}>Thường xuyên liên lạc</Option>);
+            const { result } = this.state;
+            const children = result.map(email => <Option key={email}>{email}</Option>);
             const { visible, onCancel, onOk_kh, Data, form, title, confirmLoading, formtype, kh_id_visible, handleChange, select_tinh, select_huyen, select_xa, onSelectTinh, onSelectHuyen, onSelectXa, select_tendv, onSelectDv, stateoption } = this.props;
             const { getFieldDecorator } = form;
             // var datacha = this.props.datacha
@@ -66,7 +80,9 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                 <Col span={8}>
                                     <Form.Item label='Email'>
                                         {getFieldDecorator('kh_email', {
-                                        })(<Input type="text" />)}
+                                        })(<AutoComplete style={{ width: 300 }} onSearch={this.handleSearch}>
+                                            {children}
+                                        </AutoComplete>)}
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -169,14 +185,15 @@ const CreateModalCustomer = Form.create({ name: 'form_create_customer' })(
                                     <Form.Item label='Đơn vị'>
                                         {getFieldDecorator('dm_dv_id', {
 
-                                        })(<Select onSelect={onSelectDv} placeholder="---Không có đơn vị có thể bỏ qua trường này---"
+                                        })(<Select
+                                            allowClear
+                                            onSelect={onSelectDv} placeholder="---Không có đơn vị có thể bỏ qua trường này---"
                                             filterOption={(input, option) =>
                                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
                                             showSearch
                                         >
                                             <Option value="add_donvi" disabled={stateoption}>Thêm đơn vị</Option>
-                                            <Option value={null}>Bỏ chọn</Option>
                                             {
                                                 select_tendv.map((value, index) => {
                                                     return (

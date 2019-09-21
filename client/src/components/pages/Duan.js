@@ -85,6 +85,7 @@ class Duan extends React.Component {
       pageNumber: 1,
       current: 1,
       page: 1,
+      timkiem: [],
       pageSize: 10,
       count: 1,
       show: false,
@@ -107,6 +108,7 @@ class Duan extends React.Component {
       rowthotroselected: {},
       selectedrow: [],
       selectedRowKeys: [],
+      timkiem : []
     }
   }
   //--------------DELETE-----------------------
@@ -194,8 +196,8 @@ class Duan extends React.Component {
 
   getTienTo = (e) => {
     let str = e.target.value
-    if(str!==null)
-    str = str.trim()
+    if (str !== null)
+      str = str.trim()
     var tt = str[0]
     for (var i = 0; i < str.length - 1; i++) {
       if (str.charAt(i) === " ") {
@@ -204,9 +206,64 @@ class Duan extends React.Component {
     }
     // tt=tt.toUpperCase()
     const { form } = this.formRef.props
-    
+
     form.setFieldsValue({ dm_duan_key: tt })
   }
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8, align: 'center' }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90 }}
+        >
+          Search
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+  });
+
+  handleSearch = (selectedKeys, value, confirm) => {
+    let vl = { values: selectedKeys[0], keys: value }
+    if (value && selectedKeys.length > 0) {
+      this.state.timkiem.push(vl)
+    }
+    Request(`duan/search`, 'POST',
+      {
+        timkiem: this.state.timkiem,
+        pageSize: this.state.pageSize,
+        pageNumber: this.state.page
+      })
+      .then((res) => {
+        notification[res.data.success === true ? 'success' : 'error']({
+          message: 'Đã xuất hiện bản ghi',
+          description: res.data.message
+        });
+        this.setState({
+          duans: res.data.data.duans,
+        })
+      })
+
+
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+  };
 
   refresh = (pageNumber) => {
     this.getDuans(this.state.pageNumber)
@@ -256,6 +313,60 @@ class Duan extends React.Component {
     }
     this.set_select_qtda()
   };
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8, align: 'center' }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={'Từ tìm kiếm'}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90 }}
+        >
+          Tìm kiếm
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+  });
+
+  handleSearch = (selectedKeys, value, confirm) => {
+    let vl = { values: selectedKeys[0], keys: value }
+    if (value && selectedKeys.length > 0) {
+        this.state.timkiem.push(vl)
+    }
+    Request(`duan/search`, 'POST',
+        {
+            timkiem: this.state.timkiem,
+            pageSize: this.state.pageSize,
+            pageNumber: this.state.page
+        })
+        .then((res) => {
+            notification[res.data.success === true ? 'success' : 'error']({
+                message: 'Đã xuất hiện bản ghi',
+                description: res.data.message
+            });
+            this.setState({
+                duans: res.data.data.duans,
+            })
+        })
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+};
+
 
   handleCancel = e => {
     this.setState({
@@ -355,6 +466,17 @@ class Duan extends React.Component {
         statebuttonedit: true
       })
   };
+  clearChecked = () => {
+    this.onSelectChange([], [])
+  };
+  onRowClick = (row) => {
+    if (this.state.selectedRowKeys[0] === row.dm_duan_id) {
+      this.onSelectChange([], [])
+    }
+    else {
+      this.onSelectChange([row.dm_duan_id], [row])
+    }
+  }
 
   render() {
     const { selectedRowKeys } = this.state
@@ -362,7 +484,10 @@ class Duan extends React.Component {
       hideDefaultSelections: true,
       selectedRowKeys,
       onChange: this.onSelectChange,
-      onHeaderCell: this.click
+      getCheckboxProps: record => ({
+        disabled: Column.title === 'Id',
+        name: record.name,
+      }),
     };
     if (token)
       return (
@@ -372,7 +497,7 @@ class Duan extends React.Component {
               <Col span={2}>
                 <Tooltip title="Thêm Dự Án">
                   <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
-                  <Icon type="plus" />
+                    <Icon type="plus" />
                   </Button>
                 </Tooltip>
               </Col>
@@ -420,17 +545,22 @@ class Duan extends React.Component {
               select_qtda={this.state.select_qtda}
               getTienTo={this.getTienTo}
             />
-            <Table rowSelection={rowSelection} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id">
+            <Table components={this.components} rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.duans} bordered rowKey="dm_duan_id">
               <Column title="Tiền tố" dataIndex="dm_duan_key" onHeaderCell={this.onHeaderCell}
                 render={text => {
                   return <div style={{ textAlign: 'left' }}>{text}</div>
                 }}
+                {...this.getColumnSearchProps('dm_duan_key')}
               />
-              <Column title="Tên dự án" dataIndex="dm_duan_ten" onHeaderCell={this.onHeaderCell}
+              <Column title="Tên dự án" dataIndex="dm_duan_ten"  {...this.getColumnSearchProps('dm_duan_ten')} onHeaderCell={this.onHeaderCell}
                 render={text => {
                   return <div style={{ textAlign: 'left' }}>{text}</div>
-                }} />
-              <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} />
+                }} 
+                {...this.getColumnSearchProps('dm_duan_ten')}
+                />
+              <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} 
+                              {...this.getColumnSearchProps('ns_hovaten')}
+              />
             </Table>
           </Row>
           <Row>

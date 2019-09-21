@@ -47,7 +47,6 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var id_duan = this.props.setidduan;
             var nhansu = this.props.setNhansu;
             var khachhang = this.props.setKhachHang;
-            console.log("KH ",khachhang)
             var donvi = this.props.setDonVi;
             var first_kh_id = null;
             var first_da_id = null;
@@ -343,6 +342,7 @@ class Hotro extends React.Component {
             stateButtonTatca: false,
             stateButtonGap: false,
             searchText: '',
+            timkiem: []
         }
     }
 
@@ -454,7 +454,8 @@ class Hotro extends React.Component {
                         form.resetFields();
                         this.setState({
                             visible: false,
-                            message: response.data.message
+                            message: response.data.message,
+                            trangthaibutton: false
                         })
                     }
                     var description = response.data.message
@@ -474,7 +475,6 @@ class Hotro extends React.Component {
                         description: description
                     });
                     this.getHotro(this.state.page)
-                    this.render()
                 }).catch((err) => {
                     console.log(err)
                 })
@@ -488,21 +488,76 @@ class Hotro extends React.Component {
                     message: 'Thong Bao',
                     description: res.data.message
                 });
-                this.getHotro(this.state.page)
+
                 this.setState({
                     stateconfirmdelete: false,
                     statebuttondelete: true,
                     statebuttonedit: true,
                     selectedRowKeys: []
                 })
-                this.render()
+                this.getHotro(this.state.page)
             }).catch((err) => {
                 console.log(err)
             })
     }
 
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8, align: 'center' }}>
+                <Input
+                    ref={node => {
+                        this.searchInput = node;
+                    }}
+                    placeholder={'Từ tìm kiếm'}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    icon="search"
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Tìm kiếm
+            </Button>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+    });
+
+    handleSearch = (selectedKeys, value, confirm) => {
+        let vl = { values: selectedKeys[0], keys: value }
+        if (value && selectedKeys.length > 0) {
+            this.state.timkiem.push(vl)
+        }
+        Request(`hotro/search`, 'POST',
+            {
+                timkiem: this.state.timkiem,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.page
+            })
+            .then((res) => {
+                notification[res.data.success === true ? 'success' : 'error']({
+                    message: 'Đã xuất hiện bản ghi',
+                    description: res.data.message
+                });
+                this.setState({
+                    hotro: res.data.data.hotros,
+                })
+            })
+
+
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    };
+
     refresh = async (pageNumber) => {
-        message.success('Refresh success', 1);
+        message.success('Tải lại thành công', 1);
         await this.getHotro(this.state.pageNumber)
     }
 
@@ -558,7 +613,7 @@ class Hotro extends React.Component {
     showModal = async (hotro) => {
         // console.log("hotro ", hotro)
         this.setState({
-            action: 'insert'
+            action: 'insert',
         })
         if (hotro.ht_trangthai === "daxong") {
             this.setState({
@@ -773,40 +828,48 @@ class Hotro extends React.Component {
 
     getDataGap = () => {
         var user_cookie = null
-        Request('hotro/getmyselfgap', 'POST', { user_cookie }).then((res) => {
-            if (res.data.data.myselfGap) {
-                this.setState({
-                    hotro: res.data.data.myselfGap,
-                    stateButtonTatca: false,
-                    stateButtonGap: true,
-                    stateButtonDaxong: false
-                })
-                array_ht_trangthai = []
-                res.data.data.myselfGap.map((data, index) => {
-                    array_ht_trangthai.push(data.ht_trangthai)
-                })
-            }
-            this.forceUpdate()
-        })
+        Request('hotro/getmyselfgap', 'POST',
+            {
+                user_cookie,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.pageNumber,
+                index: this.state.index,
+                sortBy: this.state.sortBy
+            }).then((res) => {
+                if (res.data.data.myselfGap) {
+                    this.setState({
+                        hotro: res.data.data.myselfGap,
+                        stateButtonTatca: false,
+                        stateButtonGap: true,
+                        stateButtonDaxong: false
+                    })
+                    array_ht_trangthai = []
+                    res.data.data.myselfGap.map((data, index) => {
+                        array_ht_trangthai.push(data.ht_trangthai)
+                    })
+                }
+                this.forceUpdate()
+            })
     }
 
-    getDataDaxong =async (pageNumber) => {
+    getDataDaxong = async (pageNumber) => {
         var user_cookie = null
         Request('hotro/getmyselfdaxong', 'POST', {
             user_cookie,
             pageSize: this.state.pageSize,
             pageNumber: pageNumber,
         }).then((res) => {
-            if (res.data.data.myselfDaxong) {
+            console.log("res ",res)
+            if (res.data.data.myself) {
                 this.setState({
-                    hotro: res.data.data.myselfDaxong,
+                    hotro: res.data.data.myself,
                     count: res.data.data.count,
                     stateButtonDaxong: true,
                     stateButtonTatca: false,
                     stateButtonGap: false
                 })
                 array_ht_trangthai = []
-                res.data.data.myselfDaxong.map((data, index) => {
+                res.data.data.myself.map((data, index) => {
                     array_ht_trangthai.push(data.ht_trangthai)
                 })
             }
@@ -818,7 +881,7 @@ class Hotro extends React.Component {
     //     confirm();
     //     this.setState({ searchText: selectedKeys[0] });
     //   };
-    
+
     //   handleReset = clearFilters => {
     //     clearFilters();
     //     this.setState({ searchText: '' });
@@ -965,13 +1028,16 @@ class Hotro extends React.Component {
                             <Col span={6}>
                                 <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
                                     <Button
+                                        disabled={this.state.stateButtonGap}
+                                        onClick={this.getDataGap.bind(this)}
+                                    >
+                                        Gấp
+                                    </Button>
+                                    <Button
                                         disabled={this.state.stateButtonTatca}
                                         onClick={this.getHotro.bind(this, this.state.page)}
                                     >Tất cả</Button>
-                                    <Button
-                                        disabled={this.state.stateButtonGap}
-                                        onClick={this.getDataGap.bind(this)}
-                                    >Gấp</Button>
+
                                     <Button
                                         disabled={this.state.stateButtonDaxong}
                                         onClick={this.getDataDaxong.bind(this, this.state.page)}
@@ -1004,7 +1070,6 @@ class Hotro extends React.Component {
                                 render={
                                     text => {
                                         j++
-                                        console.log("day la j ",j)
                                         if (array_ht_trangthai[j - 1] === "daxong") {
                                             return <Badge color={"brown"} />
                                         }
@@ -1023,8 +1088,9 @@ class Hotro extends React.Component {
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
+                                {...this.getColumnSearchProps('dm_duan_ten')}
                                 onHeaderCell={this.onHeaderCell}
-                                // {...this.getColumnSearchProps('Dự án')}
+                            // {...this.getColumnSearchProps('Dự án')}
                             />
                             <Column title="Đơn vị" dataIndex="dm_dv_ten" width={150}
                                 render={text => {
@@ -1033,8 +1099,9 @@ class Hotro extends React.Component {
                                             <Row>{this.checkDate(i, text, j)}</Row>
                                         </div>)
                                 }}
+                                {...this.getColumnSearchProps('dm_dv_ten')}
                                 width={150} onHeaderCell={this.onHeaderCell}
-                                // {...this.getColumnSearchProps('Đơn vị')}
+                            // {...this.getColumnSearchProps('Đơn vị')}
                             />
                             <Column title="Khách hàng" dataIndex="kh_ten" width={150}
                                 render={text => {
@@ -1043,16 +1110,19 @@ class Hotro extends React.Component {
                                             <Row>{this.checkDate(i, text, j)}</Row>
                                         </div>)
                                 }}
+                                {...this.getColumnSearchProps('kh_ten')}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Người tạo" dataIndex="ns_hoten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
+                                {...this.getColumnSearchProps('ns_hoten')}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Người được giao" dataIndex="ns_hovaten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
+                                {...this.getColumnSearchProps('ns_hovaten')}
                                 width={150} onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái" dataIndex="ht_trangthai" width={150}
                                 render={

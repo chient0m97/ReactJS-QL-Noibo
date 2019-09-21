@@ -12,36 +12,36 @@ router.post('/get', function (req, res) {
     let pageSize = body.pageSize;
     let index = req.body.index;
     let sortBy = req.body.sortBy
-    unitController.getUnit(pageNumber, pageSize,index,sortBy, function (data) {
+    unitController.getUnit(pageNumber, pageSize, index, sortBy, function (data) {
         res.send(data);
     })
 })
 
 router.post('/getCha', function (req, res) {
-    unitController.getcha(function(data){})
+    unitController.getcha(function (data) { })
     res.send(data);
 })
 
 router.post('/gettinh', function (req, res) {
-    unitController.getTinh(function(data){
+    unitController.getTinh(function (data) {
         res.send(data);
     })
 })
 
 router.post('/gethuyen', function (req, res) {
-    unitController.getHuyen(req.body, function(data){
+    unitController.getHuyen(req.body, function (data) {
         res.send(data);
     })
 })
 
 router.post('/getxa', function (req, res) {
-    unitController.getXa(req.body, function(data){
+    unitController.getXa(req.body, function (data) {
         res.send(data);
     })
 })
 
 router.post('/getkhachhang', function (req, res) {
-    unitController.getKhachhang(function(data){
+    unitController.getKhachhang(function (data) {
         res.send(data);
     })
 })
@@ -53,7 +53,7 @@ router.get('/get/:Id', function (req, res) {
 })
 
 router.delete('/delete', function (req, res) {
-    unitController.DeleteUnitbyId(req.body.dm_dv_id, function(data) {
+    unitController.DeleteUnitbyId(req.body.dm_dv_id, function (data) {
         res.send(data);
     })
 })
@@ -71,24 +71,22 @@ router.post('/insertkh', function (req, res) {
 })
 
 router.post('/update', function (req, res) {
-    unitController.updateUnit(req.body,function (data) {
+    unitController.updateUnit(req.body, function (data) {
         res.send(data);
-        
+
     })
 })
 
-router.post('/search',function(req,res){
-    let pageSize=req.body.pageSize;
-    let pageNumber=req.body.pageNumber;
-    let textSearch = req.body.textSearch;
-    let columnSearch = req.body.columnSearch;
-    let index = req.body.p1;
-    let sortBy = req.body.p2
-    unitController.search(pageSize,pageNumber,textSearch, columnSearch,index,sortBy ,function(data){
+router.post('/search', function (req, res) {
+    let pageSize = req.body.pageSize;
+    let pageNumber = req.body.pageNumber;
+    let timkiem = req.body.timkiem;
+    console.log('ssss', req.body.timkiem)
+    unitController.search(pageSize, pageNumber, timkiem, function (data) {
+        console.log('tttttttttt', data)
         res.send(data);
     })
-  
-  })
+})
 
 router.get('/about', function (req, res) {
     res.send('About Unit')

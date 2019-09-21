@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Tooltip, Card } from 'antd';
+import { Pagination, Icon, Table, Input, Popconfirm, message, Button, Row, Col, notification, Alert, Select, Tooltip, Card } from 'antd';
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
@@ -7,12 +7,14 @@ import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
+import { fetchDonvi } from '@actions/donvi.action';
 import CreateModalUnit from '@pages/Modal/CreateModalUnit';
 import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 // import CreateModalCustomer from '@pages/Modal/CreateModalCustomer';
 import { async } from 'q';
 import Modal_FileDonvis from '@pages/Modal/Modal_FileDonvis.js'
 import axios from 'axios';
+import Highlighter from 'react-highlight-words';
 
 const token = cookie.load('token');
 const { Column } = Table;
@@ -37,13 +39,14 @@ class Unit extends React.Component {
             action: 'insert',
             isSearch: 0,
             textSearch: '',
-            columnSearch: '',
+            searchText: '',
             isSort: true,
             sortBy: 'ASC',
             index: 'dm_dv_ten',
             orderby: 'arrow-up',
             corlor: '#d9d9d9',
             visible_kh: false,
+            visible_timkiem: false,
             formtype_kh: 'horizontal',
             title_kh: 'Thêm mới khách hàng',
             dataSource_Select_Parent: [],
@@ -67,6 +70,8 @@ class Unit extends React.Component {
             checked: true,
             visibleImport: false,
             selectedFile: null,
+            timkiem: [],
+            showDataTimkiem: []
         }
     }
     //---Delete---
@@ -169,6 +174,61 @@ class Unit extends React.Component {
         })
     }
 
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8, align : 'center' }}>
+                <Input
+                    ref={node => {
+                        this.searchInput = node;
+                    }}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Button
+                    type="primary"
+                    onClick={() => this.handleSearch(selectedKeys, dataIndex, confirm)}
+                    icon="search"
+                    size="small"
+                    style={{ width: 90 }}
+                >
+                    Search
+            </Button>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+    });
+
+    handleSearch = (selectedKeys, value, confirm) => {
+        let vl = { values: selectedKeys[0], keys: value }
+        if (value && selectedKeys.length > 0) {
+            this.state.timkiem.push(vl)
+        }
+        Request(`unit/search`, 'POST',
+            {
+                timkiem: this.state.timkiem,
+                pageSize: this.state.pageSize,
+                pageNumber: this.state.page
+            })
+            .then((res) => {
+                notification[res.data.success === true ? 'success' : 'error']({
+                    message: 'Đã xuất hiện bản ghi',
+                    description: res.data.message
+                });
+                this.setState({
+                    units: res.data.data.donvis,
+                })
+            })
+
+
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    };
+
     refresh = (pageNumber) => {
         this.getUnits(this.state.pageNumber)
     }
@@ -194,6 +254,7 @@ class Unit extends React.Component {
     }
 
     showModalUpdate = async (unit) => {
+        console.log('dcmm',unit)
         const { form } = this.formRef.props
         this.setState({
             visible: true,
@@ -229,12 +290,6 @@ class Unit extends React.Component {
                 form.setFieldsValue({ dm_db_id_xa: '' })
             }
             form.setFieldsValue(unit);
-            if (unit.kh_id_nguoidaidien) {
-                console.log('hihi haha')
-            }
-            else {
-                form.setFieldsValue({ kh_id_nguoidaidien: '' })
-            }
         }
     };
 
@@ -857,7 +912,7 @@ class Unit extends React.Component {
                         }
 
                     });
-                    await console.log('excel con ', listExcelNotParent, 'va co cha la ',listExcelParent)
+                    await console.log('excel con ', listExcelNotParent, 'va co cha la ', listExcelParent)
                     return
                     Request('unit/insert', 'POST', response.data.dataExcel)
                         .then((response) => {
@@ -995,23 +1050,23 @@ class Unit extends React.Component {
                             stateoption={this.state.stateoption}
                         />
                         <Table rowSelection={rowSelection} onRowClick={this.onRowClick} className="table-contents" pagination={false} dataSource={this.state.units} bordered='1' scroll={{ x: '130%' }} rowKey="dm_dv_id">
-                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" onHeaderCell={this.onHeaderCell} width={150} />
+                            <Column title="ID" dataIndex="dm_dv_id" key="dm_dv_id" className="hidden-action" />
+                            <Column title="Tên đơn vị" dataIndex="dm_dv_ten" key="dm_dv_ten" {...this.getColumnSearchProps('dm_dv_ten')} onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="ID Đơn vị cấp trên" dataIndex="dm_dv_id_cha" key="dm_dv_id_cha" className="hidden-action" />
                             <Column title="Đơn vị cấp trên" dataIndex="tendonvicha" key="tendonvicha" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" onHeaderCell={this.onHeaderCell} width={150} />
+                            <Column title="Địa chỉ" dataIndex="dm_dv_diachi" key="dm_dv_diachi" {...this.getColumnSearchProps('dm_dv_diachi')} onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Mã số thuế" dataIndex="dm_dv_masothue" key="dm_dv_masothue" onHeaderCell={this.onHeaderCell} />
-                            <Column title="Số điện thoại" dataIndex="dm_dv_sodienthoai" key="dm_dv_sodienthoai" onHeaderCell={this.onHeaderCell} />
+                            <Column title="Mã số thuế" dataIndex="dm_dv_masothue" key="dm_dv_masothue" {...this.getColumnSearchProps('dm_dv_masothue')} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Số điện thoại" dataIndex="dm_dv_sodienthoai" key="dm_dv_sodienthoai" {...this.getColumnSearchProps('dm_dv_sodienthoai')} onHeaderCell={this.onHeaderCell} />
                             <Column title="Mã người đại diện" dataIndex="kh_id_nguoidaidien" key="kh_id_nguoidaidien" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Người đại diện" dataIndex="tennguoidaidien" key="tennguoidaidien" onHeaderCell={this.onHeaderCell} width={150} />
                             <Column title="Trạng thái đơn vị" dataIndex="dm_dv_trangthai" key="dm_dv_trangthai" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Trạng thái" dataIndex="dm_dv_trangthai_txt" key="dm_dv_trangthai_txt" />
-                            <Column />
                         </Table>
                     </Row>
                     <Row>
@@ -1039,9 +1094,11 @@ const mapStateToProps = state => ({
     ...state
 })
 
+
 export default connect(mapStateToProps,
     {
         fetchUser,
-        fetchLoading
+        fetchLoading,
+        fetchDonvi
     })
     (Unit);

@@ -726,7 +726,7 @@ class Groupfilter extends React.Component {
                 Thoát
               </Button>
               <Button onClick={this.onSearch} type="primary">
-                Tiềm kiếm
+                Tìm kiếm
               </Button>
             </div>
           </div>

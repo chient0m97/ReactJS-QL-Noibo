@@ -27,8 +27,8 @@ const FormModalImport = Form.create({ name: 'from_in_modal' })(
                     <div>
                         <label>File của bạn</label>
                         <input type="file" name="file"
-                            // onChange={onChangeFile}
-                            // onChange={onChangeHandler}
+                        // onChange={onChangeFile}
+                        // onChange={onChangeHandler}
                         />
                     </div>
                 </Modal>
@@ -113,6 +113,7 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                         {getFieldDecorator('kh_id_nguoidaidien', {
 
                                         })(<Select
+                                            allowClear
                                             onSelect={onSelectKh}
                                             placeholder="---Không có người đại diện có thể bỏ qua trường này---"
                                             filterOption={(input, option) =>
@@ -121,7 +122,6 @@ const CreateModalUnit = Form.create({ name: 'form_create_unit' })(
                                             showSearch
                                         >
                                             <Option value="add_nguoidaidien" disabled={stateoption}>Thêm người đại diện</Option>
-                                            <Option value={null}>Bỏ chọn</Option>
                                             {
                                                 select_tenkh.map((value, index) => {
                                                     return (
