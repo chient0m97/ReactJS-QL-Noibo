@@ -104,5 +104,37 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+
+    getProfile(a,callback) {
+        knex.raw("select * from nhansu where ns_dinhdanhcanhan ='"+a+"'").then((res) => {
+            console.log('sssssssssssss',res.rows)
+        // knex.select('name','madinhdanh' ).from('users').then((res) => {
+            
+            callback({
+                data: {
+                    nhansu: res.rows
+                }
+            })
+        })
+    },
+
+    getUpdate: function(nhansu, callback) {
+        console.log('xczxczxc',nhansu.ns_dinhdanhcanhan)
+        nhansu.ns_ngaysinh=dateFormat(nhansu.ns_ngaysinh, "yyyy/mm/dd")
+        nhansu.ns_ngayhocviec=dateFormat(nhansu.ns_ngayhocviec, "yyyy/mm/dd")
+        nhansu.ns_ngaythuviec=dateFormat(nhansu.ns_ngaythuviec, "yyyy/mm/dd")
+        nhansu.ns_ngaylamchinhthuc=dateFormat(nhansu.ns_ngaylamchinhthuc, "yyyy/mm/dd")
+        nhansu.ns_ngaydongbaohiem=dateFormat(nhansu.ns_ngaydongbaohiem, "yyyy/mm/dd")
+        knex.from('nhansu').where('ns_dinhdanhcanhan',nhansu.ns_dinhdanhcanhan).update(nhansu).then(res => {
+            callback({
+                success:true
+            })
+        }).catch(err => {
+            console.log(err)
+            callback({
+                success : false
+            })
+        })
+    },
 }

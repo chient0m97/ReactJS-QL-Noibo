@@ -15,6 +15,7 @@ import File_khachhang from '../components/pages/File'
 import Group from '../components/pages/Group'
 import Member from '../components/pages/Member';
 import ChangePassword from '../components/pages/Modal/ChangePassword';
+import ViewProfile from '../components/pages/Modal/ViewProfile';
 import ok from '../components/common/ok';
 import Hoadon from '../components/pages/Quanly_hoadon'
 import Request from '@pages/Request'
@@ -109,6 +110,11 @@ const routers = [
         path: '/changepassword',
         component: ChangePassword,
         name: 'changepassword'
+    },
+    {
+        path: '/viewprofile',
+        component: ViewProfile,
+        name: 'viewprofile'
     },
     {
         path: '/ok',

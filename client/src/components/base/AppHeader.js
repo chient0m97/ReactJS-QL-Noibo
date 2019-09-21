@@ -155,7 +155,7 @@ class AppHeader extends Component {
     return (
       <Menu>
         <Menu.Item key="0">
-          <a href="https://www.google.com/">View Profile</a>
+          <a href="/viewprofile">View Profile</a>
         </Menu.Item>
         <Menu.Item key="1">
           <a href="/changepassword">Đổi mật khẩu</a>

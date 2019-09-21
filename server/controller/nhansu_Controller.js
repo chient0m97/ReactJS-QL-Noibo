@@ -81,6 +81,17 @@ var nhansuController = {
             callback(data);
         })
     },
+    getProfile(a,callback) {
+        nhansuData.getProfile(a,function (data) {
+            callback(data);
+        })
+    },
+
+    getUpdate(s,callback) {
+        nhansuData.getUpdate(s,function (data) {
+            callback(data);
+        })
+    },
 
     getById: function getById(ns_id, callback) {
         nhansuData.getById(ns_id, data => {
