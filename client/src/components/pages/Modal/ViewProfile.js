@@ -1,17 +1,17 @@
 import React from 'react';
-import { Pagination, Icon, Upload, Table, Input, Checkbox, Modal, Popconfirm, message, Button, Spin, Form, Row, Col, notification, Alert, Select } from 'antd';
+import { Pagination, AutoComplete , Icon, Mentions, Upload, Table, Input, Checkbox, Modal, Popconfirm, message, Button, Spin, Form, Row, Col, notification, Alert, Select } from 'antd';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
 import Request from '@apis/Request'
-
 import { fetchLoading } from '@actions/common.action'
 import jwt from 'jsonwebtoken'
 import '@styles/style.css'
 var formatDateModal = require('dateformat')
 const token = cookie.load('token');
 const { Column } = Table;
-
+var { Option } = Mentions;
+var { Option } = AutoComplete;
 function getBase64(img, callback) {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result));
@@ -106,6 +106,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                         <Col span={6}>
                             <Form.Item label="Họ">
                                 {getFieldDecorator('ns_ho', {
+                                    initialValue: "afc163",
                                     rules: [{ required: true, message: 'Trường không được để trống!' }]
                                 })(
                                     <Input type="text" />)}

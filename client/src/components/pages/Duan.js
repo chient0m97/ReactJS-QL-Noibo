@@ -500,12 +500,8 @@ class Duan extends React.Component {
               <Column title="Tên dự án" dataIndex="dm_duan_ten"  {...this.getColumnSearchProps('dm_duan_ten')} onHeaderCell={this.onHeaderCell}
                 render={text => {
                   return <div style={{ textAlign: 'left' }}>{text}</div>
-                }} 
-                {...this.getColumnSearchProps('dm_duan_ten')}
-                />
-              <Column title="Quản trị dự án" dataIndex="ns_hovaten" onHeaderCell={this.onHeaderCell} 
-                              {...this.getColumnSearchProps('ns_hovaten')}
-              />
+                }} />
+              <Column title="Quản trị dự án" dataIndex="ns_hovaten" {...this.getColumnSearchProps('ns_hovaten')} onHeaderCell={this.onHeaderCell} />
             </Table>
           </Row>
           <Row>
