@@ -210,31 +210,6 @@ class Duan extends React.Component {
     form.setFieldsValue({ dm_duan_key: tt })
   }
 
-  search = async (xxxx) => {
-    Request('duan/search', 'POST', {
-      pageSize: this.state.pageSize,
-      pageNumber: this.state.page,
-      searchText: xxxx,
-      columnSearch: this.state.columnSearch,
-      p1: this.state.index,
-      p2: this.state.sortBy,
-
-    })
-      .then((response) => {
-        let data = response.data;
-
-        if (data.data)
-          this.setState({
-            users: data.data.users,
-            count: Number(data.data.count),//eps kieeru veef,
-            searchText: xxxx,
-            isSearch: 1
-          })
-
-      })
-
-  }
-
   refresh = (pageNumber) => {
     this.getDuans(this.state.pageNumber)
   }
