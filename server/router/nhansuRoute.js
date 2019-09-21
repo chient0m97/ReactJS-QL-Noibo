@@ -57,13 +57,26 @@ router.post('/getdinhdanh', function (req, res) {
     })
 })
 
-router.get('/get/:ns_id', function (req, res) {
-    nhansuController.getById(req.params.ns_id, function (data) {
+router.post('/viewprofile', function(req, res){
+    nhansuController.getProfile(req.body.a,function(data){
         res.send(data)
     })
 })
 
-router.get('/about', function (req, res) {
+router.get('/get/:ns_id', function(req, res){
+    nhansuController.getById(req.params.ns_id, function(data){
+        res.send(data)
+    })
+})
+
+router.post('/updatens', function(req, res){
+    console.log('sxxxxx',req.body)
+    nhansuController.getUpdate(req.body, function(data){
+        res.send(data)
+    })
+})
+
+router.get('/about', function(req,res) {
     res.send('About Nhan Su')
 })
 

@@ -368,7 +368,6 @@ module.exports = {
                 from nhatky_hopdongs hd,\
                 duans da \
                 where hd.dm_duan_id = da.dm_duan_id) as hopdongs where " + queryy + " "
-                console.log(query,'query');
                 
             knex.raw(query)
                 .then(res => {

@@ -108,14 +108,15 @@ module.exports = {
                 //     qr = qr + "upper(cast(nhansu.ns_ho || nhansu.ns_tenlot || nhansu.ns_ten as text)) like upper('%" + a.values.replace(/ /g) + "%') and"
                 //     console.log('qrrrr', qr)
                 // } 
-                    qr = qr + "upper(cast(nhansu." + a.keys + " as text)) like upper('%" + a.values + "%') and "
+                    qr = qr + "upper(cast(ns." + a.keys + " as text)) like upper('%" + a.values + "%') and "
             
             }
             let queryy = qr.slice(0, qr.length - 5)
-            let query = "select * from nhansu where " + queryy + ""
+            let query = "select * from (select *, coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten from nhansu)as ns where " + queryy + ""
+            
             knex.raw(query)
                 .then(res => {
-                    knex.raw("select count(*) from nhansu where " + queryy + "")
+                    knex.raw("select count(*) from (select *, coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' || coalesce (ns_ten, '') as ns_hovaten from nhansu)as ns where " + queryy + "")
                         .then(resCount => {
                             callback({
                                 success: true,
@@ -146,5 +147,37 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+
+    getProfile(a,callback) {
+        knex.raw("select * from nhansu where ns_dinhdanhcanhan ='"+a+"'").then((res) => {
+            console.log('sssssssssssss',res.rows)
+        // knex.select('name','madinhdanh' ).from('users').then((res) => {
+            
+            callback({
+                data: {
+                    nhansu: res.rows
+                }
+            })
+        })
+    },
+
+    getUpdate: function(nhansu, callback) {
+        console.log('xczxczxc',nhansu.ns_dinhdanhcanhan)
+        nhansu.ns_ngaysinh=dateFormat(nhansu.ns_ngaysinh, "yyyy/mm/dd")
+        nhansu.ns_ngayhocviec=dateFormat(nhansu.ns_ngayhocviec, "yyyy/mm/dd")
+        nhansu.ns_ngaythuviec=dateFormat(nhansu.ns_ngaythuviec, "yyyy/mm/dd")
+        nhansu.ns_ngaylamchinhthuc=dateFormat(nhansu.ns_ngaylamchinhthuc, "yyyy/mm/dd")
+        nhansu.ns_ngaydongbaohiem=dateFormat(nhansu.ns_ngaydongbaohiem, "yyyy/mm/dd")
+        knex.from('nhansu').where('ns_dinhdanhcanhan',nhansu.ns_dinhdanhcanhan).update(nhansu).then(res => {
+            callback({
+                success:true
+            })
+        }).catch(err => {
+            console.log(err)
+            callback({
+                success : false
+            })
+        })
+    },
 }
