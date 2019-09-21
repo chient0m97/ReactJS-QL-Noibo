@@ -59,7 +59,7 @@ class Customer extends React.Component {
             visible_dv: false,
             selectedFile: null,
             visibleImport: false,
-            timkiem: []
+            timkiem: [],
         }
     }
 
@@ -114,7 +114,7 @@ class Customer extends React.Component {
                 let data = response.data;
                 if (data.data) {
                     await this.setState({
-                        customers: data.data.customers,
+                        customers: this.convertColumnSearch(data.data.customers),
                         count: Number(data.data.count)
                     })
                 }
@@ -205,29 +205,8 @@ class Customer extends React.Component {
     });
 
     handleSearch = (selectedKeys, value, confirm) => {
-        let vl = { values: selectedKeys[0], keys: value }
-        if (value && selectedKeys.length > 0) {
-            this.state.timkiem.push(vl)
-        }
-        Request(`customer/search`, 'POST',
-            {
-                timkiem: this.state.timkiem,
-                pageSize: this.state.pageSize,
-                pageNumber: this.state.page
-            })
-            .then((res) => {
-                notification[res.data.success === true ? 'success' : 'error']({
-                    message: 'Đã xuất hiện bản ghi',
-                    description: res.data.message
-                });
-                this.setState({
-                    customers: res.data.data.khachhangs,
-                })
-            })
 
 
-        confirm();
-        this.setState({ searchText: selectedKeys[0] });
     };
 
     refresh = (pageNumber) => {
@@ -670,6 +649,69 @@ class Customer extends React.Component {
         this.onSelectChange([], [])
     };
 
+    convertColumnSearch = (data) => {
+        if (data.length > 0) {
+            var arrkey = Object.keys(data[0])
+            var obj_key_search = {}
+            arrkey.map(value => {
+                eval('obj_key_search.' + value + "='" + value + "'")
+            })
+
+            return [obj_key_search].concat(data)
+        }
+        else {
+            return data
+        }
+
+    }
+
+    renderCell = (option, value, row, index) => {
+        if (index === 0) {
+            if (option.type === 'select') {
+                return (
+                    <Select >
+                        {option.option.map(valueoption => {
+                            return <Option></Option>
+                        })}
+                    </Select>
+                )
+            }
+            return (
+                <Input type={option.type} style={{ minWidth: '100px' }} onPressEnter={this.handleSearchs.bind(this, option.name)} />
+            )
+        }
+        return value
+    }
+
+    handleSearchs = (nameSearch, e) => {
+
+        if (e.target.value !== '') {
+            let vl = { values: e.target.value, keys: nameSearch }
+            console.log(this.state.timkiem, 'timkiemgia tri timkiem')
+            var timkiem = this.state.timkiem
+            timkiem = timkiem.push(vl)
+            // this.setState({
+            //     timkiem: timkiem
+            // })
+            Request(`customer/search`, 'POST',
+                {
+                    timkiem: this.state.timkiem,
+                    pageSize: this.state.pageSize,
+                    pageNumber: this.state.page
+                })
+                .then((res) => {
+                    notification[res.data.success === true ? 'success' : 'error']({
+                        message: 'Đã xuất hiện bản ghi',
+                        description: res.data.message
+                    });
+                    this.setState({
+                        customers: this.convertColumnSearch(res.data.data.khachhangs),
+                    })
+                })
+            this.setState({ searchText: e.target.value });
+        }
+    }
+
     onRowClick = (row) => {
         if (this.state.selectedRowKeys[0] === row.kh_id) {
             this.onSelectChange([], [])
@@ -908,18 +950,24 @@ class Customer extends React.Component {
                             stateoption={this.state.stateoption}
                         />
                         <Table rowSelection={rowSelection} onRowClick={this.onRowClick} pagination={false} dataSource={this.state.customers} bordered='1' scroll={{ x: 1000 }} rowKey="kh_id">
-                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" {...this.getColumnSearchProps('kh_ten')} onHeaderCell={this.onHeaderCell} width={150} />
-                            <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai" {...this.getColumnSearchProps('kh_sodienthoai')} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Email" dataIndex="kh_email" key="kh_email" {...this.getColumnSearchProps('kh_email')} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Tên khách hàng" dataIndex="kh_ten" key="kh_ten" onHeaderCell={this.onHeaderCell} width={150}
+                                render={this.renderCell.bind(this, { type: 'text', name: 'kh_ten' })}
+                            />
+                            <Column title="Số điện thoại" dataIndex="kh_sodienthoai" key="kh_sodienthoai"  onHeaderCell={this.onHeaderCell}
+                                render={this.renderCell.bind(this, { type: 'text', name: 'kh_sodienthoai' })} />
+                            <Column title="Email" dataIndex="kh_email" key="kh_email"  onHeaderCell={this.onHeaderCell}
+                                render={this.renderCell.bind(this, { type: 'text', name: 'kh_email' })} />
                             <Column title="Mã tỉnh" dataInde="dm_db_id_tinh" key="dm_db_id_tinh" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Tỉnh/TP" dataIndex="tentinh" key="tentinh" />
                             <Column title="Mã huyện" dataIndex="dm_db_id_huyen" key="dm_db_id_huyen" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Huyện/Quận" dataIndex="tenhuyen" key="tenhuyen" />
                             <Column title="Mã xã" dataIndex="dm_db_id_xa" key="dm_db_id_xa" className="hidden-action" disabled onHeaderCell={this.onHeaderCell} />
                             <Column title="Xã/Phường" dataIndex="tenxa" key="tenxa" />
-                            <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} width={150} />
+                            <Column title="Địa chỉ" dataIndex="kh_diachi" key="kh_diachi" onHeaderCell={this.onHeaderCell} width={150}
+                                render={this.renderCell.bind(this, { type: 'text', name: 'kh_diachi' })} />
                             <Column title="Mã đơn vị" dataIndex="dm_dv_id" key="dm_dv_id" className='hidden-action' disabled onHeaderCell={this.onHeaderCell} />
-                            <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" {...this.getColumnSearchProps('tendonvi')} onHeaderCell={this.onHeaderCell} />
+                            <Column title="Đơn vị" dataIndex="tendonvi" key="tendonvi" onHeaderCell={this.onHeaderCell}
+                                render={this.renderCell.bind(this, { type: 'text', name: 'tendonvi' })} />
                             <Column title="Vị trí công tác" dataIndex="kh_vitricongtac" key="kh_vitricongtac" onHeaderCell={this.onHeaderCell} />
                             <Column title="Liên lạc" dataIndex="kh_lienlac" key="kh_lienlac" className='hidden-action' disabaled onHeaderCell={this.onHeaderCell} />
                             <Column title="Liên lạc" dataIndex="kh_lienlac_txt" key="kh_lienlac_txt" />
