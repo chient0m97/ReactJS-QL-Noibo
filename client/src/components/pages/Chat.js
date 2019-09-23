@@ -4,7 +4,7 @@ import $ from 'jquery';
 import '@styles/layout.css';
 import cookie from 'react-cookies'
 import { Button, Input } from 'antd'
-var socket = io('localhost:6969');
+var socket = io('fscvn.ddns.net:6969');
 var ten = cookie.load('user');
 socket.on("server-send-danhsach-Users", function (data) {
     $("#boxContent").html("");

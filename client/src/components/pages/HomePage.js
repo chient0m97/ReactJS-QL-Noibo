@@ -181,7 +181,6 @@ export default class HomePage extends Component {
         var user_cookie = cookie.load('user');
 
         Request('hotro/getdatanguoitao', 'POST', { user_cookie }).then((res) => {
-            console.log(res)
             if (res.data.data.dataNguoiTao) {
                 this.setState({
                     dataNguoiTao: res.data.data.dataNguoiTao
@@ -195,7 +194,7 @@ export default class HomePage extends Component {
         Request('hotro/getmyself', 'POST', { userDatao }).then((res) => {
             if (res.data.data.myself) {
                 this.setState({
-                    myself: res.data.data.myself
+                    dataNguoiTao: res.data.data.myself
                 })
             }
         })
@@ -209,20 +208,20 @@ export default class HomePage extends Component {
         Request('hotro/getmyselfgap', 'POST', { userDatao }).then((res) => {
             if (res.data.data.myselfGap) {
                 this.setState({
-                    myself: res.data.data.myselfGap
+                    dataNguoiTao: res.data.data.myselfGap
                 })
             }
         })
     }
 
     getDataDaxongDaTao = () => {
-
         var userDaTao = cookie.load('user');
 
         Request('hotro/getmyselfdaxong', 'POST', { userDaTao }).then((res) => {
+            console.log("res datao daxong ",res)
             if (res.data.data.myself) {
                 this.setState({
-                    myself: res.data.data.myself
+                    dataNguoiTao: res.data.data.myself
                 })
             }
         })
@@ -239,7 +238,7 @@ export default class HomePage extends Component {
         document.getElementsByClassName('ant-statistic-title')[3].style.fontSize = '18px'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
-        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
+        // document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
         // let day = new Date().getDate()
         // console.log("date ", format(new Date(), 'yyyy-mm-' + (new Date().getDate() + 1)))
 
@@ -560,6 +559,7 @@ export default class HomePage extends Component {
         const { selectedRowKeys } = this.state
         const rowSelection = {
             type: 'radio',
+            columnWidth: '60px',
             hideDefaultSelections: true,
             selectedRowKeys,
             onChange: this.onSelectChange,
@@ -781,8 +781,8 @@ export default class HomePage extends Component {
                                             <Col span={6}>
                                                 <ButtonGroup style={{ marginBottom: '5px', zIndex: 999 }} >
                                                     <Button onClick={this.getDataAllDaTao.bind(this)}>Tất cả</Button>
-                                                    <Button onClick={this.getDataGap.bind(this)}>Gấp</Button>
-                                                    <Button onClick={this.getDataDaxong.bind(this)}>Đã xong</Button>
+                                                    <Button onClick={this.getDataGapDaTao.bind(this)}>Gấp</Button>
+                                                    <Button onClick={this.getDataDaxongDaTao.bind(this)}>Đã xong</Button>
                                                     {/* <Button >Đang xử lý</Button> */}
                                                 </ButtonGroup>
                                             </Col>

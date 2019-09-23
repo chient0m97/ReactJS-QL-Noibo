@@ -11,7 +11,7 @@ app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'dist', './index.html'));
 })
 io.on("connection", function(socket){
-    //console.log('co nguoi ket noi '+socket.id);
+    console.log('co nguoi ket noi '+socket.id);
     socket.on("user-send-message", function(data){
         io.sockets.emit("server-send-message", {un:data.user, nd:data.text});
     });

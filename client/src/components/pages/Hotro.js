@@ -563,7 +563,8 @@ class Hotro extends React.Component {
 
     async componentDidMount() {
         await this.getHotro(this.state.pageNumber, this.state.index, this.state.sortBy);
-        document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Yêu cầu / Ghi chú'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Chi tiết'
+        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.height=document.getElementsByClassName('ant-table-expand-icon-th')[1].style.height
         // document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
         // document.getElementsByClassName('')
@@ -1048,11 +1049,12 @@ class Hotro extends React.Component {
                     </Card>
                     <Row style={{ marginTop: 5 }}>
                         <Table
+                            
                             rowSelection={rowSelection}
                             onRowClick={this.onRowClick.bind(this)}
                             pagination={false}
                             dataSource={this.state.hotro}
-                            rowKey="ht_id" bordered scroll={{ x: 1000, y: 400 }}
+                            rowKey="ht_id" bordered scroll={{ x: 1000}}
                             expandedRowRender={(record, selectedRowKeys) => {
                                 return (
                                     <div style={{ textAlign: 'left' }}>
@@ -1145,13 +1147,12 @@ class Hotro extends React.Component {
                                 onHeaderCell={this.onHeaderCell} />
                             <Column title="Ưu tiên" dataIndex="ht_uutien"
                                 width={150}
-                                align='left'
                                 render={text => {
-                                    if (text === 'GAP') { return <span> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /> &nbsp; {this.checkDate(i, "Gấp", j)} </span> }
+                                    if (text === 'GAP') { return <span> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /></span> }
                                     if (text === 'CAO') { return <span> <Icon type="up" style={{ color: 'orange' }} /> &nbsp; {this.checkDate(i, "Cao", j)} </span> }
-                                    if (text === 'TB') { return <span> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /> &nbsp; {this.checkDate(i, "Trung bình", j)}</span> }
-                                    if (text === 'THAP') { return <span> <Icon type="down" style={{ color: '#ccff33' }} /> &nbsp; {this.checkDate(i, "Thấp", j)} </span> }
-                                    return <span> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /> &nbsp; {this.checkDate(i, "Rất Thấp", j)} </span>
+                                    if (text === 'TB') { return <span> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /></span> }
+                                    if (text === 'THAP') { return <span> <Icon type="down" style={{ color: '#ccff33' }} /></span> }
+                                    return <span> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /></span>
                                 }}
                             />
                             <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}

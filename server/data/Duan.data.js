@@ -123,11 +123,10 @@ module.exports = {
                 qr = qr + "upper(cast(da." + a.keys + " as text)) like upper('%" + a.values + "%') and "
             }
             var queryy = qr.slice(0, qr.length - 5)
-            var query = "select  da.*, nhs.ns_hovaten,nhs.ns_id from duans da left join \
-            (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' \
-             || coalesce (ns_ten, '') as ns_hovaten, ns.ns_id as ns_id from nhansu \
-             ns) as nhs on nhs.ns_id = da.ns_id_qtda where " + queryy + " "
-             console.log(query, 'query');
+            var query = "select * from (select  da.*, nhs.ns_hovaten,nhs.ns_id from duans da left join \
+                (select coalesce (ns_ho, '') || ' ' || coalesce (ns_tenlot, '') || ' ' \
+                 || coalesce (ns_ten, '') as ns_hovaten, ns.ns_id as ns_id from nhansu \
+                 ns) as nhs on nhs.ns_id = da.ns_id_qtda)as da where " + queryy + " "
              
             knex.raw(query)
                 .then(res => {
