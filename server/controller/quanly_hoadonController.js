@@ -48,8 +48,16 @@ var quanly_hoadonsController = {
         })
     },
 
-    getKhachHang(callback){
-        quanly_hoadonsData.getKhachHang(function(data){
+    getKhachHang(callback) {
+        quanly_hoadonsData.getKhachHang(function (data) {
+            callback(data);
+        })
+    },
+
+    search: function search(pageSize, pageNumber, textSearch, columnSearch, index, sortBy, callback) {
+        let limit = pageSize;
+        let offset = pageSize * (pageNumber - 1);
+        quanly_hoadonsData.search(limit, offset, textSearch, columnSearch, index, sortBy, (data) => {
             callback(data);
         })
     },

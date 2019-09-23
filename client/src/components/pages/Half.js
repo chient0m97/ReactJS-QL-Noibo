@@ -147,12 +147,12 @@ class Half extends Component {
     }
     componentDidMount() {
         document.getElementById("id_name").style.display = 'none';
-        document.getElementById("id_name1").style.display = 'none';
+        document.getElementById("id_name1").style.display = 'block';
         document.getElementById("id_name2").style.display = 'none';
-        document.getElementById("id_name3").style.display = 'none';
+        document.getElementById("id_name3").style.display = 'block';
         document.getElementById("id_name4").style.display = 'none';
-        document.getElementById("id_name5").style.display = 'none';
-        document.getElementById("id_name6").style.display = 'none';
+        document.getElementById("id_name5").style.display = 'block';
+        document.getElementById("id_name6").style.display = 'block';
     }
     onClickRegistration = () => {
         console.log(ten, 'ten');
@@ -264,7 +264,28 @@ class Half extends Component {
             }
         }
         else {
-            //mac dinh
+            if (this.state.chonNgay !== "" && this.state.nguoiDuyetDu !== "" && this.state.lyDo !== "") {
+                Request('half/insert2', 'POST', {
+                    name: ten,
+                    registration_time: formatDateHMS(new Date(), "dd/mm/yyyy - HH:MM:ss"),
+                    date: this.state.chonNgay,
+                    person: this.state.nguoiDuyetDu,
+                    reason: this.state.lyDo
+                }).then((res) =>
+                    notification[res.data.success === true ? 'success' : 'error']({
+                        message: 'Thông Báo',
+                        description: res.data.message
+                    })
+                ).catch((err) => {
+                    console.log(err)
+                })
+            }
+            else {
+                notification['error']({
+                    message: 'Lỗi',
+                    description: 'Bạn chưa điền đủ thông tin'
+                })
+            }
         }
     }
 
@@ -272,7 +293,7 @@ class Half extends Component {
         return (
             <div>
                 <div>
-                    <Radio.Group buttonStyle="solid">
+                    <Radio.Group defaultValue="a" buttonStyle="solid">
                         <Radio.Button onClick={(e) => this.onChangeA(e)} value="a">1/2 Ngày - Sáng</Radio.Button>
                         <Radio.Button onClick={(e) => this.onChangeB(e)} value="b">1/2 Ngày - Chiều</Radio.Button>
                         <Radio.Button onClick={(e) => this.onChangeC(e)} value="c">1 Ngày</Radio.Button>
