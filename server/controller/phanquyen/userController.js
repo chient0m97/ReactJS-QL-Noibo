@@ -103,7 +103,6 @@ var UserController = {
 
     },
     changeProfile: function changeProfile(user, callback) {
-        console.log('controller',user)
       
     },
     Login: function getUserLogin(userName, callback) {

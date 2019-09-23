@@ -151,7 +151,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                     initialValue: "Nam",
                                     rules: [{ required: true, message: 'Trường không được để trống', }],
                                 })(<Select
-
+                                    size="small"
                                 >
                                     <Option value="Nam" >Nam</Option>
                                     <Option value="Nữ" >Nữ</Option>
@@ -165,7 +165,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                     {getFieldDecorator('ns_trangthai', {
                                         rules: [{ required: true, message: 'Trường không được để trống!' }]
                                     })(<Select
-
+                                        size="small"
                                     >
                                         <Option value="TT" >Thực Tập</Option>
                                         <Option value="HC" >Học Việc</Option>
@@ -297,10 +297,10 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                         </Row> */}
                     <Form.Item style={{ marginTop: '25px' }}>
                         <Button type="primary" htmlType="submit" style={{ marginLeft: '490px' }} >
-                            SAVE CHANGES
+                            Lưu Thay Đổi
                         </Button>
                         <Button type="default" style={{ marginLeft: '10px' }} onClick={getProfile}  >
-                            DISCARD CHANGES
+                            Trở Về
                          </Button>
                     </Form.Item>
                 </Form>
