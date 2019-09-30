@@ -5,7 +5,7 @@ const path = require('path')
 jwt = require('jsonwebtoken');
 config = require('./configurations/config');
 var app = express();
-app.use('/upload', express.static(path.join(__dirname, 'upload', './')))
+app.use('/uploads', express.static(path.join(__dirname, 'upload', './')))
 // app.use(express.static("./public"));
 // app.set("view engine", "ejs");
 // app.set("views", "./views");
@@ -45,8 +45,10 @@ var memberRoute = require('./router/memberRoute')
 var fileRoute = require('./router/fileRoute')
 var ChangePass = require('./router/changepass')
 var ViewProfile = require('./router/viewprofile')
+var binhluanRoute = require('./router/binhluanRoute')
 var authorize = require('./middleware/authorize')
 var bodyParser = require('body-parser');
+var thongbao = require('./router/thongbaoRoute')
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
@@ -73,6 +75,8 @@ app.use('/viewprofile', ViewProfile);
 
 app.use('/hotro', hotroRoute)
 
+app.use('/binhluan', binhluanRoute)
+
 app.use('/hopdong', hopdong)
 
 app.use('/menu', menuRoute)
@@ -88,6 +92,8 @@ app.use('/duan', duanRoute)
 app.use('/khachhangRoute', khachhangRoute)
 
 app.use('/customer', cusrouter)
+
+app.use('/thongbao', thongbao)
 
 app.use('/filekhachhangs', fileRoute);
 
@@ -118,6 +124,8 @@ app.use('/several', approved);
 app.use('/half', half);
 
 app.use('/notification', notification);
+
+
 
 // io.on("connection", function(socket){
 //   console.log('co nguoi ket noi '+socket.id);

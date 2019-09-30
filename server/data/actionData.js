@@ -38,7 +38,7 @@ module.exports = {
     },
     insertUser: function (user, callback) {
         knex.from('users').insert(user).then(res => {
-            console.log('inserted');
+            // console.log('inserted');
             callback({ success: true });
         }).catch(err => {
             console.log(err)

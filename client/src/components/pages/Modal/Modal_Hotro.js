@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card, DatePicker, Divider } from 'antd';
+import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, Rate, Alert, Select, Badge, Tag, Card, DatePicker, Divider } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
@@ -12,6 +12,7 @@ import { Width } from 'devextreme-react/linear-gauge';
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
+const desc = ['Dễ', 'Vừa phải', 'Trung bình', 'Khó', 'Phức tạp'];
 
 const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
     class extends React.Component {
@@ -25,7 +26,7 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
             var first_da_id = null;
             var first_ns_id = null;
             var first_dv_id = null
-            const { visible, onCancel, onSave, form, onTodoChange, assignme, trangthaibutton, changeButton, set_Select_KhachHang } = this.props;
+            const { visible, onCancel, onSave, form, onTodoChange, assignme, trangthaibutton, changeButton, set_Select_KhachHang, valueRate, handleChangeRate } = this.props;
             const { getFieldDecorator } = form;
             if (khachhang.length !== 0) {
                 first_kh_id = khachhang[0].kh_id
@@ -263,6 +264,13 @@ const Modal_Hotro = Form.create({ name: 'from_in_modal_hotros' })(
                                     })(<TextArea type="text" size={"small"} style={{ Height: 20 }} />)}
                                 </Form.Item>
                             </Col>
+                        </Row>
+                        <Row>
+                            <Form.Item label="Vote tự đánh giá mức độ công việc">
+                                {getFieldDecorator('ht_vote', {})
+                                    (<Rate tooltips={desc} onChange={handleChangeRate} />)}
+                                {valueRate ? <span className="ant-rate-text">{desc[valueRate - 1]}</span> : ''}
+                            </Form.Item>
                         </Row>
                     </Form>
                 </Modal>

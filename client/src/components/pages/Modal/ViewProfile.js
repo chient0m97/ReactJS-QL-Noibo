@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, AutoComplete , Icon, Mentions, Upload, Table, Input, Checkbox, Modal, Popconfirm, message, Button, Spin, Form, Row, Col, notification, Alert, Select } from 'antd';
+import {  Pagination, AutoComplete, Icon, Mentions, Upload, Table, Input, Checkbox, Modal, Popconfirm, message, Button, Spin, Form, Row, Col, notification, Alert, Select } from 'antd';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
 import Login from '@components/Authen/Login'
@@ -7,73 +7,13 @@ import Request from '@apis/Request'
 import { fetchLoading } from '@actions/common.action'
 import jwt from 'jsonwebtoken'
 import '@styles/style.css'
+import Modal_Filekhachhangs from '@pages/Modal/Modal_Filekhachhangs.js'
+import axios from 'axios';
+
 var formatDateModal = require('dateformat')
 const token = cookie.load('token');
-const { Column } = Table;
 var { Option } = Mentions;
 var { Option } = AutoComplete;
-function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  }
-  
-  function beforeUpload(file) {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
-  }
-  
-  class Avatar extends React.Component {
-    state = {
-      loading: false,
-    };
-  
-    handleChange = info => {
-      if (info.file.status === 'uploading') {
-        this.setState({ loading: true });
-        return;
-      }
-      if (info.file.status === 'done') {
-        // Get this url from response in real world.
-        getBase64(info.file.originFileObj, imageUrl =>
-          this.setState({
-            imageUrl,
-            loading: false,
-          }),
-        );
-      }
-    };
-  
-    render() {
-      const uploadButton = (
-        <div>
-          <Icon type={this.state.loading ? 'loading' : 'plus'} />
-          <div className="ant-upload-text">Upload</div>
-        </div>
-      );
-      const { imageUrl } = this.state;
-      return (
-        <Upload
-          name="avatar"
-          listType="picture-card"
-          className="avatar-uploader"
-          showUploadList={false}
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          beforeUpload={beforeUpload}
-          onChange={this.handleChange}
-        >
-          {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-        </Upload>
-      );
-    }
-  }
 
 const FormSyss = Form.create({ name: 'normal_login' })(
     class extends React.Component {
@@ -86,7 +26,6 @@ const FormSyss = Form.create({ name: 'normal_login' })(
             this.props.form.setFieldsValue(value)
         }
 
-        
         render() {
             const { form, getProfile, onSave } = this.props;
             const { getFieldDecorator } = form;
@@ -102,11 +41,10 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                             </div>
                         </Col>
                     </Row>
-                    <Row gutter={24} align="middle" style={{ marginTop: 'px' }}>
+                    <Row gutter={24} align="middle" type="flex">
                         <Col span={6}>
                             <Form.Item label="Họ">
                                 {getFieldDecorator('ns_ho', {
-                                    initialValue: "afc163",
                                     rules: [{ required: true, message: 'Trường không được để trống!' }]
                                 })(
                                     <Input type="text" />)}
@@ -126,8 +64,11 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
-                        <Col span={2} offset={2}><Avatar size="large" /></Col>
+                        <Col span={6}>
+                            <img src={this.props.address} style={{width: '120px', height: '120px'}}/>
+                        </Col>
                     </Row>
+                    
                     <Row gutter={24}>
                         <Col span={6}>
                             <Form.Item label="Ngày Sinh">
@@ -144,10 +85,10 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                         <Col span={6}>
                             <Form.Item label="Giới Tính">
                                 {getFieldDecorator('ns_gioitinh', {
-                                    initialValue: "Nam",
+                                    // initialValue: "Nam",
                                     rules: [{ required: true, message: 'Trường không được để trống', }],
                                 })(<Select
-                                    size="small"
+                                    size="default"
                                 >
                                     <Option value="Nam" >Nam</Option>
                                     <Option value="Nữ" >Nữ</Option>
@@ -155,28 +96,31 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 </Select>)}
                             </Form.Item>
                         </Col>
-                        <div>
+                        <Col span={6}>
+                            <Form.Item label="Trạng thái">
+                                {getFieldDecorator('ns_trangthai', {
+                                    rules: [{ required: true, message: 'Trường không được để trống!' }]
+                                })(<Select
+                                    size="default"
+                                >
+                                    <Option value="TT" >Thực Tập</Option>
+                                    <Option value="HC" >Học Việc</Option>
+                                    <Option value="TV" >Thử Việc</Option>
+                                    <Option value="CT" >Chính Thức</Option>
+                                    <Option value="NV" >Nghỉ Việc</Option>
+                                    <Option value="Khac" >Khác</Option>
+                                </Select>)}
+                            </Form.Item>
+                        </Col>
                             <Col span={6}>
-                                <Form.Item label="Trạng thái">
-                                    {getFieldDecorator('ns_trangthai', {
-                                        rules: [{ required: true, message: 'Trường không được để trống!' }]
-                                    })(<Select
-                                        size="small"
-                                    >
-                                        <Option value="TT" >Thực Tập</Option>
-                                        <Option value="HC" >Học Việc</Option>
-                                        <Option value="TV" >Thử Việc</Option>
-                                        <Option value="CT" >Chính Thức</Option>
-                                        <Option value="NV" >Nghỉ Việc</Option>
-                                        <Option value="Khac" >Khác</Option>
-                                    </Select>)}
+                                <Form.Item label='Chọn ảnh'>
+                                    <Button onClick={this.props.showModalUpload}>Chọn Ảnh</Button>
                                 </Form.Item>
                             </Col>
-                        </div>
-                        
+
                     </Row>
-                    
-                  
+
+
                     <Row gutter={24}>
                         <Col span={9}>
                             <Form.Item label="Định danh cá nhân">
@@ -239,7 +183,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                             <Form.Item label="Các giấy tờ đã nộp">
                                 {getFieldDecorator('ns_cacgiaytodanop', {
                                     rules: [{}]
-                                })(<Input type="text"/>)}
+                                })(<Input type="text" />)}
                             </Form.Item>
                         </Col>
                         <Col span={6}>
@@ -256,7 +200,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 {getFieldDecorator('ns_ngayhocviec', {
                                     rules: [{}]
                                 })(
-                                    <Input  type="date" />
+                                    <Input type="date" />
                                 )}
                             </Form.Item>
                         </Col>
@@ -283,7 +227,7 @@ const FormSyss = Form.create({ name: 'normal_login' })(
                                 {getFieldDecorator('ns_ngaydongbaohiem', {
                                     rules: [{}]
                                 })(
-                                    <Input  type="date" />
+                                    <Input type="date" />
                                 )}
                             </Form.Item>
                         </Col>
@@ -333,66 +277,66 @@ class ViewProfile extends React.Component {
             pagexx: [],
             editForm: true,
             nhansu: [],
-
+            visibleUpload: false,
+            selectedFile: null,
+            address: ''
         }
     }
     //--------------DELETE-----------------------
 
     save = () => {
-    
+
         const { form } = this.formRef.props;
         form.validateFields((err, values) => {
+            values.ns_address=this.state.address
             Request('nhansu/updatens', 'POST', values).then(res => {
-                
-                console.log('values',values)
+
+                // console.log('values', values)
                 message.success(res.data.message)
                 this.setState({
-                    nhansu : values
+                    nhansu: values
                 })
             })
         })
 
-        
+
     }
 
     getProfile = async () => {
         const form = this.formRef.props.form;
-        const value = form.getFieldsValue()
-      
+        // const value = form.getFieldsValue()
         await Request('nhansu/get', 'POST', null)
-          .then((response) => {
-    
-            console.log('response;,', response)
-         
-            if (response.data)
-    
-              this.setState({
-                profile: response.data,
-              })
-          })
-         
-        console.log('dcm', this.state.nhansu)
-        
-        form.setFieldsValue(this.state.nhansu)
-      }
+            .then((response) => {
 
-  
+                // console.log('response;,', response)
+
+                if (response.data)
+
+                    this.setState({
+                        profile: response.data,
+                    })
+            })
+
+        // console.log('dcm', this.state.nhansu)
+
+        form.setFieldsValue(this.state.nhansu)
+    }
+
+
 
     refresh = (pageNumber) => {
         this.getProfile(this.state.pageNumber)
     }
 
     bindData = async () => {
-        const { form } = this.formRef.props;
+        const { form } = this.formRef.props
         var payload = jwt.decode(token);
-        console.log('token', payload.mdd)
 
         let a = payload.mdd
         await Request('nhansu/viewprofile', 'POST', {
             a
         })
             .then((res) => {
-                console.log('asdasddddddddddddddd', res.data.data.nhansu)
                 let xx = res.data.data.nhansu[0]
                 xx.ns_ngaysinh = formatDateModal(xx.ns_ngaysinh, 'yyyy-mm-dd')
                 xx.ns_ngayhocviec = formatDateModal(xx.ns_ngayhocviec, 'yyyy-mm-dd')
@@ -409,16 +353,12 @@ class ViewProfile extends React.Component {
                     loading: false
                 })
             })
-        console.log('aaaaaaaaaaaaa', this.state.nhansu)
         form.setFieldsValue(this.state.nhansu)
-
     }
     componentDidMount() {
         this.bindData();
 
     }
-
-
 
     onchangpage = (page) => {
         this.setState({
@@ -433,25 +373,6 @@ class ViewProfile extends React.Component {
         }
     }
 
-    showModal = (nhansu) => {
-        const { form } = this.formRef.props
-        this.setState({
-            visible: true
-        });
-        this.openModal()
-        form.resetFields();
-        form.setFieldsValue({ ns_trangthai: 'TT' })
-        if (nhansu.ns_id !== undefined) {
-            this.setState({
-                id_visible: true,
-                action: 'update'
-            })
-
-            form.setFieldsValue(nhansu);
-        }
-        this.set_Select_DinhDanh();
-    }
-
     handleChangeInput = (e) => {
         let state = this.state;
         state[e.target.name] = e.target.value;
@@ -464,7 +385,6 @@ class ViewProfile extends React.Component {
         })
     }
     confirm = (e) => {
-        console.log(e);
         message.success('Bấm yes để xác nhận');
     }
 
@@ -472,22 +392,119 @@ class ViewProfile extends React.Component {
         return `Total ${total} items`;
     }
 
-
+    saveFormRefImage = formRef => {
+        this.formRefImage = formRef;
+    }
 
     saveFormRef = formRef => {
         this.formRef = formRef;
     }
 
+    showModalUpload = () => {
+        this.setState({
+            visibleUpload: true
+        });
+    }
+
+    handleCancel = e => {
+        this.setState({
+            visibleUpload: false,
+        });
+    };
+
+    onChangeHandler = event => {
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })
+    }
+
+    onClickHandler = () => {
+        const data = new FormData()
+        if (this.state.selectedFile !== null) {
+            data.append('file', this.state.selectedFile)
+            axios.post("http://fscvn.ddns.net:5000/upload", data, {
+            })
+                .then(res => {
+                    this.setState({
+                        visibleUpload: false
+                    })
+                    var notifi_type = 'success'
+                    var message = 'Thành Công'
+
+                    notification[notifi_type]({
+                        message: message
+                    });
+                })
+        }
+    }
+
+    insertOrUpdateUpload = () => {
+        this.onClickHandler();
+        console.log("day la statefile_name ","http://fscvn.ddns.net:5000/uploads/" +this.state.selectedFile.name)
+        this.setState({
+            address: "http://fscvn.ddns.net:5000/uploads/" +this.state.selectedFile.name
+        })
+        // const { form } = this.formRef.props;
+        // form.validateFields((err, values) => {
+        //     if (err) {
+        //         return
+        //     }
+        //     if (this.state.selectedFile !== null) {
+        //         const urlFile = "http://fscvn.ddns.net:5000/upload/" + this.state.selectedFile.name;
+        //         values.file_data = urlFile
+        //     }
+        //     else {
+        //         values.file_data = " "
+        //     }
+        // var url = this.state.action === 'insert' ? 'filekhachhangs/insert' : 'filekhachhangs/update'
+
+        // Request(url, 'POST', values)
+        //     .then(async (response) => {
+        //         console.log("data ", response.data.dataExcel)
+        //         this.setState({
+        //             rowthotroselected: values
+        //         })
+        //         if (response.status === 200 & response.data.success === true) {
+        //             form.resetFields();
+        //             this.setState({
+        //                 visible: false,
+        //                 message: response.data.message
+        //             })
+        //         }
+        //         var description = response.data.message
+        //         var notifi_type = 'success'
+        //         var message = 'Thanh Cong'
+
+        //         console.log("check response ", response.data.success)
+        //         if (!!!response.data.success) {
+        //             message = 'Co loi xay ra !'
+        //             notifi_type = 'error'
+        //             description = response.data.message.map((value, index) => {
+        //                 return <Alert type='error' message={value}></Alert>
+        //             })
+        //         }
+        //         await notification[notifi_type]({
+        //             message: message,
+        //             description: description
+        //         });
+        //     })
+        // })
+    }
 
     render() {
         if (token)
             return (
                 <div>
-
-
                     <p style={{ textAlign: 'center' }}></p>
-                   
-                    <FormSyss wrappedComponentRef={this.saveFormRef} save={this.save} onSave={this.insertOrUpdate} getProfile={this.getProfile} />
+                    <FormSyss wrappedComponentRef={this.saveFormRef} save={this.save} onSave={this.insertOrUpdate} getProfile={this.getProfile} showModalUpload={this.showModalUpload} address={this.state.nhansu.ns_address} />
+                    <Modal_Filekhachhangs
+                        wrappedComponentRef={this.saveFormRefImage}
+                        visible={this.state.visibleUpload}
+                        onCancel={this.handleCancel}
+                        onSave={this.insertOrUpdateUpload}
+                        onChangeHandler={this.onChangeHandler}
+                    />
                 </div>
             );
         else
@@ -497,14 +514,12 @@ class ViewProfile extends React.Component {
     }
 }
 
-
 const mapStateToProps = state => ({
     ...state
 })
 
 export default connect(mapStateToProps,
     {
-
         fetchLoading
     }
 )(ViewProfile);

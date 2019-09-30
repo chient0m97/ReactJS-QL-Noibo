@@ -7,7 +7,6 @@ var knex = require('knex')({
         // password: 'Admin123!@#',
         host: 'fscvn.ddns.net',
         password: 'admin',
-        //password: 'Admin123!@#',
         port: 5432,
         max: 10
     }

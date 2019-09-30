@@ -5,6 +5,7 @@ import cookie from 'react-cookies'
 import Request from '@apis/Request'
 import { fetchLoading } from '@actions/common.action';
 import { connect } from 'react-redux'
+// var socket = io('fscvn.ddns.net:6969');
 var socket = io('localhost:6969');
 var ten = cookie.load('user');
 const { Column } = Table;

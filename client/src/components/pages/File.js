@@ -1,12 +1,11 @@
 import React from 'react'
-import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card } from 'antd'
+import { Tooltip, Pagination, Icon, Table, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Card, Avatar } from 'antd'
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action'
 import { fetchLoading } from '@actions/common.action'
 import Modal_Filekhachhangs from '@pages/Modal/Modal_Filekhachhangs.js'
 import axios from 'axios';
-
 import '@styles/style.css'
 const { Column } = Table;
 
@@ -71,7 +70,7 @@ class File extends React.Component {
                 return
             }
             if (this.state.selectedFile !== null) {
-                const urlFile = "http://localhost:5000/upload/" + this.state.selectedFile.name;
+                const urlFile = "http://fscvn.ddns.net:5000/uploads/" + this.state.selectedFile.name;
                 values.file_data = urlFile
             }
             else {
@@ -80,7 +79,7 @@ class File extends React.Component {
             var url = this.state.action === 'insert' ? 'filekhachhangs/insert' : 'filekhachhangs/update'
             Request(url, 'POST', values)
                 .then(async (response) => {
-                    console.log("data ",response.data.dataExcel)
+                    // console.log("data ",response.data.dataExcel)
                     this.setState({
                         rowthotroselected: values
                     })
@@ -260,7 +259,7 @@ class File extends React.Component {
         const data = new FormData()
         if (this.state.selectedFile !== null) {
             data.append('file', this.state.selectedFile)
-            axios.post("http://localhost:5000/upload", data, {
+            axios.post("http://fscvn.ddns.net:5000/uploads", data, {
                 // receive two    parameter endpoint url ,form data
             })
                 .then(res => { // then print response status

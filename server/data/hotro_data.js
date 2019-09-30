@@ -261,8 +261,10 @@ module.exports = {
 
     insertHotro: function (hotros, callback) {
         knex.from('hotros').insert(hotros).then(response => {
+            // console.log("ht_id ",hotros.ht_id)
             callback({
-                success: true
+                success: true,
+                ht_id: hotros.ht_id
             })
         }).catch(err => {
             console.log(err)
@@ -356,7 +358,8 @@ module.exports = {
     },
 
     getName: function (cookie, callback) {
-        knex.raw("select coalesce (ns.ns_ho, '') || ' ' || coalesce (ns.ns_tenlot, '') || ' ' || coalesce (ns.ns_ten, '') as ns_hovaten, ns.ns_id from nhansu ns where ns_dinhdanhcanhan=(select madinhdanh from users where name='" + cookie.user_cookie + "')")
+        console.log("cookie ",cookie)
+        knex.raw("select coalesce (ns.ns_ho, '') || ' ' || coalesce (ns.ns_tenlot, '') || ' ' || coalesce (ns.ns_ten, '') as ns_hovaten, ns.ns_id, ns_address from nhansu ns where ns_dinhdanhcanhan=(select madinhdanh from users where name='" + cookie.user_cookie + "')")
             .then((res) => {
                 callback({
                     data: {

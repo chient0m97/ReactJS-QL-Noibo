@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card, DatePicker, Divider } from 'antd';
+import { Menu, Tooltip, Pagination, Icon, Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, notification, Alert, Select, Badge, Tag, Card, Rate, Comment, Avatar, List, Dropdown } from 'antd';
 import { connect } from 'react-redux'
 import Request from '@apis/Request'
 import { fetchUser } from '@actions/user.action';
@@ -10,14 +10,68 @@ import '@styles/style.css'
 import moment from 'moment';
 import { Width } from 'devextreme-react/linear-gauge';
 import { async } from 'q';
+import InfiniteScroll from 'react-infinite-scroller'
+
+import io from 'socket.io-client';
+import $ from 'jquery';
+
+// var socket = io('fscvn.ddns.net:6969');
+var socket = io('localhost:6969');
 //import Highlighter from 'react-highlight-words';
 const { Column } = Table;
 const { Option } = Select
 const { TextArea } = Input;
 const ButtonGroup = Button.Group;
-
+const desc = ['Dễ', 'Vừa phải', 'Trung bình', 'Khó', 'Phức tạp'];
 var format = require('dateformat')
-var demclass = 0
+
+const menu = (
+    <Menu >
+        <Menu.Item key="1">Sửa bình luận</Menu.Item>
+        <Menu.Item key="2">Xóa bình luận</Menu.Item>
+    </Menu>
+);
+
+const CommentList = ({ comments }) => (
+    <div className="demo-infinite-container">
+        <InfiniteScroll
+            initialLoad={false}
+            pageStart={0}
+            useWindow={false}
+        >
+            <List
+                dataSource={comments}
+                header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+                itemLayout="horizontal"
+                renderItem={props =>
+                    <div>
+                        <Comment
+                            {...props}
+                            style={{ display: 'inline-block' }}
+                        />
+                        <Dropdown overlay={menu} >
+                            <a><Icon type="ellipsis" /></a>
+                        </Dropdown>
+                    </div>
+                }
+            />
+        </InfiniteScroll>
+    </div>
+);
+
+const Editor = ({ onChange, onSubmit, submitting, value }) => (
+    <div>
+        <Form.Item>
+            <TextArea rows={4} onChange={onChange} value={value} />
+        </Form.Item>
+        <Form.Item>
+            <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">
+                Thêm bình luận
+        </Button>
+        </Form.Item>
+    </div>
+)
+
 const FormModal = Form.create({ name: 'from_in_modal' })(
     class extends React.Component {
         clear = e => {
@@ -53,7 +107,7 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
             var first_ns_id = null;
             var first_dv_id = null;
             var date_Tiepnhan = null
-            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton, set_Select_KhachHang, dateTiepnhan } = this.props;
+            const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible, onTodoChange, assignme, trangthaibutton, changeButton, set_Select_KhachHang, dateTiepnhan, valueRate, handleChangeRate } = this.props;
             const { getFieldDecorator } = form;
             if (khachhang.length !== 0) {
                 first_kh_id = khachhang[0].kh_id
@@ -291,6 +345,14 @@ const FormModal = Form.create({ name: 'from_in_modal' })(
                                 </Form.Item>
                             </Col>
                         </Row>
+                        <Row>
+                            <Form.Item label="Vote tự đánh giá mức độ công việc">
+                                {getFieldDecorator('ht_vote', {})
+                                    (<Rate tooltips={desc} onChange={handleChangeRate} />)}
+                                {valueRate ? <span className="ant-rate-text" style={{ marginRight: '10px' }}>{desc[valueRate - 1]}</span> : ''}
+                                <span style={{ fontSize: '18px' }}> {valueRate === 1 || valueRate === 2 ? <Icon type="smile" /> : valueRate === 3 || valueRate === 4 ? <Icon type="meh" /> : valueRate === 5 ? <Icon type="frown" /> : ''}</span>
+                            </Form.Item>
+                        </Row>
                     </Form>
                 </Modal>
             )
@@ -319,7 +381,7 @@ class Hotro extends React.Component {
             id_visible: false,
             action: 'insert',
             isSearch: 0,
-            searchText: '',
+            valueRate: 3,
             columnSearch: 'ht_uutien',
             isSort: true,
             sortBy: 'DESC',
@@ -342,8 +404,87 @@ class Hotro extends React.Component {
             stateButtonTatca: false,
             stateButtonGap: false,
             searchText: '',
-            timkiem: []
+            timkiem: [],
+            comments: [],
+            submitting: false,
+            value: '',
+            expandedRowKeys: [],
+            name: '',
+            address: '',
+            expandKey: ''
         }
+    }
+
+    reloadBinhLuan = () => {
+
+        this.getBinhluan(this.state.expandKey)
+    }
+
+    getBinhluan = (ht_id) => {
+        this.setState({
+            expandKey: ht_id
+        })
+        Request('binhluan/get', 'POST', { ht_id })
+            .then((res) => {
+                this.setState({
+                    comments: res.data.data.binhluan
+                })
+            })
+    }
+
+    getName = (user_cookie) => {
+        Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
+            if (res) {
+                if (res.data.data.name[0] === undefined)
+                    this.setState({
+                        name: 'Chưa có tài khoản'
+                    })
+                else
+                    this.setState({
+                        name: res.data.data.name[0].ns_hovaten
+                    })
+            }
+        })
+    }
+
+    handleSubmit = async (ht_id) => {
+        if (!this.state.value) {
+            return;
+        }
+
+        this.setState({
+            submitting: true,
+        });
+
+        await this.setState({
+            submitting: false,
+            value: '',
+            comments: [
+                {
+                    author: this.state.name,
+                    avatar: this.state.address,
+                    content: this.state.value,
+                    datetime: moment().format('LLLL'),
+                    ht_id: ht_id
+                },
+                ...this.state.comments,
+            ],
+        });
+        // console.log("state comment ", this.state.comments)
+        Request('binhluan/insert', 'POST', this.state.comments)
+            .then(async (response) => {
+                this.getHotro(this.state.page)
+            }).catch((err) => {
+                console.log(err)
+            })
+        this.clientSendUsername('data')
+        // console.log("comment ",this.state.comments, "values ", this.state.value)
+    }
+
+    handleChangeComment = e => {
+        this.setState({
+            value: e.target.value,
+        });
     }
 
     set_Select_id_duan() {
@@ -562,13 +703,24 @@ class Hotro extends React.Component {
     }
 
     async componentDidMount() {
+        var that = this
+        var user_cookie = cookie.load('user');
+        var dem = 0
+        this.getName(user_cookie)
+        this.getAddress()
+        socket.on("server-send-comment", function (data) {
+            that.reloadBinhLuan()
+        })
+
         await this.getHotro(this.state.pageNumber, this.state.index, this.state.sortBy);
         document.getElementsByClassName('ant-table-expand-icon-th')[0].innerHTML = 'Chi tiết'
-        document.getElementsByClassName('ant-table-expand-icon-th')[0].style.height=document.getElementsByClassName('ant-table-expand-icon-th')[1].style.height
+        // document.getElementsByClassName('ant-table-expand-icon-th')[1].style.height = document.getElementsByClassName('ant-table-expand-icon-th')[0].style.height
         // document.getElementsByClassName('ant-table-expand-icon-th')[0].style.width = '85px'
         document.getElementsByClassName('ant-table-expand-icon-th')[0].style.display = 'block'
         // document.getElementsByClassName('')
         document.getElementsByClassName('ant-card-body')[0].style.padding = '7px'
+
+
     }
 
     onchangpage = (page) => {
@@ -613,8 +765,10 @@ class Hotro extends React.Component {
 
     showModal = async (hotro) => {
         // console.log("hotro ", hotro)
+
         this.setState({
             action: 'insert',
+            valueRate: hotro.ht_vote
         })
         if (hotro.ht_trangthai === "daxong") {
             this.setState({
@@ -638,7 +792,8 @@ class Hotro extends React.Component {
             this.setState({
                 id_visible: true,
                 action: 'update',
-                dateTiepnhan: hotro.ht_thoigiantiepnhan
+                dateTiepnhan: hotro.ht_thoigiantiepnhan,
+                valueRate: hotro.ht_vote
             })
             form.setFieldsValue(hotro);
             if (hotro.ht_thoigian_dukien_hoanthanh !== null) {
@@ -772,11 +927,11 @@ class Hotro extends React.Component {
     checkDate = (check, text, j) => {
         j = j - 1
         if (array_ht_trangthai[j] === "daxong") {
-            return <a style={{ color: 'black' }}>{text}</a>
+            return <span style={{ color: 'black' }}>{text}</span>
         }
         if (check === 1)
-            return <a style={{ color: 'red' }} >{text}</a>
-        return <a style={{ color: 'lime' }}>{text}</a>
+            return <span style={{ color: 'red' }} >{text}</span>
+        return <span style={{ color: 'lime' }}>{text}</span>
     }
 
     checkDateConvert = (x) => {
@@ -860,7 +1015,6 @@ class Hotro extends React.Component {
             pageSize: this.state.pageSize,
             pageNumber: pageNumber,
         }).then((res) => {
-            console.log("res ",res)
             if (res.data.data.myself) {
                 this.setState({
                     hotro: res.data.data.myself,
@@ -875,6 +1029,23 @@ class Hotro extends React.Component {
                 })
             }
             this.forceUpdate()
+        })
+    }
+
+    handleChangeRate = valueRate => {
+        const { form } = this.formRef.props
+        form.setFieldsValue({ ht_vote: valueRate })
+        this.setState({ valueRate });
+    };
+
+    getAddress = () => {
+        var user_cookie = cookie.load('user')
+        Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
+            if (res) {
+                this.setState({
+                    address: res.data.data.name[0].ns_address
+                })
+            }
         })
     }
 
@@ -967,8 +1138,29 @@ class Hotro extends React.Component {
 
     // }
 
-    render() {
+    clientSendUsername = (tempValue) => {
+        socket.emit("user-send-comment", tempValue);
+        document.getElementById("comment").value = ''
+        document.getElementById('comment').focus();
+    }
 
+    // textChat(event) {
+    //     const name = event.target.name;
+    //     const value = event.target.value;
+    //     //console.log(name);//text
+    //     //console.log(value);
+    //     this.setState({
+    //         tempValue: event.target.value
+    //     });
+    // }
+
+    render() {
+        var ten = cookie.load('user');
+        var obj = {
+            text: this.state.tempValue,
+            user: ten
+        }
+        var name = cookie.load('user');
         var i = 0
         var j = 0
         var formatDate = require('dateformat')
@@ -981,26 +1173,26 @@ class Hotro extends React.Component {
             onHeaderCell: this.click
         };
 
+        const { comments, submitting, value } = this.state;
+
         return (
             <div>
                 <Form>
                     <Card >
                         <Row >
-                            <Col span={2}>
+                            <Col span={8}>
                                 <Tooltip title="Thêm Hỗ Trợ">
                                     <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(null)}>
                                         <Icon type="plus" />
                                     </Button>
                                 </Tooltip>
-                            </Col>
-                            <Col span={2}>
+
                                 <Tooltip title="Sửa Hỗ Trợ">
-                                    <Button shape="round" type="primary" size="default" onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
+                                    <Button shape="round" type="primary" size="default" style={{ marginLeft: '10px' }} onClick={this.showModal.bind(this, this.state.rowthotroselected)} disabled={this.state.statebuttonedit}>
                                         <Icon type="edit" />
                                     </Button>
                                 </Tooltip>
-                            </Col>
-                            <Col span={2}>
+
                                 <Tooltip title="Xóa Hỗ Trợ">
                                     <Popconfirm
                                         title="Bạn chắc chắn muốn xóa?"
@@ -1015,15 +1207,14 @@ class Hotro extends React.Component {
                                         </Button>
                                     </Popconfirm>
                                 </Tooltip>
-                            </Col>
-                            <Col span={2}>
+
                                 <Tooltip title="Tải Lại">
-                                    <Button shape="round" type="primary" size="default" style={{ marginLeft: '18px' }} onClick={this.refresh.bind(null)}>
+                                    <Button shape="round" type="primary" size="default" style={{ marginLeft: '10px' }} onClick={this.refresh.bind(null)}>
                                         <Icon type="reload" />
                                     </Button>
                                 </Tooltip>
                             </Col>
-                            <Col span={3} offset={6}>
+                            <Col span={3} offset={7}>
                                 <span style={{ fontSize: '16px' }}>Loại công việc</span>
                             </Col>
                             <Col span={6}>
@@ -1049,26 +1240,60 @@ class Hotro extends React.Component {
                     </Card>
                     <Row style={{ marginTop: 5 }}>
                         <Table
-                            
                             rowSelection={rowSelection}
                             onRowClick={this.onRowClick.bind(this)}
                             pagination={false}
                             dataSource={this.state.hotro}
-                            rowKey="ht_id" bordered scroll={{ x: 1000}}
+                            rowKey="ht_id"
+                            bordered
+                            // scroll={{ y:400}}
+                            // expandedRowKeys={this.state.expandedRowKeys}
+                            onExpand={(expanded, record) => {
+                                // console.log("record ",record)
+                                this.getBinhluan(record.ht_id)
+                            }}
                             expandedRowRender={(record, selectedRowKeys) => {
                                 return (
                                     <div style={{ textAlign: 'left' }}>
-                                        <div style={{ fontSize: '18px' }}> Yêu cầu: </div>
-                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }} >{this.state.hotro[selectedRowKeys].ht_noidungyeucau}</Row>
-                                        <div style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </div>
-                                        <Row style={{ paddingTop: '7px', borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }}>{this.state.hotro[selectedRowKeys].ht_ghichu}</Row>
+                                        {/* <div style={{ fontSize: '18px' }}> Yêu cầu: </div> */}
+                                        <Row style={{ borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }} >
+                                            <span style={{ fontSize: '18px' }}> Yêu cầu: </span>
+                                            {this.state.hotro[selectedRowKeys].ht_noidungyeucau}
+                                        </Row>
+                                        <Row style={{ paddingTop: '7px', borderBottom: '1px solid #e8e8e8', paddingTop: '7px', paddingBottom: '16px', width: '1000' }}>
+                                            <span style={{ paddingTop: '10px', fontSize: '18px' }}> Ghi chú: </span>
+                                            {this.state.hotro[selectedRowKeys].ht_ghichu}
+                                        </Row>
                                         <Row style={{ marginTop: '5px', marginBottom: '5px' }}>SĐT : {this.state.hotro[selectedRowKeys].kh_sodienthoai}</Row>
                                         <Row style={{ marginTop: '5px', marginBottom: '5px' }} >Email : {this.state.hotro[selectedRowKeys].kh_email}</Row>
+                                        <div>
+                                            {comments.length > 0 && <CommentList comments={comments} />}
+                                            {/* <div id="comment"></div>
+                                            <Input style={{ marginBottom: "15px" }} type="text" name="text" id="comment" placeholder="..." onChange={(event) => this.textChat(event)} />
+                                            <Button onClick={() => this.clientSendUsername(obj)}>Send comment</Button> */}
+                                            <Comment
+                                                avatar={
+                                                    <Avatar
+                                                        src={this.state.address}
+                                                        alt={name}
+                                                    />
+                                                }
+                                                content={
+                                                    <Editor
+                                                        onChange={this.handleChangeComment}
+                                                        onSubmit={this.handleSubmit.bind(this, record.ht_id)}
+                                                        submitting={submitting}
+                                                        value={value}
+                                                    />
+                                                }
+                                            />
+                                        </div>
                                     </div>
                                 )
                             }}
                         >
-                            <Column dataIndex="ht_thoigian_dukien_hoanthanh" align='center' className="hidden-action" width={150}
+                            <Column dataIndex="ht_thoigian_dukien_hoanthanh" align='center' className="hidden-action"
+                                //  width={150}
                                 render={
                                     text => {
                                         j++
@@ -1086,15 +1311,28 @@ class Hotro extends React.Component {
 
                                     }}
                             />
-                            <Column title="Dự án" dataIndex="dm_duan_ten" width={150}
+                            <Column title="Ưu tiên" dataIndex="ht_uutien"
+                                // width={50}
                                 render={text => {
+                                    if (text === 'GAP') { return <span> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /></span> }
+                                    if (text === 'CAO') { return <span> <Icon type="up" style={{ color: 'orange' }} /> </span> }
+                                    if (text === 'TB') { return <span> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /></span> }
+                                    if (text === 'THAP') { return <span> <Icon type="down" style={{ color: '#ccff33' }} /></span> }
+                                    return <span> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /></span>
+                                }}
+                            />
+                            <Column title="Dự án" dataIndex="dm_duan_ten"
+                                // width={150}
+                                render={(text, record, index) => {
+                                    // console.log(index)
                                     return this.checkDate(i, text, j)
                                 }}
                                 {...this.getColumnSearchProps('dm_duan_ten')}
                                 onHeaderCell={this.onHeaderCell}
-                            // {...this.getColumnSearchProps('Dự án')}
+
                             />
-                            <Column title="Đơn vị" dataIndex="dm_dv_ten" width={150}
+                            <Column title="Đơn vị" dataIndex="dm_dv_ten"
+                                // width={150}
                                 render={text => {
                                     return (
                                         <div>
@@ -1102,10 +1340,12 @@ class Hotro extends React.Component {
                                         </div>)
                                 }}
                                 {...this.getColumnSearchProps('dm_dv_ten')}
-                                width={150} onHeaderCell={this.onHeaderCell}
+                                // width={150}
+                                onHeaderCell={this.onHeaderCell}
                             // {...this.getColumnSearchProps('Đơn vị')}
                             />
-                            <Column title="Khách hàng" dataIndex="kh_ten" width={150}
+                            <Column title="Khách hàng" dataIndex="kh_ten"
+                                // width={150}
                                 render={text => {
                                     return (
                                         <div>
@@ -1113,20 +1353,25 @@ class Hotro extends React.Component {
                                         </div>)
                                 }}
                                 {...this.getColumnSearchProps('kh_ten')}
-                                width={150} onHeaderCell={this.onHeaderCell} />
+                                // width={150} 
+                                onHeaderCell={this.onHeaderCell} />
                             <Column title="Người tạo" dataIndex="ns_hoten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
                                 {...this.getColumnSearchProps('ns_hoten')}
-                                width={150} onHeaderCell={this.onHeaderCell} />
+                                // width={150} 
+                                onHeaderCell={this.onHeaderCell} />
                             <Column title="Người được giao" dataIndex="ns_hovaten"
                                 render={text => {
                                     return this.checkDate(i, text, j)
                                 }}
                                 {...this.getColumnSearchProps('ns_hovaten')}
-                                width={150} onHeaderCell={this.onHeaderCell} />
-                            <Column title="Trạng thái" dataIndex="ht_trangthai" width={150}
+                                // width={150}
+                                onHeaderCell={this.onHeaderCell} />
+                            <Column title="Trạng thái" dataIndex="ht_trangthai"
+                                //  width={150}
+                                className="hidden-action"
                                 render={
                                     text => {
                                         if (text === 'tiepnhan') { return this.checkDate(i, "Tiếp nhận", j) }
@@ -1136,7 +1381,9 @@ class Hotro extends React.Component {
                                     }
                                 }
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Phân loại" dataIndex="ht_phanloai" width={150}
+                            <Column title="Phân loại" dataIndex="ht_phanloai"
+                                // width={150}
+                                className="hidden-action"
                                 render={text => {
                                     if (text === 'bug') { return this.checkDate(i, "Lỗi", j) }
                                     if (text === 'new') {
@@ -1145,35 +1392,43 @@ class Hotro extends React.Component {
                                     return this.checkDate(i, this.checkDate(i, "Việc tương lai", j))
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Ưu tiên" dataIndex="ht_uutien"
-                                width={150}
-                                render={text => {
-                                    if (text === 'GAP') { return <span> <Icon type="double-right" style={{ transform: 'rotate(-90deg)', color: 'red' }} /></span> }
-                                    if (text === 'CAO') { return <span> <Icon type="up" style={{ color: 'orange' }} /> &nbsp; {this.checkDate(i, "Cao", j)} </span> }
-                                    if (text === 'TB') { return <span> <Icon type="pause" style={{ transform: 'rotate(-90deg)', color: 'gold' }} /></span> }
-                                    if (text === 'THAP') { return <span> <Icon type="down" style={{ color: '#ccff33' }} /></span> }
-                                    return <span> <Icon type="double-right" style={{ transform: 'rotate(90deg)', color: 'lime' }} /></span>
-                                }}
-                            />
-                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan" width={150}
+
+                            <Column title="Thời gian tiếp nhận" dataIndex="ht_thoigiantiepnhan"
+                                //  width={150}
                                 render={text => {
                                     // return this.checkDate(i, formatDate(text, "dd/mm/yyyy '-' HH:MM:ss"), j)
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh" width={150}
+                            <Column title="Thời gian dự kiến hoàn thành" dataIndex="ht_thoigian_dukien_hoanthanh"
+                                // width={150}
                                 render={text => {
                                     if (text === null) { return '' }
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
-                            <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh" width={100}
+                            <Column title="Thời gian hoàn thành" dataIndex="ht_thoigian_hoanthanh"
+                                //  width={100}
+                                className="hidden-action"
                                 render={text => {
                                     if (text === null) { return '' }
                                     return this.checkDate(i, formatDate(text, "dd/mm/yyyy"), j)
                                 }}
                                 onHeaderCell={this.onHeaderCell} />
+                            <Column
+                                title="Độ khó công việc"
+                                dataIndex="ht_vote"
+                                render={text => {
+                                    if (text === '1') { return this.checkDate(i, "Dễ", j) }
+                                    else if (text === 2) return this.checkDate(i, "Vừa phải", j)
+                                    else if (text === 3) return this.checkDate(i, "Trung bình", j)
+                                    else if (text === 4) return this.checkDate(i, "Khó", j)
+                                    else if (text === null) return ''
+                                    return this.checkDate(i, "Phức tạp", j)
+                                }}
+                            />
                         </Table>
+
                     </Row>
                     <Row>
                         <Pagination onChange={this.onchangpage} total={this.state.count} style={{ marginTop: 10 }} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
@@ -1198,6 +1453,11 @@ class Hotro extends React.Component {
                         changeButton={this.changeButton}
                         set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
                         dateTiepnhan={this.state.dateTiepnhan}
+                        comments={this.state.comments}
+                        submitting={this.state.submitting}
+                        value={this.state.value}
+                        valueRate={this.state.valueRate}
+                        handleChangeRate={this.handleChangeRate}
                     />
                     <Modal_Khachhangs
                         title="Thêm Khách Hàng"
@@ -1207,7 +1467,7 @@ class Hotro extends React.Component {
                         formtype={this.state.formtype}
                     />
                 </Form>
-            </div>
+            </div >
         )
     }
 }

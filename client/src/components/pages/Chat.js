@@ -4,7 +4,8 @@ import $ from 'jquery';
 import '@styles/layout.css';
 import cookie from 'react-cookies'
 import { Button, Input } from 'antd'
-var socket = io('fscvn.ddns.net:6969');
+// var socket = io('fscvn.ddns.net:6969');
+var socket = io('localhost:6969');
 var ten = cookie.load('user');
 socket.on("server-send-danhsach-Users", function (data) {
     $("#boxContent").html("");
@@ -54,7 +55,7 @@ class Chat extends Component {
     clientSendUsername = (tempValue) => {
         //console.log(tempValue, 'tempValue');
         socket.emit("user-send-message", tempValue);
-        document.getElementById("txtMessage").value=''
+        document.getElementById("txtMessage").value = ''
         document.getElementById('txtMessage').focus();
     }
     textChat(event) {
@@ -82,7 +83,7 @@ class Chat extends Component {
                 user: ten
             }
             this.clientSendUsername(obj)
-          }
+        }
     }
 
     render() {
@@ -94,11 +95,11 @@ class Chat extends Component {
             <div id="wrapper">
                 <div id="chatForm">
                     <div id="right">
-                        <div id="sayHi">Hello <span id="currentUser">{ten}</span></div>
+                        <div id="sayHi">Chào <span id="currentUser">{ten}</span></div>
                         <div id="listMessages"></div>
                         <div id="thongbao"></div>
                         <div>
-                            <Input style={{marginBottom: "15px"}} type="text" name="text" id="txtMessage" placeholder="Type your message here..." onChange={(event) => this.textChat(event)} onKeyDown={this._handleKeyDown}/>
+                            <Input style={{ marginBottom: "15px" }} type="text" name="text" id="txtMessage" placeholder="..." onChange={(event) => this.textChat(event)} onKeyDown={this._handleKeyDown} />
                         </div>
                         <div>
                             <Button onClick={() => this.clientSendUsername(obj)}>Send</Button>
@@ -110,4 +111,4 @@ class Chat extends Component {
     }
 }
 
- export default Chat;
+export default Chat;

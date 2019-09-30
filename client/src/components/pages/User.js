@@ -148,7 +148,7 @@ class User extends React.Component {
   }
   //--------------DELETE-----------------------
   deleteUser = async (id) => {
-    console.log('delte id: ', payload.userName)
+    // console.log('delte id: ', payload.userName)
     await Request(`user/delete`, 'DELETE', { id: id })
       .then((res) => {
         notification[res.data.success === true ? 'success' : 'error']({
@@ -172,7 +172,7 @@ class User extends React.Component {
     })
       .then((response) => {
         if (response) {
-          console.log('getttttttttttttttttttttttttttttttttttttttt', response.data.data)
+          // console.log('getttttttttttttttttttttttttttttttttttttttt', response.data.data)
 
           let data = response.data;
           let objUsers = Object.keys(data.data.users[0])
@@ -198,7 +198,7 @@ class User extends React.Component {
       if (err) {
         return
       }
-      console.log('urllllllllllllllllllll', this.state.action)
+      // console.log('urllllllllllllllllllll', this.state.action)
       var url = this.state.action === 'insert' ? 'user/insert' : 'user/update'
       Request(url, 'POST', values)
         .then((response) => {
@@ -256,7 +256,6 @@ class User extends React.Component {
     });
     form.resetFields();
     if (user.id !== undefined) {
-      console.log('day la update')
       this.setState({
         id_visible: true,
         action: 'update'
@@ -290,12 +289,10 @@ class User extends React.Component {
     })
   }
   confirm = (e) => {
-    console.log(e);
     message.success('Bấm yes để xác nhận');
   }
 
   cancel = (e) => {
-    console.log(e);
   }
 
   showTotal = (total) => {
@@ -409,11 +406,11 @@ class User extends React.Component {
   okRole = async e => {
     let user = this.state.selectedId
     let a = this.child.state.checkedKeys
-    console.log('checkkkkkkkkkkkkkkkkkkkkk', a)
+    // console.log('checkkkkkkkkkkkkkkkkkkkkk', a)
     Request('setpermission', 'POST', { a, user }).then(res => {
 
     })
-    console.log('data con ', a)
+    // console.log('data con ', a)
     await this.setState({
       modalRoleVisible: false,
     });
@@ -454,10 +451,10 @@ class User extends React.Component {
       selectedRowKeys,
       onChange: async (selectedRowKeys, selectedRows) => {
         let sl = selectedRowKeys[0]
-        console.log('==================================================', sl)
+        // console.log('==================================================', sl)
         await Request('checkrole', 'POST', { sl }).then((res) => {
           let data = res.data;
-          console.log('---------------------------------', data)
+          // console.log('---------------------------------', data)
           let a = data.map(function (value) {
             return a = { role: value.split('.')[0], acton: value.split('.')[1] }
           })

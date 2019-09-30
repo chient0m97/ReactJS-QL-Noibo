@@ -8,9 +8,9 @@ app.set('Secret', config.secret);
 
 router.post('/', (req, res) => {
     userController.Login(req.body.username, function (data) {
-        console.log('data',data)
+        // console.log('data',data)
         bcrypt.compare(req.body.password, data.password, function (err, match) {
-            console.log('matching ', match)
+            // console.log('matching ', match)
             if (match) {
                 const payload = {
                     userName: req.body.username,
@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
                 var token = jwt.sign(payload, app.get('Secret'), {
                     expiresIn: "24h", // expires in 24 hours
                 });
-                console.log('token', token)
+                // console.log('token', token)
                 res.json({
                     success: true,
                     message: 'authentication done ',

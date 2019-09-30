@@ -25,7 +25,8 @@ var hotroController = {
             }
             callback({
                 message: message,
-                success: response.success
+                success: response.success,
+                ht_id:response.ht_id
             }, status);
         });
     },

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Card, Row, Avatar, Badge, notification } from 'antd'
+import { Layout, Button, Icon, Dropdown, Menu, Col, Tooltip, Divider, Row, Avatar, Badge, notification } from 'antd'
 import cookie from 'react-cookies'
 import jwt from 'jsonwebtoken'
 import Request from '@apis/Request'
@@ -22,19 +22,26 @@ class AppHeader extends Component {
       donvis: [],
       date: <a>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;</a>,
       trangthaibutton: false,
+      valueRate: 3,
+      address: '',
+      countBadge: 0,
+      menuThongbao: null,
+      noidung: 'có nội dung'
     }
   }
+
 
   getName = (user_cookie) => {
     Request('hotro/getname', 'POST', { user_cookie }).then((res) => {
       if (res) {
         if (res.data.data.name[0] === undefined)
           this.setState({
-            name: 'Chưa có tài khoản'
+            name: 'Chưa tạo nhân sự'
           })
         else
           this.setState({
-            name: res.data.data.name[0].ns_hovaten
+            name: res.data.data.name[0].ns_hovaten,
+            address: res.data.data.name[0].ns_address
           })
       }
     })
@@ -64,12 +71,29 @@ class AppHeader extends Component {
         values.ns_id_capnhat = user_cookie
         values.nkht_thoigiancapnhat = new Date()
       }
-      console.log("values ",values)
-      if (values.ht_thoigian_dukien_hoanthanh === null || values.ht_thoigian_dukien_hoanthanh===undefined) {
+      // console.log("values ", values)
+      if (values.ht_thoigian_dukien_hoanthanh === null || values.ht_thoigian_dukien_hoanthanh === undefined) {
         values.ht_thoigian_dukien_hoanthanh = format(new Date(), 'yyyy-mm-dd')
       }
       Request(url, 'POST', values)
         .then(async (response) => {
+          // console.log("read response ",response)
+          //--------------------------
+          var thongbao = {}
+          thongbao.tb_thoigiantao = format(new Date(), 'dd-mm-yyyy - HH:MM:ss')
+          thongbao.tb_noidung = values.ns_id_nguoitao + ' đã tạo công việc và gán cho bạn vào lúc ' + thongbao.tb_thoigiantao
+          thongbao.tb_trangthai = 'chuadoc'
+          thongbao.tb_ns_id = values.ns_id_ass
+          thongbao.tb_ht_id = response.data.ht_id
+          thongbao.tb_link = 'link'
+
+          console.log('thongbao ', thongbao)
+          //--------------------------
+
+          Request('thongbao/insert', 'POST', thongbao).then((res) => {
+            console.log("da cai dat duoc thongbao")
+          })
+
           if (response.status === 200 & response.data.success === true) {
             form.resetFields();
             this.setState({
@@ -81,7 +105,7 @@ class AppHeader extends Component {
           var notifi_type = 'success'
           var message = 'Thành Công'
 
-          console.log("check response ", response.data.success)
+          // console.log("check response ", response.data.success)
           if (await !!!response.data.success) {
             message = 'Có lỗi xảy ra !'
             notifi_type = 'error'
@@ -94,10 +118,10 @@ class AppHeader extends Component {
             description: description
           });
           this.props.getNhansu
-          setTimeout(() => {
-            window.location.reload()
-          }, 50);
-          
+          // setTimeout(() => {
+          //   window.location.reload()
+          // }, 50);
+
           // this.render()
         }).catch((err) => {
           console.log(err)
@@ -158,18 +182,40 @@ class AppHeader extends Component {
 
   renderMenuUser = () => {
     return (
-      <Menu>
+      <Menu style={{ width: '140px' }}>
         <Menu.Item key="0">
-          <a href="/viewprofile">View Profile</a>
+          <a href="/viewprofile"> <Icon type="user" /> <span style={{ marginLeft: '5px' }}> View Profile </span></a>
         </Menu.Item>
         <Menu.Item key="1">
-          <a href="/changepassword">Đổi mật khẩu</a>
+          <a href="/changepassword"> <Icon type="edit" /> <span style={{ marginLeft: '5px' }}> Đổi mật khẩu </span></a>
         </Menu.Item>
+        <Divider style={{ marginTop: '5px', marginBottom: '5px' }} />
         <Menu.Item key="2">
-          <a onClick={this.logOut} href="/"> <Icon type="logout" />Đăng xuất</a>
+          <a onClick={this.logOut} href="/" style={{ color: 'red' }}> <Icon type="logout" /> <span style={{ marginLeft: '5px' }}>Đăng xuất</span></a>
         </Menu.Item>
       </Menu>
     );
+  }
+
+  renderMenuThongbao = () => {
+    console.log("noidung ",this.state.noidung)
+    return (
+      this.state.noidung.map((value, index) => {
+        {<Menu>
+          <Menu.Item key={index + 10}>
+            {value}
+          </Menu.Item>
+        </Menu>}
+      })
+    )
+    // return (
+    //   <Menu style={{ padding: '10px' }}>
+    //     {this.state.countBadge === 0 ? 'Không có thông báo' : this.state.noidung}
+
+    //     {/* <Menu.Item key="3">
+    //       </Menu.Item> */}
+    //   </Menu>
+    // );
   }
 
   toggleCollapsed = (e) => {
@@ -189,8 +235,10 @@ class AppHeader extends Component {
     var user_cookie = cookie.load('user');
     this.setState({
       menu: this.renderMenuUser,
+      menuThongbao: this.renderMenuThongbao
     })
     this.getName(user_cookie)
+    this.getThongbao(user_cookie)
   }
 
   set_Select_KhachHang(dv) {
@@ -250,6 +298,31 @@ class AppHeader extends Component {
     this.set_Select_DonVi();
   }
 
+  handleChangeRate = valueRate => {
+    const { form } = this.formRef.props
+    form.setFieldsValue({ ht_vote: valueRate })
+    this.setState({ valueRate });
+  }
+
+  getThongbao = (tb_ns_id) => {
+    Request('thongbao/get', 'POST', { tb_ns_id }).then((res) => {
+      if (res) {
+        console.log("dem so thong bao ", res)
+        this.setState({
+          countBadge: res.data.data.thongbao.length
+        })
+        var noidung = []
+        res.data.data.thongbao.map((value, index) => {
+          noidung.push(value.tb_noidung)
+        })
+        this.setState({
+          noidung: noidung
+        })
+        console.log("noi dung ", this.state.noidung)
+      }
+    })
+  }
+
   render() {
     let token = cookie.load('token')
     let payload = jwt.decode(token);
@@ -261,15 +334,21 @@ class AppHeader extends Component {
           <Button type="dashed" onClick={this.toggleCollapsed} style={{ marginLeft: 12 }}>
             <Icon type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} />
           </Button>
-          <Button style={{ marginLeft: '50%' }} onClick={this.showModal.bind(this)}><Icon type="plus" />Tạo nhanh công việc</Button>
+          <Tooltip title='Tạo nhanh công việc'>
+            <Button style={{ marginLeft: '65%' }} onClick={this.showModal.bind(this)}><Icon type="plus" /></Button>
+          </Tooltip>
+
+          <Dropdown overlay={this.state.menuThongbao}>
+            <Badge count={this.state.countBadge} style={{ fontSize: '12 px', margin: '20px' }}>
+              <a><Icon type="bell" style={{ fontSize: '25px', margin: '20px' }} /></a>
+            </Badge>
+          </Dropdown>
+
           <Dropdown overlay={this.state.menu} trigger={['click']}>
             <a style={{ marginLeft: '2%' }} className="ant-dropdown-link" href="/">
-              <Badge count={0} style={{ fontSize: '20px', margin: '20px' }}>
-                <Icon type="bell" style={{ fontSize: '25px', margin: '20px' }} />
-              </Badge>
-              <Avatar icon="user" style={{ fontSize: '20px', backgroundColor: 'orange' }} />
+              <Avatar src={this.state.address} style={{ fontSize: '20px', backgroundColor: 'orange' }} />
               <Tooltip title="Tên tài khoản">
-                <span style={{ fontSize: '18px' }}> {this.state.name} </span>
+                <span style={{ fontSize: '16px' }}> {this.state.name} </span>
               </Tooltip>
             </a>
           </Dropdown>
@@ -290,6 +369,8 @@ class AppHeader extends Component {
           trangthaibutton={this.state.trangthaibutton}
           changeButton={this.changeButton}
           set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
+          handleChangeRate={this.handleChangeRate}
+          valueRate={this.state.valueRate}
         />
       </div>
     )

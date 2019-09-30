@@ -13,8 +13,15 @@ app.get('*', function (req, res) {
 io.on("connection", function(socket){
     console.log('co nguoi ket noi '+socket.id);
     socket.on("user-send-message", function(data){
-        io.sockets.emit("server-send-message", {un:data.user, nd:data.text});
+        console.log("check chat data ",data)
+        io.sockets.emit("server-send-message", data);
     });
+    
+    socket.on("user-send-comment", function(data){
+        console.log("check comment data ",data)
+        io.sockets.emit("server-send-comment", {data});
+    });
+
     socket.on("toi-dang-go-chu", function(){
         socket.broadcast.emit("ai-do-dang-go-chu", "ai đó đang nhập tin nhắn");
     });
@@ -22,7 +29,7 @@ io.on("connection", function(socket){
         io.sockets.emit("ai-do-stop-go-chu");
     });
     socket.on("user-send-registration", function(data){
-        //console.log(data,'data');
+        // console.log(data,'data');
         if(data.dangKy==="nhuan")
         {
             io.sockets.emit("server-send-nhuan", data);

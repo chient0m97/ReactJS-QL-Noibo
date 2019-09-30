@@ -26,19 +26,17 @@ const FormModal = Form.create({ name: 'form_in_modal' })(
             super(props);
             this.state = {
                 messageRequired: 'Trường này không được bỏ trống!'
-
-
             }
         }
         render() {
             const { visible, onCancel, onSave, Data, form, title, confirmLoading, formtype, id_visible } = this.props;
             const { getFieldDecorator } = form;
-            console.log('actionnnnnnnnnnnnnnnnnnnnnnnnn', this.props.dataAction)
+            // console.log('actionnnnnnnnnnnnnnnnnnnnnnnnn', this.props.dataAction)
             let actionData = this.props.dataAction
             let ac = actionData.map(function (valuee) {
                 return ac = { label: valuee.name, value: valuee.name }
             })
-            console.log('=========================', ac)
+            // console.log('=========================', ac)
             return (
                 <Modal
                     visible={visible}
@@ -163,7 +161,6 @@ class RoleAction extends React.Component {
     }
 
     getRoles = (pageNumber) => {
-        console.log('getttt')
         if (pageNumber <= 0)
             return;
 
@@ -362,7 +359,7 @@ class RoleAction extends React.Component {
         if (this.state.searchText) {
             this.search(this.state.searchText);
         }
-        console.log(`selected ${value}`);
+        // console.log(`selected ${value}`);
     }
 
     onSearch = (val) => {
@@ -413,11 +410,9 @@ class RoleAction extends React.Component {
 
     }
     ChangeCheckbox = () => {
-        console.log('dcm')
     }
 
     changeRows = (selectedRowKeys, selectedRows) => {
-        console.log('checked')
     }
 
     handleClickRow(rowIndex) {
@@ -428,7 +423,7 @@ class RoleAction extends React.Component {
         })
     }
     onchangeRole = (value) => {
-        console.log('valueeeeeeeeeeeeee', value)
+        // console.log('valueeeeeeeeeeeeee', value)
         if (value === 'role') {
             this.setState({
                 roleModaVisible: true
@@ -508,7 +503,7 @@ class RoleAction extends React.Component {
             hideDefaultSelections: true,
             selectedRowKeys,
             onChange: async (selectedRowKeys, selectedRows) => {
-                console.log('selected rowkeys', selectedRowKeys)
+                // console.log('selected rowkeys', selectedRowKeys)
                 if (selectedRows[0]) {
                     await this.setState({
                         selectedId: selectedRows[0].id,
@@ -604,8 +599,6 @@ class RoleAction extends React.Component {
                                             onClick: async event => {
                                                await this.handleClickRow.bind(this, rowIndex)
                                                 if (this.state.selectedRowKeys.indexOf(record.id) >= 0) {
-                                                    console.log('111111111111111111111111111111111111111111')
-
                                                     for (var i =0;i< this.state.selectedRowKeys.length; i++) {
                             
                                                         if (this.state.selectedRowKeys[i] === record.id)
@@ -616,7 +609,7 @@ class RoleAction extends React.Component {
                                                     this.state.selectedRowKeys.push(record.id)
 
                                                 }
-                                                console.log('loggggggggggggggggggggggggggg', this.state.selectedRowKeys)
+                                                // console.log('loggggggggggggggggggggggggggg', this.state.selectedRowKeys)
                                                 await this.setState({
                                                     selectedId: record.id,
                                                     user: record
@@ -645,7 +638,7 @@ class RoleAction extends React.Component {
                                 <Pagination onChange={this.onchangpage} total={this.state.count} showSizeChanger onShowSizeChange={this.onShowSizeChange} showQuickJumper />
                             </Row>
                         </div>
-                        : <h1>Mày đéo có quyền vào đây</h1>
+                        : <h1>Không có quyền</h1>
                 }
 
             </div >

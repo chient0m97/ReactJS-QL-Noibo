@@ -81,6 +81,9 @@ class AppSider extends Component {
                 else if (claims[i] === Permission.User.Read) {
                     claims[i] = { url: '/user', des: 'User', menu: 1 }
                 }
+                else if (claims[i] === Permission.User.Read) {
+                    claims[i] = { url: '/approved', des: 'Phê duyệt', menu: 1 }
+                }
                 else if (claims[i] === Permission.Hotro.Read) {
                     claims[i] = { url: '/hotro', des: 'Công Việc & Hỗ trợ', menu: 2 }
                 }
@@ -148,6 +151,9 @@ class AppSider extends Component {
                         <Menu.Item key="26">
                             <NavLink to="/chat" className="">Chat all</NavLink >
                         </Menu.Item>
+                        <Menu.Item key="17">
+                            <span><NavLink to="/approved" className="">Phê Duyệt</NavLink ></span>
+                        </Menu.Item>
                     </SubMenu>
                     <SubMenu
                         key="sub2"
@@ -176,7 +182,7 @@ class AppSider extends Component {
                         title={
                             <span>
                                 <Icon type="team" />
-                                <span>Quản Lý Kế Toán</span>
+                                <span>Danh Mục Quản Lý</span>
                             </span>
                         }
                     >
@@ -196,14 +202,11 @@ class AppSider extends Component {
                     </SubMenu>
                     <Menu.Item key="14">
                         <Icon type="file" />
-                        <span><NavLink to="/file" className="">Tập Tin Khách Hàng</NavLink ></span>
+                        <span><NavLink to="/file" className="">Danh Mục Tập tin</NavLink ></span>
                     </Menu.Item>
-                    <Menu.Item key="17">
-                        <Icon type="file-done" />
-                        <span><NavLink to="/approved" className="">Phê Duyệt</NavLink ></span>
-                    </Menu.Item>
+
                     <Menu.Item key="13">
-                        <Icon type="setting" onClick={this.showDrawer} />Cài Đặt
+                        <Icon type="setting" onClick={this.showDrawer} /> <span>Cài Đặt</span>
                     </Menu.Item>
                     <SubMenu key="sub4" title={
                         <span>

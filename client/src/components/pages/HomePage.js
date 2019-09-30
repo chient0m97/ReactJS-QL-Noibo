@@ -218,7 +218,7 @@ export default class HomePage extends Component {
         var userDaTao = cookie.load('user');
 
         Request('hotro/getmyselfdaxong', 'POST', { userDaTao }).then((res) => {
-            console.log("res datao daxong ",res)
+            console.log("res datao daxong ", res)
             if (res.data.data.myself) {
                 this.setState({
                     dataNguoiTao: res.data.data.myself
@@ -575,18 +575,32 @@ export default class HomePage extends Component {
                                         <NavLink to="/nhansu" >
                                             <Statistic
                                                 title={
-                                                    <span>
+                                                    <span style={{marginLeft: '25px'}}>
                                                         Nhân Sự
                                                     <Tooltip title="Số lượng Nhân Sự">
                                                             <Icon style={{ marginLeft: '60px', fontSize: '13px' }} type="info-circle" />
                                                         </Tooltip>
                                                     </span>
                                                 }
-                                                value={this.state.countNhanSu}
-                                                valueStyle={{ color: '#3f8600' }}
-                                                prefix={<Icon type="user" />}
-                                                style={{ textAlign: 'center', color: '1890ff' }}
+                                                // value={this.state.countNhanSu}                                            }
+                                                // valueStyle={{ color: '#3f8600' }}
+                                                prefix={<Icon type="user" style={{marginLeft: '55px'}} />}
+                                                style={{ color: '1890ff' }}
                                                 valueStyle={{ fontSize: '30px', color: 'red', borderTop: '1px solid #e8e8e8' }}
+                                                formatter={value => {
+                                                    return (
+                                                        <div style={{ display: 'inline-block', padding: '0px', position:'absolute'}}>
+                                                            <div style={{float:'left', display: 'inline-block'}} >
+                                                                <span> {this.state.countNhanSu}</span>
+                                                            </div>
+                                                            <div style={{float:'right', display: 'inline-block', marginLeft:'15px', marginTop:'5px'}}>
+                                                                <span style={{ fontSize: '12px', display: 'block' }}>Nam: {this.state.dataChartjs[0]}</span>
+                                                                <span style={{ fontSize: '12px', display: 'block' }}>Nữ: {this.state.dataChartjs[1]}</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    )
+                                                }}
                                             />
                                         </NavLink>
                                     </Card>
@@ -982,9 +996,6 @@ export default class HomePage extends Component {
                         assignme={this.Assignme}
                         trangthaibutton={this.state.trangthaibutton}
                         set_Select_KhachHang={this.set_Select_KhachHang.bind(this)}
-                    />
-                    <AppHeader
-                        getNhansu={this.getNhansu}
                     />
                 </Form>
             </div>

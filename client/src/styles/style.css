@@ -302,14 +302,6 @@ margin-bottom: 0px !important;
   zoom: 1 !important;
 }
 
-.ant-table-thead > tr > th {
-  color: rgba(0, 0, 0, 0.85) !important;
-  font-weight: 500 !important;
-  text-align: center !important;
-  font-size: 17px !important;
-  padding: 6px !important;
-}
-
 thead[class*="ant-table-thead"] th{
   background-color: cornflowerblue !important;
   color: #fff !important;
@@ -430,3 +422,16 @@ thead[class*="ant-table-thead"] th{
   float: right !important;
 }
   
+.demo-infinite-container {
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  overflow: auto;
+  padding: 8px 24px;
+  height: 300px;
+}
+.demo-loading-container {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
+}

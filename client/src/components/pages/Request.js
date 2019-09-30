@@ -8,6 +8,7 @@ const InputGroup = Input.Group;
 const { Option } = Select;
 const { TextArea } = Input;
 const { Panel } = Collapse;
+// var socket = io('fscvn.ddns.net:6969');
 var socket = io('localhost:6969');
 var ten = cookie.load('user');
 var formatDateHMS = require('dateformat')
