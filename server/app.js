@@ -16,7 +16,7 @@ const role_action = require('./router/role_action')
 // var server = require("http").Server(app);
 // var io = require("socket.io")(server);
 // server.listen(3000);
-const port = 5000; 
+const port = 8000; 
 
 // var xlsx = require("xlsx")
 // var wb = xlsx.readFile("./upload/test_Read_excel.xlsx")

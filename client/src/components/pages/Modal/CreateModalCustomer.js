@@ -3,7 +3,7 @@ import { Table, Input, Modal, Popconfirm, message, Button, Form, Row, Col, Selec
 // import ChildComp from './component/ChildComp';
 import cookie from 'react-cookies'
 import { connect } from 'react-redux'
-import Login from '@components/Authen/Login'
+import Login from '@components/Authen/Login'  
 import Request from '@apis/Request'
 // import { fetchUser } from '@actions/user.action';
 import { fetchLoading } from '@actions/common.action';
